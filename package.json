@@ -7,7 +7,11 @@
     "dev:server": "pnpm --filter server dev",
     "dev:realtime": "pnpm --filter realtime-server dev",
     "dev": "pnpm run /^dev:/",
-    "build": "pnpm -r run build"
+    "build": "pnpm --filter shared build && pnpm --filter server build && pnpm --filter realtime-server build && pnpm --filter client build",
+    "build:client": "pnpm --filter shared build && pnpm --filter client build",
+    "build:server": "pnpm --filter shared build && pnpm --filter server build",
+    "build:realtime": "pnpm --filter shared build && pnpm --filter realtime-server build",
+    "build:shared": "pnpm --filter shared build"
   },
   "devDependencies": {
     "@types/bcrypt": "^5.0.0",

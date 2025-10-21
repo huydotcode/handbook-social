@@ -21,7 +21,7 @@
         ],
         "paths": {
             "@/*": ["./src/*"],
-            "@handbook/shared": ["../shared/src"]
+            "@handbook/shared": ["../shared/dist"]
         },
         "forceConsistentCasingInFileNames": true,
         "types": ["react", "react-dom"]
