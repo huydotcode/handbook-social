@@ -90,6 +90,10 @@ module.exports = {
                 warning: 'var(--warning)',
             },
             keyframes: {
+                marquee: {
+                    '0%': { transform: 'translateX(0%)' },
+                    '100%': { transform: 'translateX(-100%)' },
+                },
                 skeleton: {
                     '0%': {
                         opacity: 0.25,
@@ -100,6 +104,7 @@ module.exports = {
                 },
             },
             animation: {
+                marquee: 'marquee 20s linear infinite',
                 skeleton: 'skeleton 1s steps(10, end) infinite alternate 0ms',
             },
             gridTemplateColumns: {
