@@ -13,19 +13,14 @@ const SocialButton = () => {
     const loginWithGoogle = async () => {
         try {
             setIsGoogleLoading(true);
-            const result = await signIn('google', {
+            await signIn('google', {
                 callbackUrl: '/',
                 redirect: false,
             });
-
-            if (result?.ok) {
-                toast.success('Đăng nhập thành công!');
-                router.push('/');
-            } else {
-                toast.error('Đăng nhập thất bại');
-            }
         } catch (error) {
-            toast.error('Đăng nhập thất bại');
+            toast.error('Đã có lỗi xảy ra khi đăng nhập với Google', {
+                id: 'error-login-google',
+            });
         } finally {
             setIsGoogleLoading(false);
         }

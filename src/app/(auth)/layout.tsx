@@ -56,14 +56,17 @@ interface Props {
 
 const AuthLayout: React.FC<Props> = async ({ children }) => {
     return (
-        <div className="relative bg-white dark:bg-dark-secondary-2">
-            <DarkmodeButton className="fixed left-6 top-6 z-50 border border-white/30 bg-white/20 backdrop-blur-md transition-all duration-300 hover:bg-white/30 dark:border-white/10 dark:bg-black/20 dark:hover:bg-black/30" />
+        <div className="relative min-h-screen overflow-hidden bg-white dark:bg-dark-secondary-2">
+            {/* Darkmode Button */}
+            <div className="flex w-full justify-end p-4">
+                <DarkmodeButton className="block" />
+            </div>
 
-            <div className="relative z-10 mx-auto flex w-full max-w-7xl items-center justify-center p-4 lg:h-auto">
+            <div className="relative z-10 mx-auto flex h-[calc(100vh-52px)] w-full max-w-7xl items-center justify-center p-4 lg:h-auto">
                 {/* Desktop Layout: Features left, Login right */}
-                <div className="flex min-h-screen w-screen flex-row items-center justify-between gap-2 lg:h-auto lg:flex-col-reverse lg:pt-[100px]">
+                <div className="grid h-full w-screen grid-cols-2 gap-2 lg:h-auto lg:grid-cols-1">
                     {/* Features Section - Left side on desktop */}
-                    <div className="flex h-full min-h-[200px] w-[calc(100%-500px)] max-w-3xl flex-1 flex-col justify-center rounded-xl p-4 lg:w-full md:w-full md:max-w-screen">
+                    <div className="flex flex-1 flex-col justify-center rounded-xl p-4 lg:w-full md:w-full md:max-w-screen">
                         <div className="relative mb-4">
                             <h1 className="animate-fade-in text-center text-3xl font-bold text-primary-2 dark:text-white">
                                 Chào mừng đến với Handbook
@@ -77,7 +80,7 @@ const AuthLayout: React.FC<Props> = async ({ children }) => {
                     </div>
 
                     {/* Login Section - Right side on desktop */}
-                    <div className="flex w-[500px] flex-col items-center justify-center md:w-full">
+                    <div className="flex flex-1 flex-col items-center justify-center md:w-full">
                         <div className="animate-fade-in-delay-3 w-full">
                             {children}
                         </div>
@@ -90,7 +93,7 @@ const AuthLayout: React.FC<Props> = async ({ children }) => {
 
 const LandingFeatures = () => {
     return (
-        <section className="group w-full max-w-full p-2">
+        <section className="group w-full max-w-full p-2 lg:hidden">
             <div className="relative h-full overflow-x-hidden">
                 <div className="flex animate-marquee p-2 group-hover:[animation-play-state:paused]">
                     {[...features, ...features].map((feature, index) => (
