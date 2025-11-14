@@ -1,12 +1,8 @@
 'use client';
-import { ConfirmModal, Icons, SlideShow } from '@/components/ui';
+import { Icons, SlideShow } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import Image from '@/components/ui/image';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/Popover';
+import { Popover, PopoverTrigger } from '@/components/ui/Popover';
 import {
     Tooltip,
     TooltipContent,
@@ -15,15 +11,15 @@ import {
 } from '@/components/ui/tooltip';
 import VideoPlayer from '@/components/ui/VideoPlayer';
 import { useSocket } from '@/context';
+import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
 import { cn } from '@/lib/utils';
 import { FormatDate } from '@/utils/formatDate';
 import { urlRegex } from '@/utils/regex';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
-import { FormEventHandler, useMemo, useRef, useState } from 'react';
+import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import MessageAction from './MessageAction';
 
@@ -47,7 +43,7 @@ const MessageContent = ({
     isPin = false,
     handleClick,
 }: MessageContentProps) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socket, socketEmitor } = useSocket();
     const {
         queryClientAddPinnedMessage,
@@ -70,7 +66,7 @@ const MessageContent = ({
             ? true
             : false;
     const index = messages.findIndex((m) => m._id === msg._id);
-    const isOwnMsg = msg.sender._id === session?.user.id;
+    const isOwnMsg = msg.sender._id === user?.id;
 
     const isGroupMsg = msg.conversation.group ? true : false;
     const memoizedImages = useMemo(

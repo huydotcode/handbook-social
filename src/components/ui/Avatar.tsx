@@ -5,9 +5,17 @@ import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
 
+interface User {
+    id: string;
+    name: string;
+    avatar?: string;
+    image?: string;
+}
+
 interface Props {
     className?: string;
     session?: Session;
+    user?: User;
     userUrl?: string;
     imgSrc?: string;
     width?: number;
@@ -22,6 +30,7 @@ interface Props {
 const Avatar: React.FC<Props> = ({
     className,
     session,
+    user,
     imgSrc,
     userUrl,
     alt,
@@ -32,7 +41,13 @@ const Avatar: React.FC<Props> = ({
     rounded = 'full',
     onlyImage = false,
 }) => {
-    const isUser = session?.user.id || userUrl;
+    // Prefer user over session
+    const userId = user?.id || session?.user.id || userUrl;
+    const userImage =
+        user?.avatar || user?.image || session?.user.image || imgSrc;
+    const userName = user?.name || session?.user.name || alt;
+
+    const isUser = !!userId;
     const [isError, setIsError] = useState<boolean>(false);
     const sizeProps = fill
         ? { fill: true }
@@ -45,12 +60,8 @@ const Avatar: React.FC<Props> = ({
         return (
             <Image
                 className={cn(`rounded-${rounded}`, className)}
-                src={
-                    isError
-                        ? '/assets/img/user-profile.jpg'
-                        : session?.user.image || imgSrc || ''
-                }
-                alt={session?.user.name || alt || ''}
+                src={isError ? '/assets/img/user-profile.jpg' : userImage || ''}
+                alt={userName || ''}
                 priority={true}
                 onError={() => setIsError(true)}
                 {...sizeProps}
@@ -61,20 +72,12 @@ const Avatar: React.FC<Props> = ({
     return (
         <Link
             className={className}
-            href={
-                (isUser && `/profile/${session?.user.id || userUrl}`) ||
-                (href && href) ||
-                ''
-            }
+            href={(isUser && `/profile/${userId}`) || (href && href) || ''}
         >
             <Image
                 className={cn(`rounded-${rounded}`, className)}
-                src={
-                    isError
-                        ? '/assets/img/user-profile.jpg'
-                        : session?.user.image || imgSrc || ''
-                }
-                alt={session?.user.name || alt || ''}
+                src={isError ? '/assets/img/user-profile.jpg' : userImage || ''}
+                alt={userName || ''}
                 priority={true}
                 onError={() => setIsError(true)}
                 {...sizeProps}

@@ -8,10 +8,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useAuth } from '@/context';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
@@ -22,10 +22,10 @@ interface Props {
 }
 
 const Avatar: React.FC<Props> = ({ user }) => {
+    const { user: currentUser, setUser } = useAuth();
     const path = usePathname();
-    const { data: session, update } = useSession();
     const [hover, setHover] = useState(false);
-    const canChangeAvatar = session?.user?.id === user._id;
+    const canChangeAvatar = currentUser?.id === user._id;
     const [openModal, setOpenModal] = useState(false);
     const [file, setFile] = useState<File | null>(null);
 
@@ -56,14 +56,10 @@ const Avatar: React.FC<Props> = ({ user }) => {
                 id: 'uplodate-avatar',
             });
 
-            // Update session data
-            if (session?.user) {
-                update({
-                    ...session,
-                    user: {
-                        ...session.user,
-                        image: image.url,
-                    },
+            if (currentUser) {
+                setUser({
+                    ...currentUser,
+                    avatar: image.url,
                 });
             }
         } catch (error) {

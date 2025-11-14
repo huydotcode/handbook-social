@@ -1,15 +1,14 @@
 'use client';
 import { navLink } from '@/constants/navLink';
+import { useAuth } from '@/context';
 import { UserRole } from '@/enums/UserRole';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 
 const Sidebar = () => {
-    const { data: session } = useSession();
-    const user = session?.user;
+    const { user } = useAuth();
     const path = usePathname();
 
     return (
@@ -23,7 +22,7 @@ const Sidebar = () => {
                         className="rounded-full "
                         width={32}
                         height={32}
-                        src={user?.image || ''}
+                        src={user?.avatar || ''}
                         alt={user?.name || ''}
                     />
 
@@ -48,7 +47,7 @@ const Sidebar = () => {
 
                     if (
                         link.role === UserRole.ADMIN &&
-                        session?.user.role !== UserRole.ADMIN
+                        user?.role !== UserRole.ADMIN
                     )
                         return null;
 

@@ -4,10 +4,7 @@ import * as DialogPrimitive from '@radix-ui/react-dialog';
 import { X } from 'lucide-react';
 import * as React from 'react';
 
-import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
-import { useEffect, useState } from 'react';
 
 const Dialog = DialogPrimitive.Root;
 

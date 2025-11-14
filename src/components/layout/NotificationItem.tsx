@@ -1,7 +1,7 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
+import { useAuth, useSocket } from '@/context';
 import {
     NotificationMessage,
     NotificationType,
@@ -10,7 +10,6 @@ import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ConversationService from '@/lib/services/conversation.service';
 import NotificationService from '@/lib/services/notification.service';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import Icons from '../ui/Icons';
@@ -22,7 +21,7 @@ const NotificationItem = ({
     data: INotification;
     showMessage?: boolean;
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socket, socketEmitor } = useSocket();
     const { invalidateNotifications, invalidateFriends } =
         useQueryInvalidation();
@@ -34,13 +33,13 @@ const NotificationItem = ({
         try {
             const notificatonRequestAddFriend =
                 await NotificationService.getTypeAcceptFriendByUser(
-                    session?.user.id as string
+                    user?.id as string
                 );
 
             if (!notificatonRequestAddFriend) {
                 toast.error('Không tìm thấy thông báo. Vui lòng thử lại!');
 
-                await invalidateNotifications(session?.user.id as string);
+                await invalidateNotifications(user?.id as string);
 
                 return;
             }
@@ -68,8 +67,8 @@ const NotificationItem = ({
             }
 
             // Cập nhật lại danh sách bạn bè
-            await invalidateNotifications(session?.user.id as string);
-            await invalidateFriends(session?.user.id as string);
+            await invalidateNotifications(user?.id as string);
+            await invalidateFriends(user?.id as string);
 
             //Tạo thông báo cho người gửi
             const notificationAcceptFriend =
@@ -104,7 +103,7 @@ const NotificationItem = ({
         invalidateFriends,
         invalidateNotifications,
         notification,
-        session?.user.id,
+        user?.id,
         socket,
         socketEmitor,
     ]);
@@ -117,8 +116,8 @@ const NotificationItem = ({
                 senderId: notification.sender._id,
             });
 
-            await invalidateNotifications(session?.user.id as string);
-            await invalidateFriends(session?.user.id as string);
+            await invalidateNotifications(user?.id as string);
+            await invalidateFriends(user?.id as string);
             toast.success('Đã từ chối lời mời kết bạn');
         } catch (error) {
             toast.error('Không thể từ chối lời mời kết bạn. Vui lòng thử lại!');
@@ -129,7 +128,7 @@ const NotificationItem = ({
         try {
             await NotificationService.deleteNotification(notification._id);
 
-            await invalidateNotifications(session?.user.id as string);
+            await invalidateNotifications(user?.id as string);
             toast.success('Đã xóa thông báo');
         } catch (error) {
             toast.error('Không thể xóa thông báo. Vui lòng thử lại!');

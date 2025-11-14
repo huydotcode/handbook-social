@@ -7,8 +7,8 @@ import PostService from '@/lib/services/post.service';
 import { cn } from '@/lib/utils';
 import logger from '@/utils/logger';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React from 'react';
+import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { InfinityPostData } from '../InfinityPostComponent';
 import { usePostContext } from '../Post';
@@ -18,7 +18,7 @@ interface Props {
 }
 
 const ReactionPost: React.FC<Props> = ({ post }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const queryClient = useQueryClient();
 
     const { socketEmitor } = useSocket();
@@ -28,7 +28,7 @@ const ReactionPost: React.FC<Props> = ({ post }) => {
 
     const mutation = useMutation({
         mutationFn: async () => {
-            if (!session?.user) {
+            if (!user) {
                 toast.error('Bạn cần đăng nhập để thực hiện chức năng này!');
                 return;
             }
@@ -65,7 +65,7 @@ const ReactionPost: React.FC<Props> = ({ post }) => {
                 await PostService.sendReaction(post._id);
 
                 // Kiểm tra nếu người dùng không phải là tác giả bài viết và tương tác bài viết
-                if (!isReacted && session.user.id !== post.author._id) {
+                if (!isReacted && user.id !== post.author._id) {
                     socketEmitor.likePost({
                         postId: post._id,
                         authorId: post.author._id,

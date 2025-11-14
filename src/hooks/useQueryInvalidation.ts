@@ -1,11 +1,11 @@
+import { useAuth } from '@/context';
 import queryKey from '@/lib/queryKey';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useCallback } from 'react';
 
 export const useQueryInvalidation = () => {
     const queryClient = useQueryClient();
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     // Các hàm invalidate cho từng loại query
     const invalidateMessages = useCallback(
@@ -67,7 +67,7 @@ export const useQueryInvalidation = () => {
             );
 
             queryClient.setQueryData(
-                queryKey.conversations.userId(session?.user.id as string),
+                queryKey.conversations.userId(user?.id as string),
                 (oldConversations: IConversation[] | undefined | null) => {
                     if (!oldConversations) return oldConversations;
 
@@ -83,7 +83,7 @@ export const useQueryInvalidation = () => {
                 }
             );
         },
-        [queryClient, session?.user.id]
+        [queryClient, user?.id]
     );
 
     const queryClientAddPinnedMessage = useCallback(
@@ -230,7 +230,7 @@ export const useQueryInvalidation = () => {
             );
 
             queryClient.setQueryData(
-                queryKey.conversations.userId(session?.user.id as string),
+                queryKey.conversations.userId(user?.id as string),
                 (oldConversations: IConversation[] | undefined | null) => {
                     if (!oldConversations) return oldConversations;
 
@@ -273,7 +273,7 @@ export const useQueryInvalidation = () => {
                 }
             );
         },
-        [queryClient, session?.user.id]
+        [queryClient, user?.id]
     );
 
     const queryClientReadMessage = useCallback(
@@ -284,12 +284,10 @@ export const useQueryInvalidation = () => {
             });
 
             queryClient.invalidateQueries({
-                queryKey: queryKey.conversations.userId(
-                    session?.user.id as string
-                ),
+                queryKey: queryKey.conversations.userId(user?.id as string),
             });
         },
-        [queryClient, session?.user.id]
+        [queryClient, user?.id]
     );
 
     const invalidatePinnedMessages = useCallback(
@@ -305,9 +303,9 @@ export const useQueryInvalidation = () => {
     const invalidateConversations = useCallback(async () => {
         console.log('[LIB-HOOKS] invalidateConversations');
         await queryClient.invalidateQueries({
-            queryKey: queryKey.conversations.userId(session?.user.id as string),
+            queryKey: queryKey.conversations.userId(user?.id as string),
         });
-    }, [queryClient, session?.user.id]);
+    }, [queryClient, user?.id]);
 
     const invalidateProfile = useCallback(
         async (userId: string) => {
@@ -339,15 +337,13 @@ export const useQueryInvalidation = () => {
                 queryKey: queryKey.messages.conversationId(conversationId),
             });
             await queryClient.invalidateQueries({
-                queryKey: queryKey.conversations.userId(
-                    session?.user.id as string
-                ),
+                queryKey: queryKey.conversations.userId(user?.id as string),
             });
             await queryClient.invalidateQueries({
                 queryKey: queryKey.messages.pinnedMessages(conversationId),
             });
         },
-        [queryClient, session?.user.id]
+        [queryClient, user?.id]
     );
 
     // Tạo các hook với các key bên dưới
@@ -355,10 +351,7 @@ export const useQueryInvalidation = () => {
         async (q: string, type: string) => {
             console.log('[LIB-HOOKS] invalidateSearch', { q, type });
             await queryClient.invalidateQueries({
-                queryKey: queryKey.search({
-                    q,
-                    type,
-                }),
+                queryKey: queryKey.search.general(q, type),
             });
         },
         [queryClient]
@@ -498,7 +491,7 @@ export const useQueryInvalidation = () => {
     const invalidateItems = useCallback(async () => {
         console.log('[LIB-HOOKS] invalidateItems');
         await queryClient.invalidateQueries({
-            queryKey: queryKey.items.index,
+            queryKey: queryKey.items.list(),
         });
     }, [queryClient]);
 

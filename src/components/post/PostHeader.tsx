@@ -2,7 +2,6 @@
 import VerifiedUser from '@/components/VerifiedUser';
 import postAudience from '@/constants/postAudience.constant';
 import { timeConvert3 } from '@/utils/timeConvert';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { ActionPost } from '.';

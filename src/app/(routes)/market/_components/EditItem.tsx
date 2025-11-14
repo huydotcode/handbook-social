@@ -26,10 +26,10 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/context';
 import { useCategories, useLocations } from '@/context/AppContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ItemService from '@/lib/services/item.service';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -50,7 +50,7 @@ interface Props {
 
 const EditItem: React.FC<Props> = ({ data: item }) => {
     const { invalidateItemsBySeller } = useQueryInvalidation();
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
     const form = useForm<ItemData>({
@@ -88,7 +88,7 @@ const EditItem: React.FC<Props> = ({ data: item }) => {
                 path,
             });
 
-            await invalidateItemsBySeller(session?.user.id as string);
+            await invalidateItemsBySeller(user?.id as string);
 
             toast.success('Cập nhật mặt hàng thành công', {
                 id: 'update-item',
@@ -110,7 +110,7 @@ const EditItem: React.FC<Props> = ({ data: item }) => {
                 path,
             });
 
-            await invalidateItemsBySeller(session?.user.id as string);
+            await invalidateItemsBySeller(user?.id as string);
 
             toast.success('Xóa mặt hàng thành công');
         } catch (error: any) {

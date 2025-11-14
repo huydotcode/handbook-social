@@ -146,7 +146,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
 /**
  * Hook to access auth context
- * Replaces useSession from NextAuth
  */
 export function useAuth() {
     const context = useContext(AuthContext);

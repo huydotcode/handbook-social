@@ -12,12 +12,12 @@ import {
     useMutation,
     useQueryClient,
 } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React, { useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Form, FormControl } from '../../ui/Form';
 import { Textarea } from '../../ui/textarea';
+import { useAuth } from '@/context';
 
 interface Props {
     post: IPost;
@@ -31,7 +31,7 @@ type FormData = {
 const PAGE_SIZE = 3;
 
 const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const queryClient = useQueryClient();
 
     const {
@@ -154,7 +154,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
         }
     };
 
-    if (!session || !comments || isLoadingComments)
+    if (!user || !comments || isLoadingComments)
         return (
             <div className={'flex flex-col gap-4'}>
                 <SkeletonComment />
@@ -166,7 +166,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
     return (
         <>
             <div className="mb-2 mt-2 flex items-center">
-                {session && <Avatar session={session} />}
+                {user && <Avatar user={user} />}
 
                 <div className="ml-2 flex-1">
                     <Form {...form}>

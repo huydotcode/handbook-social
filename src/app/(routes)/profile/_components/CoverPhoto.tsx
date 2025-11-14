@@ -8,10 +8,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useAuth } from '@/context';
 import ImageService from '@/lib/services/image.service';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
@@ -21,11 +21,10 @@ interface Props {
 }
 
 const CoverPhoto: React.FC<Props> = ({ profile }) => {
-    const { data: session } = useSession();
-    const canChangeCoverPhoto = session?.user.id === profile.user._id;
+    const { user } = useAuth();
+    const canChangeCoverPhoto = user?.id === profile.user._id;
     const [openModal, setOpenModal] = useState(false);
     const [files, setFiles] = useState<File[]>([]);
-    const [hover, setHover] = useState(false);
     const path = usePathname();
 
     const handleChangeCoverPhoto = async () => {

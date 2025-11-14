@@ -3,10 +3,10 @@ import SidebarCollapse from '@/components/layout/SidebarCollapse';
 import { Items } from '@/components/shared';
 import { Loading } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context';
 import queryKey from '@/lib/queryKey';
 import GroupService from '@/lib/services/group.service';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React from 'react';
 
 interface Props {}
@@ -35,8 +35,8 @@ export const useGroups = (userId: string | undefined) =>
     });
 
 const Sidebar: React.FC<Props> = () => {
-    const { data: session } = useSession();
-    const { data: groups, isLoading } = useGroups(session?.user.id);
+    const { user } = useAuth();
+    const { data: groups, isLoading } = useGroups(user?.id);
 
     return (
         <>

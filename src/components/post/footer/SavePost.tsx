@@ -6,8 +6,8 @@ import queryKey from '@/lib/queryKey';
 import PostService from '@/lib/services/post.service';
 import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
+import { useAuth } from '@/context/AuthContext';
 import React from 'react';
 import toast from 'react-hot-toast';
 import { usePostContext } from '../Post';
@@ -23,7 +23,7 @@ const SavePost: React.FC<Props> = ({ post }) => {
         maxCount: 1,
     });
     const queryClient = useQueryClient();
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     const { postParams } = usePostContext();
 
@@ -39,7 +39,7 @@ const SavePost: React.FC<Props> = ({ post }) => {
         handleClick();
 
         if (!canClick) return;
-        if (!session?.user) return;
+        if (!user) return;
 
         try {
             if (isSaved) {

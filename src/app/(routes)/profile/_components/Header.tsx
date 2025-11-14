@@ -12,7 +12,7 @@ import {
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { navProfile } from '@/constants/navLink';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import React from 'react';
 import AddFriendAction from './AddFriendAction';
 
@@ -21,9 +21,9 @@ interface Props {
 }
 
 const Header: React.FC<Props> = ({ profile }) => {
-    const { data: session } = useSession();
+    const { user: currentUser } = useAuth();
     const user = profile.user;
-    const isOwner = session && session.user.id == user._id.toString();
+    const isOwner = currentUser && currentUser.id == user._id.toString();
 
     return (
         <header className="w-full rounded-b-xl bg-white pb-2 dark:bg-dark-secondary-1">

@@ -1,5 +1,4 @@
 'use client';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { ChangeEvent, FC, useCallback, useState } from 'react';
@@ -7,6 +6,7 @@ import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import postAudience from '@/constants/postAudience.constant';
+import { useAuth } from '@/context';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import PostService from '@/lib/services/post.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
@@ -19,14 +19,14 @@ import { FileUploaderWrapper } from '../shared/FileUploader';
 import { Icons } from '../ui';
 import { Button } from '../ui/Button';
 import { EditorField } from '../ui/EditorV2';
-import Video from '../ui/video';
-import TagInput from './TagInput';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
 } from '../ui/tooltip';
+import Video from '../ui/video';
+import TagInput from './TagInput';
 
 interface Props {
     className?: string;
@@ -47,7 +47,7 @@ const CreatePostV2: FC<Props> = ({
     variant = 'default',
     onSubmitSuccess,
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { invalidatePosts } = useQueryInvalidation();
     const [showTagInput, setShowTagInput] = useState<boolean>(true);
 
@@ -66,7 +66,7 @@ const CreatePostV2: FC<Props> = ({
 
     const sendPost = useCallback(
         async (data: IPostFormData) => {
-            if (!session?.user) return;
+            if (!user) return;
 
             try {
                 const { content, option, files, tags } = data;
@@ -99,7 +99,7 @@ const CreatePostV2: FC<Props> = ({
                 throw new Error(error);
             }
         },
-        [session?.user, groupId, type, invalidatePosts, reset, onSubmitSuccess]
+        [user, groupId, type, invalidatePosts, reset, onSubmitSuccess]
     );
 
     const mutation = useMutation({
@@ -197,27 +197,29 @@ const CreatePostV2: FC<Props> = ({
                 <div className={cn('relative mx-auto', className)}>
                     <div className="relative mt-3 flex flex-col">
                         <div className="flex items-center">
-                            {session?.user && (
+                            {user && (
                                 <Link href="/">
                                     <Image
                                         width={48}
                                         height={48}
                                         className="rounded-full object-cover"
-                                        src={session?.user.image || ''}
-                                        alt={session?.user.name || ''}
+                                        src={user.avatar || ''}
+                                        alt={user.name || ''}
                                     />
                                 </Link>
                             )}
 
                             <div className="ml-2 flex h-12 flex-col">
-                                <Link
-                                    className="h-6"
-                                    href={`/profile/${session?.user.id}`}
-                                >
-                                    <span className="text-base dark:text-dark-primary-1">
-                                        {session?.user.name}
-                                    </span>
-                                </Link>
+                                {user && (
+                                    <Link
+                                        className="h-6"
+                                        href={`/profile/${user.id}`}
+                                    >
+                                        <span className="text-base dark:text-dark-primary-1">
+                                            {user.name}
+                                        </span>
+                                    </Link>
+                                )}
 
                                 <select
                                     className="h-10 cursor-pointer border py-1 text-[10px]"

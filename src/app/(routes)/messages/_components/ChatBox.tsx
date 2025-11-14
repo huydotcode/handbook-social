@@ -15,7 +15,7 @@ import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import React, {
     KeyboardEventHandler,
@@ -104,7 +104,7 @@ export const usePinnedMessages = (conversationId: string) => {
 };
 
 const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socketEmitor } = useSocket();
     const queryClient = useQueryClient();
     const { invalidateAfterSendMessage, queryClientReadMessage } =
@@ -220,20 +220,20 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
     }, [fetchNextPage, inView]);
 
     useEffect(() => {
-        if (!session?.user?.id) return;
+        if (!user?.id) return;
 
         socketEmitor.joinRoom({
             roomId: conversation._id,
-            userId: session?.user.id,
+            userId: user.id,
         });
 
         return () => {
             socketEmitor.leaveRoom({
                 roomId: conversation._id,
-                userId: session?.user.id,
+                userId: user.id,
             });
         };
-    }, [conversation._id, session?.user.id, socketEmitor]);
+    }, [conversation._id, user?.id, socketEmitor]);
 
     // Kiểm tra nếu đang ở bottomRef thì không hiển thị nút scroll down
     useEffect(() => {

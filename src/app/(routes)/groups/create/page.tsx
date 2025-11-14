@@ -17,7 +17,7 @@ import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { createGroupValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -55,20 +55,21 @@ const CreateGroupPage: React.FC = ({}) => {
 
     const [friends, setFriends] = useState<IFriend[]>([]);
     const [searchFriendValue, setSearchFriendValue] = useState<string>('');
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const file = watch('file');
 
     const router = useRouter();
 
     useEffect(() => {
         (async () => {
+            if (!user?.id) return;
             const friends = await UserService.getFriendsByUserId({
-                userId: session?.user.id as string,
+                userId: user.id,
             });
 
             setFriends(friends);
         })();
-    }, [session?.user.id]);
+    }, [user?.id]);
 
     const onSubmit = async (data: ICreateGroup) => {
         if (isSubmitting) return;

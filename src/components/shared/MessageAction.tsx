@@ -1,9 +1,8 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
+import { useAuth, useSocket } from '@/context';
 import ConversationService from '@/lib/services/conversation.service';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
@@ -13,16 +12,16 @@ interface Props {
 }
 
 const MessageAction = ({ className = '', messageTo }: Props) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const router = useRouter();
     const { socketEmitor } = useSocket();
 
     const handleClick = async () => {
-        if (!session) return;
+        if (!user) return;
 
         const { isNew, conversation } =
             await ConversationService.getPrivateConversation({
-                userId: session.user.id,
+                userId: user.id,
                 friendId: messageTo,
             });
 
@@ -34,7 +33,7 @@ const MessageAction = ({ className = '', messageTo }: Props) => {
         if (isNew) {
             socketEmitor.joinRoom({
                 roomId: conversation._id,
-                userId: session.user.id,
+                userId: user.id,
             });
 
             socketEmitor.joinRoom({

@@ -7,7 +7,7 @@ import { useGroupsJoined } from '@/context/AppContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import GroupService from '@/lib/services/group.service';
 import logger from '@/utils/logger';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -18,9 +18,9 @@ interface Props {
 
 const Action: React.FC<Props> = ({ group }) => {
     const groupId = group._id;
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const router = useRouter();
-    const { data: groupJoined } = useGroupsJoined(session?.user.id);
+    const { data: groupJoined } = useGroupsJoined(user?.id);
     const [isPending, setIsPending] = useState(false);
     const { invalidateGroups, invalidateConversations } =
         useQueryInvalidation();
@@ -31,8 +31,8 @@ const Action: React.FC<Props> = ({ group }) => {
     const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
     const isCreator = useMemo(() => {
-        return group.creator._id == session?.user?.id;
-    }, [group.creator._id, session?.user?.id]);
+        return group.creator._id == user?.id;
+    }, [group.creator._id, user?.id]);
 
     const handleJoinGroup: FormEventHandler = async (e) => {
         e.preventDefault();
@@ -42,10 +42,10 @@ const Action: React.FC<Props> = ({ group }) => {
         try {
             await GroupService.join({
                 groupId,
-                userId: session?.user.id as string,
+                userId: user?.id as string,
             });
 
-            await invalidateGroups(session?.user.id as string);
+            await invalidateGroups(user?.id as string);
 
             toast.success('Đã tham gia nhóm');
         } catch (error) {
@@ -65,11 +65,11 @@ const Action: React.FC<Props> = ({ group }) => {
         try {
             await GroupService.leave({
                 groupId,
-                userId: session?.user.id as string,
+                userId: user?.id as string,
                 path,
             });
 
-            await invalidateGroups(session?.user.id as string);
+            await invalidateGroups(user?.id as string);
 
             await invalidateConversations();
 
@@ -90,7 +90,7 @@ const Action: React.FC<Props> = ({ group }) => {
 
             toast.success('Xóa nhóm thành công');
 
-            await invalidateGroups(session?.user.id as string);
+            await invalidateGroups(user?.id as string);
             await invalidateConversations();
 
             router.push('/groups');

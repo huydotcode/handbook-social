@@ -3,11 +3,11 @@ import { Post } from '@/components/post';
 import { PostTypes, usePosts } from '@/components/post/InfinityPostComponent';
 import { Loading } from '@/components/ui';
 import { API_ROUTES } from '@/config/api';
+import { useAuth } from '@/context';
 import { useFriends } from '@/context/SocialContext';
 import axiosInstance from '@/lib/axios';
 import queryKey from '@/lib/queryKey';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useSearchParams } from 'next/navigation';
 import { useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
@@ -23,7 +23,7 @@ interface SearchData {
 const PAGE_SIZE = 10;
 
 const Search = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const searchParams = useSearchParams();
     const q = searchParams.get('q') || '';
     const type = searchParams.get('type') || 'all';
@@ -35,10 +35,9 @@ const Search = () => {
     });
 
     const { data, isLoading } = useQuery<SearchData>({
-        queryKey: queryKey.search({ q, type }),
+        queryKey: queryKey.search.general(q, type),
         queryFn: async () => {
-            if (!q || !session?.user.id)
-                return { users: [], posts: [], groups: [] };
+            if (!q || !user?.id) return { users: [], posts: [], groups: [] };
 
             switch (type) {
                 case 'users':
@@ -65,7 +64,7 @@ const Search = () => {
         refetchOnReconnect: false,
         refetchOnMount: false,
         staleTime: 1000 * 60 * 5,
-        enabled: !!session?.user.id && !!q,
+        enabled: !!user?.id && !!q,
     });
 
     const { data: posts } = usePosts({
@@ -73,7 +72,7 @@ const Search = () => {
         enabled: type === 'posts',
         search: q,
     });
-    const { data: friends } = useFriends(session?.user.id);
+    const { data: friends } = useFriends(user?.id);
 
     const userFriendStatus = useMemo(() => {
         if (!data?.users || !friends) return {};

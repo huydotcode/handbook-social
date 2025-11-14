@@ -1,5 +1,5 @@
 'use client';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import React, { ChangeEvent, FC, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -36,7 +36,7 @@ interface MediaItem {
 }
 
 const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { invalidatePost, invalidatePosts } = useQueryInvalidation();
 
     // Chuyển đổi media từ post thành định dạng hiển thị
@@ -70,7 +70,7 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
     });
 
     const updatePost = async (data: IPostFormData) => {
-        if (!session?.user) return;
+        if (!user) return;
 
         try {
             const { content, option, files, tags } = data;
@@ -246,17 +246,23 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
             <form onSubmit={submit} encType="multipart/form-data">
                 <div className="flex items-center">
                     <Avatar
-                        userUrl={session?.user.id}
-                        imgSrc={session?.user.image || ''}
+                        user={
+                            user
+                                ? {
+                                      id: user.id,
+                                      name: user.name,
+                                      avatar: user.avatar,
+                                  }
+                                : undefined
+                        }
+                        userUrl={user?.id}
+                        imgSrc={user?.avatar || ''}
                     />
 
                     <div className="ml-2 flex h-12 flex-col">
-                        <Link
-                            className="h-6"
-                            href={`/profile/${session?.user.id}`}
-                        >
+                        <Link className="h-6" href={`/profile/${user?.id}`}>
                             <span className="text-base dark:text-dark-primary-1">
-                                {session?.user.name}
+                                {user?.name}
                             </span>
                         </Link>
 

@@ -16,7 +16,7 @@ import {
     useMutation,
     useQueryClient,
 } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import React, { useEffect, useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
@@ -73,7 +73,7 @@ export const useReplyComments = ({
     });
 
 const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { invalidateComments, invalidatePost, invalidateReplyComments } =
         useQueryInvalidation();
     const { data: replyComments } = useReplyComments({
@@ -92,7 +92,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
     const { handleSubmit, formState, reset } = form;
     const formRef = useRef<HTMLFormElement>(null);
     const [isLoved, setIsLoved] = useState<boolean>(
-        comment.loves.some((love) => love._id === session?.user.id)
+        comment.loves.some((love) => love._id === user?.id)
     );
 
     const mutationSendReplyComment = useMutation({
@@ -225,12 +225,9 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                                     loves: isLoved
                                         ? c.loves.filter(
                                               (love: IUser) =>
-                                                  love._id !== session?.user.id
+                                                  love._id !== user?.id
                                           )
-                                        : [
-                                              ...c.loves,
-                                              { _id: session?.user.id },
-                                          ],
+                                        : [...c.loves, { _id: user?.id }],
                                 };
                             }
                             return c;
@@ -256,13 +253,9 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                                         loves: isLoved
                                             ? c.loves.filter(
                                                   (love: IUser) =>
-                                                      love._id !==
-                                                      session?.user.id
+                                                      love._id !== user?.id
                                               )
-                                            : [
-                                                  ...c.loves,
-                                                  { _id: session?.user.id },
-                                              ],
+                                            : [...c.loves, { _id: user?.id }],
                                     };
                                 }
                                 return c;
@@ -416,7 +409,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                             Trả lời
                         </Button>
 
-                        {session?.user.id === comment.author._id && (
+                        {user?.id === comment.author._id && (
                             <Button
                                 variant={'text'}
                                 size={'xs'}
@@ -430,9 +423,9 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                         )}
                     </div>
 
-                    {session?.user && showReplyForm && (
+                    {user && showReplyForm && (
                         <div className="relative mt-2 flex">
-                            <Avatar session={session} />
+                            <Avatar user={user} />
 
                             <div className="ml-2 flex w-full flex-col">
                                 <Form {...form}>

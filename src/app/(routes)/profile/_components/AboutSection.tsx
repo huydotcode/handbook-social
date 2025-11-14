@@ -1,8 +1,8 @@
 'use client';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import ModalEditBio from './ModalEditBio';
@@ -23,8 +23,8 @@ const AboutSection: React.FC<Props> = ({ profile }) => {
         info: false,
     });
 
-    const { data: session } = useSession();
-    const canEdit = session?.user.id === profile.user._id;
+    const { user } = useAuth();
+    const canEdit = user?.id === profile.user._id;
 
     const renderInfo = (info: Date | string): string => {
         if (!isNaN(Date.parse(info.toString()))) {

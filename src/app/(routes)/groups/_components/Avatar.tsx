@@ -8,10 +8,10 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
+import { useAuth } from '@/context';
 import GroupService from '@/lib/services/group.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
@@ -23,9 +23,9 @@ interface Props {
 
 const Avatar: React.FC<Props> = ({ group }) => {
     const path = usePathname();
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const [hover, setHover] = useState(false);
-    const canChangeAvatar = session?.user?.id === group.creator._id;
+    const canChangeAvatar = user?.id === group.creator._id;
     const [openModal, setOpenModal] = useState(false);
     const [file, setFile] = useState<File | null>(null);
 

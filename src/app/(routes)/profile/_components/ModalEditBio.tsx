@@ -1,9 +1,9 @@
 import { Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { useAuth } from '@/context';
 import ProfileService from '@/lib/services/profile.service';
 import logger from '@/utils/logger';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -20,6 +20,7 @@ type FormBio = {
 };
 
 const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
+    const { user } = useAuth();
     const path = usePathname();
     const {
         register: registerBio,
@@ -27,12 +28,10 @@ const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
         formState: { errors, isSubmitting },
     } = useForm<FormBio>();
 
-    const { data: session } = useSession();
-
     const changeBio: SubmitHandler<FormBio> = async (data) => {
         const newBio = data.bio;
 
-        if (!session?.user.id) {
+        if (!user?.id) {
             toast.error('Vui lòng đăng nhập!');
             return;
         }
@@ -41,7 +40,7 @@ const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
             await ProfileService.updateBio({
                 newBio: newBio,
                 path: path,
-                userId: session.user.id,
+                userId: user.id,
             });
 
             toast.success('Thay đổi tiểu sử thành công!');

@@ -1,12 +1,12 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import React, { useEffect, useRef } from 'react';
+import { useAuth } from '@/context/AuthContext';
+import { useSocket } from '@/context';
 import MessageContent from './MessageContent';
 import ReadMessage from './ReadMessage';
 import { useInView } from 'react-intersection-observer';
-import { useSocket } from '@/context';
 import { useQueryClient } from '@tanstack/react-query';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 
@@ -31,7 +31,7 @@ const Message: React.FC<Props> = React.memo<Props>(
         isLastMessage,
         isPin = false,
     }) => {
-        const { data: session } = useSession();
+        const { user } = useAuth();
         const { ref: messageRef, inView } = useInView({
             threshold: 0.1,
             triggerOnce: true,
@@ -44,7 +44,7 @@ const Message: React.FC<Props> = React.memo<Props>(
                 ? true
                 : false;
         const index = messages.findIndex((m) => m._id === msg._id);
-        const isOwnMsg = msg.sender._id === session?.user.id;
+        const isOwnMsg = msg.sender._id === user?.id;
         const isGroupMsg = msg.conversation.group ? true : false;
 
         // Nếu đang inview và là tin nhắn cuối sẽ xử lý readmessage
@@ -52,19 +52,19 @@ const Message: React.FC<Props> = React.memo<Props>(
             if (
                 inView &&
                 isLastMessage &&
-                session?.user?.id &&
-                msg.sender._id !== session.user.id
+                user?.id &&
+                msg.sender._id !== user.id
             ) {
-                queryClientReadMessage(msg.conversation._id, session.user.id);
+                queryClientReadMessage(msg.conversation._id, user.id);
                 socketEmitor.readMessage({
                     roomId: msg.conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
             }
         }, [
             inView,
             isLastMessage,
-            session?.user?.id,
+            user?.id,
             msg.conversation._id,
             msg.sender._id,
             socketEmitor,

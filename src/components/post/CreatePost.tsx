@@ -1,9 +1,9 @@
 'use client';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import Link from 'next/link';
 import { FC, useCallback, useState } from 'react';
 
+import { useAuth } from '@/context';
 import { Modal } from '../ui';
 import CreatePostV2 from './CreatePostV2';
 
@@ -13,8 +13,7 @@ interface Props {
 }
 
 const CreatePost: FC<Props> = ({ groupId, type = 'default' }) => {
-    const { data: session } = useSession();
-
+    const { user } = useAuth();
     const [show, setShow] = useState(false);
 
     const handleClose = useCallback(() => setShow(false), []);
@@ -24,17 +23,14 @@ const CreatePost: FC<Props> = ({ groupId, type = 'default' }) => {
         <>
             <div className="mb-4 rounded-xl bg-white px-4 py-2 shadow-md transition-all duration-300 ease-in-out dark:bg-dark-secondary-1">
                 <div className="flex items-center">
-                    <Link
-                        className="h-10 w-10"
-                        href={`/profile/${session?.user.id}`}
-                    >
-                        {session?.user && (
+                    <Link className="h-10 w-10" href={`/profile/${user?.id}`}>
+                        {user && (
                             <Image
                                 className="h-full w-full rounded-full object-cover"
                                 width={40}
                                 height={40}
-                                src={session.user.image || ''}
-                                alt={session.user.name || ''}
+                                src={user.avatar || ''}
+                                alt={user.name || ''}
                             />
                         )}
                     </Link>

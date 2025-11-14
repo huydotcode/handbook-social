@@ -6,7 +6,7 @@ import { useSocket } from '@/context';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -17,7 +17,7 @@ interface Props {
 }
 
 const MessageAction = ({ msg, index, messages }: Props) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socket, socketEmitor } = useSocket();
     const [openModalCofirm, setOpenModalConfirm] = useState<boolean>(false);
     const {
@@ -26,7 +26,7 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         queryClientRemovePinnedMessage,
     } = useQueryInvalidation();
 
-    const isOwnMsg = msg.sender._id === session?.user.id;
+    const isOwnMsg = msg.sender._id === user?.id;
     const pinnedMessages = useMemo(() => {
         return messages.filter((msg) => msg.isPin);
     }, [messages]);

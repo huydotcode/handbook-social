@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 interface Props {
     msg: IMessage;
     index: number;
@@ -21,13 +21,13 @@ const ReadMessage = ({
     isOwnMsg,
     isSearchMessage = false,
 }: Props) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     return (
         <>
             {index == 0 && !isSearchMessage && (
                 <>
-                    {msg.sender._id === session?.user.id &&
+                    {msg.sender._id === user?.id &&
                         msg.conversation.type === 'private' &&
                         msg.readBy.length > 0 && (
                             <span className="text-xs text-secondary-1">

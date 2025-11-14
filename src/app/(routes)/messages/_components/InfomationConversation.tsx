@@ -10,10 +10,9 @@ import {
 } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/context';
+import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { leaveConversation } from '@/lib/actions/conversation.action';
 import ConversationService from '@/lib/services/conversation.service';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -33,7 +32,7 @@ const InfomationConversation: React.FC<Props> = ({
     setOpenInfo,
     messages,
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socketEmitor } = useSocket();
     const router = useRouter();
     const { invalidateConversations } = useQueryInvalidation();
@@ -68,13 +67,13 @@ const InfomationConversation: React.FC<Props> = ({
         if (conversation.group) {
             return null;
         } else {
-            if (conversation.participants[0]._id === session?.user?.id) {
+            if (conversation.participants[0]._id === user?.id) {
                 return conversation.participants[1];
             } else {
                 return conversation.participants[0];
             }
         }
-    }, [conversation.group, conversation.participants, session?.user?.id]);
+    }, [conversation.group, conversation.participants, user?.id]);
 
     const title = useMemo(() => {
         if (conversation.group) {
@@ -93,22 +92,22 @@ const InfomationConversation: React.FC<Props> = ({
     }, [conversation.group, partner?.avatar]);
 
     const handleOutConversation = async () => {
-        if (!conversation._id || !session?.user) return;
+        if (!conversation._id || !user) return;
 
         try {
             if (isPrivate) {
                 await ConversationService.deleteByUser({
                     conversationId: conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
 
                 toast.success('Xóa đoạn hội thoại thành công');
             }
 
             if (isGroup) {
-                await leaveConversation({
+                await ConversationService.leaveConversation({
                     conversationId: conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
 
                 toast.success('Rời đoạn hội thoại thành công');
@@ -120,7 +119,7 @@ const InfomationConversation: React.FC<Props> = ({
 
             socketEmitor.leaveRoom({
                 roomId: conversation._id,
-                userId: session?.user?.id,
+                userId: user.id,
             });
         } catch (error) {
             toast.error(

@@ -2,11 +2,11 @@
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/context';
+import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import React, { ChangeEvent, useEffect, useMemo } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
@@ -24,7 +24,7 @@ interface IFormData {
 
 const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
     const { socketEmitor } = useSocket();
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const formRef = React.useRef<HTMLFormElement>(null);
     const { queryClientAddMessage, invalidateConversation } =
         useQueryInvalidation();
@@ -66,7 +66,7 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
         setValue('files', []);
         setValue('text', '');
 
-        if (!session?.user) return;
+        if (!user) return;
 
         if (!text.trim() && files.length === 0) {
             return;

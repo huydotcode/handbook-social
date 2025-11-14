@@ -1,13 +1,13 @@
 'use client';
 import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context';
+import { useVideoCall } from '@/context/VideoCallContext';
 import useBreakpoint from '@/hooks/useBreakpoint';
 import { cn } from '@/lib/utils';
 import { timeConvert3 } from '@/utils/timeConvert';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
-import { useVideoCall } from '@/context/VideoCallContext';
 
 interface Props {
     openInfo: boolean;
@@ -24,7 +24,7 @@ const ChatHeader: React.FC<Props> = ({
     handleOpenInfo,
     handleOpenSearch,
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const router = useRouter();
     const { breakpoint } = useBreakpoint();
     const { startCall } = useVideoCall();
@@ -37,10 +37,10 @@ const ChatHeader: React.FC<Props> = ({
         if (!currentRoom.participants || currentRoom.participants.length < 2) {
             return null;
         }
-        if (!session?.user) return null;
+        if (!user) return null;
 
-        return currentRoom.participants.find((p) => p._id !== session.user.id);
-    }, [isGroup, currentRoom.participants, session?.user]);
+        return currentRoom.participants.find((p) => p._id !== user.id);
+    }, [isGroup, currentRoom.participants, user]);
 
     const title = useMemo(() => {
         if (roomType == 'group') {

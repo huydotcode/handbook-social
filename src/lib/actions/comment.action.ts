@@ -1,7 +1,6 @@
 'use server';
 import { Comment, Post } from '@/models';
 import connectToDB from '@/services/mongoose';
-import logger from '@/utils/logger';
 import { getAuthSession } from '../auth';
 
 export const getCommentByCommentId = async ({

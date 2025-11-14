@@ -1,13 +1,12 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/context';
+import { useAuth } from '@/context/AuthContext';
 import { useFollowing } from '@/context/SocialContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import NotificationService from '@/lib/services/notification.service';
 import UserService from '@/lib/services/user.service';
 import { cn } from '@/lib/utils';
-import { useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -17,11 +16,11 @@ interface Props {
 }
 
 const FollowAction: React.FC<Props> = ({ className = '', userId }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { invalidateRequests, invalidateFollowings } = useQueryInvalidation();
     const { socket, socketEmitor } = useSocket();
 
-    const { data: followings } = useFollowing(session?.user.id as string);
+    const { data: followings } = useFollowing(user?.id);
 
     const [countClick, setCountClick] = useState<number>(0);
 
@@ -34,12 +33,12 @@ const FollowAction: React.FC<Props> = ({ className = '', userId }) => {
         try {
             await UserService.follow(userId);
 
-            await invalidateRequests(session?.user.id as string);
-            await invalidateFollowings(session?.user.id as string);
+            await invalidateRequests(user?.id as string);
+            await invalidateFollowings(user?.id as string);
 
             const newNotification =
                 await NotificationService.createNotificationFollowUser({
-                    senderId: session?.user.id as string,
+                    senderId: user?.id as string,
                     receiverId: userId,
                 });
 
@@ -60,7 +59,7 @@ const FollowAction: React.FC<Props> = ({ className = '', userId }) => {
         try {
             await UserService.unfollow(userId);
 
-            await invalidateFollowings(session?.user.id as string);
+            await invalidateFollowings(user?.id as string);
 
             toast.success('Đã bỏ theo dõi');
         } catch (error) {

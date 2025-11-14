@@ -6,7 +6,7 @@ import { useFriends } from '@/context/SocialContext';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
 import PostService from '@/lib/services/post.service';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import {
@@ -25,20 +25,20 @@ interface Props {
 const BASE_URL = 'https://handbookk.vercel.app';
 
 const SharePost: React.FC<Props> = ({ post }) => {
-    const { data: session } = useSession();
-    const { data: friends } = useFriends(session?.user.id);
+    const { user } = useAuth();
+    const { data: friends } = useFriends(user?.id);
     const [sended, setSended] = useState<string[]>([]);
     const { socketEmitor } = useSocket();
 
     const handleShare = async (friendId: string) => {
-        if (!session?.user) return;
+        if (!user) return;
 
         try {
             await PostService.share(post._id);
 
             const { isNew, conversation } =
                 await ConversationService.getPrivateConversation({
-                    userId: session.user.id,
+                    userId: user.id,
                     friendId,
                 });
 

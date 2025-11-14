@@ -1,4 +1,3 @@
-import { getAuthSession } from '@/lib/auth';
 import ConversationService from '@/lib/services/conversation.service';
 import React from 'react';
 
@@ -11,7 +10,6 @@ export async function generateMetadata({ params }: Props) {
     try {
         const { conversationId } = await params;
         const conversation = await ConversationService.getById(conversationId);
-        const session = await getAuthSession();
 
         if (!conversation) {
             return {
@@ -19,7 +17,7 @@ export async function generateMetadata({ params }: Props) {
             };
         }
 
-        const type = conversation.type; // Remove optional chaining
+        const type = conversation.type;
 
         if (type === 'group') {
             const name = conversation.title || 'Nhóm chat';
@@ -33,10 +31,9 @@ export async function generateMetadata({ params }: Props) {
                 },
             };
         } else if (type === 'private') {
+            // For private conversations, use the first participant's name
             const name =
-                conversation?.participants.find(
-                    (member) => member._id !== session?.user.id
-                )?.name || 'Messenger';
+                conversation?.participants[0]?.name || 'Messenger';
 
             return {
                 title: `${name} | Messenger`,

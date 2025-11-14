@@ -3,17 +3,13 @@ import PhotoGrid from '@/components/post/PhotoGrid';
 import ReviewPost from '@/components/post/ReviewPost';
 import SkeletonPost from '@/components/post/SkeletonPost';
 import { Button } from '@/components/ui/Button';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
-import queryKey from '@/lib/queryKey';
-import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useState } from 'react';
 import { FooterPost } from '.';
 import VideoPlayer from '../ui/VideoPlayer';
+import { PostParams } from './InfinityPostComponent';
 import PostHeader from './PostHeader';
-import { PostParams, PostType } from './InfinityPostComponent';
 
 interface Props {
     data: IPost;
@@ -37,13 +33,13 @@ export const usePostContext = () => useContext(PostContext);
 const Post: React.FC<Props> = React.memo(
     ({ data: post, isManage = false, params }) => {
         const pathname = usePathname();
-        const { data: session } = useSession();
+        const { user } = useAuth();
 
         const showInPrivate =
             post &&
             post.option === 'private' &&
             pathname == `/profile/${post.author._id}` &&
-            session?.user?.id == post.author._id;
+            user?.id == post.author._id;
 
         if (!post) return <SkeletonPost />;
         if (post.option == 'private' && !showInPrivate) return null;

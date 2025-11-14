@@ -3,6 +3,7 @@ import { Button } from '@/components/ui/Button';
 import Icons from '@/components/ui/Icons';
 import { useSocket } from '@/context';
 import { useRequests } from '@/context/AppContext';
+import { useAuth } from '@/context/AuthContext';
 import { useFriends } from '@/context/SocialContext';
 import { NotificationType } from '@/enums/EnumNotification';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
@@ -10,7 +11,6 @@ import NotificationService from '@/lib/services/notification.service';
 import UserService from '@/lib/services/user.service';
 import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -20,15 +20,13 @@ interface Props {
 }
 
 const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { invalidateFriends, invalidateRequests } = useQueryInvalidation();
     const { data: requests, isLoading: isLoadingRequests } = useRequests(
-        session?.user.id
+        user?.id
     );
     const { socketEmitor } = useSocket();
-    const { data: friends, isLoading: isLoadingFriends } = useFriends(
-        session?.user.id
-    );
+    const { data: friends, isLoading: isLoadingFriends } = useFriends(user?.id);
     const isLoadingBtn = useMemo(() => {
         return isLoadingRequests || isLoadingFriends;
     }, [isLoadingRequests, isLoadingFriends]);
@@ -37,7 +35,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
         mutationFn: async ({ receiverId }: { receiverId: string }) => {
             const request = await NotificationService.sendRequestFriend({
                 receiverId: receiverId,
-                senderId: session?.user.id as string,
+                senderId: user?.id as string,
             });
 
             return request;
@@ -49,8 +47,8 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             });
         },
         onSuccess: async (data) => {
-            await invalidateRequests(session?.user.id as string);
-            await invalidateFriends(session?.user.id as string);
+            await invalidateRequests(user?.id as string);
+            await invalidateFriends(user?.id as string);
 
             if (!data) return;
 
@@ -82,8 +80,8 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             });
         },
         onSuccess: async () => {
-            await invalidateFriends(session?.user.id as string);
-            await invalidateRequests(session?.user.id as string);
+            await invalidateFriends(user?.id as string);
+            await invalidateRequests(user?.id as string);
 
             toast.success('Hủy kết bạn thành công', {
                 id: 'unfriend',
@@ -111,17 +109,17 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
 
     // Hủy lời mời kết bạn
     const handleRemoveRequest = async () => {
-        if (!session) return;
+        if (!user) return;
 
         try {
             await NotificationService.deleteNotificationByUsers({
-                senderId: session.user.id,
+                senderId: user.id,
                 receiverId: userId,
                 type: NotificationType.REQUEST_ADD_FRIEND,
             });
 
-            await invalidateRequests(session?.user.id as string);
-            await invalidateFriends(session?.user.id as string);
+            await invalidateRequests(user?.id as string);
+            await invalidateFriends(user?.id as string);
 
             toast.success('Đã hủy lời mời kết bạn', {
                 id: 'removeRequest',
@@ -136,7 +134,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
 
     // Xử lý khi click vào nút kết bạn
     const handleAddFriend = async () => {
-        if (!session) return;
+        if (!user) return;
 
         setCountClick((prev) => prev + 1);
 

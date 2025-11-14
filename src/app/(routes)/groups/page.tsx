@@ -1,14 +1,47 @@
+'use client';
 import { InfinityPostComponent } from '@/components/post';
 import { Button } from '@/components/ui/Button';
-import { getAuthSession } from '@/lib/auth';
+import { useAuth } from '@/context/AuthContext';
 import GroupService from '@/lib/services/group.service';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { Sidebar } from './_components';
 
-const GroupsPage = async () => {
-    const session = await getAuthSession();
-    if (!session) return null;
-    const groups = await GroupService.getRecommendedGroups(session.user.id);
+const GroupsPage = () => {
+    const { user } = useAuth();
+    const [groups, setGroups] = useState<IGroup[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            if (!user?.id) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const data = await GroupService.getRecommendedGroups(user.id);
+                setGroups(data || []);
+            } catch (error) {
+                console.error('Error fetching recommended groups:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchGroups();
+    }, [user?.id]);
+
+    if (isLoading) {
+        return (
+            <>
+                <Sidebar />
+                <div className="mx-auto max-w-[700px]">
+                    <div className="text-center">Đang tải...</div>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>

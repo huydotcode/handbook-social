@@ -113,13 +113,13 @@ export const usePosts = ({
 
     const fetchPosts = useCallback(
         async (pageParam: number) => {
-            if (!session?.user.id) return [];
+            if (!user?.id) return [];
 
             const endpoint = getEndpoint(type);
             const params = {
                 page: pageParam,
                 page_size: PAGE_SIZE,
-                ...(isFeedType && { user_id: session.user.id }),
+                ...(isFeedType && { user_id: user.id }),
                 ...(type === 'post-by-member' && {
                     user_id: userId,
                     group_id: groupId,
@@ -132,15 +132,7 @@ export const usePosts = ({
             });
             return data;
         },
-        [
-            session?.user.id,
-            getEndpoint,
-            type,
-            isFeedType,
-            userId,
-            groupId,
-            search,
-        ]
+        [user?.id, getEndpoint, type, isFeedType, userId, groupId, search]
     );
 
     return useInfiniteQuery({
@@ -254,7 +246,6 @@ const InfinityPostComponent: React.FC<Props> = ({
     const renderCreatePost = useCallback(() => {
         if (!shouldShowCreatePost && !showModalCreatePost) return null;
 
-        const user = session?.user;
         const isGroupPost = type === 'group' && groupId;
 
         return (
@@ -267,7 +258,7 @@ const InfinityPostComponent: React.FC<Props> = ({
                         >
                             {user && (
                                 <Image
-                                    src={user.image || ''}
+                                    src={user.avatar || ''}
                                     alt={user.name || ''}
                                     width={40}
                                     height={40}
@@ -303,7 +294,7 @@ const InfinityPostComponent: React.FC<Props> = ({
     }, [
         shouldShowCreatePost,
         showModalCreatePost,
-        session?.user,
+        user,
         handleShow,
         type,
         groupId,
