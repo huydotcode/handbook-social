@@ -3,8 +3,8 @@ import { API_ROUTES } from '@/config/api';
 import axiosInstance from '@/lib/axios';
 import queryKey from '@/lib/queryKey';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useEffect } from 'react';
+import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
 
 const PAGE_SIZE = 10;
@@ -49,7 +49,7 @@ export const useConversations = (userId: string | undefined) =>
     });
 
 export const useConversation = (conversationId: string | undefined) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     return useQuery<IConversation | null>({
         queryKey: queryKey.conversations.id(conversationId),
@@ -63,7 +63,7 @@ export const useConversation = (conversationId: string | undefined) => {
                 return null;
             }
         },
-        enabled: !!conversationId && !!session?.user.id,
+        enabled: !!conversationId && !!user?.id,
         retry: false,
         refetchInterval: false,
         refetchOnWindowFocus: false,
@@ -120,25 +120,21 @@ export const useFollowing = (userId: string | undefined) =>
     });
 
 function SocialProvider({ children }: { children: React.ReactNode }) {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socketEmitor, isConnected } = useSocket();
-    const { data: conversations } = useConversations(session?.user.id);
+    const { data: conversations } = useConversations(user?.id);
 
     useEffect(() => {
-        if (!session?.user?.id || !conversations || !isConnected) return;
+        if (!user?.id || !conversations || !isConnected) return;
 
         conversations.forEach((conversation) => {
-            if (
-                !conversation.participants.some(
-                    (p) => p._id === session.user.id
-                )
-            )
+            if (!conversation.participants.some((p) => p._id === user.id))
                 return;
-            if (conversation.isDeletedBy?.includes(session.user.id)) return;
+            if (conversation.isDeletedBy?.includes(user.id)) return;
 
             socketEmitor.joinRoom({
                 roomId: conversation._id,
-                userId: session?.user.id,
+                userId: user.id,
             });
         });
 
@@ -146,11 +142,11 @@ function SocialProvider({ children }: { children: React.ReactNode }) {
             conversations.forEach((conversation) => {
                 socketEmitor.leaveRoom({
                     roomId: conversation._id,
-                    userId: session?.user.id,
+                    userId: user.id,
                 });
             });
         };
-    }, [conversations, session?.user.id, socketEmitor, isConnected]);
+    }, [conversations, user?.id, socketEmitor, isConnected]);
 
     return <>{children}</>;
 }

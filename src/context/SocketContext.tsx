@@ -7,8 +7,8 @@ import { useSound } from '@/hooks';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import queryKey from '@/lib/queryKey';
 import { useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import Link from 'next/link';
+import { useAuth } from './AuthContext';
 import { usePathname } from 'next/navigation';
 import {
     createContext,
@@ -65,7 +65,7 @@ export const SocketContext = createContext<SocketContextType>({
 export const useSocket = () => useContext(SocketContext);
 
 function SocketProvider({ children }: { children: React.ReactNode }) {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const queryClient = useQueryClient();
     const {
         queryClientAddMessage,
@@ -215,15 +215,14 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     const onReceiveMessage = useCallback(
         (message: IMessage) => {
             // Bỏ qua tin nhắn do chính user gửi đi
-            if (!session?.user || session.user.id === message.sender._id)
-                return;
+            if (!user || user.id === message.sender._id) return;
 
             if (pathname.includes(`/messages/${message.conversation._id}`)) {
                 queryClientAddMessage(message);
 
                 socketEmitor.readMessage({
                     roomId: message.conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
             } else {
                 queryClientAddMessage(message);
@@ -253,52 +252,46 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
                 );
             }
         },
-        [
-            session?.user,
-            pathname,
-            queryClientAddMessage,
-            socketEmitor,
-            playMessageSound,
-        ]
+        [user, pathname, queryClientAddMessage, socketEmitor, playMessageSound]
     );
 
     const onDeleteMessage = useCallback(
         (message: IMessage) => {
             if (
-                !session?.user ||
-                session.user.id !== message.sender._id ||
+                !user ||
+                user.id !== message.sender._id ||
                 pathname.includes(`/messages/${message.conversation._id}`)
             ) {
                 queryClientDeleteMessage(message);
             }
         },
-        [session, pathname, queryClientDeleteMessage]
+        [user, pathname, queryClientDeleteMessage]
     );
 
     const onPinMessage = useCallback(
         (message: IMessage) => {
             if (
-                !session?.user ||
-                session.user.id !== message.sender._id ||
+                !user ||
+                user.id !== message.sender._id ||
                 pathname.includes(`/messages/${message.conversation._id}`)
             ) {
                 queryClientAddPinnedMessage(message);
             }
         },
-        [session, pathname, queryClientAddPinnedMessage]
+        [user, pathname, queryClientAddPinnedMessage]
     );
 
     const onUnpinMessage = useCallback(
         (message: IMessage) => {
             if (
-                !session?.user ||
-                session.user.id !== message.sender._id ||
+                !user ||
+                user.id !== message.sender._id ||
                 pathname.includes(`/messages/${message.conversation._id}`)
             ) {
                 queryClientRemovePinnedMessage(message);
             }
         },
-        [session, pathname, queryClientRemovePinnedMessage]
+        [user, pathname, queryClientRemovePinnedMessage]
     );
 
     const onReadMessage = useCallback(
@@ -315,30 +308,28 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
     }, [socket]);
 
     const onFriendOnline = useCallback(
-        (user: IFriend) => {
+        (friend: IFriend) => {
             queryClient.setQueryData(
-                queryKey.user.friends(session?.user?.id),
+                queryKey.user.friends(user?.id),
                 (oldData: any) => {
                     if (!oldData) return oldData;
-                    return oldData.map((friend: IFriend) =>
-                        friend._id === user._id
-                            ? { ...friend, isOnline: true }
-                            : friend
+                    return oldData.map((f: IFriend) =>
+                        f._id === friend._id ? { ...f, isOnline: true } : f
                     );
                 }
             );
 
-            toast(`${user.name} đã trực tuyến`, {
-                id: 'friend-online-' + user._id,
+            toast(`${friend.name} đã trực tuyến`, {
+                id: 'friend-online-' + friend._id,
                 icon: <Icons.Circle className="text-primary-2" />,
             });
         },
-        [queryClient, session?.user?.id]
+        [queryClient, user?.id]
     );
 
     // Khởi tạo socket
     useEffect(() => {
-        if (!session?.user.id) return;
+        if (!user?.id) return;
 
         const accessToken = localStorage.getItem('accessToken');
 
@@ -347,7 +338,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         const socketIO = ClientIO(socketConfig.url, {
             withCredentials: true,
             transports: ['websocket', 'polling'],
-            auth: { user: session.user, accessToken },
+            auth: { user, accessToken },
         }) as any;
 
         setSocket(socketIO);
@@ -357,13 +348,13 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         socketIO.on('disconnect', onDisconnect);
         socketIO.on('connect_error', onConnectError);
 
-        // Cleanup khi component unmount hoặc session thay đổi
+        // Cleanup khi component unmount hoặc user thay đổi
         return () => {
             socketIO.disconnect();
             setSocket(null);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [session?.user.id]); // Thay đổi ở đây
+    }, [user?.id]);
 
     // Gắn và gỡ các event listener khi socket hoặc các hàm callback thay đổi
     useEffect(() => {

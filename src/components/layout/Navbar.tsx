@@ -9,7 +9,7 @@ import {
 import { navbarLink, navLink } from '@/constants/navLink';
 import { UserRole } from '@/enums/UserRole';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -20,7 +20,7 @@ import NavbarSearch from './NavbarSearch';
 import NavbarUser from './NavbarUser';
 
 const Navbar = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const [showPages, setShowPages] = useState<boolean>(false);
     const path = usePathname();
     const listNavRef = React.useRef<HTMLUListElement>(null);
@@ -79,7 +79,7 @@ const Navbar = () => {
                         {navbarLink.map((link) => {
                             if (
                                 link.role === UserRole.ADMIN &&
-                                session?.user.role !== UserRole.ADMIN
+                                user?.role !== UserRole.ADMIN
                             )
                                 return null;
 
@@ -144,7 +144,7 @@ const Navbar = () => {
                         {navLink.map((link, index) => {
                             if (
                                 link.role === UserRole.ADMIN &&
-                                session?.user.role !== UserRole.ADMIN
+                                user?.role !== UserRole.ADMIN
                             )
                                 return null;
 

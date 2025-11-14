@@ -1,28 +1,96 @@
-import { useMutation } from '@tanstack/react-query';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { authService } from '@/lib/api/services/auth.service';
 import type {
     LoginDto,
     SendOTPDto,
     VerifyOTPDto,
     ResetPasswordDto,
+    LoginResponse,
 } from '@/lib/api/services/auth.service';
+import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
+import queryKey from '@/lib/queryKey';
 
 /**
  * Hook for user login
  */
 export const useLogin = () => {
+    const { setUser } = useAuth();
+    const queryClient = useQueryClient();
+
     return useMutation({
         mutationFn: (data: LoginDto) => authService.login(data),
-        onSuccess: (data) => {
+        onSuccess: (data: LoginResponse) => {
             // Store token
             if (typeof window !== 'undefined' && data.token) {
                 localStorage.setItem('accessToken', data.token);
+
+                // Set user in context if provided
+                if (data.user) {
+                    setUser(data.user);
+                } else {
+                    // Decode token to get user info
+                    try {
+                        const base64Url = data.token.split('.')[1];
+                        const base64 = base64Url
+                            .replace(/-/g, '+')
+                            .replace(/_/g, '/');
+                        const jsonPayload = decodeURIComponent(
+                            atob(base64)
+                                .split('')
+                                .map(
+                                    (c) =>
+                                        '%' +
+                                        (
+                                            '00' + c.charCodeAt(0).toString(16)
+                                        ).slice(-2)
+                                )
+                                .join('')
+                        );
+                        const decoded = JSON.parse(jsonPayload);
+                        setUser({
+                            id: decoded.id,
+                            name: decoded.name,
+                            email: decoded.email,
+                            username: decoded.username || '',
+                            avatar: decoded.picture || '',
+                            role: decoded.role || 'user',
+                        });
+                    } catch (error) {
+                        console.error('Error decoding token:', error);
+                    }
+                }
             }
+
+            // Invalidate auth query
+            queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
             toast.success('Đăng nhập thành công');
         },
         onError: (error: any) => {
             toast.error(error.message || 'Đăng nhập thất bại');
+        },
+    });
+};
+
+/**
+ * Hook for user logout
+ */
+export const useLogout = () => {
+    const { logout } = useAuth();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: async () => {
+            // Clear token and user
+            logout();
+        },
+        onSuccess: () => {
+            // Clear all queries
+            queryClient.clear();
+            toast.success('Đăng xuất thành công');
+        },
+        onError: (error: any) => {
+            toast.error(error.message || 'Đăng xuất thất bại');
         },
     });
 };

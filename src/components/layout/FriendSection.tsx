@@ -15,26 +15,23 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useConversations, useFriends } from '@/context/SocialContext';
+import { useAuth } from '@/context/AuthContext';
 import { cn } from '@/lib/utils';
-import { Session } from 'next-auth';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import ConversationItemSkeleton from '../skeleton/ConversationItemSkeleton';
 
-interface Props {
-    session: Session;
-}
+interface Props {}
 
-const FriendSection: React.FC<Props> = ({ session }) => {
+const FriendSection: React.FC<Props> = () => {
     const path = usePathname();
     const router = useRouter();
+    const { user } = useAuth();
 
     const { data: conversations, isLoading: isLoadingConversations } =
-        useConversations(session?.user.id);
-    const { data: friends, isLoading: isLoadingFriends } = useFriends(
-        session?.user.id
-    );
+        useConversations(user?.id);
+    const { data: friends, isLoading: isLoadingFriends } = useFriends(user?.id);
 
     const privateConversations =
         conversations?.filter(
@@ -80,7 +77,7 @@ const FriendSection: React.FC<Props> = ({ session }) => {
                         {privateConversations &&
                             privateConversations.map((conversation) => {
                                 const friend = conversation.participants.find(
-                                    (p) => p._id !== session?.user.id
+                                    (p) => p._id !== user?.id
                                 );
                                 if (!friend) return null;
 

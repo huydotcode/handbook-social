@@ -4,7 +4,7 @@ import axiosInstance from '@/lib/axios';
 import queryKey from '@/lib/queryKey';
 import { cn } from '@/lib/utils';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -89,7 +89,7 @@ export const usePosts = ({
     Props,
     'userId' | 'groupId' | 'username' | 'type' | 'enabled' | 'search'
 >) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     const isFeedType = useMemo(
         () => ['new-feed', 'new-feed-friend', 'new-feed-group'].includes(type),
@@ -161,7 +161,7 @@ export const usePosts = ({
         refetchInterval: REFETCH_INTERVAL,
         refetchOnMount: false,
         refetchOnWindowFocus: false,
-        enabled: !!session && !!session.user.id && enabled,
+        enabled: !!user && !!user.id && enabled,
     });
 };
 
@@ -174,7 +174,7 @@ const InfinityPostComponent: React.FC<Props> = ({
     title,
     showCreatePost = true,
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const {
         data,
         isLoading,
@@ -192,7 +192,7 @@ const InfinityPostComponent: React.FC<Props> = ({
     };
 
     const { ref: bottomRef, inView } = useInView({ threshold: 0 });
-    const currentUser = session?.user;
+    const currentUser = user;
 
     const isManage = type === 'manage-group-posts-pending';
     const isCurrentUser = useMemo(

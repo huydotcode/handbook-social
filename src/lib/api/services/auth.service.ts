@@ -22,6 +22,14 @@ export interface ResetPasswordDto {
 
 export interface LoginResponse {
     token: string;
+    user?: {
+        id: string;
+        email: string;
+        name: string;
+        avatar: string;
+        role: string;
+        username: string;
+    };
 }
 
 export const authService = {

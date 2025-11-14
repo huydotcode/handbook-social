@@ -1,11 +1,8 @@
+'use client';
 import { FriendSection, Sidebar } from '@/components/layout';
 import { InfinityPostComponent } from '@/components/post';
-import { getAuthSession } from '@/lib/auth';
 
-const HomePage = async () => {
-    const session = await getAuthSession();
-    if (!session) return null;
-
+const HomePage = () => {
     return (
         <div className="relative top-[56px] mx-auto min-h-[calc(100vh-56px)] w-[1200px] max-w-screen md:w-screen">
             <Sidebar />
@@ -14,7 +11,7 @@ const HomePage = async () => {
                 <InfinityPostComponent type="new-feed" />
             </div>
 
-            <FriendSection session={session} />
+            <FriendSection />
         </div>
     );
 };

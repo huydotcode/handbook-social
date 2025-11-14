@@ -9,8 +9,11 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
+import {
+    useSendOTP,
+    useVerifyOTP,
+    useResetPassword,
+} from '@/lib/hooks/api/useAuth';
 import { resetPasswordValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
@@ -33,6 +36,10 @@ type Step = 'send-otp' | 'verify-otp' | 'reset-password';
 
 const ForgotPassword = () => {
     const router = useRouter();
+    const sendOTPMutation = useSendOTP();
+    const verifyOTPMutation = useVerifyOTP();
+    const resetPasswordMutation = useResetPassword();
+
     const form = useForm<FormForgotPasswordData>({
         defaultValues: {
             email: '',
@@ -47,59 +54,40 @@ const ForgotPassword = () => {
         formState: { isSubmitting, errors },
         setError,
         reset,
+        getValues,
     } = form;
 
     const [step, setStep] = useState<Step>('send-otp');
-    const [isSendingOtp, setIsSendingOtp] = useState<boolean>(false);
-    const [isVerified, setIsVerified] = useState<boolean>(false);
 
     const handleSendOtp = async (email: string) => {
-        setIsSendingOtp(true);
         try {
-            await axiosInstance.post(API_ROUTES.AUTH.SEND_OTP, {
-                email,
-            });
-
-            setIsSendingOtp(false);
-            setStep('verify-otp');
-            toast.success('OTP đã được gửi tới email của bạn', {
-                id: 'success-send-otp',
-            });
+            await sendOTPMutation.mutateAsync(
+                { email },
+                {
+                    onSuccess: () => {
+                        setStep('verify-otp');
+                    },
+                }
+            );
         } catch (error) {
-            setIsSendingOtp(false);
-            toast.error('Đã có lỗi xảy ra khi gửi OTP', {
-                id: 'error-send-otp',
-            });
-            return;
+            // Error already handled in hook
         }
     };
 
     const handleVerifyOtp = async (otp: string) => {
+        const email = getValues('email');
         try {
-            const email = form.getValues('email');
-
-            const response = await axiosInstance.post(
-                API_ROUTES.AUTH.VERIFY_OTP,
+            await verifyOTPMutation.mutateAsync(
+                { email, otp },
                 {
-                    email,
-                    otp,
+                    onSuccess: () => {
+                        setStep('reset-password');
+                    },
                 }
             );
-
-            if (response?.data?.success) {
-                setIsVerified(true);
-                setStep('reset-password');
-                toast.success('Xác thực OTP thành công', {
-                    id: 'success-verify-otp',
-                });
-            } else {
-                setError('root', {
-                    message: 'Xác thực OTP không thành công',
-                });
-            }
         } catch (error) {
             setError('root', {
-                message: 'Đã có lỗi xảy ra khi xác thực OTP',
+                message: 'Xác thực OTP không thành công',
             });
         }
     };
@@ -115,21 +103,18 @@ const ForgotPassword = () => {
         }
 
         try {
-            await axiosInstance.post(API_ROUTES.AUTH.RESET_PASSWORD, {
-                email,
-                newPassword: password,
-            });
-            reset();
-            setStep('send-otp');
-            toast.success('Đặt lại mật khẩu thành công', {
-                id: 'success-reset-password',
-            });
-
-            router.push('/auth/login');
+            await resetPasswordMutation.mutateAsync(
+                { email, newPassword: password },
+                {
+                    onSuccess: () => {
+                        reset();
+                        setStep('send-otp');
+                        router.push('/auth/login');
+                    },
+                }
+            );
         } catch (error) {
-            toast.error('Đã có lỗi xảy ra khi đặt lại mật khẩu', {
-                id: 'error-reset-password',
-            });
+            // Error already handled in hook
         }
     };
 
@@ -169,9 +154,12 @@ const ForgotPassword = () => {
                                                     }
                                                     size={'sm'}
                                                     variant={'primary'}
-                                                    disabled={isSendingOtp}
+                                                    disabled={
+                                                        sendOTPMutation.isPending
+                                                    }
+                                                    type="button"
                                                 >
-                                                    {isSendingOtp
+                                                    {sendOTPMutation.isPending
                                                         ? 'Đang gửi...'
                                                         : 'Gửi OTP'}
                                                 </Button>
@@ -192,7 +180,7 @@ const ForgotPassword = () => {
                                     <FormItem className="space-y-2">
                                         <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
                                             Nhập OTP đã gửi cho email{' '}
-                                            {form.getValues('email')}
+                                            {getValues('email')}
                                         </FormLabel>
                                         <FormControl>
                                             <div className="relative flex items-center">
@@ -211,15 +199,14 @@ const ForgotPassword = () => {
                                                         )
                                                     }
                                                     disabled={
-                                                        isSendingOtp ||
-                                                        isVerified
+                                                        verifyOTPMutation.isPending ||
+                                                        step !== 'verify-otp'
                                                     }
+                                                    type="button"
                                                 >
-                                                    {isSendingOtp
+                                                    {verifyOTPMutation.isPending
                                                         ? 'Đang xác thực...'
-                                                        : isVerified
-                                                          ? 'Đã xác thực'
-                                                          : 'Xác thực OTP'}
+                                                        : 'Xác thực OTP'}
                                                 </Button>
                                             </div>
                                         </FormControl>
@@ -292,9 +279,13 @@ const ForgotPassword = () => {
                             type="submit"
                             variant={'primary'}
                             size={'md'}
-                            disabled={isSubmitting || step !== 'reset-password'}
+                            disabled={
+                                isSubmitting ||
+                                resetPasswordMutation.isPending ||
+                                step !== 'reset-password'
+                            }
                         >
-                            {isSubmitting ? (
+                            {isSubmitting || resetPasswordMutation.isPending ? (
                                 <div className="flex items-center justify-center">
                                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                     <span>Đang xử lý...</span>

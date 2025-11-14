@@ -10,7 +10,8 @@ import {
     INavbarUserMenu,
     navbarUserMenu,
 } from '@/constants/navbar-user-menu.constant';
-import { signOut, useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
+import { useLogout } from '@/lib/hooks/api/useAuth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -19,15 +20,13 @@ import Icons from '../ui/Icons';
 import { useRouter } from 'next/navigation';
 
 const NavbarUser = () => {
-    const { data: session, status } = useSession();
+    const { user, isLoading } = useAuth();
+    const logoutMutation = useLogout();
     const router = useRouter();
-    const [isLoggingOut, setIsLoggingOut] = useState(false);
 
     const [menuStack, setMenuStack] = useState<INavbarUserMenu[][]>([
         navbarUserMenu,
     ]);
-
-    const user = session?.user as ISessionUser;
 
     const currentMenu = menuStack[menuStack.length - 1];
     const currentTitle =
@@ -40,22 +39,10 @@ const NavbarUser = () => {
 
     const handleLogout = async () => {
         try {
-            setIsLoggingOut(true);
-            toast.loading('Đang đăng xuất...', { id: 'logout' });
-
-            await signOut({
-                callbackUrl: '/auth/login',
-                redirect: false,
-            });
-
-            toast.success('Đăng xuất thành công!', { id: 'logout' });
-
-            setTimeout(() => {
-                router.push('/auth/login');
-            }, 500);
+            await logoutMutation.mutateAsync();
+            router.push('/auth/login');
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi đăng xuất', { id: 'logout' });
-            setIsLoggingOut(false);
+            // Error already handled in hook
         }
     };
 
@@ -69,7 +56,7 @@ const NavbarUser = () => {
         setTimeout(() => setMenuStack([navbarUserMenu]), 150);
     };
 
-    if (status === 'loading' || !session?.user) {
+    if (isLoading || !user) {
         return <SkeletonAvatar />;
     }
 
@@ -80,7 +67,7 @@ const NavbarUser = () => {
                     className="cursor-pointer rounded-full"
                     width={40}
                     height={40}
-                    src={user.image || ''}
+                    src={user.avatar || ''}
                     alt="Your profile picture"
                     referrerPolicy="no-referrer"
                 />
@@ -116,7 +103,7 @@ const NavbarUser = () => {
                                         className="rounded-full"
                                         width={40}
                                         height={40}
-                                        src={user?.image || ''}
+                                        src={user?.avatar || ''}
                                         alt={user?.name || ''}
                                     />
                                 </div>
@@ -193,17 +180,17 @@ const NavbarUser = () => {
                                     variant="ghost"
                                     className="h-auto w-full justify-start p-2"
                                     onClick={handleLogout}
-                                    disabled={isLoggingOut}
+                                    disabled={logoutMutation.isPending}
                                 >
                                     <span className="mr-3 flex h-9 w-9 items-center justify-center rounded-full bg-hover-2 text-xl dark:bg-dark-hover-1">
-                                        {isLoggingOut ? (
+                                        {logoutMutation.isPending ? (
                                             <div className="h-5 w-5 animate-spin rounded-full border-2 border-gray-400 border-t-transparent"></div>
                                         ) : (
                                             <Icons.LogOut />
                                         )}
                                     </span>
                                     <span className="text-sm font-medium">
-                                        {isLoggingOut
+                                        {logoutMutation.isPending
                                             ? 'Đang đăng xuất...'
                                             : 'Đăng xuất'}
                                     </span>

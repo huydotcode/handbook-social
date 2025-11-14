@@ -10,17 +10,15 @@ import { Badge } from '@/components/ui/badge';
 import { useNotifications } from '@/context/AppContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import NotificationService from '@/lib/services/notification.service';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Icons from '../ui/Icons';
 import NotificationItem from './NotificationItem';
 
 const NavbarNotification = () => {
-    const { data: session } = useSession();
-    const { data: notifications, isLoading } = useNotifications(
-        session?.user?.id
-    );
+    const { user } = useAuth();
+    const { data: notifications, isLoading } = useNotifications(user?.id);
     const unreadCount = notifications
         ? notifications.filter((n) => !n.isRead).length
         : 0;
@@ -31,7 +29,7 @@ const NavbarNotification = () => {
     const handleMarkAllAsRead = async () => {
         try {
             await NotificationService.markAllAsRead();
-            await invalidateNotifications(session?.user.id as string);
+            await invalidateNotifications(user?.id as string);
         } catch (error) {
             toast.error('Đã có lỗi xảy ra. Vui lòng thử lại!');
         }

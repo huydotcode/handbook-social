@@ -1,11 +1,16 @@
 'use client';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { signIn } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
+/**
+ * SocialButton component - Google OAuth login
+ * Note: Google OAuth needs to be implemented via REST API
+ * For now, this is a placeholder that shows the button
+ * TODO: Implement Google OAuth via REST API endpoint
+ */
 const SocialButton = () => {
     const router = useRouter();
     const [isGoogleLoading, setIsGoogleLoading] = useState(false);
@@ -13,10 +18,15 @@ const SocialButton = () => {
     const loginWithGoogle = async () => {
         try {
             setIsGoogleLoading(true);
-            await signIn('google', {
-                callbackUrl: '/',
-                redirect: false,
-            });
+            // TODO: Implement Google OAuth via REST API
+            // For now, redirect to Google OAuth URL or show message
+            toast.error(
+                'Google OAuth chưa được triển khai. Vui lòng đăng nhập bằng email.',
+                {
+                    id: 'error-login-google',
+                }
+            );
+            // Example: window.location.href = '/api/auth/google';
         } catch (error) {
             toast.error('Đã có lỗi xảy ra khi đăng nhập với Google', {
                 id: 'error-login-google',

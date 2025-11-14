@@ -5,13 +5,13 @@ import { useDebounce } from '@/hooks';
 import UserService from '@/lib/services/user.service';
 import logger from '@/utils/logger';
 import { Collapse } from '@mui/material';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Icons from '../ui/Icons';
 
 const NavbarSearch = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const [showModal, setShowModal] = useState(false);
     const [searchValue, setSearchValue] = useState('');
     const [searchResult, setSearchResult] = useState<IUser[]>([]);
@@ -40,11 +40,11 @@ const NavbarSearch = () => {
         const fetchSearchData = async (value: string) => {
             setIsSearching(true);
 
-            if (!session?.user.id) return;
+            if (!user?.id) return;
 
             try {
                 const { users, isNext } = await UserService.searchUsers({
-                    userId: session?.user.id,
+                    userId: user.id,
                     pageNumber: page,
                     pageSize: pageSize,
                     searchString: value,
@@ -65,7 +65,7 @@ const NavbarSearch = () => {
         if (debounceValue.trim().length > 0) {
             fetchSearchData(debounceValue);
         }
-    }, [debounceValue, page, pageSize, session?.user.id]);
+    }, [debounceValue, page, pageSize, user?.id]);
 
     // Đóng modal khi click ra ngoài
     useEffect(() => {

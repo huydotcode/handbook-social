@@ -6,6 +6,7 @@
 // Auth hooks
 export {
     useLogin,
+    useLogout,
     useSendOTP,
     useVerifyOTP,
     useResetPassword,

@@ -7,10 +7,10 @@ import axiosInstance from '@/lib/axios';
 import queryKey from '@/lib/queryKey';
 import { soundManager } from '@/lib/soundManager';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSocket } from '.';
+import { useAuth } from './AuthContext';
 import { SidebarCollapseContext } from './SidebarContext';
 
 const PAGE_SIZE = 10;
@@ -54,7 +54,7 @@ export const useNotifications = (userId: string | undefined) =>
 
 export const useCategories = () =>
     useQuery<ICategory[]>({
-        queryKey: queryKey.categories,
+        queryKey: queryKey.categories.list(),
         queryFn: async () => {
             const res = await axiosInstance.get(API_ROUTES.CATEGORIES.INDEX);
             const categories = res.data;
@@ -131,7 +131,7 @@ export const useRequests = (userId: string | undefined) =>
 
 export const useLocations = () =>
     useQuery<ILocation[]>({
-        queryKey: queryKey.locations,
+        queryKey: queryKey.locations.list(),
         queryFn: async () => {
             const res = await axiosInstance.get(API_ROUTES.LOCATIONS.INDEX);
 
@@ -142,7 +142,7 @@ export const useLocations = () =>
     });
 
 function AppProvider({ children }: { children: React.ReactNode }) {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { invalidateFriends, invalidateNotifications } =
         useQueryInvalidation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -151,7 +151,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
     // Lắng nghe thông báo mới
     useEffect(() => {
-        if (!session?.user?.id || !socket) return;
+        if (!user?.id || !socket) return;
 
         socket.on(
             socketEvent.RECEIVE_NOTIFICATION,
@@ -167,26 +167,11 @@ function AppProvider({ children }: { children: React.ReactNode }) {
                     );
                 }
 
-                await invalidateFriends(session?.user.id);
-                await invalidateNotifications(session?.user.id as string);
+                await invalidateFriends(user.id);
+                await invalidateNotifications(user.id);
             }
         );
-    }, [socket, session?.user.id, invalidateFriends, invalidateNotifications]);
-
-    useEffect(() => {
-        if (!session || !session?.user) {
-            localStorage.removeItem('accessToken');
-            return;
-        }
-        if (!session?.user.accessToken) return;
-
-        const accessToken = localStorage.getItem('accessToken');
-        if (accessToken) {
-            localStorage.removeItem('accessToken');
-        }
-
-        localStorage.setItem('accessToken', session?.user.accessToken);
-    }, [session, session?.user]);
+    }, [socket, user?.id, invalidateFriends, invalidateNotifications]);
 
     // Preload các âm thanh
     useEffect(() => {

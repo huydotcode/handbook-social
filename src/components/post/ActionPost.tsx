@@ -5,7 +5,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/Popover';
-import { useSession } from 'next-auth/react'; // 1. Import useSession
+import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import Icons from '../ui/Icons';
@@ -18,14 +18,14 @@ interface Props {
 }
 
 const ActionPost: React.FC<Props> = ({ post }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const path = usePathname();
     const isManageGroupPostActive =
         path === `/groups/${post.group?._id}/manage/posts`;
     const [showEditModal, setShowEditModal] = useState<boolean>(false);
     const [showDeleteModal, setShowDeleteModal] = useState<boolean>(false);
 
-    const currentUserId = session?.user?.id;
+    const currentUserId = user?.id;
     const isAuthor = currentUserId === post.author._id;
 
     // Người dùng có thể chỉnh sửa nếu họ là tác giả

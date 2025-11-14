@@ -9,8 +9,7 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import { checkAuth } from '@/lib/actions/user.action';
-import { signIn } from 'next-auth/react';
+import { useLogin } from '@/lib/hooks/api/useAuth';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -27,6 +26,7 @@ interface FormLoginData {
 
 const LoginPage = () => {
     const router = useRouter();
+    const loginMutation = useLogin();
     const form = useForm<FormLoginData>({
         defaultValues: {
             email: '',
@@ -40,63 +40,49 @@ const LoginPage = () => {
         reset,
     } = form;
 
-    const loginWithCrenditals: SubmitHandler<FormLoginData> = async (
+    const loginWithCredentials: SubmitHandler<FormLoginData> = async (
         formData
     ) => {
         const { email, password } = formData;
 
         try {
-            const validUser = (await checkAuth({
-                email,
-                password,
-            })) as {
-                error: {
-                    type: string;
-                    message: string;
-                };
-            } | null;
+            await loginMutation.mutateAsync(
+                { email, password },
+                {
+                    onSuccess: () => {
+                        reset();
+                        router.push('/');
+                    },
+                    onError: (error: any) => {
+                        // Handle specific error types
+                        const errorMessage =
+                            error.message || 'Đăng nhập thất bại';
 
-            if (validUser?.error) {
-                const type = validUser.error.type;
-
-                if (type == 'email') {
-                    setError('root', {
-                        message: 'Người dùng không tồn tại',
-                    });
+                        if (
+                            errorMessage.includes('Email') ||
+                            errorMessage.includes('email')
+                        ) {
+                            setError('root', {
+                                message: 'Email không tồn tại trong hệ thống',
+                            });
+                        } else if (
+                            errorMessage.includes('Mật khẩu') ||
+                            errorMessage.includes('password')
+                        ) {
+                            setError('root', {
+                                message: 'Mật khẩu không chính xác',
+                            });
+                        } else {
+                            setError('root', {
+                                message: errorMessage,
+                            });
+                        }
+                    },
                 }
-
-                if (type == 'password') {
-                    setError('root', {
-                        message: validUser.error.message,
-                    });
-                }
-
-                return;
-            }
-
-            const res = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-                callbackUrl: '/',
-            });
-
-            if (!res?.ok) {
-                toast.error('Đã có lỗi xảy ra khi đăng nhập', {
-                    id: 'error-login',
-                });
-                return;
-            }
-
-            if (res?.ok) {
-                toast.success('Đăng nhập thành công!');
-                reset();
-                router.push('/');
-            }
+            );
         } catch (error: any) {
-            toast.error('Đã có lỗi xảy ra khi đăng nhập', {
-                id: 'error-login',
-            });
+            // Error already handled in onError callback
+            console.error('Login error:', error);
         }
     };
 
@@ -107,7 +93,7 @@ const LoginPage = () => {
                 <Form {...form}>
                     <form
                         method="POST"
-                        onSubmit={handleSubmit(loginWithCrenditals)}
+                        onSubmit={handleSubmit(loginWithCredentials)}
                         className="space-y-4"
                     >
                         <FormField
@@ -175,9 +161,9 @@ const LoginPage = () => {
                             size={'md'}
                             variant={'primary'}
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || loginMutation.isPending}
                         >
-                            {isSubmitting ? (
+                            {isSubmitting || loginMutation.isPending ? (
                                 <div className="flex items-center justify-center">
                                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                     Đang đăng nhập...
