@@ -1,36 +1,22 @@
-import { follow } from './actions/user.action';
+/**
+ * Query Keys - Centralized query key definitions
+ * Used for React Query cache management
+ */
 
 export const queryKey = {
-    search: ({
-        q,
-        type,
-    }: {
-        q: string | undefined;
-        type: string | undefined;
-    }) => ['search', q, type],
-
-    conversations: {
-        index: ['conversations'],
-        userId: (userId: string | undefined) => ['conversations', userId],
-        id: (conversationId: string | undefined) => [
-            'conversation',
-            conversationId,
-        ],
+    // Auth
+    auth: {
+        current: ['auth', 'current'],
     },
 
-    messages: {
-        conversationId: (conversationId: string | undefined) => [
-            'messages',
-            conversationId,
+    // Users
+    users: {
+        list: (params?: { page?: number; pageSize?: number }) => [
+            'users',
+            'list',
+            params,
         ],
-        lastMessage: (conversationId: string | undefined) => [
-            'lastMessage',
-            conversationId,
-        ],
-        pinnedMessages: (conversationId: string | undefined) => [
-            'pinnedMessages',
-            conversationId,
-        ],
+        byId: (id: string) => ['users', id],
     },
 
     user: {
@@ -47,21 +33,24 @@ export const queryKey = {
         groups: (userId: string | undefined) => ['groups', userId],
     },
 
+    // Posts
     posts: {
+        all: () => ['posts'],
+        id: (postId: string) => ['post', postId],
         newFeed: ({
             type,
             userId,
             groupId,
             username,
         }: {
-            type: string | undefined;
-            userId: string | undefined;
-            groupId: string | undefined;
-            username: string | undefined;
-        }) => ['posts', type, userId, groupId, username],
-        id: (postId: string) => ['post', postId],
-        all: () => ['posts'],
-        saved: (userId: string | undefined) => ['savedPosts', userId],
+            type?: string;
+            userId?: string;
+            groupId?: string;
+            username?: string;
+        }) => ['posts', 'newFeed', { type, userId, groupId, username }],
+        saved: (userId?: string) => ['posts', 'saved', userId],
+        profile: (userId: string) => ['posts', 'profile', userId],
+        group: (groupId: string) => ['posts', 'group', groupId],
         comments: (postId: string | undefined) => ['comments', postId],
         replyComments: (commentId: string | undefined) => [
             'replyComments',
@@ -69,14 +58,90 @@ export const queryKey = {
         ],
     },
 
-    locations: ['locations'],
-    categories: ['categories'],
-    items: {
-        index: ['items'],
-        id: (itemId: string | undefined) => ['item', itemId],
-        bySeller: (sellerId: string | undefined) => ['itemsBySeller', sellerId],
+    // Comments
+    comments: {
+        byPost: (postId: string) => ['comments', 'post', postId],
+        byId: (id: string) => ['comments', id],
+        replies: (commentId: string) => ['comments', 'replies', commentId],
+        count: (postId: string) => ['comments', 'count', postId],
     },
 
+    // Messages
+    messages: {
+        conversationId: (conversationId: string | undefined) => [
+            'messages',
+            'conversation',
+            conversationId,
+        ],
+        pinnedMessages: (conversationId: string | undefined) => [
+            'pinnedMessages',
+            conversationId,
+        ],
+    },
+
+    // Conversations
+    conversations: {
+        list: (userId?: string) => ['conversations', userId],
+        id: (conversationId: string | undefined) => [
+            'conversation',
+            conversationId,
+        ],
+        userId: (userId: string | undefined) => ['conversations', userId],
+    },
+
+    // Groups
+    groups: {
+        joined: (userId?: string) => ['groups', 'joined', userId],
+        byId: (id: string) => ['groups', id],
+    },
+
+    // Items
+    items: {
+        list: (params?: { page?: number; pageSize?: number }) => [
+            'items',
+            params,
+        ],
+        bySeller: (sellerId: string) => ['items', 'seller', sellerId],
+        search: (query: string) => ['items', 'search', query],
+    },
+
+    // Notifications
+    notifications: {
+        byReceiver: (receiverId: string) => [
+            'notifications',
+            'receiver',
+            receiverId,
+        ],
+        bySender: (senderId: string) => ['notifications', 'sender', senderId],
+    },
+
+    // Search
+    search: {
+        general: (query: string, type?: string) => ['search', query, type],
+        users: (query: string) => ['search', 'users', query],
+        posts: (query: string) => ['search', 'posts', query],
+        groups: (query: string) => ['search', 'groups', query],
+    },
+
+    // Categories
+    categories: {
+        list: () => ['categories'],
+        all: () => ['categories', 'all'],
+        byId: (id: string) => ['categories', id],
+        bySlug: (slug: string) => ['categories', 'slug', slug],
+    },
+
+    // Locations
+    locations: {
+        list: () => ['locations'],
+    },
+
+    // Follows
+    follows: {
+        followings: (userId: string) => ['follows', 'followings', userId],
+    },
+
+    // Admin
     admin: {
         users: {
             index: ['admin', 'users'],
