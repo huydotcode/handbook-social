@@ -1,6 +1,6 @@
 import { InfinityPostComponent } from '@/components/post';
 import ProfileService from '@/lib/services/profile.service';
-import mongoose from 'mongoose';
+import { isValidObjectId } from '@/lib/utils';
 import { FC } from 'react';
 import { InfomationSection } from '../_components';
 
@@ -19,7 +19,7 @@ const ProfilePage: FC<ProfilePageProps> = async ({ params }) => {
         );
     }
 
-    const props = mongoose.isValidObjectId(userId)
+    const props = isValidObjectId(userId)
         ? {
               userId: userId,
           }

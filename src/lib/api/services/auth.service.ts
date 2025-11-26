@@ -6,6 +6,14 @@ export interface LoginDto {
     password: string;
 }
 
+export interface RegisterDto {
+    email: string;
+    username: string;
+    name: string;
+    password: string;
+    avatar?: string;
+}
+
 export interface SendOTPDto {
     email: string;
 }
@@ -33,6 +41,13 @@ export interface LoginResponse {
 }
 
 export const authService = {
+    /**
+     * Register user
+     */
+    register: (data: RegisterDto) => {
+        return apiClient.post(API_ENDPOINTS.AUTH.REGISTER, data);
+    },
+
     /**
      * Login user
      */

@@ -9,7 +9,8 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import { API_ROUTES } from '@/config/api';
+import type { ErrorResponse } from '@/lib/api/client';
+import { authService } from '@/lib/api/services/auth.service';
 import { signUpValidation } from '@/lib/validation';
 import logger from '@/utils/logger';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -60,31 +61,26 @@ const SignUpPage = () => {
         }
 
         try {
-            const res = await fetch(API_ROUTES.AUTH.SIGN_UP, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data),
+            await authService.register({
+                email: data.email,
+                username: data.username,
+                name: data.name,
+                password: data.password,
             });
 
-            const result = await res.json();
-            if (result.success) {
-                toast.success('Đăng ký thành công', {
-                    id: 'sign-up-success',
-                });
-                router.push('/auth/login');
-            } else {
-                toast.error(result.msg, {
-                    id: 'sign-up-fail',
-                });
-            }
+            toast.success('Đăng ký thành công', {
+                id: 'sign-up-success',
+            });
+            router.push('/auth/login');
         } catch (error) {
             logger({
                 message: 'Error sign-up' + error,
                 type: 'error',
             });
-            toast.error('Có lỗi xảy ra khi đăng ký');
+            const apiError = error as ErrorResponse;
+            toast.error(apiError?.message || 'Có lỗi xảy ra khi đăng ký', {
+                id: 'sign-up-fail',
+            });
         }
     };
 
