@@ -3,8 +3,7 @@ import Comment from '@/components/post/comment/CommentItem';
 import SkeletonComment from '@/components/post/comment/SkeletonComment';
 import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
+import { commentService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
 import CommentService from '@/lib/services/comment.service';
 import {
@@ -44,16 +43,10 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
         queryFn: async ({ pageParam = 1 }) => {
             if (!post._id) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.COMMENTS.INDEX, {
-                params: {
-                    post_id: post._id,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return commentService.getByPost(post._id, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-            const comments = res.data;
-
-            return comments;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {

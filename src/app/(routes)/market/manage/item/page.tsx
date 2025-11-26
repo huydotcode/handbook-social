@@ -1,9 +1,8 @@
 'use client';
 import ListItem from '@/app/(routes)/market/_components/ListItem';
 import { Loading } from '@/components/ui';
-import { API_ROUTES } from '@/config/api';
 import { useAuth } from '@/context';
-import axiosInstance from '@/lib/axios';
+import { itemService } from '@/lib/api/services/item.service';
 import queryKey from '@/lib/queryKey';
 import { useQuery } from '@tanstack/react-query';
 
@@ -11,16 +10,9 @@ const ManageItemPage = () => {
     const { user } = useAuth();
     const { data: items, isLoading } = useQuery<IItem[]>({
         queryKey: queryKey.items.bySeller(user?.id as string),
-        queryFn: async () => {
-            try {
-                const res = await axiosInstance.get(
-                    API_ROUTES.ITEMS.BY_SELLER(user?.id as string)
-                );
-
-                return res.data;
-            } catch (error) {
-                console.log(error);
-            }
+        queryFn: () => {
+            if (!user?.id) return Promise.resolve([]);
+            return itemService.getBySeller(user.id);
         },
         enabled: !!user?.id,
     });

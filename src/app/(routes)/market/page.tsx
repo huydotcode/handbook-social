@@ -1,8 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import { API_ROUTES } from '@/config/api';
 import { useSidebarCollapse } from '@/context/SidebarContext';
-import axiosInstance from '@/lib/axios';
+import { itemService } from '@/lib/api/services/item.service';
 import queryKey from '@/lib/queryKey';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
@@ -25,11 +24,11 @@ const MarketPage: React.FC<Props> = () => {
         fetchNextPage,
     } = useInfiniteQuery<IItem[]>({
         queryKey: queryKey.items.index,
-        queryFn: async ({ pageParam = 1 }) => {
-            const res = await axiosInstance.get(
-                API_ROUTES.ITEMS.QUERY(pageParam as number, PAGE_SIZE)
-            );
-            return res.data;
+        queryFn: ({ pageParam = 1 }) => {
+            return itemService.getAll({
+                page: pageParam,
+                page_size: PAGE_SIZE,
+            });
         },
         getNextPageParam: (lastPage, allPages) => {
             if (lastPage.length < PAGE_SIZE) return undefined;

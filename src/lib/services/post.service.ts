@@ -71,6 +71,11 @@ class PostServiceClass {
             }
         }
 
+        const normalizedStatus =
+            type && ['active', 'pending', 'rejected'].includes(type)
+                ? (type as 'active' | 'pending' | 'rejected')
+                : undefined;
+
         return await apiPostService.create({
             author: authorId,
             text: content,
@@ -78,7 +83,7 @@ class PostServiceClass {
             group: groupId || undefined,
             tags: tags,
             option: option,
-            status: type,
+            status: normalizedStatus,
         });
     }
 

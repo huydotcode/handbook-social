@@ -1,6 +1,11 @@
 'use client';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
+import {
+    conversationService,
+    ConversationQueryParams,
+} from '@/lib/api/services/conversation.service';
+import { followService } from '@/lib/api/services/follow.service';
+import { messageService } from '@/lib/api/services/message.service';
+import { userService, UserQueryParams } from '@/lib/api/services/user.service';
 import queryKey from '@/lib/queryKey';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -15,14 +20,8 @@ export const useFriends = (userId: string | undefined) =>
         queryFn: async () => {
             if (!userId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.USER.FRIENDS, {
-                params: {
-                    user_id: userId,
-                },
-            });
-
-            const friends = res.data;
-            return friends;
+            const params: UserQueryParams = { page: 1, page_size: 100 };
+            return userService.getFriends(userId, params);
         },
         enabled: !!userId,
         refetchOnMount: false,
@@ -36,11 +35,12 @@ export const useConversations = (userId: string | undefined) =>
         queryFn: async () => {
             if (!userId) return [];
 
-            const res = await axiosInstance.get(
-                API_ROUTES.CONVERSATIONS.GET_BY_USER(userId)
-            );
-            const conversations = res.data;
-            return conversations;
+            const params: ConversationQueryParams = {
+                user_id: userId,
+                page: 1,
+                page_size: PAGE_SIZE,
+            };
+            return conversationService.getAll(params);
         },
         enabled: !!userId,
         refetchOnMount: false,
@@ -55,10 +55,8 @@ export const useConversation = (conversationId: string | undefined) => {
         queryKey: queryKey.conversations.id(conversationId),
         queryFn: async () => {
             try {
-                const res = await axiosInstance.get(
-                    API_ROUTES.CONVERSATIONS.ID(conversationId as string)
-                );
-                return res.data;
+                if (!conversationId) return null;
+                return conversationService.getById(conversationId);
             } catch (error) {
                 return null;
             }
@@ -77,15 +75,10 @@ export const useMessages = (conversationId: string | undefined) =>
         queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
             if (!conversationId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.MESSAGES.INDEX, {
-                params: {
-                    conversation_id: conversationId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return messageService.getByConversation(conversationId, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data;
         },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
@@ -107,11 +100,7 @@ export const useFollowing = (userId: string | undefined) =>
         queryFn: async () => {
             if (!userId) return [];
 
-            const res = await axiosInstance.get(
-                API_ROUTES.USER.FOLLOWINGS(userId)
-            );
-
-            return res.data;
+            return followService.getFollowings(userId);
         },
         enabled: !!userId,
         refetchInterval: false,

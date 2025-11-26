@@ -3,6 +3,8 @@ import { API_ENDPOINTS } from '../endpoints';
 
 export interface GroupQueryParams {
     user_id?: string;
+    page?: number;
+    page_size?: number;
 }
 
 export const groupService = {

@@ -1,8 +1,7 @@
 'use client';
 import { Post } from '@/components/post';
 import { Loading } from '@/components/ui';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
+import { postService } from '@/lib/api/services/post.service';
 import queryKey from '@/lib/queryKey';
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react';
@@ -12,16 +11,13 @@ interface Props {
 
 const PostPage: React.FC<Props> = ({ params }) => {
     const { postId } = use(params);
-    const { data: post, isLoading } = useQuery<IPost>({
+    const { data: post, isLoading } = useQuery<IPost | null>({
         queryKey: queryKey.posts.id(postId || ''),
         queryFn: async () => {
             if (!postId) return null;
 
             try {
-                const res = await axiosInstance.get(
-                    API_ROUTES.POSTS.ID(postId)
-                );
-                return res.data;
+                return (await postService.getById(postId)) || null;
             } catch (error) {
                 console.log(error);
                 return null;

@@ -2,10 +2,12 @@
 import { Post } from '@/components/post';
 import { PostTypes, usePosts } from '@/components/post/InfinityPostComponent';
 import { Loading } from '@/components/ui';
-import { API_ROUTES } from '@/config/api';
 import { useAuth } from '@/context';
 import { useFriends } from '@/context/SocialContext';
-import axiosInstance from '@/lib/axios';
+import {
+    searchService,
+    SearchQueryParams,
+} from '@/lib/api/services/search.service';
 import queryKey from '@/lib/queryKey';
 import { useQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
@@ -35,29 +37,27 @@ const Search = () => {
     });
 
     const { data, isLoading } = useQuery<SearchData>({
-        queryKey: queryKey.search.general(q, type),
+        queryKey: [...queryKey.search.general(q, type), page],
         queryFn: async () => {
             if (!q || !user?.id) return { users: [], posts: [], groups: [] };
 
+            const params: SearchQueryParams = {
+                q,
+                page,
+                page_size: PAGE_SIZE,
+            };
+
             switch (type) {
-                case 'users':
-                    return axiosInstance
-                        .get<SearchData>(API_ROUTES.SEARCH.USERS, {
-                            params: { q, page, page_size: PAGE_SIZE },
-                        })
-                        .then((res) => res.data);
-                case 'groups':
-                    return axiosInstance
-                        .get<SearchData>(API_ROUTES.SEARCH.GROUPS, {
-                            params: { q, page, page_size: PAGE_SIZE },
-                        })
-                        .then((res) => res.data);
+                case 'users': {
+                    const users = await searchService.searchUsers(params);
+                    return { users, posts: [], groups: [] };
+                }
+                case 'groups': {
+                    const groups = await searchService.searchGroups(params);
+                    return { users: [], posts: [], groups };
+                }
                 default:
-                    return axiosInstance
-                        .get<SearchData>(API_ROUTES.SEARCH.INDEX, {
-                            params: { q, page, page_size: PAGE_SIZE },
-                        })
-                        .then((res) => res.data);
+                    return searchService.search(params);
             }
         },
         refetchOnWindowFocus: false,

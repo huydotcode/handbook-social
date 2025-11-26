@@ -3,9 +3,8 @@ import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl } from '@/components/ui/Form';
 import { Textarea } from '@/components/ui/textarea';
-import { API_ROUTES } from '@/config/api';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import axiosInstance from '@/lib/axios';
+import { commentService as commentApiService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
 import CommentService from '@/lib/services/comment.service';
 import { cn } from '@/lib/utils';
@@ -47,15 +46,10 @@ export const useReplyComments = ({
         queryFn: async ({ pageParam = 1 }) => {
             if (!commentId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.COMMENTS.REPLY, {
-                params: {
-                    comment_id: commentId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return commentApiService.getReplies(commentId, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {

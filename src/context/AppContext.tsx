@@ -1,9 +1,14 @@
 'use client';
-import { API_ROUTES } from '@/config/api';
 import { notificationType } from '@/constants/notificationType';
 import { socketEvent } from '@/constants/socketEvent.constant';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import axiosInstance from '@/lib/axios';
+import { categoryService } from '@/lib/api/services/category.service';
+import { groupService } from '@/lib/api/services/group.service';
+import { locationService } from '@/lib/api/services/location.service';
+import {
+    notificationService,
+    NotificationQueryParams,
+} from '@/lib/api/services/notification.service';
 import queryKey from '@/lib/queryKey';
 import { soundManager } from '@/lib/soundManager';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -21,18 +26,11 @@ export const useNotifications = (userId: string | undefined) =>
         queryFn: async ({ pageParam = 1 }) => {
             if (!userId) return [];
 
-            const res = await axiosInstance.get(
-                API_ROUTES.NOTIFICATIONS.INDEX,
-                {
-                    params: {
-                        user_id: userId,
-                        page: pageParam,
-                        page_size: PAGE_SIZE,
-                    },
-                }
-            );
-
-            return res.data;
+            const params: NotificationQueryParams = {
+                page: pageParam,
+                page_size: PAGE_SIZE,
+            };
+            return notificationService.getByReceiver(userId, params);
         },
         select: (data) => {
             return data.pages.flatMap((page) => page);
@@ -56,9 +54,7 @@ export const useCategories = () =>
     useQuery<ICategory[]>({
         queryKey: queryKey.categories.list(),
         queryFn: async () => {
-            const res = await axiosInstance.get(API_ROUTES.CATEGORIES.INDEX);
-            const categories = res.data;
-            return categories;
+            return categoryService.getAll();
         },
     });
 
@@ -68,15 +64,11 @@ export const useGroupsJoined = (userId: string | undefined) => {
         queryFn: async ({ pageParam = 1 }) => {
             if (!userId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.GROUP.JOINED, {
-                params: {
-                    user_id: userId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return groupService.getJoined({
+                user_id: userId,
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data;
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {
@@ -102,15 +94,11 @@ export const useRequests = (userId: string | undefined) =>
         queryFn: async ({ pageParam = 1 }) => {
             if (!userId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.REQUESTS.INDEX, {
-                params: {
-                    user_id: userId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
-            });
-
-            return res.data;
+            const params: NotificationQueryParams = {
+                page: pageParam,
+                page_size: PAGE_SIZE,
+            };
+            return notificationService.getBySender(userId, params);
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {
@@ -133,9 +121,7 @@ export const useLocations = () =>
     useQuery<ILocation[]>({
         queryKey: queryKey.locations.list(),
         queryFn: async () => {
-            const res = await axiosInstance.get(API_ROUTES.LOCATIONS.INDEX);
-
-            return res.data;
+            return locationService.getAll();
         },
         refetchInterval: false,
         refetchOnWindowFocus: false,

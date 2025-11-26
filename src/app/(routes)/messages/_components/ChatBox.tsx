@@ -4,12 +4,11 @@ import { FileUploaderWrapper } from '@/components/shared/FileUploader';
 import MessageSkeleton from '@/components/skeleton/MessageSkeleton';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { API_ROUTES } from '@/config/api';
 import { useSocket } from '@/context';
 import useBreakpoint from '@/hooks/useBreakpoint';
 import { useMessageHandling } from '@/hooks/useMessageHandling';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import axiosInstance from '@/lib/axios';
+import { messageService } from '@/lib/api/services/message.service';
 import queryKey from '@/lib/queryKey';
 import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
@@ -51,15 +50,10 @@ export const useMessages = (conversationId: string) => {
         queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
             if (!conversationId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.MESSAGES.INDEX, {
-                params: {
-                    conversation_id: conversationId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return messageService.getByConversation(conversationId, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data || [];
         },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
@@ -80,15 +74,10 @@ export const usePinnedMessages = (conversationId: string) => {
         queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
             if (!conversationId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.MESSAGES.PINNED, {
-                params: {
-                    conversation_id: conversationId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return messageService.getPinned(conversationId, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data || [];
         },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
