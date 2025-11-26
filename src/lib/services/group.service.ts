@@ -1,86 +1,6 @@
 import { groupService as apiGroupService } from '../api/services/group.service';
-import { apiClient } from '../api/client';
-import { API_ENDPOINTS } from '../api/endpoints';
 
-interface IGroupService {
-    create: ({
-        name,
-        description,
-        avatar,
-        type,
-        members,
-    }: {
-        name: string;
-        description: string;
-        avatar: string;
-        type: string;
-        members: string[];
-    }) => Promise<IGroup>;
-    getById: (groupId: string) => Promise<IGroup>;
-    getByUserId: ({
-        userId,
-        page,
-        pageSize,
-    }: {
-        userId: string;
-        page: number;
-        pageSize: number;
-    }) => Promise<IGroup[]>;
-    getRecommendedGroups: (userId: string) => Promise<IGroup[]>;
-    getMembers: (groupId: string) => Promise<IMemberGroup[]>;
-
-    updateCoverPhoto: ({
-        groupId,
-        coverPhoto,
-        path,
-    }: {
-        groupId: string;
-        coverPhoto: string;
-        path: string;
-    }) => Promise<void>;
-    updateAvatar: ({
-        groupId,
-        avatarId,
-        path,
-    }: {
-        groupId: string;
-        avatarId: string;
-        path: string;
-    }) => Promise<void>;
-    update: ({
-        groupId,
-        name,
-        description,
-        type,
-        path,
-    }: {
-        groupId: string;
-        name: string;
-        description: string;
-        type: string;
-        path?: string;
-    }) => Promise<void>;
-
-    join: ({
-        groupId,
-        userId,
-    }: {
-        groupId: string;
-        userId: string;
-    }) => Promise<void>;
-    leave: ({
-        groupId,
-        userId,
-        path,
-    }: {
-        groupId: string;
-        userId: string;
-        path?: string;
-    }) => Promise<void>;
-    delete: (groupId: string) => Promise<void>;
-}
-
-class GroupServiceClass implements IGroupService {
+class GroupServiceClass {
     /**
      * Create a new group
      * TODO: Server API needs POST /groups endpoint
@@ -101,7 +21,9 @@ class GroupServiceClass implements IGroupService {
         // TODO: Implement create group endpoint in server-api
         // POST /groups
         console.warn('create group not yet implemented via REST API');
-        throw new Error('Create group endpoint not yet implemented in REST API');
+        throw new Error(
+            'Create group endpoint not yet implemented in REST API'
+        );
     }
 
     /**
@@ -176,7 +98,9 @@ class GroupServiceClass implements IGroupService {
         // TODO: Implement updateCoverPhoto endpoint in server-api
         // PUT /groups/:id/cover-photo
         console.warn('updateCoverPhoto not yet implemented via REST API');
-        throw new Error('Update cover photo endpoint not yet implemented in REST API');
+        throw new Error(
+            'Update cover photo endpoint not yet implemented in REST API'
+        );
     }
 
     /**
@@ -195,7 +119,9 @@ class GroupServiceClass implements IGroupService {
         // TODO: Implement updateAvatar endpoint in server-api
         // PUT /groups/:id/avatar
         console.warn('updateAvatar not yet implemented via REST API');
-        throw new Error('Update avatar endpoint not yet implemented in REST API');
+        throw new Error(
+            'Update avatar endpoint not yet implemented in REST API'
+        );
     }
 
     /**
@@ -218,7 +144,9 @@ class GroupServiceClass implements IGroupService {
         // TODO: Implement update group endpoint in server-api
         // PUT /groups/:id
         console.warn('update group not yet implemented via REST API');
-        throw new Error('Update group endpoint not yet implemented in REST API');
+        throw new Error(
+            'Update group endpoint not yet implemented in REST API'
+        );
     }
 
     /**
@@ -265,7 +193,9 @@ class GroupServiceClass implements IGroupService {
         // TODO: Implement delete group endpoint in server-api
         // DELETE /groups/:id
         console.warn('delete group not yet implemented via REST API');
-        throw new Error('Delete group endpoint not yet implemented in REST API');
+        throw new Error(
+            'Delete group endpoint not yet implemented in REST API'
+        );
     }
 }
 

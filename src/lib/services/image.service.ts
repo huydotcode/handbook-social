@@ -1,12 +1,4 @@
-import { apiClient } from '../api/client';
-import { API_ENDPOINTS } from '../api/endpoints';
-
-interface IImageService {
-    getUrlByImageId: (imageId: string) => Promise<string | null>;
-    removeImage: (imageUrl: string) => Promise<boolean>;
-}
-
-class ImageServiceClass implements IImageService {
+class ImageServiceClass {
     /**
      * Get image URL by image ID
      * TODO: Server API needs GET /images/:id endpoint

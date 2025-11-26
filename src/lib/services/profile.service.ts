@@ -1,60 +1,6 @@
 import { locationService as apiLocationService } from '../api/services/location.service';
-import { apiClient } from '../api/client';
-import { API_ENDPOINTS } from '../api/endpoints';
 
-interface IProfileService {
-    getByUserId(userId: string): Promise<IProfile | null>;
-    updateBio({
-        newBio,
-        path,
-        userId,
-    }: {
-        userId: string;
-        newBio: any;
-        path: string;
-    }): Promise<boolean>;
-    getProfilePicturesAction: (userId: string) => Promise<IMedia[]>;
-
-    updateInfo: ({
-        profileId,
-        dateOfBirth,
-        education,
-        location,
-        work,
-        path,
-    }: {
-        profileId: string;
-        work: string;
-        education: string;
-        location: string;
-        dateOfBirth: Date;
-        path: string;
-    }) => Promise<boolean>;
-
-    getLocations: () => Promise<ILocation[]>;
-
-    updateAvatar: ({
-        userId,
-        avatar,
-        path,
-    }: {
-        userId: string;
-        avatar: string;
-        path: string;
-    }) => Promise<boolean>;
-
-    updateCoverPhoto?: ({
-        userId,
-        coverPhoto,
-        path,
-    }: {
-        userId: string;
-        coverPhoto: string;
-        path: string;
-    }) => Promise<boolean>;
-}
-
-class ProfileServiceClass implements IProfileService {
+class ProfileServiceClass {
     /**
      * Get profile by user ID
      * TODO: Server API needs GET /users/:id/profile endpoint

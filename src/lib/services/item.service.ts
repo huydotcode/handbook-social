@@ -1,61 +1,6 @@
 import { itemService as apiItemService } from '../api/services/item.service';
-import { apiClient } from '../api/client';
-import { API_ENDPOINTS } from '../api/endpoints';
 
-interface IItemService {
-    create({
-        name,
-        seller,
-        description,
-        price,
-        imagesIds,
-        location,
-        category,
-        status,
-    }: {
-        name: string;
-        seller: string;
-        description: string;
-        price: number;
-        imagesIds: string[];
-        location: string;
-        category: string;
-        status: string;
-    }): Promise<IItem>;
-    getById(itemId: string): Promise<IItem>;
-    getBySeller(seller: string): Promise<IItem[]>;
-    getItemsByCategoryId(categoryId: string): Promise<IItem[]>;
-    update({
-        itemId,
-        name,
-        description,
-        price,
-        imagesIds,
-        location,
-        category,
-        status,
-        path,
-    }: {
-        itemId: string;
-        name: string;
-        description: string;
-        price: number;
-        imagesIds: string[];
-        location: string;
-        category: string;
-        status: string;
-        path: string;
-    }): Promise<boolean>;
-    delete({
-        itemId,
-        path,
-    }: {
-        itemId: string;
-        path: string;
-    }): Promise<boolean>;
-}
-
-class ItemServiceClass implements IItemService {
+class ItemServiceClass {
     /**
      * Create a new item
      * TODO: Server API needs POST /items endpoint

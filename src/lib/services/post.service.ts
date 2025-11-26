@@ -1,65 +1,6 @@
 import { postService as apiPostService } from '../api/services/post.service';
-import { apiClient } from '../api/client';
-import { API_ENDPOINTS } from '../api/endpoints';
 
-interface IPostService {
-    getById(id: string): Promise<IPost | null>;
-    getSavedByUserId?(userId: string): Promise<IPost[]>;
-    create: ({
-        content,
-        mediaIds,
-        option,
-        groupId,
-        type,
-    }: {
-        content: string;
-        mediaIds: string[];
-        option: string;
-        groupId?: string | null;
-        type?: string;
-    }) => Promise<IPost>;
-    update: ({
-        content,
-        mediaIds,
-        option,
-        postId,
-    }: {
-        content: string;
-        mediaIds: string[];
-        option: string;
-        postId: string;
-    }) => Promise<IPost>;
-    sendReaction: (postId: string) => Promise<boolean>;
-    delete: (postId: string) => Promise<boolean>;
-
-    updateStatus: ({
-        postId,
-        status,
-        path,
-    }: {
-        postId: string;
-        status: string;
-        path: string;
-    }) => Promise<boolean>;
-
-    savePost: ({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }) => Promise<boolean>;
-
-    unsavePost: ({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }) => Promise<boolean>;
-}
-
-class PostServiceClass implements IPostService {
+class PostServiceClass {
     /**
      * Get post by ID using REST API
      */

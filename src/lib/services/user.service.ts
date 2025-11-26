@@ -2,35 +2,7 @@ import { apiClient } from '../api/client';
 import { API_ENDPOINTS } from '../api/endpoints';
 import { searchService } from '../api/services/search.service';
 
-interface IUserService {
-    searchUsers: ({
-        userId,
-        searchString,
-        pageNumber,
-        pageSize,
-        sortBy,
-    }: {
-        userId: string;
-        searchString?: string;
-        pageNumber?: number;
-        pageSize?: number;
-        sortBy?: 'asc' | 'desc';
-    }) => Promise<{
-        users: IUser[];
-        isNext: boolean;
-    }>;
-
-    getFriendsByUserId: ({ userId }: { userId: string }) => Promise<IFriend[]>;
-
-    getById: (id: string) => Promise<IUser | null>;
-
-    unfriend: (userId: string) => Promise<boolean>;
-
-    follow: (userId: string) => Promise<boolean>;
-    unfollow: (userId: string) => Promise<boolean>;
-}
-
-class UserServiceClass implements IUserService {
+class UserServiceClass {
     /**
      * Search users using REST API
      * TODO: Server API needs to support pagination metadata for isNext
@@ -54,11 +26,11 @@ class UserServiceClass implements IUserService {
                 page: pageNumber,
                 page_size: pageSize,
             });
-            
+
             // TODO: API should return pagination metadata
             // For now, assume there's more if we got a full page
             const isNext = Array.isArray(users) && users.length === pageSize;
-            
+
             return { users: users || [], isNext };
         } catch (error) {
             console.error('Error searching users:', error);

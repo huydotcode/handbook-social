@@ -1,32 +1,4 @@
-import { messageService as apiMessageService } from '../api/services/message.service';
-import { conversationService as apiConversationService } from '../api/services/conversation.service';
-import { apiClient } from '../api/client';
-import { API_ENDPOINTS } from '../api/endpoints';
-
-interface IMessageService {
-    send: ({
-        roomId,
-        text,
-        images,
-    }: {
-        roomId: string;
-        text: string;
-        images?: string[];
-    }) => Promise<IMessage | null>;
-    delete: ({
-        messageId,
-        prevMessageId,
-        conversationId,
-    }: {
-        messageId: string;
-        conversationId: string;
-        prevMessageId?: string | null;
-    }) => Promise<boolean>;
-    pin: (messageId: string) => Promise<boolean>;
-    unpin: (messageId: string) => Promise<boolean>;
-}
-
-class MessageServiceClass implements IMessageService {
+class MessageServiceClass {
     /**
      * Send a message
      * TODO: Server API needs POST /messages endpoint
