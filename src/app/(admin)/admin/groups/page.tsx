@@ -18,7 +18,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { getGroups } from '@/lib/actions/admin/group.action';
+import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
@@ -31,9 +31,11 @@ const AdminGroupPage = () => {
     } = useQuery<IGroup[]>({
         queryKey: queryKey.admin.groups.index,
         queryFn: async () => {
-            const groups = await getGroups();
-            return groups;
+            return await adminService.getGroups({
+                page_size: 100,
+            });
         },
+        initialData: [],
     });
 
     return (

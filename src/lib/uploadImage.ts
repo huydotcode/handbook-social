@@ -1,26 +1,27 @@
 import toast from 'react-hot-toast';
-import axiosInstance from './axios';
-import { API_ROUTES } from '@/config/api';
+import { uploadService } from './api/services/upload.service';
 
+/**
+ * Upload images from base64 strings (deprecated - use uploadService directly)
+ * @deprecated This function is kept for backward compatibility
+ */
 export const uploadImages = async ({
     photos,
 }: {
     photos: string[];
 }): Promise<string[]> => {
-    const imagesUpload = photos.map((photo) => {
-        return fetch(API_ROUTES.IMAGES.INDEX, {
-            method: 'POST',
-            body: JSON.stringify({ image: photo }),
-            headers: { 'Content-Type': 'application/json' },
-        }).then((res) => res.json().then((data: IMedia) => data._id as string));
-    });
-
-    const results = await Promise.allSettled(imagesUpload);
-    return results
-        .filter((result) => result.status === 'fulfilled')
-        .map((result) => (result as PromiseFulfilledResult<string>).value);
+    // Note: This function uploads base64 strings, which is not supported by REST API
+    // Consider migrating to use File objects with uploadService instead
+    toast.error(
+        'Upload từ base64 không còn được hỗ trợ. Vui lòng sử dụng File objects.'
+    );
+    throw new Error('Upload từ base64 không còn được hỗ trợ');
 };
 
+/**
+ * Upload a single image or video file
+ * Uses REST API uploadService
+ */
 export const uploadImageWithFile = async ({
     file,
 }: {
@@ -33,55 +34,25 @@ export const uploadImageWithFile = async ({
 
     const type = file.type.split('/')[0];
 
-    switch (type) {
-        case 'image':
-            const formDataImage = new FormData();
-            formDataImage.append('image', file);
-
-            const response = await axiosInstance.post(
-                API_ROUTES.UPLOAD.IMAGE,
-                formDataImage,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-
-            if (!response.data.success) {
-                throw new Error(
-                    response.data.message || 'Lỗi khi tải lên hình ảnh'
-                );
-            }
-
-            return response.data.data;
-
-        case 'video':
-            const formDataVideo = new FormData();
-            formDataVideo.append('video', file);
-            const responseVideo = await axiosInstance.post(
-                API_ROUTES.UPLOAD.VIDEO,
-                formDataVideo,
-                {
-                    headers: {
-                        'Content-Type': 'multipart/form-data',
-                    },
-                }
-            );
-
-            if (!responseVideo.data.success) {
-                throw new Error(
-                    responseVideo.data.message || 'Lỗi khi tải lên video'
-                );
-            }
-
-            return responseVideo.data.data;
-
-        default:
-            throw new Error('Không hỗ trợ định dạng file này');
+    try {
+        switch (type) {
+            case 'image':
+                return await uploadService.uploadImage(file);
+            case 'video':
+                return await uploadService.uploadVideo(file);
+            default:
+                throw new Error('Không hỗ trợ định dạng file này');
+        }
+    } catch (error: any) {
+        toast.error(error.message || 'Lỗi khi tải lên file');
+        throw error;
     }
 };
 
+/**
+ * Upload multiple image or video files
+ * Uses REST API uploadService
+ */
 export const uploadImagesWithFiles = async ({
     files,
 }: {
@@ -95,68 +66,38 @@ export const uploadImagesWithFiles = async ({
 
         const type = file.type.split('/')[0];
 
-        switch (type) {
-            case 'image':
-                if (files.length >= 10) {
-                    toast.error('Bạn chỉ có thể tải lên tối đa 10 hình ảnh!');
-                    throw new Error('Vượt quá số lượng ảnh cho phép');
-                }
+        // Validate file count limits
+        const imageFiles = files.filter((f) => f.type.startsWith('image/'));
+        const videoFiles = files.filter((f) => f.type.startsWith('video/'));
 
-                const formDataImage = new FormData();
-                formDataImage.append('image', file);
+        if (type === 'image' && imageFiles.length > 10) {
+            toast.error('Bạn chỉ có thể tải lên tối đa 10 hình ảnh!');
+            throw new Error('Vượt quá số lượng ảnh cho phép');
+        }
 
-                const response = await axiosInstance.post(
-                    API_ROUTES.UPLOAD.IMAGE,
-                    formDataImage,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    }
-                );
+        if (type === 'video' && videoFiles.length > 5) {
+            toast.error('Bạn chỉ có thể tải lên tối đa 5 video!');
+            throw new Error('Vượt quá số lượng video cho phép');
+        }
 
-                if (!response.data.success) {
-                    throw new Error(
-                        response.data.message || 'Lỗi khi tải lên hình ảnh'
-                    );
-                }
-
-                return response.data.data;
-
-            case 'video':
-                if (files.length >= 5) {
-                    toast.error('Bạn chỉ có thể tải lên tối đa 5 video!');
-                    throw new Error('Vượt quá số lượng video cho phép');
-                }
-
-                const formDataVideo = new FormData();
-                formDataVideo.append('video', file);
-                const responseVideo = await axiosInstance.post(
-                    API_ROUTES.UPLOAD.VIDEO,
-                    formDataVideo,
-                    {
-                        headers: {
-                            'Content-Type': 'multipart/form-data',
-                        },
-                    }
-                );
-
-                if (!responseVideo.data.success) {
-                    throw new Error(
-                        responseVideo.data.message || 'Lỗi khi tải lên video'
-                    );
-                }
-
-                return responseVideo.data.data;
-
-            default:
-                throw new Error('Không hỗ trợ định dạng file này');
+        try {
+            switch (type) {
+                case 'image':
+                    return await uploadService.uploadImage(file);
+                case 'video':
+                    return await uploadService.uploadVideo(file);
+                default:
+                    throw new Error('Không hỗ trợ định dạng file này');
+            }
+        } catch (error: any) {
+            toast.error(error.message || 'Lỗi khi tải lên file');
+            throw error;
         }
     });
 
-    const results = await Promise.all(uploadTasks);
+    const results = await Promise.allSettled(uploadTasks);
 
-    return results.filter(
-        (result): result is IMedia => result !== undefined && result !== null
-    );
+    return results
+        .filter((result) => result.status === 'fulfilled')
+        .map((result) => (result as PromiseFulfilledResult<IMedia>).value);
 };

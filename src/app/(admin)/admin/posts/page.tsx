@@ -15,7 +15,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { fetchAllPosts } from '@/lib/actions/admin/post.action';
+import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
@@ -28,9 +28,9 @@ const AdminPostsPage = () => {
     } = useQuery<IPost[]>({
         queryKey: queryKey.admin.posts.index,
         queryFn: async () => {
-            const posts = await fetchAllPosts();
-
-            return posts;
+            return await adminService.getPosts({
+                page_size: 100,
+            });
         },
         initialData: [],
     });

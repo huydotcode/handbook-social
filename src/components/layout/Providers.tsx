@@ -12,7 +12,6 @@ import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';
 import { FunctionComponent, ReactNode, useState } from 'react';
 import { Toaster } from 'react-hot-toast';
-import { SessionProvider } from 'next-auth/react';
 
 interface ProvidersProps {
     children: ReactNode;
@@ -66,36 +65,34 @@ const Providers: FunctionComponent<ProvidersProps> = ({ children }) => {
     const [queryClient] = useState(() => getQueryClient());
 
     return (
-        <SessionProvider>
-            <QueryClientProvider client={queryClient}>
-                <AuthProvider>
-                    <SocketProvider>
-                        <SocialProvider>
-                            <AppProvider>
-                                <VideoCallProvider>
-                                    <ThemeProvider
-                                        attribute="class"
-                                        defaultTheme="system"
-                                        enableSystem
-                                    >
-                                        <Toaster
-                                            position="bottom-left"
-                                            reverseOrder={false}
-                                        />
-                                        {children}
-                                        <VideoCallWrapper />
-                                    </ThemeProvider>
-                                </VideoCallProvider>
-                            </AppProvider>
-                        </SocialProvider>
-                    </SocketProvider>
-                </AuthProvider>
-                {/* React Query DevTools - only in development */}
-                {process.env.NODE_ENV === 'development' && (
-                    <ReactQueryDevtools initialIsOpen={false} />
-                )}
-            </QueryClientProvider>
-        </SessionProvider>
+        <QueryClientProvider client={queryClient}>
+            <AuthProvider>
+                <SocketProvider>
+                    <SocialProvider>
+                        <AppProvider>
+                            <VideoCallProvider>
+                                <ThemeProvider
+                                    attribute="class"
+                                    defaultTheme="system"
+                                    enableSystem
+                                >
+                                    <Toaster
+                                        position="bottom-left"
+                                        reverseOrder={false}
+                                    />
+                                    {children}
+                                    <VideoCallWrapper />
+                                </ThemeProvider>
+                            </VideoCallProvider>
+                        </AppProvider>
+                    </SocialProvider>
+                </SocketProvider>
+            </AuthProvider>
+            {/* React Query DevTools - only in development */}
+            {process.env.NODE_ENV === 'development' && (
+                <ReactQueryDevtools initialIsOpen={false} />
+            )}
+        </QueryClientProvider>
     );
 };
 

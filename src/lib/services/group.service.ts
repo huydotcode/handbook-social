@@ -1,16 +1,6 @@
-import {
-    createGroup,
-    deleteGroup,
-    getGroupByGroupId,
-    getGroupsByUserId,
-    getMembersByGroupId,
-    getRecommendGroups,
-    joinGroup,
-    leaveGroup,
-    updateAvatar,
-    updateCoverPhoto,
-    updateGroup,
-} from '../actions/group.action';
+import { groupService as apiGroupService } from '../api/services/group.service';
+import { apiClient } from '../api/client';
+import { API_ENDPOINTS } from '../api/endpoints';
 
 interface IGroupService {
     create: ({
@@ -91,6 +81,10 @@ interface IGroupService {
 }
 
 class GroupServiceClass implements IGroupService {
+    /**
+     * Create a new group
+     * TODO: Server API needs POST /groups endpoint
+     */
     public async create({
         name,
         description,
@@ -104,25 +98,27 @@ class GroupServiceClass implements IGroupService {
         type: string;
         members: string[];
     }) {
-        const newGroup = await createGroup({
-            name,
-            description,
-            avatar,
-            type,
-            members,
-        });
-
-        return newGroup;
+        // TODO: Implement create group endpoint in server-api
+        // POST /groups
+        console.warn('create group not yet implemented via REST API');
+        throw new Error('Create group endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Get group by ID using REST API
+     */
     public async getById(groupId: string): Promise<IGroup> {
-        const group = await getGroupByGroupId({
-            groupId,
-        });
-
-        return group;
+        try {
+            return await apiGroupService.getById(groupId);
+        } catch (error) {
+            console.error('Error getting group by ID:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Get groups by user ID using REST API
+     */
     public async getByUserId({
         userId,
         page,
@@ -132,31 +128,42 @@ class GroupServiceClass implements IGroupService {
         page: number;
         pageSize: number;
     }) {
-        const groups = await getGroupsByUserId({
-            userId,
-            page,
-            pageSize,
-        });
-
-        return groups;
+        try {
+            return await apiGroupService.getJoined({
+                user_id: userId,
+            });
+        } catch (error) {
+            console.error('Error getting groups by user ID:', error);
+            return [];
+        }
     }
 
+    /**
+     * Get recommended groups
+     * TODO: Server API needs GET /groups/recommended endpoint
+     */
     public async getRecommendedGroups(userId: string) {
-        const groups = await getRecommendGroups({
-            userId,
-        });
-
-        return groups;
+        // TODO: Implement getRecommendedGroups endpoint in server-api
+        // GET /groups/recommended?user_id=:userId
+        console.warn('getRecommendedGroups not yet implemented via REST API');
+        return [] as IGroup[];
     }
 
+    /**
+     * Get members of a group
+     * TODO: Server API needs GET /groups/:id/members endpoint
+     */
     public async getMembers(groupId: string): Promise<IMemberGroup[]> {
-        const members = await getMembersByGroupId({
-            groupId,
-        });
-
-        return members;
+        // TODO: Implement getMembers endpoint in server-api
+        // GET /groups/:id/members
+        console.warn('getMembers not yet implemented via REST API');
+        return [] as IMemberGroup[];
     }
 
+    /**
+     * Update cover photo
+     * TODO: Server API needs PUT /groups/:id/cover-photo endpoint
+     */
     public async updateCoverPhoto({
         groupId,
         coverPhoto,
@@ -166,13 +173,16 @@ class GroupServiceClass implements IGroupService {
         coverPhoto: string;
         path: string;
     }) {
-        await updateCoverPhoto({
-            groupId,
-            coverPhoto,
-            path,
-        });
+        // TODO: Implement updateCoverPhoto endpoint in server-api
+        // PUT /groups/:id/cover-photo
+        console.warn('updateCoverPhoto not yet implemented via REST API');
+        throw new Error('Update cover photo endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Update avatar
+     * TODO: Server API needs PUT /groups/:id/avatar endpoint
+     */
     public async updateAvatar({
         groupId,
         avatarId,
@@ -182,13 +192,16 @@ class GroupServiceClass implements IGroupService {
         avatarId: string;
         path: string;
     }) {
-        await updateAvatar({
-            groupId,
-            avatarId,
-            path,
-        });
+        // TODO: Implement updateAvatar endpoint in server-api
+        // PUT /groups/:id/avatar
+        console.warn('updateAvatar not yet implemented via REST API');
+        throw new Error('Update avatar endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Update group
+     * TODO: Server API needs PUT /groups/:id endpoint
+     */
     public async update({
         groupId,
         name,
@@ -202,15 +215,16 @@ class GroupServiceClass implements IGroupService {
         type: string;
         path?: string;
     }) {
-        await updateGroup({
-            description,
-            groupId,
-            name,
-            type,
-            path,
-        });
+        // TODO: Implement update group endpoint in server-api
+        // PUT /groups/:id
+        console.warn('update group not yet implemented via REST API');
+        throw new Error('Update group endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Join a group
+     * TODO: Server API needs POST /groups/:id/join endpoint
+     */
     public async join({
         groupId,
         userId,
@@ -218,12 +232,16 @@ class GroupServiceClass implements IGroupService {
         groupId: string;
         userId: string;
     }) {
-        await joinGroup({
-            groupId,
-            userId,
-        });
+        // TODO: Implement join group endpoint in server-api
+        // POST /groups/:id/join
+        console.warn('join group not yet implemented via REST API');
+        throw new Error('Join group endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Leave a group
+     * TODO: Server API needs POST /groups/:id/leave endpoint
+     */
     public async leave({
         groupId,
         userId,
@@ -233,17 +251,21 @@ class GroupServiceClass implements IGroupService {
         userId: string;
         path?: string;
     }) {
-        await leaveGroup({
-            groupId,
-            userId,
-            path,
-        });
+        // TODO: Implement leave group endpoint in server-api
+        // POST /groups/:id/leave
+        console.warn('leave group not yet implemented via REST API');
+        throw new Error('Leave group endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Delete a group
+     * TODO: Server API needs DELETE /groups/:id endpoint
+     */
     public async delete(groupId: string) {
-        await deleteGroup({
-            groupId,
-        });
+        // TODO: Implement delete group endpoint in server-api
+        // DELETE /groups/:id
+        console.warn('delete group not yet implemented via REST API');
+        throw new Error('Delete group endpoint not yet implemented in REST API');
     }
 }
 

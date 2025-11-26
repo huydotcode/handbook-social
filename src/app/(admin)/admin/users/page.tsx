@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { fetchUsers } from '@/lib/actions/admin/user.action';
+import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { FormatDate } from '@/utils/formatDate';
 import { useQuery } from '@tanstack/react-query';
@@ -27,11 +27,9 @@ const AdminUsersPage = () => {
     } = useQuery<IUser[]>({
         queryKey: queryKey.admin.users.index,
         queryFn: async () => {
-            const users = await fetchUsers({
-                limit: 100, // You can adjust the limit as needed
+            return await adminService.getUsers({
+                page_size: 100, // You can adjust the limit as needed
             });
-
-            return users;
         },
         initialData: [],
     });

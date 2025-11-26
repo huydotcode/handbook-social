@@ -1,9 +1,7 @@
-import {
-    deleteMessage,
-    pinMessage,
-    sendMessage,
-    unPinMessage,
-} from '../actions/message.action';
+import { messageService as apiMessageService } from '../api/services/message.service';
+import { conversationService as apiConversationService } from '../api/services/conversation.service';
+import { apiClient } from '../api/client';
+import { API_ENDPOINTS } from '../api/endpoints';
 
 interface IMessageService {
     send: ({
@@ -29,6 +27,11 @@ interface IMessageService {
 }
 
 class MessageServiceClass implements IMessageService {
+    /**
+     * Send a message
+     * TODO: Server API needs POST /messages endpoint
+     * For now, messages are sent via Socket.IO
+     */
     async send({
         roomId,
         text,
@@ -38,20 +41,21 @@ class MessageServiceClass implements IMessageService {
         text: string;
         images?: string[];
     }): Promise<IMessage | null> {
-        console.log('[LIB-SERVICES] sendMessage');
-        const newMessage = await sendMessage({
-            roomId,
-            text,
-            images,
-        });
-
-        if (!newMessage) {
-            throw new Error('Error sending message');
-        }
-
-        return newMessage;
+        // TODO: Implement send message endpoint in server-api
+        // POST /messages with { conversationId, text, media }
+        // For now, messages are sent via Socket.IO, so this might not be needed
+        console.warn(
+            'send message not yet implemented via REST API (using Socket.IO)'
+        );
+        throw new Error(
+            'Send message endpoint not yet implemented in REST API'
+        );
     }
 
+    /**
+     * Delete a message
+     * TODO: Server API needs DELETE /messages/:id endpoint
+     */
     async delete({
         messageId,
         prevMessageId,
@@ -61,42 +65,36 @@ class MessageServiceClass implements IMessageService {
         conversationId: string;
         prevMessageId?: string | null;
     }): Promise<boolean> {
-        console.log('[LIB-SERVICES] deleteMessage');
-        const result = await deleteMessage({
-            conversationId,
-            messageId,
-            prevMessageId,
-        });
-
-        if (!result) {
-            throw new Error('Error deleting message');
-        }
-
-        return true;
+        // TODO: Implement delete message endpoint in server-api
+        // DELETE /messages/:id
+        console.warn('delete message not yet implemented via REST API');
+        throw new Error(
+            'Delete message endpoint not yet implemented in REST API'
+        );
     }
 
+    /**
+     * Pin a message using REST API (via conversation endpoint)
+     */
     async pin(messageId: string): Promise<boolean> {
-        const result = await pinMessage({
-            messageId,
-        });
-
-        if (!result) {
-            throw new Error('Error pinning message');
-        }
-
-        return true;
+        // Note: Pin/unpin is handled via conversation endpoints
+        // This method signature doesn't match the API, but keeping for compatibility
+        console.warn(
+            'pin message should use conversationService.pinMessage instead'
+        );
+        throw new Error('Use conversationService.pinMessage instead');
     }
 
+    /**
+     * Unpin a message using REST API (via conversation endpoint)
+     */
     async unpin(messageId: string): Promise<boolean> {
-        const result = await unPinMessage({
-            messageId,
-        });
-
-        if (!result) {
-            throw new Error('Error unpinning message');
-        }
-
-        return true;
+        // Note: Pin/unpin is handled via conversation endpoints
+        // This method signature doesn't match the API, but keeping for compatibility
+        console.warn(
+            'unpin message should use conversationService.unpinMessage instead'
+        );
+        throw new Error('Use conversationService.unpinMessage instead');
     }
 }
 

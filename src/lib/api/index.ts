@@ -25,6 +25,7 @@ export { uploadService } from './services/upload.service';
 export { locationService } from './services/location.service';
 export { followService } from './services/follow.service';
 export { categoryService } from './services/category.service';
+export { adminService } from './services/admin.service';
 
 // Export types
 export type {

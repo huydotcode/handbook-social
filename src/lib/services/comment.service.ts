@@ -1,10 +1,9 @@
-import {
-    deleteComment,
-    loveComment,
-    sendComment,
-} from '../actions/comment.action';
+import { commentService as apiCommentService } from '../api/services/comment.service';
 
 class CommentServiceClass {
+    /**
+     * Create a new comment using REST API
+     */
     public async create({
         content,
         replyTo,
@@ -14,25 +13,25 @@ class CommentServiceClass {
         replyTo: string | null;
         postId: string;
     }) {
-        const newComment = await sendComment({
-            content,
-            replyTo,
-            postId,
+        return await apiCommentService.create({
+            post: postId,
+            text: content,
+            parent: replyTo || undefined,
         });
-
-        return newComment;
     }
 
+    /**
+     * Add love to a comment using REST API
+     */
     public async love(commentId: string) {
-        await loveComment({
-            commentId,
-        });
+        await apiCommentService.addLove(commentId);
     }
 
+    /**
+     * Delete a comment using REST API
+     */
     public async delete(commentId: string) {
-        await deleteComment({
-            commentId,
-        });
+        await apiCommentService.delete(commentId);
     }
 }
 

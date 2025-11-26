@@ -1,26 +1,34 @@
-import {
-    createCategory,
-    deleteCategory,
-    getCategoryBySlug,
-} from '../actions/category.action';
+import { categoryService as apiCategoryService } from '../api/services/category.service';
 
 class CategoryServiceClass {
+    /**
+     * Create a new category using REST API
+     */
     public async create(data: {
         name: string;
         description: string;
         slug: string;
         icon: string;
     }) {
-        await createCategory(data);
+        return await apiCategoryService.create({
+            name: data.name,
+            slug: data.slug,
+            description: data.description,
+        });
     }
 
+    /**
+     * Get category by slug using REST API
+     */
     public async getBySlug(slug: string) {
-        const category = await getCategoryBySlug({ slug });
-        return category;
+        return await apiCategoryService.getBySlug(slug);
     }
 
+    /**
+     * Delete a category using REST API
+     */
     public async delete(id: string) {
-        await deleteCategory(id);
+        await apiCategoryService.delete(id);
     }
 }
 

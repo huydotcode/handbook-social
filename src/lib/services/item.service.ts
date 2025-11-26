@@ -1,11 +1,6 @@
-import {
-    createItem,
-    deleteItem,
-    getItemById,
-    getItemsByCategoryId,
-    getItemsBySeller,
-    updateItem,
-} from '../actions/item.action';
+import { itemService as apiItemService } from '../api/services/item.service';
+import { apiClient } from '../api/client';
+import { API_ENDPOINTS } from '../api/endpoints';
 
 interface IItemService {
     create({
@@ -61,6 +56,10 @@ interface IItemService {
 }
 
 class ItemServiceClass implements IItemService {
+    /**
+     * Create a new item
+     * TODO: Server API needs POST /items endpoint
+     */
     async create({
         name,
         seller,
@@ -80,42 +79,52 @@ class ItemServiceClass implements IItemService {
         category: string;
         status: string;
     }): Promise<IItem> {
-        console.log('[LIB-SERVICES] create item');
-        const item = await createItem({
-            name,
-            seller,
-            description,
-            price,
-            imagesIds,
-            location,
-            category,
-            status,
-        });
-
-        return item;
+        // TODO: Implement create item endpoint in server-api
+        // POST /items
+        console.warn('create item not yet implemented via REST API');
+        throw new Error('Create item endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Get item by ID
+     * TODO: Server API needs GET /items/:id endpoint
+     */
     async getById(itemId: string): Promise<IItem> {
-        console.log('[LIB-SERVICES] get item by id');
-        const item = await getItemById({ id: itemId });
-
-        return item;
+        // TODO: Implement getById endpoint in server-api
+        // GET /items/:id
+        console.warn('getById item not yet implemented via REST API');
+        throw new Error(
+            'Get item by ID endpoint not yet implemented in REST API'
+        );
     }
 
+    /**
+     * Get items by seller using REST API
+     */
     async getBySeller(seller: string): Promise<IItem[]> {
-        console.log('[LIB-SERVICES] get items by seller');
-        const items = await getItemsBySeller({ seller });
-
-        return items;
+        try {
+            return await apiItemService.getBySeller(seller);
+        } catch (error) {
+            console.error('Error getting items by seller:', error);
+            return [];
+        }
     }
 
+    /**
+     * Get items by category ID
+     * TODO: Server API needs GET /items?category_id=:categoryId endpoint
+     */
     async getItemsByCategoryId(categoryId: string): Promise<IItem[]> {
-        console.log('[LIB-SERVICES] get items by category id');
-        const items = await getItemsByCategoryId({ categoryId });
-
-        return items;
+        // TODO: Implement getItemsByCategoryId endpoint in server-api
+        // GET /items?category_id=:categoryId
+        console.warn('getItemsByCategoryId not yet implemented via REST API');
+        return [];
     }
 
+    /**
+     * Update an item
+     * TODO: Server API needs PUT /items/:id endpoint
+     */
     async update({
         itemId,
         name,
@@ -137,22 +146,16 @@ class ItemServiceClass implements IItemService {
         status: string;
         path: string;
     }): Promise<boolean> {
-        console.log('[LIB-SERVICES] update item');
-        const result = await updateItem({
-            itemId,
-            name,
-            description,
-            price,
-            imagesIds,
-            location,
-            category,
-            status,
-            path,
-        });
-
-        return result;
+        // TODO: Implement update item endpoint in server-api
+        // PUT /items/:id
+        console.warn('update item not yet implemented via REST API');
+        throw new Error('Update item endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Delete an item
+     * TODO: Server API needs DELETE /items/:id endpoint
+     */
     async delete({
         itemId,
         path,
@@ -160,13 +163,10 @@ class ItemServiceClass implements IItemService {
         itemId: string;
         path: string;
     }): Promise<boolean> {
-        console.log('[LIB-SERVICES] delete item');
-        const result = await deleteItem({
-            itemId,
-            path,
-        });
-
-        return result;
+        // TODO: Implement delete item endpoint in server-api
+        // DELETE /items/:id
+        console.warn('delete item not yet implemented via REST API');
+        throw new Error('Delete item endpoint not yet implemented in REST API');
     }
 }
 

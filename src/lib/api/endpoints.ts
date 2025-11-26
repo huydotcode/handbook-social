@@ -100,8 +100,8 @@ export const API_ENDPOINTS = {
 
     // Upload endpoints
     UPLOAD: {
-        IMAGE: '/uploads/image',
-        VIDEO: '/uploads/video',
+        IMAGE: '/upload/image',
+        VIDEO: '/upload/video',
     },
 
     // Location endpoints
@@ -121,5 +121,15 @@ export const API_ENDPOINTS = {
         SEARCH: '/categories/search',
         BY_SLUG: (slug: string) => `/categories/slug/${slug}`,
         BY_ID: (id: string) => `/categories/${id}`,
+    },
+
+    // Admin endpoints
+    ADMIN: {
+        USERS: '/users',
+        POSTS: '/posts',
+        GROUPS: '/groups',
+        LOCATIONS: '/locations',
+        MEDIAS: '/medias',
+        CATEGORIES: '/categories',
     },
 };

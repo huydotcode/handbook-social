@@ -1,6 +1,5 @@
 'use client';
 import { cn } from '@/lib/utils';
-import { Session } from 'next-auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import React, { useState } from 'react';
@@ -14,7 +13,6 @@ interface User {
 
 interface Props {
     className?: string;
-    session?: Session;
     user?: User;
     userUrl?: string;
     imgSrc?: string;
@@ -29,7 +27,6 @@ interface Props {
 
 const Avatar: React.FC<Props> = ({
     className,
-    session,
     user,
     imgSrc,
     userUrl,
@@ -41,11 +38,9 @@ const Avatar: React.FC<Props> = ({
     rounded = 'full',
     onlyImage = false,
 }) => {
-    // Prefer user over session
-    const userId = user?.id || session?.user.id || userUrl;
-    const userImage =
-        user?.avatar || user?.image || session?.user.image || imgSrc;
-    const userName = user?.name || session?.user.name || alt;
+    const userId = user?.id || userUrl;
+    const userImage = user?.avatar || user?.image || imgSrc;
+    const userName = user?.name || alt;
 
     const isUser = !!userId;
     const [isError, setIsError] = useState<boolean>(false);

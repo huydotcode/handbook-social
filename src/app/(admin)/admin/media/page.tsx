@@ -3,15 +3,16 @@ import { ConfirmModal, Icons, Loading } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import VideoPlayer from '@/components/ui/VideoPlayer';
-import { deleteMedia, fetchAllMedias } from '@/lib/actions/admin/media.action';
+import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { timeConvert, timeConvert4 } from '@/utils/timeConvert';
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
 const AdminMediaPage = () => {
+    const queryClient = useQueryClient();
     const {
         data: medias,
         isLoading,
@@ -20,14 +21,27 @@ const AdminMediaPage = () => {
     } = useQuery<IMedia[]>({
         queryKey: queryKey.admin.media.index,
         queryFn: async () => {
-            const medias = await fetchAllMedias({
-                limit: 100, // You can adjust the limit as needed
+            return await adminService.getMedias({
+                page_size: 100, // You can adjust the limit as needed
                 page: 1, // You can adjust the page as needed
             });
-
-            return medias;
         },
         initialData: [],
+    });
+
+    const deleteMediaMutation = useMutation({
+        mutationFn: adminService.deleteMedia,
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: queryKey.admin.media.index,
+            });
+            toast.success('Phương tiện đã được xóa thành công.');
+        },
+        onError: () => {
+            toast.error(
+                'Xóa phương tiện không thành công. Vui lòng thử lại sau.'
+            );
+        },
     });
 
     const [openModalConfirmDelete, setOpenModalConfirmDelete] = useState(false);
@@ -35,20 +49,12 @@ const AdminMediaPage = () => {
 
     const handleDeleteMedia = async (mediaId: string) => {
         try {
-            toast.promise(deleteMedia(mediaId), {
-                loading: 'Đang xóa phương tiện...',
-                success: 'Phương tiện đã được xóa thành công.',
-                error: 'Xóa phương tiện không thành công. Vui lòng thử lại sau.',
-            });
-
+            toast.loading('Đang xóa phương tiện...', { id: 'delete-media' });
+            await deleteMediaMutation.mutateAsync(mediaId);
             setMediaIdToDelete(null);
             setOpenModalConfirmDelete(false);
-            refetch(); // Refetch the media list after deletion
         } catch (error) {
             console.error('Error deleting media:', error);
-            toast.error(
-                'Xóa phương tiện không thành công. Vui lòng thử lại sau.'
-            );
         }
     };
 

@@ -1,15 +1,6 @@
-import {
-    createPost,
-    deletePost,
-    editPost,
-    getPostByPostId,
-    getSavedPosts,
-    savePost,
-    sendReaction,
-    sharePost,
-    unsavePost,
-    updateStatusPost,
-} from '../actions/post.action';
+import { postService as apiPostService } from '../api/services/post.service';
+import { apiClient } from '../api/client';
+import { API_ENDPOINTS } from '../api/endpoints';
 
 interface IPostService {
     getById(id: string): Promise<IPost | null>;
@@ -69,21 +60,33 @@ interface IPostService {
 }
 
 class PostServiceClass implements IPostService {
+    /**
+     * Get post by ID using REST API
+     */
     async getById(id: string): Promise<IPost | null> {
-        const post = await getPostByPostId({ postId: id });
-
-        if (!post) {
-            throw new Error(`Post with ID ${id} not found`);
+        try {
+            return await apiPostService.getById(id);
+        } catch (error) {
+            console.error('Error getting post by ID:', error);
+            return null;
         }
-
-        return post;
     }
 
+    /**
+     * Get saved posts by user ID using REST API
+     */
     async getSavedByUserId(userId: string): Promise<IPost[]> {
-        const posts = await getSavedPosts({ userId });
-        return posts;
+        try {
+            return await apiPostService.getSaved();
+        } catch (error) {
+            console.error('Error getting saved posts:', error);
+            return [];
+        }
     }
 
+    /**
+     * Create a new post using REST API
+     */
     async create({
         content,
         mediaIds,
@@ -99,18 +102,48 @@ class PostServiceClass implements IPostService {
         type?: string;
         tags?: string[];
     }): Promise<IPost> {
-        const newPost = await createPost({
-            content,
-            mediaIds,
-            option,
-            groupId,
-            type,
-            tags,
-        });
+        // Get current user ID from localStorage token
+        const token =
+            typeof window !== 'undefined'
+                ? localStorage.getItem('accessToken')
+                : null;
+        let authorId = '';
 
-        return newPost;
+        if (token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                    atob(base64)
+                        .split('')
+                        .map(
+                            (c) =>
+                                '%' +
+                                ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                        )
+                        .join('')
+                );
+                const decoded = JSON.parse(jsonPayload);
+                authorId = decoded.id;
+            } catch (error) {
+                console.error('Error decoding token:', error);
+            }
+        }
+
+        return await apiPostService.create({
+            author: authorId,
+            text: content,
+            media: mediaIds,
+            group: groupId || undefined,
+            tags: tags,
+            option: option,
+            status: type,
+        });
     }
 
+    /**
+     * Update a post using REST API
+     */
     async update({
         content,
         mediaIds,
@@ -124,41 +157,53 @@ class PostServiceClass implements IPostService {
         postId: string;
         tags?: string[];
     }): Promise<IPost> {
-        const updatedPost = await editPost({
-            content,
-            mediaIds,
-            option,
-            postId,
-            tags,
+        return await apiPostService.update(postId, {
+            text: content,
+            media: mediaIds,
+            option: option,
+            tags: tags,
         });
-
-        return updatedPost;
     }
 
+    /**
+     * Send reaction (like) to a post
+     * TODO: Server API needs POST /posts/:id/like endpoint
+     */
     async sendReaction(postId: string): Promise<boolean> {
-        const result = await sendReaction({
-            postId,
-        });
-        return result;
+        // TODO: Implement like endpoint in server-api
+        // POST /posts/:id/like
+        console.warn('sendReaction not yet implemented via REST API');
+        throw new Error('Like endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Share a post
+     * TODO: Server API needs POST /posts/:id/share endpoint
+     */
     async share(postId: string): Promise<boolean> {
-        const result = await sharePost({
-            postId,
-        });
-        if (!result) {
-            throw new Error(`Failed to share post with ID ${postId}`);
-        }
-        return result;
+        // TODO: Implement share endpoint in server-api
+        // POST /posts/:id/share
+        console.warn('share not yet implemented via REST API');
+        throw new Error('Share endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Delete a post using REST API
+     */
     async delete(postId: string): Promise<boolean> {
-        const result = await deletePost({
-            postId,
-        });
-        return result;
+        try {
+            await apiPostService.delete(postId);
+            return true;
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            return false;
+        }
     }
 
+    /**
+     * Update post status
+     * TODO: Server API needs PUT /posts/:id/status endpoint or include in update
+     */
     async updateStatus({
         postId,
         status,
@@ -168,14 +213,22 @@ class PostServiceClass implements IPostService {
         status: string;
         path: string;
     }): Promise<boolean> {
-        const result = await updateStatusPost({
-            postId,
-            status,
-            path,
-        });
-        return result;
+        try {
+            // Use update endpoint with status field
+            await apiPostService.update(postId, {
+                status: status,
+            });
+            return true;
+        } catch (error) {
+            console.error('Error updating post status:', error);
+            return false;
+        }
     }
 
+    /**
+     * Save a post
+     * TODO: Server API needs POST /posts/:id/save endpoint
+     */
     async savePost({
         postId,
         path,
@@ -183,18 +236,16 @@ class PostServiceClass implements IPostService {
         postId: string;
         path: string;
     }): Promise<boolean> {
-        const result = await savePost({
-            postId,
-            path,
-        });
-
-        if (!result) {
-            throw new Error(`Failed to save post with ID ${postId}`);
-        }
-
-        return result;
+        // TODO: Implement save endpoint in server-api
+        // POST /posts/:id/save
+        console.warn('savePost not yet implemented via REST API');
+        throw new Error('Save post endpoint not yet implemented in REST API');
     }
 
+    /**
+     * Unsave a post
+     * TODO: Server API needs DELETE /posts/:id/save endpoint
+     */
     async unsavePost({
         postId,
         path,
@@ -202,16 +253,10 @@ class PostServiceClass implements IPostService {
         postId: string;
         path: string;
     }): Promise<boolean> {
-        const result = await unsavePost({
-            postId,
-            path,
-        });
-
-        if (!result) {
-            throw new Error(`Failed to unsave post with ID ${postId}`);
-        }
-
-        return result;
+        // TODO: Implement unsave endpoint in server-api
+        // DELETE /posts/:id/save
+        console.warn('unsavePost not yet implemented via REST API');
+        throw new Error('Unsave post endpoint not yet implemented in REST API');
     }
 }
 
