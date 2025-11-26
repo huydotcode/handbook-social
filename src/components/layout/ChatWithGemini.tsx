@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/Button';
 import toast from 'react-hot-toast';
 import { Avatar, Icons, Loading } from '@/components/ui';
 import { useMutation } from '@tanstack/react-query';
-import { API_ROUTES } from '@/config/api';
+import { geminiService } from '@/lib/api/services/gemini.service';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 
 interface IFormData {
@@ -50,18 +50,13 @@ const ChatWithGemini = () => {
 
             resetField('text');
 
-            const textFromGemini = await fetch(API_ROUTES.GEMINI.CHAT, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ message: text }),
-            });
+            const response = await geminiService.sendMessage({ message: text });
 
-            const { response, result } = await textFromGemini.json();
-
-            const textGemini = result.response.candidates[0].content.parts[0]
-                .text as string;
+            const textGemini =
+                response.result?.response?.candidates?.[0]?.content?.parts?.[0]
+                    ?.text ||
+                response.response ||
+                'Không có phản hồi từ Gemini';
 
             setMessages((prev) => [
                 {

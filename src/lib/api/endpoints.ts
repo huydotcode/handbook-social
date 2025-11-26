@@ -133,4 +133,9 @@ export const API_ENDPOINTS = {
         MEDIAS: '/medias',
         CATEGORIES: '/categories',
     },
+
+    // AI endpoints
+    AI: {
+        GEMINI_CHAT: '/gemini/chat',
+    },
 };
