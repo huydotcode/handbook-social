@@ -30,4 +30,15 @@ axiosInstance.interceptors.request.use(
     }
 );
 
+axiosInstance.interceptors.response.use(
+    (response) => {
+        console.log('response', response);
+        return response.data;
+    },
+    (error) => {
+        console.log('error', error);
+        return Promise.reject(error);
+    }
+);
+
 export default axiosInstance;
