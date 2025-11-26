@@ -14,6 +14,14 @@ export interface RegisterDto {
     avatar?: string;
 }
 
+export interface RegisterResponse {
+    id: string;
+    email: string;
+    name: string;
+    username: string;
+    avatar: string;
+}
+
 export interface SendOTPDto {
     email: string;
 }
@@ -45,7 +53,10 @@ export const authService = {
      * Register user
      */
     register: (data: RegisterDto) => {
-        return apiClient.post(API_ENDPOINTS.AUTH.REGISTER, data);
+        return apiClient.post<RegisterResponse>(
+            API_ENDPOINTS.AUTH.REGISTER,
+            data
+        );
     },
 
     /**
