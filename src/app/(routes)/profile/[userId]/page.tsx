@@ -3,6 +3,7 @@ import ProfileService from '@/lib/services/profile.service';
 import { isValidObjectId } from '@/lib/utils';
 import { FC } from 'react';
 import { InfomationSection } from '../_components';
+import { notFound } from 'next/navigation';
 
 interface ProfilePageProps {
     params: Promise<{ userId: string }>;
@@ -11,13 +12,7 @@ interface ProfilePageProps {
 const ProfilePage: FC<ProfilePageProps> = async ({ params }) => {
     const { userId } = await params;
     const profile = await ProfileService.getByUserId(userId);
-    if (!profile) {
-        return (
-            <div className="text-center text-red-500">
-                Trang cá nhân không tồn tại
-            </div>
-        );
-    }
+    if (!profile) notFound();
 
     const props = isValidObjectId(userId)
         ? {
