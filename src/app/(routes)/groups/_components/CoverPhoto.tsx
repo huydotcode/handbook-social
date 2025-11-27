@@ -64,7 +64,7 @@ const CoverPhoto: React.FC<Props> = ({ group }) => {
                 path,
             });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi xảy ra');
         }
     };

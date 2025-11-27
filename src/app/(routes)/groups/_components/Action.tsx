@@ -77,7 +77,7 @@ const Action: React.FC<Props> = ({ group }) => {
 
             router.push('/groups');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi xảy ra khi rời khỏi nhóm!');
         } finally {
             setIsPending(false);

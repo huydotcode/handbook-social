@@ -72,7 +72,7 @@ const ChatWithAI = () => {
 
             reset();
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi khi gửi tin nhắn, vui lòng thử lại sau');
         }
     }

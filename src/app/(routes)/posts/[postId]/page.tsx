@@ -19,7 +19,7 @@ const PostPage: React.FC<Props> = ({ params }) => {
             try {
                 return (await postService.getById(postId)) || null;
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 return null;
             }
         },

@@ -61,7 +61,7 @@ const Avatar: React.FC<Props> = ({ group }) => {
 
             toast.success('Thay đổi ảnh đại diện thành công');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi xảy ra');
         }
     };

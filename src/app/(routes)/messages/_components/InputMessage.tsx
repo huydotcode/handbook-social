@@ -100,7 +100,7 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
                 message: newMsg,
             });
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             toast.error('Không thể gửi tin nhắn!');
         } finally {
             setFocus('text');

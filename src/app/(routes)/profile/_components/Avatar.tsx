@@ -63,7 +63,7 @@ const Avatar: React.FC<Props> = ({ user }) => {
                 });
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi xảy ra');
         }
     };

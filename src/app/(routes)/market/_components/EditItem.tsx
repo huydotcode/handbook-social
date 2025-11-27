@@ -94,7 +94,7 @@ const EditItem: React.FC<Props> = ({ data: item }) => {
                 id: 'update-item',
             });
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             toast.error('Cập nhật mặt hàng thất bại', {
                 id: 'update-item',
             });

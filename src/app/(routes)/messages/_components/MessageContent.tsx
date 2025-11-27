@@ -124,7 +124,7 @@ const MessageContent = ({
                 message: msg,
             });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Đã có lỗi xảy ra!', { id: 'pin-message' });
         }
     };
