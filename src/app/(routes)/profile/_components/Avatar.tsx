@@ -13,7 +13,7 @@ import ProfileService from '@/lib/services/profile.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -23,7 +23,6 @@ interface Props {
 
 const Avatar: React.FC<Props> = ({ user }) => {
     const { user: currentUser, setUser } = useAuth();
-    const path = usePathname();
     const [hover, setHover] = useState(false);
     const canChangeAvatar = currentUser?.id === user._id;
     const [openModal, setOpenModal] = useState(false);
@@ -50,7 +49,6 @@ const Avatar: React.FC<Props> = ({ user }) => {
             await ProfileService.updateAvatar({
                 avatar: image.url,
                 userId: user._id,
-                path,
             });
 
             router.refresh();
