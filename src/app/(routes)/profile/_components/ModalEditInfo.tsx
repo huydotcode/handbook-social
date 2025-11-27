@@ -1,9 +1,10 @@
 import { Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
+import { useAuth } from '@/context';
 import { useLocations } from '@/lib/hooks/api';
 import ProfileService from '@/lib/services/profile.service';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -27,9 +28,10 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
     const locationInputId = useId();
     const dateOfBirthInputId = useId();
 
+    const { user } = useAuth();
     const { data: locations } = useLocations();
+    const router = useRouter();
 
-    const path = usePathname();
     const {
         register,
         handleSubmit,
@@ -44,17 +46,17 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
     });
 
     const changeInfo: SubmitHandler<FormInfo> = async (data) => {
-        if (isSubmitting) return;
+        if (isSubmitting || !user?.id) return;
 
         try {
             await ProfileService.updateInfo({
+                userId: user.id,
                 ...data,
-                profileId: profile._id,
-                path,
             });
 
-            toast.success('Cập nhật thành công!');
+            router.refresh();
 
+            toast.success('Cập nhật thông tin thành công!');
             handleClose();
         } catch (error) {
             toast.error('Đã có lỗi xảy ra khi cập nhật thông tin!');

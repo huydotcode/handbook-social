@@ -69,21 +69,20 @@ class ProfileServiceClass {
      * Update profile info
      */
     async updateInfo({
-        profileId,
+        userId,
         dateOfBirth,
         education,
         location,
         work,
     }: {
-        profileId: string;
+        userId: string;
         work: string;
         education: string;
         location: string;
         dateOfBirth: Date;
-        path: string;
     }): Promise<boolean> {
         try {
-            const data = await userService.updateProfile(profileId, {
+            const data = await userService.updateProfile(userId, {
                 work,
                 education,
                 location,
