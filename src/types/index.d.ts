@@ -66,12 +66,6 @@ interface IPostFormData {
     tags: string[];
 }
 
-interface GemimiChatMessage {
-    text: string;
-    isGemini: boolean;
-    createAt: Date;
-}
-
 interface ICloudinaryImage {
     asset_id: string;
     public_id: string;

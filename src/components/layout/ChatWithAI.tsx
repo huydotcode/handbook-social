@@ -1,22 +1,28 @@
 'use client';
-import { cn } from '@/lib/utils';
-import Image from 'next/image';
-import React, { useEffect, useRef, useState } from 'react';
-import { useForm } from 'react-hook-form';
+import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import toast from 'react-hot-toast';
-import { Avatar, Icons, Loading } from '@/components/ui';
+import { aiService } from '@/lib/api/services/ai.service';
+import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
-import { geminiService } from '@/lib/api/services/gemini.service';
+import Image from 'next/image';
+import { useEffect, useRef, useState } from 'react';
+import { useForm } from 'react-hook-form';
+import toast from 'react-hot-toast';
 import MessageSkeleton from '../skeleton/MessageSkeleton';
 
 interface IFormData {
     text: string;
 }
 
+interface AIChatMessage {
+    text: string;
+    isAI: boolean;
+    createAt: Date;
+}
+
 const ChatWithAI = () => {
     const [openChat, setOpenChat] = useState<boolean>(false);
-    const [messages, setMessages] = useState<GemimiChatMessage[]>([]);
+    const [messages, setMessages] = useState<AIChatMessage[]>([]);
     const bottomRef = useRef<HTMLDivElement>(null);
     const form = useForm<IFormData>();
     const {
@@ -42,7 +48,7 @@ const ChatWithAI = () => {
             setMessages((prev) => [
                 {
                     text,
-                    isGemini: false,
+                    isAI: false,
                     createAt: new Date(),
                 },
                 ...prev,
@@ -50,18 +56,15 @@ const ChatWithAI = () => {
 
             resetField('text');
 
-            const response = await geminiService.sendMessage({ message: text });
+            const response = await aiService.sendMessage({ message: text });
 
-            const textGemini =
-                response.result?.response?.candidates?.[0]?.content?.parts?.[0]
-                    ?.text ||
-                response.response ||
-                'Không có phản hồi từ Handbook AI';
+            const textAI =
+                response.response || 'Không có phản hồi từ Handbook AI';
 
             setMessages((prev) => [
                 {
-                    text: textGemini,
-                    isGemini: true,
+                    text: textAI,
+                    isAI: true,
                     createAt: new Date(),
                 },
                 ...prev,
@@ -89,7 +92,10 @@ const ChatWithAI = () => {
     return (
         <div className="fixed bottom-3 right-3 z-10 w-fit md:hidden">
             {!openChat && (
-                <Button onClick={() => setOpenChat((prev) => !prev)}>
+                <Button
+                    onClick={() => setOpenChat((prev) => !prev)}
+                    className="h-10 w-10"
+                >
                     <Image
                         src={'/assets/img/logo.png'}
                         alt="Handbook AI"
@@ -112,9 +118,7 @@ const ChatWithAI = () => {
                             <div className="flex h-14 items-center justify-between border-b p-2 dark:border-dark-secondary-2">
                                 <div className="flex items-center">
                                     <Avatar
-                                        imgSrc={
-                                            '/assets/img/Google_Gemini_logo.svg.png'
-                                        }
+                                        imgSrc={'/assets/img/logo.png'}
                                         alt="Handbook AI"
                                         className="h-10 w-10 object-contain"
                                     />
@@ -161,7 +165,7 @@ const ChatWithAI = () => {
                                         className={cn(
                                             'mb-2 flex flex-col items-start',
                                             {
-                                                'items-end': !msg.isGemini,
+                                                'items-end': !msg.isAI,
                                             }
                                         )}
                                     >
@@ -170,9 +174,9 @@ const ChatWithAI = () => {
                                                 'flex max-w-[70%] items-center rounded-lg px-2 py-1',
                                                 {
                                                     'bg-primary-1 dark:bg-dark-secondary-2':
-                                                        msg.isGemini,
+                                                        msg.isAI,
                                                     'bg-primary-2 text-white':
-                                                        !msg.isGemini,
+                                                        !msg.isAI,
                                                 }
                                             )}
                                         >
