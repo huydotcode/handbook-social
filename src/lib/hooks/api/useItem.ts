@@ -1,28 +1,28 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { itemService } from '@/lib/api/services/item.service';
-import type {
-    ItemQueryParams,
-    ItemSearchParams,
-} from '@/lib/api/services/item.service';
+import type { ItemSearchParams } from '@/lib/api/services/item.service';
+import { queryKey } from '@/lib/queryKey';
+import {
+    createGetNextPageParam,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 /**
  * Hook to get all items (infinite query)
  */
 export const useItems = (params?: { pageSize?: number }) => {
+    const pageSize = params?.pageSize || 10;
+
     return useInfiniteQuery({
-        queryKey: ['items', 'list', params],
+        queryKey: queryKey.items.list({ pageSize }),
         queryFn: ({ pageParam = 1 }) =>
             itemService.getAll({
                 page: pageParam,
-                page_size: params?.pageSize || 10,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -33,6 +33,8 @@ export const useSearchItems = (
     searchParams: ItemSearchParams,
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = searchParams.page_size || 10;
+
     return useInfiniteQuery({
         queryKey: queryKey.items.search(searchParams.q),
         queryFn: ({ pageParam = 1 }) =>
@@ -40,14 +42,10 @@ export const useSearchItems = (
                 ...searchParams,
                 page: pageParam,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && searchParams.q.trim().length > 0,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -59,20 +57,18 @@ export const useItemsBySeller = (
     params?: { pageSize?: number },
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = params?.pageSize || 10;
+
     return useInfiniteQuery({
         queryKey: queryKey.items.bySeller(sellerId),
         queryFn: ({ pageParam = 1 }) =>
             itemService.getBySeller(sellerId, {
                 page: pageParam,
-                page_size: params?.pageSize || 10,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!sellerId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };

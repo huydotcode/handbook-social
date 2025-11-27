@@ -1,6 +1,11 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { userService } from '@/lib/api/services/user.service';
 import { queryKey } from '@/lib/queryKey';
+import {
+    createGetNextPageParam,
+    defaultQueryOptions,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 export interface UserQueryParams {
     page?: number;
@@ -12,8 +17,9 @@ export interface UserQueryParams {
  */
 export const useUsers = (params?: UserQueryParams) => {
     return useQuery({
-        queryKey: ['users', 'list', params],
+        queryKey: queryKey.users.list(params),
         queryFn: () => userService.getAll(params),
+        ...defaultQueryOptions,
     });
 };
 
@@ -34,16 +40,9 @@ export const useUserFriends = (
                 ...params,
                 page: pageParam,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            // If lastPage has items equal to pageSize, there might be more pages
-            // Note: The API currently returns just an array, not a paginated response
-            // This is a simple heuristic - if we get a full page, assume there's more
-            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!userId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };

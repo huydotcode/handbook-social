@@ -1,6 +1,9 @@
 import { useMutation } from '@tanstack/react-query';
 import { uploadService } from '@/lib/api/services/upload.service';
-import toast from 'react-hot-toast';
+import {
+    handleApiError,
+    showSuccessToast,
+} from '../utils';
 
 /**
  * Hook to upload an image
@@ -15,10 +18,10 @@ export const useUploadImage = () => {
             onProgress?: (progress: number) => void;
         }) => uploadService.uploadImage(file, onProgress),
         onSuccess: () => {
-            toast.success('Upload ảnh thành công');
+            showSuccessToast('Upload ảnh thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể upload ảnh');
+        onError: (error) => {
+            handleApiError(error, 'Không thể upload ảnh');
         },
     });
 };
@@ -36,10 +39,10 @@ export const useUploadVideo = () => {
             onProgress?: (progress: number) => void;
         }) => uploadService.uploadVideo(file, onProgress),
         onSuccess: () => {
-            toast.success('Upload video thành công');
+            showSuccessToast('Upload video thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể upload video');
+        onError: (error) => {
+            handleApiError(error, 'Không thể upload video');
         },
     });
 };

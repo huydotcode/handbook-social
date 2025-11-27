@@ -1,6 +1,11 @@
 import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { messageService } from '@/lib/api/services/message.service';
 import { queryKey } from '@/lib/queryKey';
+import {
+    createGetNextPageParam,
+    defaultQueryOptions,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 export interface MessageQueryParams {
     page?: number;
@@ -15,21 +20,19 @@ export const useMessages = (
     params?: { pageSize?: number },
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = params?.pageSize || 20;
+
     return useInfiniteQuery({
         queryKey: queryKey.messages.conversationId(conversationId),
         queryFn: ({ pageParam = 1 }) =>
             messageService.getByConversation(conversationId, {
                 page: pageParam,
-                page_size: params?.pageSize || 20,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!conversationId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -41,21 +44,19 @@ export const usePinnedMessages = (
     params?: { pageSize?: number },
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = params?.pageSize || 20;
+
     return useInfiniteQuery({
         queryKey: queryKey.messages.pinnedMessages(conversationId),
         queryFn: ({ pageParam = 1 }) =>
             messageService.getPinned(conversationId, {
                 page: pageParam,
-                page_size: params?.pageSize || 20,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!conversationId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -68,11 +69,12 @@ export const useSearchMessages = (
     options?: { enabled?: boolean }
 ) => {
     return useQuery({
-        queryKey: ['messages', 'search', conversationId, keyword],
+        queryKey: queryKey.messages.search(conversationId, keyword),
         queryFn: () => messageService.search(conversationId, { q: keyword }),
         enabled:
             options?.enabled !== false &&
             !!conversationId &&
             keyword.trim().length > 0,
+        ...defaultQueryOptions,
     });
 };

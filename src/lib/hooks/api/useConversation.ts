@@ -13,7 +13,13 @@ import type {
     AddParticipantDto,
     PinMessageDto,
 } from '@/lib/api/services/conversation.service';
-import toast from 'react-hot-toast';
+import {
+    createGetNextPageParam,
+    handleApiError,
+    showSuccessToast,
+    defaultQueryOptions,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 /**
  * Hook to get all conversations (infinite query)
@@ -22,6 +28,8 @@ export const useConversations = (
     params?: ConversationQueryParams,
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = params?.page_size || 10;
+
     return useInfiniteQuery({
         queryKey: queryKey.conversations.userId(params?.user_id),
         queryFn: ({ pageParam = 1 }) =>
@@ -29,14 +37,10 @@ export const useConversations = (
                 ...params,
                 page: pageParam,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -51,6 +55,7 @@ export const useConversation = (
         queryKey: queryKey.conversations.id(conversationId),
         queryFn: () => conversationService.getById(conversationId),
         enabled: options?.enabled !== false && !!conversationId,
+        ...defaultQueryOptions,
     });
 };
 
@@ -70,10 +75,10 @@ export const useCreateConversation = () => {
             });
             // Update cache
             queryClient.setQueryData(queryKey.conversations.id(data._id), data);
-            toast.success('Tạo cuộc trò chuyện thành công');
+            showSuccessToast('Tạo cuộc trò chuyện thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể tạo cuộc trò chuyện');
+        onError: (error) => {
+            handleApiError(error, 'Không thể tạo cuộc trò chuyện');
         },
     });
 };
@@ -102,10 +107,10 @@ export const useUpdateConversation = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.conversations.list(undefined),
             });
-            toast.success('Cập nhật cuộc trò chuyện thành công');
+            showSuccessToast('Cập nhật cuộc trò chuyện thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể cập nhật cuộc trò chuyện');
+        onError: (error) => {
+            handleApiError(error, 'Không thể cập nhật cuộc trò chuyện');
         },
     });
 };
@@ -128,10 +133,10 @@ export const useDeleteConversation = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.conversations.list(undefined),
             });
-            toast.success('Xóa cuộc trò chuyện thành công');
+            showSuccessToast('Xóa cuộc trò chuyện thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể xóa cuộc trò chuyện');
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa cuộc trò chuyện');
         },
     });
 };
@@ -151,10 +156,10 @@ export const useAddParticipant = () => {
                 queryKey.conversations.id(variables.id),
                 data
             );
-            toast.success('Đã thêm thành viên');
+            showSuccessToast('Đã thêm thành viên');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể thêm thành viên');
+        onError: (error) => {
+            handleApiError(error, 'Không thể thêm thành viên');
         },
     });
 };
@@ -179,10 +184,10 @@ export const useRemoveParticipant = () => {
                 queryKey.conversations.id(variables.id),
                 data
             );
-            toast.success('Đã xóa thành viên');
+            showSuccessToast('Đã xóa thành viên');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể xóa thành viên');
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa thành viên');
         },
     });
 };
@@ -206,10 +211,10 @@ export const usePinMessage = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.messages.pinnedMessages(variables.id),
             });
-            toast.success('Đã ghim tin nhắn');
+            showSuccessToast('Đã ghim tin nhắn');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể ghim tin nhắn');
+        onError: (error) => {
+            handleApiError(error, 'Không thể ghim tin nhắn');
         },
     });
 };
@@ -233,10 +238,10 @@ export const useUnpinMessage = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.messages.pinnedMessages(variables.id),
             });
-            toast.success('Đã bỏ ghim tin nhắn');
+            showSuccessToast('Đã bỏ ghim tin nhắn');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể bỏ ghim tin nhắn');
+        onError: (error) => {
+            handleApiError(error, 'Không thể bỏ ghim tin nhắn');
         },
     });
 };

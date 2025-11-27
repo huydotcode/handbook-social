@@ -64,6 +64,8 @@ export const queryKey = {
         byId: (id: string) => ['comments', id],
         replies: (commentId: string) => ['comments', 'replies', commentId],
         count: (postId: string) => ['comments', 'count', postId],
+        // Alias for backward compatibility
+        id: (id: string) => ['comment', id],
     },
 
     // Messages
@@ -76,6 +78,12 @@ export const queryKey = {
         pinnedMessages: (conversationId: string | undefined) => [
             'pinnedMessages',
             conversationId,
+        ],
+        search: (conversationId: string, keyword: string) => [
+            'messages',
+            'search',
+            conversationId,
+            keyword,
         ],
     },
 
@@ -93,12 +101,15 @@ export const queryKey = {
     groups: {
         joined: (userId?: string) => ['groups', 'joined', userId],
         byId: (id: string) => ['groups', id],
+        // Alias for backward compatibility
+        id: (id: string) => ['group', id],
     },
 
     // Items
     items: {
         list: (params?: { page?: number; pageSize?: number }) => [
             'items',
+            'list',
             params,
         ],
         bySeller: (sellerId: string) => ['items', 'seller', sellerId],
@@ -129,6 +140,7 @@ export const queryKey = {
         all: () => ['categories', 'all'],
         byId: (id: string) => ['categories', id],
         bySlug: (slug: string) => ['categories', 'slug', slug],
+        search: (q: string) => ['categories', 'search', q],
     },
 
     // Locations

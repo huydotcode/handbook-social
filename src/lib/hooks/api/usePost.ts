@@ -11,7 +11,13 @@ import type {
     UpdatePostDto,
     PostQueryParams,
 } from '@/lib/api/services/post.service';
-import toast from 'react-hot-toast';
+import {
+    createGetNextPageParam,
+    handleApiError,
+    showSuccessToast,
+    defaultQueryOptions,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 /**
  * Hook to get a single post by ID
@@ -21,6 +27,7 @@ export const usePost = (postId: string, options?: { enabled?: boolean }) => {
         queryKey: queryKey.posts.id(postId),
         queryFn: () => postService.getById(postId),
         enabled: options?.enabled !== false && !!postId,
+        ...defaultQueryOptions,
     });
 };
 
@@ -31,6 +38,7 @@ export const usePosts = (params?: PostQueryParams) => {
     return useQuery({
         queryKey: queryKey.posts.all(),
         queryFn: () => postService.getAll(params),
+        ...defaultQueryOptions,
     });
 };
 
@@ -38,6 +46,8 @@ export const usePosts = (params?: PostQueryParams) => {
  * Hook to get new feed posts (infinite query)
  */
 export const useNewFeedPosts = (params?: { pageSize?: number }) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'new-feed',
@@ -48,16 +58,11 @@ export const useNewFeedPosts = (params?: { pageSize?: number }) => {
         queryFn: ({ pageParam = 1 }) =>
             postService.getNewFeed({
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            // Check if API returns pagination in meta
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -65,6 +70,8 @@ export const useNewFeedPosts = (params?: { pageSize?: number }) => {
  * Hook to get new feed group posts (infinite query)
  */
 export const useNewFeedGroupPosts = (params?: { pageSize?: number }) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'new-feed-group',
@@ -75,15 +82,11 @@ export const useNewFeedGroupPosts = (params?: { pageSize?: number }) => {
         queryFn: ({ pageParam = 1 }) =>
             postService.getNewFeedGroup({
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -91,6 +94,8 @@ export const useNewFeedGroupPosts = (params?: { pageSize?: number }) => {
  * Hook to get new feed friend posts (infinite query)
  */
 export const useNewFeedFriendPosts = (params?: { pageSize?: number }) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'new-feed-friend',
@@ -101,15 +106,11 @@ export const useNewFeedFriendPosts = (params?: { pageSize?: number }) => {
         queryFn: ({ pageParam = 1 }) =>
             postService.getNewFeedFriend({
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -120,15 +121,18 @@ export const useSavedPosts = (
     userId?: string,
     params?: { pageSize?: number }
 ) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.saved(userId),
         queryFn: ({ pageParam = 1 }) =>
             postService.getSaved({
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
         getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
+            // Heuristic: if we get a full page, assume there's more
+            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -145,6 +149,8 @@ export const useProfilePosts = (
     userId: string,
     params?: { pageSize?: number }
 ) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'profile',
@@ -155,10 +161,11 @@ export const useProfilePosts = (
         queryFn: ({ pageParam = 1 }) =>
             postService.getProfilePosts(userId, {
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
         getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
+            // Heuristic: if we get a full page, assume there's more
+            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -175,6 +182,8 @@ export const useGroupPosts = (
     groupId: string,
     params?: { pageSize?: number }
 ) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'group',
@@ -185,10 +194,11 @@ export const useGroupPosts = (
         queryFn: ({ pageParam = 1 }) =>
             postService.getGroupPosts(groupId, {
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
         getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
+            // Heuristic: if we get a full page, assume there's more
+            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -205,6 +215,8 @@ export const useManageGroupPosts = (
     groupId: string,
     params?: { pageSize?: number }
 ) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'manage-group-posts',
@@ -215,10 +227,11 @@ export const useManageGroupPosts = (
         queryFn: ({ pageParam = 1 }) =>
             postService.getManageGroupPosts(groupId, {
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
         getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
+            // Heuristic: if we get a full page, assume there's more
+            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -235,6 +248,8 @@ export const useManageGroupPostsPending = (
     groupId: string,
     params?: { pageSize?: number }
 ) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'manage-group-posts-pending',
@@ -245,10 +260,11 @@ export const useManageGroupPostsPending = (
         queryFn: ({ pageParam = 1 }) =>
             postService.getManageGroupPostsPending(groupId, {
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
         getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
+            // Heuristic: if we get a full page, assume there's more
+            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -266,6 +282,8 @@ export const usePostByMember = (
     userId: string,
     params?: { pageSize?: number }
 ) => {
+    const pageSize = params?.pageSize || 3;
+
     return useInfiniteQuery({
         queryKey: queryKey.posts.newFeed({
             type: 'group-member',
@@ -276,10 +294,11 @@ export const usePostByMember = (
         queryFn: ({ pageParam = 1 }) =>
             postService.getPostByMember(groupId, userId, {
                 page: pageParam,
-                page_size: params?.pageSize || 3,
+                page_size: pageSize,
             }),
         getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
+            // Heuristic: if we get a full page, assume there's more
+            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
                 return allPages.length + 1;
             }
             return undefined;
@@ -305,10 +324,10 @@ export const useCreatePost = () => {
             });
             // Update cache with new post
             queryClient.setQueryData(queryKey.posts.id(data._id), data);
-            toast.success('Đăng bài thành công');
+            showSuccessToast('Đăng bài thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể đăng bài');
+        onError: (error) => {
+            handleApiError(error, 'Không thể đăng bài');
         },
     });
 };
@@ -330,10 +349,10 @@ export const useUpdatePost = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.posts.newFeed({}),
             });
-            toast.success('Cập nhật bài viết thành công');
+            showSuccessToast('Cập nhật bài viết thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể cập nhật bài viết');
+        onError: (error) => {
+            handleApiError(error, 'Không thể cập nhật bài viết');
         },
     });
 };
@@ -354,10 +373,10 @@ export const useDeletePost = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.posts.newFeed({}),
             });
-            toast.success('Xóa bài viết thành công');
+            showSuccessToast('Xóa bài viết thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể xóa bài viết');
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa bài viết');
         },
     });
 };

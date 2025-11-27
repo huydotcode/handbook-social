@@ -12,7 +12,13 @@ import type {
     CategoryQueryParams,
     CategorySearchParams,
 } from '@/lib/api/services/category.service';
-import toast from 'react-hot-toast';
+import {
+    createGetNextPageParam,
+    handleApiError,
+    showSuccessToast,
+    defaultQueryOptions,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 /**
  * Hook to get all categories (paginated)
@@ -21,6 +27,7 @@ export const useCategories = (params?: CategoryQueryParams) => {
     return useQuery({
         queryKey: queryKey.categories.list(),
         queryFn: () => categoryService.getAll(params),
+        ...defaultQueryOptions,
     });
 };
 
@@ -31,6 +38,7 @@ export const useAllCategories = () => {
     return useQuery({
         queryKey: queryKey.categories.all(),
         queryFn: () => categoryService.getAllCategories(),
+        ...defaultQueryOptions,
     });
 };
 
@@ -41,21 +49,19 @@ export const useSearchCategories = (
     searchParams: CategorySearchParams,
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = searchParams.page_size || 10;
+
     return useInfiniteQuery({
-        queryKey: ['categories', 'search', searchParams.q],
+        queryKey: queryKey.categories.search(searchParams.q),
         queryFn: ({ pageParam = 1 }) =>
             categoryService.search({
                 ...searchParams,
                 page: pageParam,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && searchParams.q.trim().length > 0,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -70,6 +76,7 @@ export const useCategoryBySlug = (
         queryKey: queryKey.categories.bySlug(slug),
         queryFn: () => categoryService.getBySlug(slug),
         enabled: options?.enabled !== false && !!slug,
+        ...defaultQueryOptions,
     });
 };
 
@@ -84,6 +91,7 @@ export const useCategory = (
         queryKey: queryKey.categories.byId(categoryId),
         queryFn: () => categoryService.getById(categoryId),
         enabled: options?.enabled !== false && !!categoryId,
+        ...defaultQueryOptions,
     });
 };
 
@@ -103,10 +111,10 @@ export const useCreateCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.categories.all(),
             });
-            toast.success('Tạo danh mục thành công');
+            showSuccessToast('Tạo danh mục thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể tạo danh mục');
+        onError: (error) => {
+            handleApiError(error, 'Không thể tạo danh mục');
         },
     });
 };
@@ -133,10 +141,10 @@ export const useUpdateCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.categories.all(),
             });
-            toast.success('Cập nhật danh mục thành công');
+            showSuccessToast('Cập nhật danh mục thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể cập nhật danh mục');
+        onError: (error) => {
+            handleApiError(error, 'Không thể cập nhật danh mục');
         },
     });
 };
@@ -161,10 +169,10 @@ export const useDeleteCategory = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.categories.all(),
             });
-            toast.success('Xóa danh mục thành công');
+            showSuccessToast('Xóa danh mục thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể xóa danh mục');
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa danh mục');
         },
     });
 };

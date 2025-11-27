@@ -433,13 +433,13 @@ export const useQueryInvalidation = () => {
 
     const invalidateLocations = useCallback(async () => {
         await queryClient.invalidateQueries({
-            queryKey: queryKey.locations,
+            queryKey: queryKey.locations.list(),
         });
     }, [queryClient]);
 
     const invalidateCategories = useCallback(async () => {
         await queryClient.invalidateQueries({
-            queryKey: queryKey.categories,
+            queryKey: queryKey.categories.list(),
         });
     }, [queryClient]);
 

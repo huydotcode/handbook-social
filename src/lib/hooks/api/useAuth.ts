@@ -8,8 +8,11 @@ import type {
     LoginResponse,
 } from '@/lib/api/services/auth.service';
 import { useAuth } from '@/context/AuthContext';
-import toast from 'react-hot-toast';
-import queryKey from '@/lib/queryKey';
+import { queryKey } from '@/lib/queryKey';
+import {
+    handleApiError,
+    showSuccessToast,
+} from '../utils';
 
 /**
  * Hook for user login
@@ -64,10 +67,10 @@ export const useLogin = () => {
 
             // Invalidate auth query
             queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
-            toast.success('Đăng nhập thành công');
+            showSuccessToast('Đăng nhập thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Đăng nhập thất bại');
+        onError: (error) => {
+            handleApiError(error, 'Đăng nhập thất bại');
         },
     });
 };
@@ -87,10 +90,10 @@ export const useLogout = () => {
         onSuccess: () => {
             // Clear all queries
             queryClient.clear();
-            toast.success('Đăng xuất thành công');
+            showSuccessToast('Đăng xuất thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Đăng xuất thất bại');
+        onError: (error) => {
+            handleApiError(error, 'Đăng xuất thất bại');
         },
     });
 };
@@ -102,10 +105,10 @@ export const useSendOTP = () => {
     return useMutation({
         mutationFn: (data: SendOTPDto) => authService.sendOTP(data),
         onSuccess: () => {
-            toast.success('OTP đã được gửi đến email của bạn');
+            showSuccessToast('OTP đã được gửi đến email của bạn');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể gửi OTP');
+        onError: (error) => {
+            handleApiError(error, 'Không thể gửi OTP');
         },
     });
 };
@@ -117,10 +120,10 @@ export const useVerifyOTP = () => {
     return useMutation({
         mutationFn: (data: VerifyOTPDto) => authService.verifyOTP(data),
         onSuccess: () => {
-            toast.success('Xác thực OTP thành công');
+            showSuccessToast('Xác thực OTP thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'OTP không hợp lệ');
+        onError: (error) => {
+            handleApiError(error, 'OTP không hợp lệ');
         },
     });
 };
@@ -132,10 +135,10 @@ export const useResetPassword = () => {
     return useMutation({
         mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data),
         onSuccess: () => {
-            toast.success('Đặt lại mật khẩu thành công');
+            showSuccessToast('Đặt lại mật khẩu thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể đặt lại mật khẩu');
+        onError: (error) => {
+            handleApiError(error, 'Không thể đặt lại mật khẩu');
         },
     });
 };

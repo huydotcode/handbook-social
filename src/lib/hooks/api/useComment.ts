@@ -10,7 +10,13 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
+import {
+    createGetNextPageParam,
+    handleApiError,
+    showSuccessToast,
+    defaultQueryOptions,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 /**
  * Hook to get a comment by ID
@@ -20,9 +26,10 @@ export const useComment = (
     options?: { enabled?: boolean }
 ) => {
     return useQuery({
-        queryKey: ['comment', commentId],
+        queryKey: queryKey.comments.id(commentId),
         queryFn: () => commentService.getById(commentId),
         enabled: options?.enabled !== false && !!commentId,
+        ...defaultQueryOptions,
     });
 };
 
@@ -43,17 +50,10 @@ export const useCommentsByPost = (
                 page: pageParam,
                 page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            // If lastPage has items equal to pageSize, there might be more pages
-            // Note: The API returns paginated response but apiClient extracts only data array
-            // This is a simple heuristic - if we get a full page, assume there's more
-            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!postId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -69,6 +69,7 @@ export const useCommentCount = (
         queryFn: () => commentService.getCountByPost(postId),
         enabled: options?.enabled !== false && !!postId,
         select: (data) => data.count,
+        ...defaultQueryOptions,
     });
 };
 
@@ -89,17 +90,10 @@ export const useReplyComments = (
                 page: pageParam,
                 page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            // If lastPage has items equal to pageSize, there might be more pages
-            // Note: The API returns paginated response but apiClient extracts only data array
-            // This is a simple heuristic - if we get a full page, assume there's more
-            if (Array.isArray(lastPage) && lastPage.length === pageSize) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!commentId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -112,20 +106,16 @@ export const useCreateComment = () => {
     return useMutation({
         mutationFn: (data: CreateCommentDto) => commentService.create(data),
         onSuccess: (data, variables) => {
-            // Invalidate comments list
-            queryClient.invalidateQueries({
-                queryKey: queryKey.posts.comments(variables.post),
-            });
-            // Invalidate comment count
+            // Invalidate comments list and count
             queryClient.invalidateQueries({
                 queryKey: queryKey.posts.comments(variables.post),
             });
             // Update cache
-            queryClient.setQueryData(['comment', data._id], data);
-            toast.success('Bình luận thành công');
+            queryClient.setQueryData(queryKey.comments.id(data._id), data);
+            showSuccessToast('Bình luận thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể bình luận');
+        onError: (error) => {
+            handleApiError(error, 'Không thể bình luận');
         },
     });
 };
@@ -141,11 +131,11 @@ export const useUpdateComment = () => {
             commentService.update(id, data),
         onSuccess: (data, variables) => {
             // Update cache
-            queryClient.setQueryData(['comment', variables.id], data);
-            toast.success('Cập nhật bình luận thành công');
+            queryClient.setQueryData(queryKey.comments.id(variables.id), data);
+            showSuccessToast('Cập nhật bình luận thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể cập nhật bình luận');
+        onError: (error) => {
+            handleApiError(error, 'Không thể cập nhật bình luận');
         },
     });
 };
@@ -160,15 +150,17 @@ export const useDeleteComment = () => {
         mutationFn: (commentId: string) => commentService.delete(commentId),
         onSuccess: (_, commentId) => {
             // Remove from cache
-            queryClient.removeQueries({ queryKey: ['comment', commentId] });
+            queryClient.removeQueries({
+                queryKey: queryKey.comments.id(commentId),
+            });
             // Invalidate comments lists
             queryClient.invalidateQueries({
                 queryKey: queryKey.posts.comments(undefined),
             });
-            toast.success('Xóa bình luận thành công');
+            showSuccessToast('Xóa bình luận thành công');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể xóa bình luận');
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa bình luận');
         },
     });
 };
@@ -183,11 +175,11 @@ export const useAddCommentLove = () => {
         mutationFn: (commentId: string) => commentService.addLove(commentId),
         onSuccess: (data, commentId) => {
             // Update cache
-            queryClient.setQueryData(['comment', commentId], data);
-            toast.success('Đã thích bình luận');
+            queryClient.setQueryData(queryKey.comments.id(commentId), data);
+            showSuccessToast('Đã thích bình luận');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể thích bình luận');
+        onError: (error) => {
+            handleApiError(error, 'Không thể thích bình luận');
         },
     });
 };
@@ -202,11 +194,11 @@ export const useRemoveCommentLove = () => {
         mutationFn: (commentId: string) => commentService.removeLove(commentId),
         onSuccess: (data, commentId) => {
             // Update cache
-            queryClient.setQueryData(['comment', commentId], data);
-            toast.success('Đã bỏ thích bình luận');
+            queryClient.setQueryData(queryKey.comments.id(commentId), data);
+            showSuccessToast('Đã bỏ thích bình luận');
         },
-        onError: (error: any) => {
-            toast.error(error.message || 'Không thể bỏ thích bình luận');
+        onError: (error) => {
+            handleApiError(error, 'Không thể bỏ thích bình luận');
         },
     });
 };

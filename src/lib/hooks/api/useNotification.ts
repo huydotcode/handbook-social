@@ -1,6 +1,10 @@
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { notificationService } from '@/lib/api/services/notification.service';
 import { queryKey } from '@/lib/queryKey';
+import {
+    createGetNextPageParam,
+    defaultInfiniteQueryOptions,
+} from '../utils';
 
 export interface NotificationQueryParams {
     page?: number;
@@ -15,21 +19,19 @@ export const useNotificationsByReceiver = (
     params?: { pageSize?: number },
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = params?.pageSize || 10;
+
     return useInfiniteQuery({
         queryKey: queryKey.user.notifications(receiverId),
         queryFn: ({ pageParam = 1 }) =>
             notificationService.getByReceiver(receiverId, {
                 page: pageParam,
-                page_size: params?.pageSize || 10,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!receiverId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
 
@@ -41,20 +43,18 @@ export const useRequestsBySender = (
     params?: { pageSize?: number },
     options?: { enabled?: boolean }
 ) => {
+    const pageSize = params?.pageSize || 10;
+
     return useInfiniteQuery({
         queryKey: queryKey.user.requests(senderId),
         queryFn: ({ pageParam = 1 }) =>
             notificationService.getBySender(senderId, {
                 page: pageParam,
-                page_size: params?.pageSize || 10,
+                page_size: pageSize,
             }),
-        getNextPageParam: (lastPage, allPages) => {
-            if (lastPage.meta?.hasNext) {
-                return allPages.length + 1;
-            }
-            return undefined;
-        },
+        getNextPageParam: createGetNextPageParam(pageSize),
         enabled: options?.enabled !== false && !!senderId,
         initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
 };
