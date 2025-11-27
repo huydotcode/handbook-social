@@ -1,9 +1,8 @@
 import { Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import queryKey from '@/lib/queryKey';
+import { useLocations } from '@/lib/hooks/api';
 import ProfileService from '@/lib/services/profile.service';
-import { useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import React, { useId } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -28,13 +27,7 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
     const locationInputId = useId();
     const dateOfBirthInputId = useId();
 
-    const { data: locations } = useQuery<ILocation[]>({
-        queryKey: queryKey.locations,
-        queryFn: async () => {
-            const locations = await ProfileService.getLocations();
-            return locations;
-        },
-    });
+    const { data: locations } = useLocations();
 
     const path = usePathname();
     const {
