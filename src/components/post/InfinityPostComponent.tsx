@@ -60,6 +60,7 @@ interface Props {
     showCreatePost?: boolean;
     enabled?: boolean;
     search?: string;
+    showEmptyState?: boolean;
 }
 
 const PAGE_SIZE = 3;
@@ -166,6 +167,7 @@ const InfinityPostComponent: React.FC<Props> = ({
     type = 'new-feed',
     title,
     showCreatePost = true,
+    showEmptyState = true,
 }) => {
     const { user } = useAuth();
     const {
@@ -335,6 +337,15 @@ const InfinityPostComponent: React.FC<Props> = ({
                     />
                 );
             })}
+
+            {/* Empty state */}
+            {showEmptyState && data && data.length === 0 && (
+                <div className="flex justify-center py-2">
+                    <p className="dark:text-dark-primary-1">
+                        Không có bài viết nào
+                    </p>
+                </div>
+            )}
 
             {/* Infinite scroll trigger */}
             <div
