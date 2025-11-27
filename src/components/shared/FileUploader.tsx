@@ -8,6 +8,8 @@ import React, {
     DragEventHandler,
     FormEventHandler,
     useCallback,
+    useEffect,
+    useId,
     useRef,
     useState,
 } from 'react';
@@ -31,7 +33,7 @@ export const FileUploaderWrapper = ({
     const [files, setFiles] = useState<File[]>([]);
     const [isDragging, setIsDragging] = useState<boolean>(false);
     const containerRef = useRef<HTMLDivElement>(null);
-
+    const fileInputId = useId();
     // Xử lý chung cho cả drop và input file
     const handleNewFiles = useCallback(
         (newFiles: File[]) => {
@@ -95,6 +97,7 @@ export const FileUploaderWrapper = ({
             <DragOverlay
                 isVisible={isDragging}
                 onFileSelect={handleFileSelect}
+                fileInputId={fileInputId}
             />
 
             {/* Children content */}
@@ -107,13 +110,15 @@ export const FileUploaderWrapper = ({
 const DragOverlay = ({
     isVisible,
     onFileSelect,
+    fileInputId,
 }: {
     isVisible: boolean;
     onFileSelect: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    fileInputId: string;
 }) => {
     return (
         <label
-            htmlFor="file"
+            htmlFor={fileInputId}
             className={cn(
                 'absolute inset-0 z-50 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-3xl border-2 border-dashed border-gray-700 bg-secondary-2 p-8 transition-opacity dark:bg-dark-secondary-1',
                 isVisible ? 'opacity-100' : 'pointer-events-none opacity-0'
@@ -128,7 +133,7 @@ const DragOverlay = ({
                 Tải lên
             </span>
             <input
-                id="file"
+                id={fileInputId}
                 type="file"
                 className="hidden"
                 onChange={onFileSelect}
@@ -144,6 +149,7 @@ const FileUploader: React.FC<Props> = ({
     single = false,
     onlyImage = false, // Chỉ cho phép hình ảnh
 }) => {
+    const fileInputId = useId();
     const [files, setFiles] = useState<File[]>([]);
     const acceptType = onlyImage ? 'image/*' : 'video/*, image/*';
 
@@ -192,6 +198,10 @@ const FileUploader: React.FC<Props> = ({
         }
     };
 
+    useEffect(() => {
+        console.log('single', !single);
+    }, [single]);
+
     return (
         <div
             className={cn(
@@ -204,7 +214,7 @@ const FileUploader: React.FC<Props> = ({
             onDragLeave={preventDefault}
         >
             <input
-                id="file"
+                id={fileInputId}
                 type="file"
                 className="hidden"
                 onChange={handleFileSelect}
@@ -215,7 +225,7 @@ const FileUploader: React.FC<Props> = ({
             {files.length == 0 ? (
                 <>
                     <label
-                        htmlFor="file"
+                        htmlFor={fileInputId}
                         className="w-full cursor-pointer rounded-3xl border-2 border-dashed border-secondary-2 bg-secondary-1 p-8 dark:bg-dark-secondary-1"
                     >
                         <div className="flex flex-col items-center justify-center gap-1">
@@ -275,20 +285,22 @@ const FileUploader: React.FC<Props> = ({
                         </div>
                     )}
 
-                    <div className="rounded-3xl border-2 border-dashed border-secondary-2 bg-secondary-1 px-8 py-4 dark:border-dark-secondary-2 dark:bg-dark-secondary-1">
-                        <label
-                            htmlFor="file"
-                            className="cursor-pointer rounded-3xl"
-                        >
-                            <div className="flex flex-col items-center justify-center gap-1 text-sm">
-                                <p>Kéo & thả</p>
-                                <p>hoặc</p>
-                                <span className="rounded-lg bg-secondary-2 px-4 py-1 text-sm transition duration-300 hover:bg-primary-1 dark:bg-dark-secondary-2 dark:hover:bg-dark-primary-1">
-                                    Tải lên
-                                </span>
-                            </div>
-                        </label>
-                    </div>
+                    {single && files.length == 0 ? (
+                        <div className="rounded-3xl border-2 border-dashed border-secondary-2 bg-secondary-1 px-8 py-4 dark:border-dark-secondary-2 dark:bg-dark-secondary-1">
+                            <label
+                                htmlFor={fileInputId}
+                                className="cursor-pointer rounded-3xl"
+                            >
+                                <div className="flex flex-col items-center justify-center gap-1 text-sm">
+                                    <p>Kéo & thả</p>
+                                    <p>hoặc</p>
+                                    <span className="rounded-lg bg-secondary-2 px-4 py-1 text-sm transition duration-300 hover:bg-primary-1 dark:bg-dark-secondary-2 dark:hover:bg-dark-primary-1">
+                                        Tải lên
+                                    </span>
+                                </div>
+                            </label>
+                        </div>
+                    ) : null}
                 </>
             )}
         </div>
