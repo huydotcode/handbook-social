@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/context';
 import ProfileService from '@/lib/services/profile.service';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -20,12 +20,17 @@ type FormBio = {
 
 const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
     const { user } = useAuth();
+    const router = useRouter();
     const path = usePathname();
     const {
         register: registerBio,
         handleSubmit: handleSubmitBio,
         formState: { errors, isSubmitting },
-    } = useForm<FormBio>();
+    } = useForm<FormBio>({
+        defaultValues: {
+            bio: bio,
+        },
+    });
 
     const changeBio: SubmitHandler<FormBio> = async (data) => {
         const newBio = data.bio;
@@ -42,11 +47,12 @@ const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
                 userId: user.id,
             });
 
+            router.refresh();
+
             toast.success('Thay đổi tiểu sử thành công!');
+            handleClose();
         } catch (error) {
             toast.error('Không thể thay đổi tiểu sử! Đã có lỗi xảy ra');
-        } finally {
-            handleClose();
         }
     };
 
