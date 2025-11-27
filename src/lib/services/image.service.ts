@@ -1,28 +1,30 @@
+import { imageService } from '../api/services/image.service';
+
 class ImageServiceClass {
     /**
      * Get image URL by image ID
-     * TODO: Server API needs GET /images/:id endpoint
      */
     async getUrlByImageId(imageId: string): Promise<string | null> {
-        // TODO: Implement getUrlByImageId endpoint in server-api
-        // GET /images/:id
-        console.warn('getUrlByImageId not yet implemented via REST API');
-        throw new Error(
-            'Get image URL endpoint not yet implemented in REST API'
-        );
+        try {
+            const response = await imageService.getById(imageId);
+            return response.url || null;
+        } catch (error) {
+            console.error('Error getting image URL by ID:', error);
+            return null;
+        }
     }
 
     /**
      * Remove an image
-     * TODO: Server API needs DELETE /images endpoint
      */
     async removeImage(imageUrl: string): Promise<boolean> {
-        // TODO: Implement removeImage endpoint in server-api
-        // DELETE /images?url=:imageUrl
-        console.warn('removeImage not yet implemented via REST API');
-        throw new Error(
-            'Remove image endpoint not yet implemented in REST API'
-        );
+        try {
+            const response = await imageService.deleteByUrl(imageUrl);
+            return response.success || false;
+        } catch (error) {
+            console.error('Error removing image:', error);
+            return false;
+        }
     }
 }
 

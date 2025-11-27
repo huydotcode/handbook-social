@@ -1,52 +1,72 @@
+import { revalidatePath } from 'next/cache';
 import { locationService as apiLocationService } from '../api/services/location.service';
+import { userService } from '../api/services/user.service';
+
+export interface IGetUserProfileResponse {
+    _id: string;
+    bio: string;
+    user: IUser;
+    coverPhoto: string;
+    work: string;
+    education: string;
+    location: string;
+    dateOfBirth: Date;
+    createdAt: Date;
+    updatedAt: Date;
+}
 
 class ProfileServiceClass {
     /**
      * Get profile by user ID
-     * TODO: Server API needs GET /users/:id/profile endpoint
      */
-    async getByUserId(userId: string): Promise<IProfile | null> {
-        // TODO: Implement getByUserId endpoint in server-api
-        // GET /users/:id/profile
-        console.warn('getByUserId profile not yet implemented via REST API');
-        return null;
+    async getByUserId(userId: string): Promise<IGetUserProfileResponse | null> {
+        try {
+            const data = await userService.getProfile(userId);
+            if (!data) return null;
+            return data;
+        } catch (error) {
+            console.error('Error getting profile by user ID:', error);
+            return null;
+        }
     }
 
     /**
      * Update bio
-     * TODO: Server API needs PUT /users/:id/bio endpoint
      */
     async updateBio({
         newBio,
-        path,
         userId,
     }: {
         userId: string;
-        newBio: any;
+        newBio: string;
         path: string;
     }): Promise<boolean> {
-        // TODO: Implement updateBio endpoint in server-api
-        // PUT /users/:id/bio
-        console.warn('updateBio not yet implemented via REST API');
-        throw new Error('Update bio endpoint not yet implemented in REST API');
+        try {
+            const response = await userService.updateBio(userId, {
+                bio: newBio,
+            });
+            return response.success;
+        } catch (error) {
+            console.error('Error updating bio:', error);
+            throw error;
+        }
     }
 
     /**
      * Get profile pictures
-     * TODO: Server API needs GET /users/:id/pictures endpoint
      */
     async getProfilePicturesAction(userId: string): Promise<IMedia[]> {
-        // TODO: Implement getProfilePictures endpoint in server-api
-        // GET /users/:id/pictures
-        console.warn(
-            'getProfilePicturesAction not yet implemented via REST API'
-        );
-        return [];
+        try {
+            const data = await userService.getProfilePictures(userId);
+            return data;
+        } catch (error) {
+            console.error('Error getting profile pictures:', error);
+            return [];
+        }
     }
 
     /**
      * Update profile info
-     * TODO: Server API needs PUT /users/:id/profile endpoint
      */
     async updateInfo({
         profileId,
@@ -54,7 +74,6 @@ class ProfileServiceClass {
         education,
         location,
         work,
-        path,
     }: {
         profileId: string;
         work: string;
@@ -63,12 +82,18 @@ class ProfileServiceClass {
         dateOfBirth: Date;
         path: string;
     }): Promise<boolean> {
-        // TODO: Implement updateInfo endpoint in server-api
-        // PUT /users/:id/profile
-        console.warn('updateInfo not yet implemented via REST API');
-        throw new Error(
-            'Update profile info endpoint not yet implemented in REST API'
-        );
+        try {
+            const data = await userService.updateProfile(profileId, {
+                work,
+                education,
+                location,
+                dateOfBirth,
+            });
+            return !!data;
+        } catch (error) {
+            console.error('Error updating profile info:', error);
+            throw error;
+        }
     }
 
     /**
@@ -76,7 +101,8 @@ class ProfileServiceClass {
      */
     async getLocations(): Promise<ILocation[]> {
         try {
-            return await apiLocationService.getAll();
+            const data = await apiLocationService.getAll();
+            return data;
         } catch (error) {
             console.error('Error getting locations:', error);
             return [];
@@ -85,28 +111,26 @@ class ProfileServiceClass {
 
     /**
      * Update avatar
-     * TODO: Server API needs PUT /users/:id/avatar endpoint
      */
     async updateAvatar({
         userId,
         avatar,
-        path,
     }: {
         userId: string;
         avatar: string;
         path: string;
     }): Promise<boolean> {
-        // TODO: Implement updateAvatar endpoint in server-api
-        // PUT /users/:id/avatar
-        console.warn('updateAvatar not yet implemented via REST API');
-        throw new Error(
-            'Update avatar endpoint not yet implemented in REST API'
-        );
+        try {
+            const data = await userService.updateAvatar(userId, { avatar });
+            return data.success;
+        } catch (error) {
+            console.error('Error updating avatar:', error);
+            throw error;
+        }
     }
 
     /**
      * Update cover photo
-     * TODO: Server API needs PUT /users/:id/cover-photo endpoint
      */
     async updateCoverPhoto({
         userId,
@@ -117,12 +141,16 @@ class ProfileServiceClass {
         coverPhoto: string;
         path: string;
     }): Promise<boolean> {
-        // TODO: Implement updateCoverPhoto endpoint in server-api
-        // PUT /users/:id/cover-photo
-        console.warn('updateCoverPhoto not yet implemented via REST API');
-        throw new Error(
-            'Update cover photo endpoint not yet implemented in REST API'
-        );
+        try {
+            const data = await userService.updateCoverPhoto(userId, {
+                coverPhoto,
+            });
+
+            return data.success;
+        } catch (error) {
+            console.error('Error updating cover photo:', error);
+            throw error;
+        }
     }
 }
 

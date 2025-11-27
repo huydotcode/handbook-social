@@ -17,6 +17,11 @@ export const API_ENDPOINTS = {
     USERS: {
         LIST: '/users',
         FRIENDS: (userId: string) => `/users/${userId}/friends`,
+        PROFILE: (userId: string) => `/users/${userId}/profile`,
+        BIO: (userId: string) => `/users/${userId}/bio`,
+        PICTURES: (userId: string) => `/users/${userId}/pictures`,
+        AVATAR: (userId: string) => `/users/${userId}/avatar`,
+        COVER_PHOTO: (userId: string) => `/users/${userId}/cover-photo`,
     },
 
     // Posts endpoints
@@ -101,8 +106,14 @@ export const API_ENDPOINTS = {
 
     // Upload endpoints
     UPLOAD: {
-        IMAGE: '/upload/image',
-        VIDEO: '/upload/video',
+        IMAGE: '/uploads/image',
+        VIDEO: '/uploads/video',
+    },
+
+    // Image endpoints
+    IMAGES: {
+        BY_ID: (id: string) => `/images/${id}`,
+        DELETE: '/images',
     },
 
     // Location endpoints
