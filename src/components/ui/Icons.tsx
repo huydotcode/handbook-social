@@ -225,7 +225,7 @@ const Icons = {
         return (
             <Image
                 src={'/assets/img/Google_Gemini_logo.svg.png'}
-                alt="Gemini"
+                alt="Handbook AI"
                 width={64}
                 height={64}
             />

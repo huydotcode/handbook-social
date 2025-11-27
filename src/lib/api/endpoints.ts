@@ -136,6 +136,6 @@ export const API_ENDPOINTS = {
 
     // AI endpoints
     AI: {
-        GEMINI_CHAT: '/gemini/chat',
+        HANDBOOK_AI_CHAT: '/handbook-ai/chat',
     },
 };

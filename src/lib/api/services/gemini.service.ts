@@ -13,7 +13,7 @@ export interface GeminiChatResponse {
 export const geminiService = {
     sendMessage: (data: GeminiChatRequest) => {
         return apiClient.post<GeminiChatResponse>(
-            API_ENDPOINTS.AI.GEMINI_CHAT,
+            API_ENDPOINTS.AI.HANDBOOK_AI_CHAT,
             data
         );
     },

@@ -1,6 +1,6 @@
 'use client';
 import { Navbar } from '@/components/layout';
-import ChatWithGemini from '@/components/layout/ChatWithGemini';
+import ChatWithAI from '@/components/layout/ChatWithAI';
 import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
 import React from 'react';
 
@@ -16,7 +16,7 @@ const HomeLayout: React.FC<Props> = ({ children }) => {
                 <main className={'bg-primary-1 dark:bg-dark-primary-1'}>
                     {children}
                 </main>
-                <ChatWithGemini />
+                <ChatWithAI />
             </div>
         </ProtectedRoute>
     );

@@ -14,7 +14,7 @@ interface IFormData {
     text: string;
 }
 
-const ChatWithGemini = () => {
+const ChatWithAI = () => {
     const [openChat, setOpenChat] = useState<boolean>(false);
     const [messages, setMessages] = useState<GemimiChatMessage[]>([]);
     const bottomRef = useRef<HTMLDivElement>(null);
@@ -56,7 +56,7 @@ const ChatWithGemini = () => {
                 response.result?.response?.candidates?.[0]?.content?.parts?.[0]
                     ?.text ||
                 response.response ||
-                'Không có phản hồi từ Gemini';
+                'Không có phản hồi từ Handbook AI';
 
             setMessages((prev) => [
                 {
@@ -89,15 +89,11 @@ const ChatWithGemini = () => {
     return (
         <div className="fixed bottom-3 right-3 z-10 w-fit md:hidden">
             {!openChat && (
-                <Button
-                    onClick={() => setOpenChat((prev) => !prev)}
-                    className="flex items-center justify-center rounded-xl bg-white px-4 shadow-lg"
-                >
+                <Button onClick={() => setOpenChat((prev) => !prev)}>
                     <Image
-                        src={'/assets/img/Google_Gemini_logo.svg.png'}
-                        alt="Gemini"
-                        width={64}
-                        height={64}
+                        src={'/assets/img/logo.png'}
+                        alt="Handbook AI"
+                        fill
                     />
                 </Button>
             )}
@@ -119,13 +115,13 @@ const ChatWithGemini = () => {
                                         imgSrc={
                                             '/assets/img/Google_Gemini_logo.svg.png'
                                         }
-                                        alt="Gemini"
+                                        alt="Handbook AI"
                                         className="h-10 w-10 object-contain"
                                     />
 
                                     <div className="flex flex-col">
                                         <h3 className="ml-2 text-sm">
-                                            Trò chuyện cùng Gemini
+                                            Trò chuyện cùng Handbook AI
                                         </h3>
                                     </div>
                                 </div>
@@ -235,4 +231,4 @@ const ChatWithGemini = () => {
     );
 };
 
-export default ChatWithGemini;
+export default ChatWithAI;
