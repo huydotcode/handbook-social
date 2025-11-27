@@ -1,4 +1,3 @@
-import { revalidatePath } from 'next/cache';
 import { locationService as apiLocationService } from '../api/services/location.service';
 import { userService } from '../api/services/user.service';
 
@@ -39,7 +38,6 @@ class ProfileServiceClass {
     }: {
         userId: string;
         newBio: string;
-        path: string;
     }): Promise<boolean> {
         try {
             const response = await userService.updateBio(userId, {
@@ -117,7 +115,6 @@ class ProfileServiceClass {
     }: {
         userId: string;
         avatar: string;
-        path: string;
     }): Promise<boolean> {
         try {
             const data = await userService.updateAvatar(userId, { avatar });
@@ -134,11 +131,9 @@ class ProfileServiceClass {
     async updateCoverPhoto({
         userId,
         coverPhoto,
-        path,
     }: {
         userId: string;
         coverPhoto: string;
-        path: string;
     }): Promise<boolean> {
         try {
             const data = await userService.updateCoverPhoto(userId, {
