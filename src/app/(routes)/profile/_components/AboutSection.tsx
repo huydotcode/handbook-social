@@ -44,21 +44,37 @@ const AboutSection: React.FC<Props> = ({ profile }) => {
         <section
             className={cn(
                 'relative rounded-xl bg-secondary-1 px-4 py-2 shadow-md dark:bg-dark-secondary-1',
-                isAboutPage && 'flex'
+                isAboutPage && 'flex md:flex-col'
             )}
         >
-            <article className={cn(isAboutPage && 'w-[30%] border-r pr-4')}>
-                <h5 className="text-xl font-bold">Giới thiệu</h5>
+            <article
+                className={cn(
+                    isAboutPage &&
+                        'w-[30%] border-r pr-4 md:w-full md:border-r-0 md:pr-0'
+                )}
+            >
+                <div className="flex items-center justify-between">
+                    <h5 className="text-xl font-bold">Giới thiệu</h5>
+                    {canEdit && bio.length > 0 && (
+                        <Button
+                            variant="secondary"
+                            size="sm"
+                            onClick={() => toggleModal('bio')}
+                        >
+                            <Icons.Edit className="h-4 w-4" />
+                        </Button>
+                    )}
+                </div>
                 <p className="text-sm">{bio}</p>
 
-                {canEdit && (
+                {canEdit && bio.length === 0 && (
                     <Button
-                        className="mt-2 w-full"
+                        className="mt-2"
                         variant="secondary"
-                        size="sm"
+                        size="md"
                         onClick={() => toggleModal('bio')}
                     >
-                        {bio.length > 0 ? 'Sửa tiểu sử' : 'Thêm tiểu sử'}
+                        Thêm tiểu sử
                     </Button>
                 )}
 
@@ -70,7 +86,20 @@ const AboutSection: React.FC<Props> = ({ profile }) => {
             </article>
 
             {isAboutPage && (
-                <article className="flex-1 p-2">
+                <article className="flex-1 p-2 md:p-0">
+                    <div className="flex items-center justify-between">
+                        <h5 className="text-xl font-bold">Thông tin</h5>
+                        {canEdit && (
+                            <Button
+                                variant="secondary"
+                                size="sm"
+                                onClick={() => toggleModal('info')}
+                            >
+                                <Icons.Edit className="h-4 w-4" />
+                            </Button>
+                        )}
+                    </div>
+
                     <ul>
                         <li className="flex items-center p-2 text-sm">
                             <Icons.Work className="mr-2" />
@@ -96,16 +125,7 @@ const AboutSection: React.FC<Props> = ({ profile }) => {
                             Tham gia vào{' '}
                             {renderInfo(profile.createdAt || 'Trống')}
                         </li>
-                        {canEdit && (
-                            <li className="flex items-center p-2 text-sm">
-                                <Button
-                                    variant="secondary"
-                                    onClick={() => toggleModal('info')}
-                                >
-                                    Chỉnh sửa thông tin
-                                </Button>
-                            </li>
-                        )}
+
                         <ModalEditInfo
                             profile={profile}
                             show={showModal.info}
