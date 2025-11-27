@@ -1,3 +1,4 @@
+import { userService } from '../api';
 import { apiClient } from '../api/client';
 import { API_ENDPOINTS } from '../api/endpoints';
 import { searchService } from '../api/services/search.service';
@@ -47,9 +48,8 @@ class UserServiceClass {
         userId: string;
     }): Promise<IFriend[]> {
         try {
-            return await apiClient.get<IFriend[]>(
-                API_ENDPOINTS.USERS.FRIENDS(userId)
-            );
+            const data = await userService.getFriends(userId);
+            return data;
         } catch (error) {
             console.error('Error getting friends:', error);
             return [];
