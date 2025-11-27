@@ -74,23 +74,27 @@ const AboutSection: React.FC<Props> = ({ profile }) => {
                     <ul>
                         <li className="flex items-center p-2 text-sm">
                             <Icons.Work className="mr-2" />
-                            Làm việc tại {renderInfo(profile.work)}
+                            Làm việc tại {profile.work || 'Trống'}
                         </li>
                         <li className="flex items-center p-2 text-sm">
                             <Icons.School className="mr-2" />
-                            Học tại {renderInfo(profile.education)}
+                            Học tại {profile.education || 'Trống'}
                         </li>
                         <li className="flex items-center p-2 text-sm">
                             <Icons.Location className="mr-2" />
-                            Sống tại {renderInfo(profile.location)}
+                            Sống tại {profile.location || 'Trống'}
                         </li>
                         <li className="flex items-center p-2 text-sm">
                             <Icons.Birthday className="mr-2" />
-                            Sinh nhật ngày: {renderInfo(profile.dateOfBirth)}
+                            Sinh nhật ngày:{' '}
+                            {renderInfo(
+                                (profile.dateOfBirth as Date) || 'Trống'
+                            )}
                         </li>
                         <li className="flex items-center p-2 text-sm">
                             <Icons.Location className="mr-2" />
-                            Tham gia vào {renderInfo(profile.createdAt)}
+                            Tham gia vào{' '}
+                            {renderInfo(profile.createdAt || 'Trống')}
                         </li>
                         {canEdit && (
                             <li className="flex items-center p-2 text-sm">
