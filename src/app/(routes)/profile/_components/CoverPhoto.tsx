@@ -1,3 +1,4 @@
+'use client';
 import FileUploader from '@/components/shared/FileUploader';
 import { Button } from '@/components/ui/Button';
 import {
@@ -12,8 +13,8 @@ import { useAuth } from '@/context';
 import ImageService from '@/lib/services/image.service';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
-import { usePathname } from 'next/navigation';
-import React, { useState } from 'react';
+import { usePathname, useRouter } from 'next/navigation';
+import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -25,12 +26,15 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
     const canChangeCoverPhoto = user?.id === profile.user._id;
     const [openModal, setOpenModal] = useState(false);
     const [files, setFiles] = useState<File[]>([]);
+    const router = useRouter();
     const path = usePathname();
 
     const handleChangeCoverPhoto = async () => {
+        if (files.length === 0) return;
+
         setOpenModal(false);
         toast.loading('Đang tải ảnh lên...', {
-            id: 'uplodate-cover-photo',
+            id: 'update-cover-photo',
             duration: 3000,
         });
 
@@ -45,7 +49,9 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
                 await ImageService.getUrlByImageId(coverPhotoId);
 
             if (!coverPhotoUrl) {
-                toast.error('Có lỗi xảy ra');
+                toast.error('Có lỗi xảy ra', {
+                    id: 'update-cover-photo',
+                });
                 return;
             }
 
@@ -54,11 +60,29 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
                 userId: profile.user._id,
                 path,
             });
+
+            // Reset files sau khi upload thành công
+            setFiles([]);
+            router.refresh();
+
+            toast.success('Cập nhật ảnh bìa thành công!', {
+                id: 'update-cover-photo',
+            });
         } catch (error) {
-            console.log(error);
-            toast.error('Có lỗi xảy ra');
+            console.error(error);
+            toast.error('Có lỗi xảy ra', {
+                id: 'update-cover-photo',
+            });
+            // Mở lại modal nếu có lỗi để người dùng có thể thử lại
+            setOpenModal(true);
         }
     };
+
+    useEffect(() => {
+        console.log({
+            files,
+        });
+    }, [files]);
 
     return (
         <>
@@ -71,7 +95,13 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
                 {canChangeCoverPhoto && (
                     <Dialog
                         open={openModal}
-                        onOpenChange={(isOpen) => setOpenModal(isOpen)}
+                        onOpenChange={(isOpen) => {
+                            setOpenModal(isOpen);
+                            // Reset files khi đóng modal
+                            if (!isOpen) {
+                                setFiles([]);
+                            }
+                        }}
                     >
                         <DialogTrigger asChild={true}>
                             <Button
@@ -89,6 +119,8 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
 
                             <FileUploader
                                 single
+                                onlyImage={true}
+                                value={files}
                                 handleChange={(files) => setFiles(files)}
                             />
 
