@@ -3,7 +3,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/context';
 import ProfileService from '@/lib/services/profile.service';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -21,7 +21,6 @@ type FormBio = {
 const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
     const { user } = useAuth();
     const router = useRouter();
-    const path = usePathname();
     const {
         register: registerBio,
         handleSubmit: handleSubmitBio,
@@ -33,7 +32,7 @@ const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
     });
 
     const changeBio: SubmitHandler<FormBio> = async (data) => {
-        const newBio = data.bio;
+        const newBio = data.bio || '';
 
         if (!user?.id) {
             toast.error('Vui lòng đăng nhập!');
@@ -43,7 +42,6 @@ const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
         try {
             await ProfileService.updateBio({
                 newBio: newBio,
-                path: path,
                 userId: user.id,
             });
 
