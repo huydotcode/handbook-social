@@ -13,7 +13,7 @@ import ProfileService from '@/lib/services/profile.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -28,6 +28,7 @@ const Avatar: React.FC<Props> = ({ user }) => {
     const canChangeAvatar = currentUser?.id === user._id;
     const [openModal, setOpenModal] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const router = useRouter();
 
     const handleChangeAvatar = async () => {
         setOpenModal(false);
@@ -51,6 +52,8 @@ const Avatar: React.FC<Props> = ({ user }) => {
                 userId: user._id,
                 path,
             });
+
+            router.refresh();
 
             toast.success('Cập nhật ảnh đại diện thành công', {
                 id: 'uplodate-avatar',
