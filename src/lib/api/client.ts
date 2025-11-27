@@ -76,7 +76,7 @@ class ApiClient {
                 // Log request in development
                 if (process.env.NODE_ENV === 'development') {
                     console.log(
-                        `🚀 ${config.method?.toUpperCase()} ${config.url}`,
+                        `${config.method?.toUpperCase()} ${config.url}`,
                         config.data ? { data: config.data } : ''
                     );
                 }
@@ -94,7 +94,7 @@ class ApiClient {
                 // Log response in development
                 if (process.env.NODE_ENV === 'development') {
                     console.log(
-                        `✅ ${response.config.method?.toUpperCase()} ${response.config.url}`,
+                        `${response.config.method?.toUpperCase()} ${response.config.url}`,
                         response.data
                     );
                 }
