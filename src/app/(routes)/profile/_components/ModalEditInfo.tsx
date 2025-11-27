@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import queryKey from '@/lib/queryKey';
 import ProfileService from '@/lib/services/profile.service';
-import logger from '@/utils/logger';
 import { useQuery } from '@tanstack/react-query';
 import { usePathname } from 'next/navigation';
 import React, { useId } from 'react';
@@ -65,10 +64,6 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
 
             handleClose();
         } catch (error) {
-            logger({
-                message: 'Error edit info' + error,
-                type: 'error',
-            });
             toast.error('Đã có lỗi xảy ra khi cập nhật thông tin!');
         }
     };

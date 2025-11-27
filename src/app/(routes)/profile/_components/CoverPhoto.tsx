@@ -78,12 +78,6 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
         }
     };
 
-    useEffect(() => {
-        console.log({
-            files,
-        });
-    }, [files]);
-
     return (
         <>
             <div

@@ -78,10 +78,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [isLoading, setIsLoading] = useState(true);
     const queryClient = useQueryClient();
 
-    useEffect(() => {
-        console.log('AuthProvider - user', user);
-    }, [user]);
-
     // Load user from token on mount
     useEffect(() => {
         const loadUser = () => {

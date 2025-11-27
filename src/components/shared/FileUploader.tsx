@@ -37,7 +37,6 @@ export const FileUploaderWrapper = ({
     // Xử lý chung cho cả drop và input file
     const handleNewFiles = useCallback(
         (newFiles: File[]) => {
-            console.log('Handle new files New files added:', newFiles);
             // Nếu có file mới, cập nhật state files
             setFiles((prevFiles) => [...prevFiles, ...newFiles]);
 
@@ -156,10 +155,6 @@ const FileUploader: React.FC<Props> = ({
     // Xử lý khi chọn file từ input
     const handleFileSelect = useCallback(
         (event: ChangeEvent<HTMLInputElement>) => {
-            console.log(
-                'handleFileSelect called with files:',
-                event.target.files
-            );
             const newFiles = event.target.files
                 ? Array.from(event.target.files || [])
                 : [];
@@ -197,10 +192,6 @@ const FileUploader: React.FC<Props> = ({
             handleChange(files.filter((_, i) => i !== index));
         }
     };
-
-    useEffect(() => {
-        console.log('single', !single);
-    }, [single]);
 
     return (
         <div

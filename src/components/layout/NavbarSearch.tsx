@@ -1,11 +1,10 @@
 'use client';
 import { Items } from '@/components/shared';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context/AuthContext';
 import { useDebounce } from '@/hooks';
 import UserService from '@/lib/services/user.service';
-import logger from '@/utils/logger';
 import { Collapse } from '@mui/material';
-import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Icons from '../ui/Icons';
@@ -53,10 +52,7 @@ const NavbarSearch = () => {
 
                 setSearchResult(users);
             } catch (error: any) {
-                logger({
-                    message: 'Error fetch search data' + error,
-                    type: 'error',
-                });
+                console.error(error);
             } finally {
                 setIsSearching(false);
             }

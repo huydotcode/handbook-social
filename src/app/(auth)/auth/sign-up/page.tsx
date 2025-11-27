@@ -12,7 +12,6 @@ import { Input } from '@/components/ui/Input';
 import type { ErrorResponse } from '@/lib/api/client';
 import { authService } from '@/lib/api/services/auth.service';
 import { signUpValidation } from '@/lib/validation';
-import logger from '@/utils/logger';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -73,10 +72,6 @@ const SignUpPage = () => {
             });
             router.push('/auth/login');
         } catch (error) {
-            logger({
-                message: 'Error sign-up' + error,
-                type: 'error',
-            });
             const apiError = error as ErrorResponse;
             toast.error(apiError?.message || 'Có lỗi xảy ra khi đăng ký', {
                 id: 'sign-up-fail',

@@ -50,7 +50,6 @@ const FollowAction: React.FC<Props> = ({ className = '', userId }) => {
 
             toast.success('Đã theo dõi');
         } catch (error) {
-            console.log('[FollowAction] followUser error', error);
             toast.error('Đã có lỗi xảy ra khi theo dõi!');
         }
     };

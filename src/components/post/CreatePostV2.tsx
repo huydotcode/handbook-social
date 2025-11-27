@@ -12,7 +12,6 @@ import PostService from '@/lib/services/post.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { createPostValidation } from '@/lib/validation';
-import logger from '@/utils/logger';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { FileUploaderWrapper } from '../shared/FileUploader';
@@ -96,7 +95,6 @@ const CreatePostV2: FC<Props> = ({
 
                 onSubmitSuccess?.();
             } catch (error: any) {
-                console.log('Error creating post:', error);
                 throw new Error(error);
             }
         },
@@ -129,10 +127,7 @@ const CreatePostV2: FC<Props> = ({
 
                 reset();
             } catch (error: any) {
-                logger({
-                    message: 'Error submitting post: ' + error.message,
-                    type: 'error',
-                });
+                console.error(error);
             }
         },
         [formState.isSubmitting, mutation, reset, type]

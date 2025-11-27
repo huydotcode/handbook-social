@@ -5,14 +5,13 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
 import { Avatar, Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import EditorV2, { EditorField } from '@/components/ui/EditorV2';
+import { EditorField } from '@/components/ui/EditorV2';
 import Icons from '@/components/ui/Icons';
 import postAudience from '@/constants/postAudience.constant';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import PostService from '@/lib/services/post.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { editPostValidation } from '@/lib/validation';
-import logger from '@/utils/logger';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
@@ -117,10 +116,7 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
             await invalidatePosts();
             handleClose();
         } catch (error: any) {
-            logger({
-                message: 'Error update post: ' + error,
-                type: 'error',
-            });
+            console.error(error);
             throw error;
         }
     };
@@ -142,10 +138,7 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
                 }
             );
         } catch (error: any) {
-            logger({
-                message: 'Error submit post: ' + error,
-                type: 'error',
-            });
+            console.error(error);
         }
     }
 

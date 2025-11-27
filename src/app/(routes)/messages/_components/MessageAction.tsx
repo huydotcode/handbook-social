@@ -90,14 +90,6 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         try {
             if (!socket) return;
 
-            console.log({
-                index,
-                messsage: messages[index + 1],
-                prevMessageId: messages[index + 1]
-                    ? messages[index + 1]._id
-                    : null,
-            });
-
             await MessageService.delete({
                 messageId: msg._id,
                 conversationId: msg.conversation._id,

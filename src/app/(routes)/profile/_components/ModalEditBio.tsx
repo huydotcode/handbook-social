@@ -3,7 +3,6 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/context';
 import ProfileService from '@/lib/services/profile.service';
-import logger from '@/utils/logger';
 import { usePathname } from 'next/navigation';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
@@ -45,10 +44,6 @@ const ModalEditBio: React.FC<Props> = ({ show, bio, handleClose }) => {
 
             toast.success('Thay đổi tiểu sử thành công!');
         } catch (error) {
-            logger({
-                message: 'error change bio' + error,
-                type: 'error',
-            });
             toast.error('Không thể thay đổi tiểu sử! Đã có lỗi xảy ra');
         } finally {
             handleClose();

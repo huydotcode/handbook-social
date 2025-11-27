@@ -418,12 +418,6 @@ export const VideoCallProvider: React.FC<VideoCallProviderProps> = ({
         return webRTCService.getRemoteStream();
     };
 
-    useEffect(() => {
-        console.log({
-            currentCall,
-        });
-    }, [currentCall]);
-
     return (
         <VideoCallContext.Provider
             value={{

@@ -124,21 +124,13 @@ class WebRTCService {
         // Enhanced ICE candidate handling
         this.peerConnection.onicecandidate = (event) => {
             if (event.candidate) {
-                console.log('Generated ICE candidate:', {
-                    type: event.candidate.type,
-                    protocol: event.candidate.protocol,
-                    address: event.candidate.address,
-                    port: event.candidate.port,
-                });
                 this.handlers.onIceCandidate?.(event.candidate);
             } else {
-                console.log('All ICE candidates have been sent');
             }
         };
 
         // Handle remote stream
         this.peerConnection.ontrack = (event) => {
-            console.log('Received remote stream:', event.streams[0]);
             this.remoteStream = event.streams[0];
             this.handlers.onRemoteStream?.(event.streams[0]);
         };
@@ -146,7 +138,6 @@ class WebRTCService {
         // Enhanced connection state monitoring
         this.peerConnection.onconnectionstatechange = () => {
             const state = this.peerConnection?.connectionState;
-            console.log('WebRTC connection state:', state);
 
             if (state === 'connected') {
                 this.clearConnectionTimeout();
@@ -163,19 +154,13 @@ class WebRTCService {
         // Enhanced ICE connection state monitoring
         this.peerConnection.oniceconnectionstatechange = () => {
             const state = this.peerConnection?.iceConnectionState;
-            console.log('ICE connection state:', state);
 
             if (state === 'connected' || state === 'completed') {
                 this.isConnectionEstablished = true;
                 this.clearConnectionTimeout();
-                console.log(
-                    'Connection established - renegotiation now allowed'
-                );
             } else if (state === 'failed') {
-                console.error('ICE connection failed');
                 this.handleConnectionFailure();
             } else if (state === 'disconnected') {
-                console.warn('ICE connection disconnected, attempting restart');
                 this.restartIce();
             } else if (state === 'closed') {
                 this.isConnectionEstablished = false;
@@ -189,13 +174,9 @@ class WebRTCService {
         // Handle renegotiation
         this.peerConnection.onnegotiationneeded = async () => {
             if (!this.isConnectionEstablished && this.retryAttempts === 0) {
-                console.log(
-                    'Skipping renegotiation - initial connection in progress'
-                );
                 return;
             }
 
-            console.log('Negotiation needed - creating new offer');
             try {
                 const offer = await this.peerConnection!.createOffer();
                 await this.peerConnection!.setLocalDescription(offer);
@@ -204,15 +185,12 @@ class WebRTCService {
                     this.handlers.onRenegotiationNeeded(offer);
                 }
             } catch (error) {
-                console.error('Error during renegotiation:', error);
                 this.handlers.onError?.(error as Error);
             }
         };
 
         // Set connection timeout
         this.setConnectionTimeout();
-
-        console.log('Peer connection initialized with enhanced configuration');
     }
 
     /**
@@ -226,7 +204,6 @@ class WebRTCService {
                 this.peerConnection?.iceConnectionState !== 'connected' &&
                 this.peerConnection?.iceConnectionState !== 'completed'
             ) {
-                console.warn('Connection timeout - attempting retry');
                 this.handleConnectionFailure();
             }
         }, 30000); // 30 second timeout
@@ -249,7 +226,6 @@ class WebRTCService {
         if (!this.peerConnection) return;
 
         try {
-            console.log('Restarting ICE gathering...');
             await this.peerConnection.restartIce();
         } catch (error) {
             console.error('Error restarting ICE:', error);
@@ -264,8 +240,6 @@ class WebRTCService {
         audio?: boolean | MediaTrackConstraints;
     }): Promise<MediaStream> {
         try {
-            console.log('Requesting user media with constraints:', constraints);
-
             // Try with ideal constraints first
             const idealConstraints = {
                 video: constraints.video
@@ -311,7 +285,6 @@ class WebRTCService {
             }
 
             this.localStream = stream;
-            console.log('Got user media:', stream);
             this.handlers.onLocalStream?.(stream);
 
             return stream;
@@ -331,8 +304,6 @@ class WebRTCService {
         }
 
         if (this.peerConnection && stream) {
-            console.log('Adding local stream to peer connection');
-
             // Remove existing senders to avoid duplicates
             const senders = this.peerConnection.getSenders();
             await Promise.all(
@@ -346,7 +317,6 @@ class WebRTCService {
 
             // Add new tracks
             stream.getTracks().forEach((track) => {
-                console.log('Adding track:', track.kind, track.label);
                 this.peerConnection!.addTrack(track, stream);
             });
         }
@@ -362,7 +332,6 @@ class WebRTCService {
 
         try {
             this.isInitiator = true;
-            console.log('Creating WebRTC offer...');
 
             const offerOptions: RTCOfferOptions = {
                 offerToReceiveAudio: true,
@@ -372,12 +341,6 @@ class WebRTCService {
 
             const offer = await this.peerConnection!.createOffer(offerOptions);
             await this.peerConnection!.setLocalDescription(offer);
-
-            console.log('Local description set (offer):', {
-                type: offer.type,
-                hasVideo: offer.sdp?.includes('m=video'),
-                hasAudio: offer.sdp?.includes('m=audio'),
-            });
 
             this.setConnectionTimeout();
             return offer;
@@ -400,10 +363,8 @@ class WebRTCService {
 
         try {
             this.isInitiator = false;
-            console.log('Handling WebRTC offer...');
 
             await this.peerConnection!.setRemoteDescription(offer);
-            console.log('Remote description set (offer)');
 
             // Process queued ICE candidates
             await this.processQueuedIceCandidates();
@@ -415,12 +376,6 @@ class WebRTCService {
             const answer =
                 await this.peerConnection!.createAnswer(answerOptions);
             await this.peerConnection!.setLocalDescription(answer);
-
-            console.log('Local description set (answer):', {
-                type: answer.type,
-                hasVideo: answer.sdp?.includes('m=video'),
-                hasAudio: answer.sdp?.includes('m=audio'),
-            });
 
             this.setConnectionTimeout();
             return answer;
@@ -441,9 +396,7 @@ class WebRTCService {
         }
 
         try {
-            console.log('Handling WebRTC answer...');
             await this.peerConnection.setRemoteDescription(answer);
-            console.log('Remote description set (answer)');
 
             // Process queued ICE candidates
             await this.processQueuedIceCandidates();
@@ -472,17 +425,12 @@ class WebRTCService {
 
         // If remote description is not set yet, queue the candidate
         if (!this.peerConnection.remoteDescription) {
-            console.log('Queueing ICE candidate (no remote description yet)');
             this.iceCandidatesQueue.push(candidate);
             return;
         }
 
         try {
             await this.peerConnection.addIceCandidate(candidate);
-            console.log('Added ICE candidate:', {
-                type: candidate.candidate?.split(' ')[7], // candidate type
-                protocol: candidate.candidate?.split(' ')[2], // protocol
-            });
         } catch (error) {
             console.error('Error adding ICE candidate:', error);
             // Don't throw error for ICE candidate failures - continue with others
@@ -497,17 +445,12 @@ class WebRTCService {
             return;
         }
 
-        console.log(
-            `Processing ${this.iceCandidatesQueue.length} queued ICE candidates`
-        );
-
         const candidates = [...this.iceCandidatesQueue];
         this.iceCandidatesQueue = [];
 
         for (const candidate of candidates) {
             try {
                 await this.peerConnection.addIceCandidate(candidate);
-                console.log('Added queued ICE candidate');
             } catch (error) {
                 console.error('Error adding queued ICE candidate:', error);
                 // Continue with other candidates
@@ -621,9 +564,6 @@ class WebRTCService {
         }
 
         this.retryAttempts++;
-        console.log(
-            `Connection failed, attempting retry ${this.retryAttempts}/${this.maxRetryAttempts}`
-        );
 
         // Exponential backoff
         const delay = Math.min(
@@ -670,8 +610,6 @@ class WebRTCService {
                 track.enabled = enabled;
             });
         }
-
-        console.log(`Video ${enabled ? 'enabled' : 'disabled'}`);
     }
 
     /**
@@ -687,8 +625,6 @@ class WebRTCService {
         audioTracks.forEach((track) => {
             track.enabled = enabled;
         });
-
-        console.log(`Audio ${enabled ? 'enabled' : 'disabled'}`);
     }
 
     /**
@@ -704,7 +640,6 @@ class WebRTCService {
             // Check if video track already exists
             const videoTracks = this.localStream.getVideoTracks();
             if (videoTracks.length > 0) {
-                console.log('Video track already exists');
                 return;
             }
 
@@ -725,7 +660,6 @@ class WebRTCService {
                 // Add to peer connection
                 this.peerConnection.addTrack(videoTrack, this.localStream);
 
-                console.log('Video track added');
                 this.handlers.onLocalStream?.(this.localStream);
             }
         } catch (error) {
@@ -750,7 +684,6 @@ class WebRTCService {
             track.stop();
         });
 
-        console.log('Video track removed');
         this.handlers.onLocalStream?.(this.localStream);
     }
 
@@ -829,15 +762,11 @@ class WebRTCService {
 
     // THÊM HOẶC SỬA LẠI PHƯƠNG THỨC NÀY
     public cleanup() {
-        console.log('WebRTCService: Cleaning up...');
-
         // 1. Dừng các track của local stream để tắt camera/mic
         if (this.localStream) {
             this.localStream.getTracks().forEach((track) => {
-                console.log(`Stopping track: ${track.kind}`);
                 track.stop();
             });
-            console.log('All local stream tracks stopped.');
         }
 
         // 2. Đóng kết nối peer-to-peer
@@ -847,16 +776,13 @@ class WebRTCService {
             this.peerConnection.ontrack = null;
             this.peerConnection.onconnectionstatechange = null;
             this.peerConnection.onnegotiationneeded = null;
-
             this.peerConnection.close();
-            console.log('Peer connection closed.');
         }
 
         // 3. Reset lại các biến nội bộ
         this.peerConnection = null;
         this.localStream = null;
         this.remoteStream = null;
-        console.log('WebRTCService state has been reset.');
     }
 }
 

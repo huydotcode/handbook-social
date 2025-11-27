@@ -2,13 +2,12 @@
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/context';
+import { useAuth } from '@/context/AuthContext';
 import queryKey from '@/lib/queryKey';
 import PostService from '@/lib/services/post.service';
 import { cn } from '@/lib/utils';
-import logger from '@/utils/logger';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
-import { useAuth } from '@/context/AuthContext';
 import toast from 'react-hot-toast';
 import { InfinityPostData } from '../InfinityPostComponent';
 import { usePostContext } from '../Post';
@@ -72,10 +71,7 @@ const ReactionPost: React.FC<Props> = ({ post }) => {
                     });
                 }
             } catch (error: any) {
-                logger({
-                    message: 'Error reaction post' + error,
-                    type: 'error',
-                });
+                console.error(error);
             }
         },
         onError: () => {

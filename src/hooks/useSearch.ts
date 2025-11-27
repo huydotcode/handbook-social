@@ -1,5 +1,4 @@
 import useDebounce from '@/hooks/useDebounce';
-import logger from '@/utils/logger';
 import { useCallback, useEffect, useState } from 'react';
 
 interface ISearch {
@@ -21,10 +20,7 @@ const useSearch = ({ fn, initialQuery = '', delay = 300 }: ISearch) => {
                 const data = await fn(value);
                 setSearchResult(data);
             } catch (error) {
-                logger({
-                    message: 'Error fetching search data: ' + error,
-                    type: 'error',
-                });
+                console.error(error);
             } finally {
                 setIsSearching(false);
             }

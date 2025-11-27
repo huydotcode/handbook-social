@@ -2,7 +2,6 @@
 import { useAuth } from '@/context/AuthContext';
 import ConversationService from '@/lib/services/conversation.service';
 import GroupService from '@/lib/services/group.service';
-import logger from '@/utils/logger';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
 import Header from '../_components/Header';
@@ -49,10 +48,6 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
                 const access = isMember || groupData.type === 'public';
                 setCanAccess(access);
             } catch (error) {
-                logger({
-                    message: 'Error get group in layout' + error,
-                    type: 'error',
-                });
                 router.push('/groups');
             } finally {
                 setIsLoading(false);

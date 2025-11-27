@@ -127,7 +127,6 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
                 }
             );
         } catch (error: any) {
-            console.log('Error onSubmitComment: ', error);
             toast.error('Không thể gửi bình luận!', {
                 position: 'bottom-left',
             });

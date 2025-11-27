@@ -10,7 +10,6 @@ export const useQueryInvalidation = () => {
     // Các hàm invalidate cho từng loại query
     const invalidateMessages = useCallback(
         async (conversationId: string) => {
-            console.log('[LIB-HOOKS] invalidateMessages', conversationId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.messages.conversationId(conversationId),
             });
@@ -20,7 +19,6 @@ export const useQueryInvalidation = () => {
 
     const queryClientAddMessage = useCallback(
         (message: IMessage) => {
-            console.log('[LIB-HOOKS] queryClientAddMessage', message);
             queryClient.setQueryData(
                 queryKey.messages.conversationId(message.conversation._id),
                 (
@@ -41,11 +39,6 @@ export const useQueryInvalidation = () => {
                     }
 
                     const newPage = [message, ...oldMessages.pages[0]];
-
-                    console.log('NEW MESSAGES ', {
-                        pages: [newPage, ...oldMessages.pages.slice(1)],
-                        pageParams: oldMessages.pageParams,
-                    });
 
                     return {
                         pages: [newPage, ...oldMessages.pages.slice(1)],
@@ -88,7 +81,6 @@ export const useQueryInvalidation = () => {
 
     const queryClientAddPinnedMessage = useCallback(
         (message: IMessage) => {
-            console.log('[LIB-HOOKS] queryClientAddPinnedMessage', message);
             queryClient.setQueryData(
                 queryKey.messages.conversationId(message.conversation._id),
                 (
@@ -99,20 +91,12 @@ export const useQueryInvalidation = () => {
                           }
                         | undefined
                 ) => {
-                    console.log({
-                        oldMessages,
-                        message,
-                    });
                     if (!oldMessages) return oldMessages;
 
                     return {
                         pages: oldMessages.pages.map((page) => {
                             return page.map((msg) => {
                                 if (msg._id === message._id) {
-                                    console.log({
-                                        msg,
-                                        isPin: message.isPin,
-                                    });
                                     return {
                                         ...msg,
                                         isPin: true,
@@ -131,7 +115,6 @@ export const useQueryInvalidation = () => {
 
     const queryClientRemovePinnedMessage = useCallback(
         (message: IMessage) => {
-            console.log('[LIB-HOOKS] queryClientRemovePinnedMessage', message);
             queryClient.setQueryData(
                 queryKey.messages.conversationId(message.conversation._id),
                 (
@@ -166,7 +149,6 @@ export const useQueryInvalidation = () => {
 
     const queryClientDeleteMessage = useCallback(
         (message: IMessage) => {
-            console.log('[LIB-HOOKS] queryClientDeleteMessage', message);
             queryClient.setQueryData(
                 queryKey.messages.conversationId(message.conversation._id),
                 (
@@ -278,7 +260,6 @@ export const useQueryInvalidation = () => {
 
     const queryClientReadMessage = useCallback(
         (conversationId: string, userId: string) => {
-            console.log('[LIB-HOOKS] queryClientReadMessage', conversationId);
             queryClient.invalidateQueries({
                 queryKey: queryKey.messages.conversationId(conversationId),
             });
@@ -292,7 +273,6 @@ export const useQueryInvalidation = () => {
 
     const invalidatePinnedMessages = useCallback(
         async (conversationId: string) => {
-            console.log('[LIB-HOOKS] invalidatePinnedMessages', conversationId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.messages.pinnedMessages(conversationId),
             });
@@ -301,7 +281,6 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateConversations = useCallback(async () => {
-        console.log('[LIB-HOOKS] invalidateConversations');
         await queryClient.invalidateQueries({
             queryKey: queryKey.conversations.userId(user?.id as string),
         });
@@ -309,7 +288,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateProfile = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateProfile', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.profile(userId),
             });
@@ -319,7 +297,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateConversation = useCallback(
         async (conversationId: string) => {
-            console.log('[LIB-HOOKS] invalidateConversation', conversationId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.conversations.id(conversationId),
             });
@@ -329,10 +306,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateAfterSendMessage = useCallback(
         async (conversationId: string) => {
-            console.log(
-                '[LIB-HOOKS] invalidateAfterSendMessage',
-                conversationId
-            );
             await queryClient.invalidateQueries({
                 queryKey: queryKey.messages.conversationId(conversationId),
             });
@@ -349,7 +322,6 @@ export const useQueryInvalidation = () => {
     // Tạo các hook với các key bên dưới
     const invalidateSearch = useCallback(
         async (q: string, type: string) => {
-            console.log('[LIB-HOOKS] invalidateSearch', { q, type });
             await queryClient.invalidateQueries({
                 queryKey: queryKey.search.general(q, type),
             });
@@ -359,7 +331,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateFollowings = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateFollowings', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.followings(userId),
             });
@@ -369,7 +340,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateFriends = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateFriends', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.friends(userId),
             });
@@ -379,7 +349,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateRequests = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateRequests', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.requests(userId),
             });
@@ -389,7 +358,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateNotifications = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateNotifications', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.notifications(userId),
             });
@@ -399,7 +367,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateGroups = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateGroups', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.groups(userId),
             });
@@ -419,12 +386,6 @@ export const useQueryInvalidation = () => {
             groupId?: string;
             username?: string;
         }) => {
-            console.log('[LIB-HOOKS] invalidateNewFeedPosts', {
-                type,
-                userId,
-                groupId,
-                username,
-            });
             await queryClient.invalidateQueries({
                 queryKey: queryKey.posts.newFeed({
                     type,
@@ -438,7 +399,6 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidatePosts = useCallback(async () => {
-        console.log('[LIB-HOOKS] invalidatePosts');
         await queryClient.invalidateQueries({
             queryKey: queryKey.posts.all(),
         });
@@ -446,7 +406,6 @@ export const useQueryInvalidation = () => {
 
     const invalidatePost = useCallback(
         async (postId: string) => {
-            console.log('[LIB-HOOKS] invalidatePost', postId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.posts.id(postId),
             });
@@ -456,7 +415,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateComments = useCallback(
         async (postId: string) => {
-            console.log('[LIB-HOOKS] invalidateComments', postId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.posts.comments(postId),
             });
@@ -466,7 +424,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateReplyComments = useCallback(
         async (commentId: string) => {
-            console.log('[LIB-HOOKS] invalidateReplyComments', commentId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.posts.replyComments(commentId),
             });
@@ -475,21 +432,18 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateLocations = useCallback(async () => {
-        console.log('[LIB-HOOKS] invalidateLocations');
         await queryClient.invalidateQueries({
             queryKey: queryKey.locations,
         });
     }, [queryClient]);
 
     const invalidateCategories = useCallback(async () => {
-        console.log('[LIB-HOOKS] invalidateCategories');
         await queryClient.invalidateQueries({
             queryKey: queryKey.categories,
         });
     }, [queryClient]);
 
     const invalidateItems = useCallback(async () => {
-        console.log('[LIB-HOOKS] invalidateItems');
         await queryClient.invalidateQueries({
             queryKey: queryKey.items.list(),
         });
@@ -497,7 +451,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateItemsBySeller = useCallback(
         async (sellerId: string) => {
-            console.log('[LIB-HOOKS] invalidateItemsBySeller', sellerId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.items.bySeller(sellerId),
             });
@@ -507,7 +460,6 @@ export const useQueryInvalidation = () => {
 
     const invalidateUser = useCallback(
         async (userId: string) => {
-            console.log('[LIB-HOOKS] invalidateUser', userId);
             await queryClient.invalidateQueries({
                 queryKey: queryKey.user.id(userId),
             });

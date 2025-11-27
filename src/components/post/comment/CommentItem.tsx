@@ -3,21 +3,20 @@ import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Form, FormControl } from '@/components/ui/Form';
 import { Textarea } from '@/components/ui/textarea';
+import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { commentService as commentApiService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
 import CommentService from '@/lib/services/comment.service';
 import { cn } from '@/lib/utils';
-import logger from '@/utils/logger';
 import { timeConvert3 } from '@/utils/timeConvert';
 import {
     useInfiniteQuery,
     useMutation,
     useQueryClient,
 } from '@tanstack/react-query';
-import { useAuth } from '@/context/AuthContext';
 import Link from 'next/link';
-import React, { useEffect, useRef, useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import ReplyComments from './ReplyComments';
@@ -185,14 +184,8 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
             );
 
             setShowReplyComments(true);
-
-            console.log('Comment', comment);
-            console.log('New comment created: ', newComment);
         } catch (error) {
-            logger({
-                message: 'Error send reply comments' + error,
-                type: 'error',
-            });
+            console.error(error);
             toast.error('Có lỗi xảy ra khi gửi bình luận');
         }
     };
@@ -309,10 +302,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                 );
             }
         } catch (error) {
-            logger({
-                message: 'Error delete comment' + error,
-                type: 'error',
-            });
+            console.error(error);
             toast.error('Có lỗi xảy ra khi xóa bình luận');
         }
     };
@@ -330,12 +320,6 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
             );
         }
     };
-
-    useEffect(() => {
-        if (comment.replyComment) {
-            console.log('CommentItem: comment', comment);
-        }
-    }, [comment]);
 
     return (
         <div key={comment._id} className="mt-2">

@@ -51,11 +51,8 @@ const VideoCallModal: React.FC<Props> = ({
     // Function để set video stream
     const setVideoStream = (element: HTMLVideoElement, stream: MediaStream) => {
         if (videoSetRef.current && element.srcObject === stream) {
-            console.log('Video stream already set correctly');
             return; // Đã set rồi, không set lại
         }
-
-        console.log('Setting video stream to element');
 
         // Ensure clean state
         element.pause();
@@ -63,7 +60,6 @@ const VideoCallModal: React.FC<Props> = ({
         videoSetRef.current = true;
 
         element.onloadedmetadata = () => {
-            console.log('Video metadata loaded, starting playback');
             element.play().catch(console.error);
         };
     };
@@ -73,22 +69,6 @@ const VideoCallModal: React.FC<Props> = ({
         const localStream = getLocalStream();
         if (localStream) {
             const videoTracks = localStream.getVideoTracks();
-            console.log('=== Stream Debug ===');
-            console.log('Video tracks count:', videoTracks.length);
-            console.log(
-                'Video tracks:',
-                videoTracks.map((track: MediaStreamTrack) => ({
-                    id: track.id,
-                    enabled: track.enabled,
-                    readyState: track.readyState,
-                }))
-            );
-            console.log(
-                'Video element srcObject:',
-                localVideoRef.current?.srcObject
-            );
-            console.log('videoSetRef.current:', videoSetRef.current);
-            console.log('==================');
         }
     }, [getLocalStream]);
 
@@ -108,7 +88,6 @@ const VideoCallModal: React.FC<Props> = ({
 
     // Check if we should show video or avatar
     const shouldShowVideo = useCallback(() => {
-        console.log('shouldShowVideo called:', remoteVideoAvailable);
         return remoteVideoAvailable;
     }, [remoteVideoAvailable]);
 
@@ -118,7 +97,6 @@ const VideoCallModal: React.FC<Props> = ({
 
         const enableCameraForIncomingVideoCall = async () => {
             try {
-                console.log('Auto-enabling camera for incoming video call...');
                 setIsLoadingMedia(true);
 
                 // Get camera and microphone for incoming video call
@@ -127,7 +105,6 @@ const VideoCallModal: React.FC<Props> = ({
                     audio: true,
                 });
 
-                console.log('Got camera for incoming video call:', stream);
                 setIsLoadingMedia(false);
 
                 // Update UI state to show video is enabled
@@ -157,36 +134,18 @@ const VideoCallModal: React.FC<Props> = ({
     useEffect(() => {
         if (!isOpen) return;
 
-        console.log('Setting up video streams...');
         const localStream = getLocalStream();
         const remoteStream = getRemoteStream();
 
-        console.log(
-            'Available streams - Local:',
-            !!localStream,
-            'Remote:',
-            !!remoteStream
-        );
-
         // Don't override global loading state, just log for debugging
-        console.log(
-            'Streams check - Local:',
-            !!localStream,
-            'Remote:',
-            !!remoteStream,
-            'Global loading:',
-            callState.isLoadingMedia
-        );
 
         // Set local video
         if (localVideoRef.current && localStream) {
-            console.log('Setting local stream to video element');
             setVideoStream(localVideoRef.current, localStream);
         }
 
         // Set remote video
         if (remoteVideoRef.current && remoteStream) {
-            console.log('Setting remote stream to video element');
             setVideoStream(remoteVideoRef.current, remoteStream);
         }
     }, [isOpen, getLocalStream, getRemoteStream, callState.isLoadingMedia]);
@@ -195,7 +154,6 @@ const VideoCallModal: React.FC<Props> = ({
     useEffect(() => {
         const remoteStream = getRemoteStream();
         if (remoteVideoRef.current && remoteStream && shouldShowVideo()) {
-            console.log('Force updating remote video due to new video tracks');
             // Reset video flag to force re-set when stream changes
             videoSetRef.current = false;
             setVideoStream(remoteVideoRef.current, remoteStream);
@@ -215,12 +173,6 @@ const VideoCallModal: React.FC<Props> = ({
             const hasActiveVideo =
                 videoTracks.length > 0 &&
                 videoTracks.some((track) => track.enabled);
-
-            console.log('Checking remote video availability:', {
-                tracksCount: videoTracks.length,
-                tracksEnabled: videoTracks.map((track) => track.enabled),
-                hasActiveVideo,
-            });
 
             setRemoteVideoAvailable(hasActiveVideo);
         };
@@ -248,12 +200,6 @@ const VideoCallModal: React.FC<Props> = ({
                 audioTracks.length > 0 &&
                 audioTracks.some((track) => track.enabled);
 
-            console.log('Checking remote audio availability:', {
-                tracksCount: audioTracks.length,
-                tracksEnabled: audioTracks.map((track) => track.enabled),
-                hasActiveAudio,
-            });
-
             setRemoteAudioAvailable(hasActiveAudio);
         };
 
@@ -268,7 +214,6 @@ const VideoCallModal: React.FC<Props> = ({
 
     // Sync global call state to local state
     useEffect(() => {
-        console.log('Syncing global call state to local:', callState);
         setLocalCallState((prev) => {
             // Reset call duration when connection is first established
             const shouldResetDuration =
@@ -358,7 +303,6 @@ const VideoCallModal: React.FC<Props> = ({
             localCallState.isVideoEnabled &&
             !isLoadingMedia
         ) {
-            console.log('useEffect: Setting video stream');
             debugStreamState();
             setVideoStream(localVideoRef.current, localStream);
         }
@@ -390,19 +334,16 @@ const VideoCallModal: React.FC<Props> = ({
     const toggleVideo = async () => {
         // Prevent concurrent toggles
         if (isTogglingVideo.current) {
-            console.log('Video toggle already in progress, ignoring...');
             return;
         }
 
         isTogglingVideo.current = true;
         setIsTogglingVideoState(true);
 
-        console.log('=== Before Toggle ===');
         debugStreamState();
 
         try {
             const newVideoState = !localCallState.isVideoEnabled;
-            console.log(`Toggling video: ${newVideoState ? 'ON' : 'OFF'}`);
 
             if (
                 newVideoState &&
@@ -420,7 +361,6 @@ const VideoCallModal: React.FC<Props> = ({
                 isVideoEnabled: newVideoState,
             }));
 
-            console.log(`Video ${newVideoState ? 'enabled' : 'disabled'}`);
             debugStreamState();
         } catch (error) {
             console.error('Error toggling video:', error);
@@ -446,8 +386,6 @@ const VideoCallModal: React.FC<Props> = ({
             ...prev,
             isAudioEnabled: newAudioState,
         }));
-
-        console.log(`Audio ${newAudioState ? 'enabled' : 'disabled'}`);
     };
 
     const handleMouseMove = () => {
@@ -455,13 +393,10 @@ const VideoCallModal: React.FC<Props> = ({
     };
 
     const handleVideoCanPlay = () => {
-        console.log('Video can play - stream is ready');
         // Video sẽ tự play do autoPlay attribute
     };
 
-    const handleVideoLoadedMetadata = () => {
-        console.log('Video metadata loaded');
-    };
+    const handleVideoLoadedMetadata = () => {};
 
     if (!isOpen) return null;
 
@@ -476,11 +411,6 @@ const VideoCallModal: React.FC<Props> = ({
                     {(() => {
                         const showVideo =
                             localCallState.isConnected && shouldShowVideo();
-                        console.log('Render decision:', {
-                            isConnected: localCallState.isConnected,
-                            shouldShowVideo: shouldShowVideo(),
-                            showVideo,
-                        });
                         return showVideo;
                     })() ? (
                         <video
@@ -525,11 +455,6 @@ const VideoCallModal: React.FC<Props> = ({
                     {(() => {
                         const showMuteIcon =
                             localCallState.isConnected && !remoteAudioAvailable;
-                        console.log('Mute indicator:', {
-                            isConnected: localCallState.isConnected,
-                            remoteAudioAvailable,
-                            showMuteIcon,
-                        });
                         return showMuteIcon;
                     })() && (
                         <div className="absolute bottom-4 left-4 flex h-12 w-12 items-center justify-center rounded-full border-2 border-white bg-red-500 shadow-lg">

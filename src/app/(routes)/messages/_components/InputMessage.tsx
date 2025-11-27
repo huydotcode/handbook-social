@@ -144,10 +144,6 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
         }
     };
 
-    useEffect(() => {
-        console.log('Files in InputMessage:', files);
-    }, [files]);
-
     return (
         <form
             className="max-[calc(100vw-100px)] flex min-w-[500px] overflow-hidden rounded-xl border bg-secondary-1 dark:border-none dark:bg-dark-secondary-2 md:min-w-0"

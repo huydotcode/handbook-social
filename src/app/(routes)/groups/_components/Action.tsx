@@ -4,14 +4,11 @@ import Icons from '@/components/ui/Icons';
 
 import { Button } from '@/components/ui/Button';
 import { useGroupsJoined } from '@/context/AppContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import GroupService from '@/lib/services/group.service';
-import logger from '@/utils/logger';
 import { useAuth } from '@/context/AuthContext';
+import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-
 interface Props {
     group: IGroup;
 }
@@ -49,10 +46,6 @@ const Action: React.FC<Props> = ({ group }) => {
 
             toast.success('Đã tham gia nhóm');
         } catch (error) {
-            logger({
-                message: 'Error handle add friend' + error,
-                type: 'error',
-            });
             toast.error('Có lỗi xảy ra khi tham gia nhóm!');
         } finally {
             setIsPending(false);
