@@ -120,7 +120,6 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
                             <FileUploader
                                 single
                                 onlyImage={true}
-                                value={files}
                                 handleChange={(files) => setFiles(files)}
                             />
 
