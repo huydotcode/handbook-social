@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import axiosInstance from '@/lib/axios';
+import { apiClient } from '@/lib/api/client';
 import queryKey from '@/lib/queryKey';
 import { cn } from '@/lib/utils';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -127,10 +127,11 @@ export const usePosts = ({
                 ...(type === 'search-posts' && { q: search }),
             };
 
-            const { data } = await axiosInstance.get<IPost[]>(endpoint, {
+            // apiClient.get() tự động extract response.data.data
+            const data = await apiClient.get<IPost[]>(endpoint, {
                 params,
             });
-            return data;
+            return data || [];
         },
         [user?.id, getEndpoint, type, isFeedType, userId, groupId, search]
     );
