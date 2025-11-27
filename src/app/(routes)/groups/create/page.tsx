@@ -20,7 +20,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/context';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sidebar } from '../_components';
@@ -57,7 +57,7 @@ const CreateGroupPage: React.FC = ({}) => {
     const [searchFriendValue, setSearchFriendValue] = useState<string>('');
     const { user } = useAuth();
     const file = watch('file');
-
+    const fileInputId = useId();
     const router = useRouter();
 
     useEffect(() => {
@@ -98,7 +98,7 @@ const CreateGroupPage: React.FC = ({}) => {
             });
 
             toast.success('Tạo nhóm thành công!');
-            router.push(`/groups/${newGroup._id}`);
+            router.push(`/groups/${newGroup?._id}`);
         } catch (error) {
             toast.error('Có lỗi xảy ra khi tạo nhóm, vui lòng thử lại!');
         }
@@ -181,7 +181,7 @@ const CreateGroupPage: React.FC = ({}) => {
                                 </label>
                                 <input
                                     type="file"
-                                    id="avatar"
+                                    id={fileInputId}
                                     accept="image/*"
                                     className="hidden"
                                     onChange={(e) => {

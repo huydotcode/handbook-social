@@ -1,6 +1,6 @@
 'use client';
 import Image from 'next/image';
-import React, { ChangeEvent } from 'react';
+import React, { ChangeEvent, useId } from 'react';
 import { cn } from '@/lib/utils';
 
 interface Props {
@@ -9,6 +9,7 @@ interface Props {
 }
 
 const AddToPost: React.FC<Props> = ({ className = '', handleChangeImage }) => {
+    const inputFileId = useId(); // Tạo ID duy nhất cho mỗi instance
     return (
         <div
             className={cn(
@@ -22,7 +23,7 @@ const AddToPost: React.FC<Props> = ({ className = '', handleChangeImage }) => {
                 <div className="flex h-10 w-10 cursor-pointer items-center justify-center rounded-xl hover:cursor-pointer">
                     <label
                         className="flex h-10 w-10 cursor-pointer items-center  justify-center rounded-xl hover:cursor-pointer hover:bg-secondary-2 dark:hover:bg-dark-secondary-2"
-                        htmlFor="input-file"
+                        htmlFor={inputFileId}
                     >
                         <Image
                             src={'/assets/img/images.png'}
@@ -33,7 +34,7 @@ const AddToPost: React.FC<Props> = ({ className = '', handleChangeImage }) => {
                     </label>
                     <input
                         className="hidden"
-                        id="input-file"
+                        id={inputFileId}
                         type="file"
                         accept="image/*, video/*"
                         multiple

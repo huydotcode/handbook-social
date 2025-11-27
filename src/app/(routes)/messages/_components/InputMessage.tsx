@@ -8,7 +8,7 @@ import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import React, { ChangeEvent, useEffect, useMemo } from 'react';
+import React, { ChangeEvent, useEffect, useId, useMemo } from 'react';
 import { useForm, UseFormReturn } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -28,6 +28,7 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
     const formRef = React.useRef<HTMLFormElement>(null);
     const { queryClientAddMessage, invalidateConversation } =
         useQueryInvalidation();
+    const fileInputId = useId();
     const form = useForm<IFormData>({
         defaultValues: {
             text: '',
@@ -248,12 +249,12 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
                 //     setFocus('text');
                 // }}
                 type="file"
-                id="files"
+                id={fileInputId}
             />
 
             <label
                 className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-hover-1 dark:hover:bg-dark-secondary-1"
-                htmlFor="files"
+                htmlFor={fileInputId}
             >
                 <Icons.Upload className={'h-6 w-6'} />
             </label>

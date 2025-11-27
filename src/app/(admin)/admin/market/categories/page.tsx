@@ -21,7 +21,7 @@ import {
 } from '@/components/ui/table';
 import { useCategories } from '@/context/AppContext';
 import CategoryService from '@/lib/services/category.service';
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -51,6 +51,7 @@ const AdminMarketCategoryPage = () => {
         },
     });
     const { handleSubmit, register, formState } = form;
+    const iconInputId = useId(); // Tạo ID duy nhất cho mỗi instance
 
     const onSubmit = async (data: CategoryForm) => {
         try {
@@ -196,11 +197,11 @@ const AdminMarketCategoryPage = () => {
                             )}
                         />
 
-                        <label className="text-sm" htmlFor="icon">
+                        <label className="text-sm" htmlFor={iconInputId}>
                             Icon
                         </label>
                         <select
-                            id="icon"
+                            id={iconInputId}
                             {...register('icon')}
                             className="w-full rounded border p-2"
                             defaultValue={''}

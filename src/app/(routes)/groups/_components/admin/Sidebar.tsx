@@ -9,7 +9,7 @@ import useBreakPoint from '@/hooks/useBreakpoint';
 import ConversationService from '@/lib/services/conversation.service';
 import { timeConvert } from '@/utils/timeConvert';
 import { useMutation } from '@tanstack/react-query';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -30,7 +30,7 @@ const Sidebar: React.FC<Props> = ({
     const { user } = useAuth();
     const { breakpoint } = useBreakPoint();
     const isMobile = breakpoint === 'sm' || breakpoint === 'md';
-
+    const nameInputId = useId();
     const [showModalCreateConversation, setShowModalCreateConversation] =
         useState<boolean>(false);
     const [conversations, setConversations] =
@@ -225,9 +225,11 @@ const Sidebar: React.FC<Props> = ({
                         className="p-4"
                     >
                         <div>
-                            <label htmlFor="name">Tên cuộc hội thoại</label>
+                            <label htmlFor={nameInputId}>
+                                Tên cuộc hội thoại
+                            </label>
                             <input
-                                id="name"
+                                id={nameInputId}
                                 className="my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1"
                                 type="text"
                                 placeholder="Tên cuộc hội thoại"

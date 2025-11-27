@@ -1,7 +1,7 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { cn } from '@/lib/utils';
-import React, { useEffect, useRef } from 'react';
+import React, { useEffect, useId, useRef } from 'react';
 import { useAuth } from '@/context/AuthContext';
 import { useSocket } from '@/context';
 import MessageContent from './MessageContent';
@@ -31,6 +31,7 @@ const Message: React.FC<Props> = React.memo<Props>(
         isLastMessage,
         isPin = false,
     }) => {
+        const messageId = useId();
         const { user } = useAuth();
         const { ref: messageRef, inView } = useInView({
             threshold: 0.1,
@@ -73,7 +74,7 @@ const Message: React.FC<Props> = React.memo<Props>(
 
         return (
             <div
-                id={msg._id + (isPin ? 'pinned' : '')}
+                id={messageId}
                 key={msg._id}
                 className={cn('relative flex w-full', {
                     'justify-end': isOwnMsg,

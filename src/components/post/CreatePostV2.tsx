@@ -1,7 +1,7 @@
 'use client';
 import Image from 'next/image';
 import Link from 'next/link';
-import { ChangeEvent, FC, useCallback, useState } from 'react';
+import { ChangeEvent, FC, useCallback, useId, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -50,6 +50,7 @@ const CreatePostV2: FC<Props> = ({
     const { user } = useAuth();
     const { invalidatePosts } = useQueryInvalidation();
     const [showTagInput, setShowTagInput] = useState<boolean>(true);
+    const fileInputId = useId(); // Tạo ID duy nhất cho mỗi instance
 
     const form = useForm<IPostFormData>({
         defaultValues: {
@@ -401,7 +402,7 @@ const CreatePostV2: FC<Props> = ({
                                                 <TooltipTrigger asChild>
                                                     <label
                                                         className="flex h-10 w-10 cursor-pointer items-center  justify-center rounded-xl hover:cursor-pointer hover:bg-secondary-2 dark:hover:bg-dark-secondary-2"
-                                                        htmlFor="input-file"
+                                                        htmlFor={fileInputId}
                                                     >
                                                         <Image
                                                             src={
@@ -423,7 +424,7 @@ const CreatePostV2: FC<Props> = ({
 
                                         <input
                                             className="hidden"
-                                            id="input-file"
+                                            id={fileInputId}
                                             type="file"
                                             accept="image/*, video/*"
                                             multiple
