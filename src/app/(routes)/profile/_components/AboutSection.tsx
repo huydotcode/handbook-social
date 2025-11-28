@@ -71,7 +71,7 @@ const AboutSection: React.FC<Props> = ({ profile }) => {
                     <Button
                         className="mt-2"
                         variant="secondary"
-                        size="md"
+                        size="sm"
                         onClick={() => toggleModal('bio')}
                     >
                         Thêm tiểu sử
