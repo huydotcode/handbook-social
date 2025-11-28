@@ -4,7 +4,7 @@ import { Button } from '@/components/ui/Button';
 
 const SearchGroupItem = ({ data }: { data: IGroup }) => {
     return (
-        <div className="flex items-center rounded-xl bg-secondary-1 px-2 py-1 shadow-sm">
+        <div className="flex items-center rounded-xl bg-secondary-1 px-4 py-2 shadow-sm">
             <Avatar
                 userUrl={data._id}
                 imgSrc={data.avatar.url}

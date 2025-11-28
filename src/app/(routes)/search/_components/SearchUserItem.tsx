@@ -11,7 +11,7 @@ const SearchUserItem = ({
     isFriend: boolean;
 }) => {
     return (
-        <div className="flex items-center rounded-xl bg-secondary-1 px-2 py-1 shadow-sm">
+        <div className="flex items-center rounded-xl bg-secondary-1 px-4 py-2 shadow-sm">
             <Avatar
                 userUrl={data._id}
                 imgSrc={data.avatar}
@@ -26,7 +26,14 @@ const SearchUserItem = ({
                     </Button>
                 </div>
 
-                <div>{!isFriend && <AddFriendAction userId={data._id} />}</div>
+                <div>
+                    {!isFriend && (
+                        <AddFriendAction
+                            className="px-4 text-sm"
+                            userId={data._id}
+                        />
+                    )}
+                </div>
             </div>
         </div>
     );
