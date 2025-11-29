@@ -1,19 +1,33 @@
 'use client';
 import PhotoGrid from '@/components/post/PhotoGrid';
 import { Button } from '@/components/ui/Button';
-import { useState } from 'react';
+import DOMPurify from 'isomorphic-dompurify';
+import React, { useMemo, useState } from 'react';
 import VideoPlayer from '../ui/VideoPlayer';
 
-interface Props {
-    post: IPost;
-}
+const PostContent = React.memo(({ post }: { post: IPost }) => {
+    const [contentLength, setContentLength] = useState(() =>
+        post.text.length > 100 ? 100 : post.text.length
+    );
 
-const PostContent = ({ post }: Props) => {
-    const [contentLength, setContentLength] = useState(post.text.length);
+    const content = useMemo(() => {
+        const textContent = post.text
+            .slice(0, contentLength)
+            .replace(/\n/g, '<br/>');
+        return DOMPurify.sanitize(textContent, {
+            ALLOWED_TAGS: ['br'],
+            ALLOWED_ATTR: [],
+        });
+    }, [post.text, contentLength]);
 
-    const content = post.text.slice(0, contentLength).replace(/\n/g, '<br/>');
-    const images = post.media.filter((m) => m.resourceType === 'image');
-    const videos = post.media.filter((m) => m.resourceType === 'video');
+    const images = useMemo(
+        () => post.media.filter((m) => m.resourceType === 'image'),
+        [post.media]
+    );
+    const videos = useMemo(
+        () => post.media.filter((m) => m.resourceType === 'video'),
+        [post.media]
+    );
 
     return (
         <div className="post-content my-2">
@@ -34,7 +48,7 @@ const PostContent = ({ post }: Props) => {
                     }}
                 >
                     {post?.text.length > 100 &&
-                        contentLength != post.text.length &&
+                        contentLength !== post.text.length &&
                         'Xem thêm'}
                     {contentLength === post.text.length && 'Ẩn bớt'}
                 </Button>
@@ -63,6 +77,8 @@ const PostContent = ({ post }: Props) => {
             )}
         </div>
     );
-};
+});
+
+PostContent.displayName = 'PostContent';
 
 export default PostContent;
