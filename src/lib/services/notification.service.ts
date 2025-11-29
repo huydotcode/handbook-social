@@ -33,7 +33,6 @@ class NotificationServiceClass {
 
     /**
      * Send friend request
-     * TODO: Server API needs POST /notifications/request endpoint
      */
     async sendRequestFriend({
         senderId,
@@ -42,50 +41,60 @@ class NotificationServiceClass {
         senderId: string;
         receiverId: string;
     }): Promise<INotification | null> {
-        // TODO: Implement sendRequestFriend endpoint in server-api
-        // POST /notifications/request
-        console.warn('sendRequestFriend not yet implemented via REST API');
-        throw new Error(
-            'Send friend request endpoint not yet implemented in REST API'
-        );
+        try {
+            const notification = await apiNotificationService.sendFriendRequest(
+                {
+                    receiver: receiverId,
+                }
+            );
+            return notification;
+        } catch (error) {
+            console.error('Error sending friend request:', error);
+            throw error;
+        }
     }
 
     /**
      * Accept friend request
-     * TODO: Server API needs POST /notifications/:id/accept endpoint
      */
     async acceptFriend({
-        senderId,
         notificationId,
     }: {
-        senderId: string;
         notificationId: string;
-    }): Promise<boolean> {
-        // TODO: Implement acceptFriend endpoint in server-api
-        // POST /notifications/:id/accept
-        console.warn('acceptFriend not yet implemented via REST API');
-        throw new Error(
-            'Accept friend endpoint not yet implemented in REST API'
-        );
+    }): Promise<{ success: boolean; conversation?: IConversation }> {
+        try {
+            const result =
+                await apiNotificationService.acceptFriendRequest(
+                    notificationId
+                );
+            return {
+                success: result.success,
+                conversation: result.conversation,
+            };
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+            throw error;
+        }
     }
 
     /**
      * Decline friend request
-     * TODO: Server API needs POST /notifications/:id/decline endpoint
      */
     async declineFriend({
-        senderId,
         notificationId,
     }: {
-        senderId: string;
         notificationId: string;
     }): Promise<boolean> {
-        // TODO: Implement declineFriend endpoint in server-api
-        // POST /notifications/:id/decline
-        console.warn('declineFriend not yet implemented via REST API');
-        throw new Error(
-            'Decline friend endpoint not yet implemented in REST API'
-        );
+        try {
+            const result =
+                await apiNotificationService.declineFriendRequest(
+                    notificationId
+                );
+            return result.success;
+        } catch (error) {
+            console.error('Error declining friend request:', error);
+            throw error;
+        }
     }
 
     /**
@@ -158,7 +167,6 @@ class NotificationServiceClass {
 
     /**
      * Delete notification by users
-     * TODO: Server API needs DELETE /notifications?sender_id=:senderId&receiver_id=:receiverId endpoint
      */
     async deleteNotificationByUsers({
         senderId,
@@ -169,14 +177,17 @@ class NotificationServiceClass {
         receiverId: string;
         type?: string;
     }): Promise<boolean> {
-        // TODO: Implement deleteNotificationByUsers endpoint in server-api
-        // DELETE /notifications?sender_id=:senderId&receiver_id=:receiverId&type=:type
-        console.warn(
-            'deleteNotificationByUsers not yet implemented via REST API'
-        );
-        throw new Error(
-            'Delete notification by users endpoint not yet implemented in REST API'
-        );
+        try {
+            const result =
+                await apiNotificationService.deleteNotificationByUsers({
+                    sender: senderId,
+                    receiver: receiverId,
+                });
+            return result.success;
+        } catch (error) {
+            console.error('Error deleting notification by users:', error);
+            throw error;
+        }
     }
 }
 

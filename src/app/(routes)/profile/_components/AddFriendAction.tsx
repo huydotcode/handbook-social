@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/Button';
 import Icons from '@/components/ui/Icons';
 import { useSocket } from '@/context';
-import { useRequests } from '@/context/AppContext';
+import { useNotifications, useRequests } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { useFriends } from '@/context/SocialContext';
 import { NotificationType } from '@/enums/EnumNotification';
@@ -21,15 +21,18 @@ interface Props {
 
 const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
     const { user } = useAuth();
-    const { invalidateFriends, invalidateRequests } = useQueryInvalidation();
+    const { invalidateFriends, invalidateRequests, invalidateNotifications } =
+        useQueryInvalidation();
     const { data: requests, isLoading: isLoadingRequests } = useRequests(
         user?.id
     );
-    const { socketEmitor } = useSocket();
+    const { data: notifications, isLoading: isLoadingNotifications } =
+        useNotifications(user?.id);
+    const { socket, socketEmitor } = useSocket();
     const { data: friends, isLoading: isLoadingFriends } = useFriends(user?.id);
     const isLoadingBtn = useMemo(() => {
-        return isLoadingRequests || isLoadingFriends;
-    }, [isLoadingRequests, isLoadingFriends]);
+        return isLoadingRequests || isLoadingFriends || isLoadingNotifications;
+    }, [isLoadingRequests, isLoadingFriends, isLoadingNotifications]);
 
     const { mutateAsync: sendRequest, isPending } = useMutation({
         mutationFn: async ({ receiverId }: { receiverId: string }) => {
@@ -48,6 +51,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
         },
         onSuccess: async (data) => {
             await invalidateRequests(user?.id as string);
+            await invalidateNotifications(user?.id as string);
             await invalidateFriends(user?.id as string);
 
             if (!data) return;
@@ -62,6 +66,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             });
         },
         onError: (error) => {
+            console.error(error);
             toast.error('Đã có lỗi xảy ra khi gửi lời mời kết bạn.', {
                 id: 'sendRequest',
                 position: 'bottom-left',
@@ -82,6 +87,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
         onSuccess: async () => {
             await invalidateFriends(user?.id as string);
             await invalidateRequests(user?.id as string);
+            await invalidateNotifications(user?.id as string);
 
             toast.success('Hủy kết bạn thành công', {
                 id: 'unfriend',
@@ -89,6 +95,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             });
         },
         onError: (error) => {
+            console.error(error);
             toast.error('Đã có lỗi xảy ra khi hủy kết bạn.', {
                 id: 'unfriend',
                 position: 'bottom-left',
@@ -96,9 +103,6 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
         },
     });
 
-    const isRequest =
-        requests &&
-        requests?.some((request) => request.receiver._id === userId);
     const [countClick, setCountClick] = useState<number>(0);
 
     // Kiểm tra trạng thái bạn bè
@@ -107,7 +111,33 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
         [friends, userId]
     );
 
-    // Hủy lời mời kết bạn
+    // Kiểm tra: Đã gửi request cho userId chưa
+    const isSentRequest = useMemo(
+        () =>
+            requests &&
+            requests.some(
+                (request) =>
+                    request.receiver._id === userId &&
+                    request.type === NotificationType.REQUEST_ADD_FRIEND
+            ),
+        [requests, userId]
+    );
+
+    // Kiểm tra: Đã nhận được request từ userId chưa
+    const receivedRequest = useMemo(
+        () =>
+            notifications &&
+            notifications.find(
+                (notification) =>
+                    notification.sender._id === userId &&
+                    notification.receiver._id === user?.id &&
+                    notification.type === NotificationType.REQUEST_ADD_FRIEND &&
+                    !notification.isDeleted
+            ),
+        [notifications, userId, user?.id]
+    );
+
+    // Hủy lời mời kết bạn (đã gửi)
     const handleRemoveRequest = async () => {
         if (!user) return;
 
@@ -119,15 +149,84 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             });
 
             await invalidateRequests(user?.id as string);
+            await invalidateNotifications(user?.id as string);
             await invalidateFriends(user?.id as string);
 
             toast.success('Đã hủy lời mời kết bạn', {
                 id: 'removeRequest',
             });
         } catch (error) {
-            console.error('Lỗi hủy lời mời kết bạn:', error);
+            console.error(error);
             toast.error('Đã có lỗi xảy ra khi hủy lời mời kết bạn.', {
                 id: 'removeRequest',
+            });
+        }
+    };
+
+    // Chấp nhận lời mời kết bạn
+    const handleAcceptRequest = async () => {
+        if (!receivedRequest || !user) return;
+
+        try {
+            // Server sẽ tự động tạo conversation khi accept friend request
+            const result = await NotificationService.acceptFriend({
+                notificationId: receivedRequest._id,
+            });
+
+            if (!result.success) {
+                toast.error('Đã có lỗi xảy ra khi chấp nhận lời mời kết bạn.', {
+                    id: 'acceptRequest',
+                });
+                return;
+            }
+
+            await invalidateNotifications(user.id);
+            await invalidateFriends(user.id);
+            await invalidateRequests(user.id);
+
+            // Join socket room nếu conversation đã được tạo
+            if (socket && result.conversation) {
+                socketEmitor.joinRoom({
+                    roomId: result.conversation._id,
+                    userId: user.id,
+                });
+
+                socketEmitor.joinRoom({
+                    roomId: result.conversation._id,
+                    userId: receivedRequest.sender._id,
+                });
+            }
+
+            toast.success('Đã chấp nhận lời mời kết bạn', {
+                id: 'acceptRequest',
+            });
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+            toast.error('Đã có lỗi xảy ra khi chấp nhận lời mời kết bạn.', {
+                id: 'acceptRequest',
+            });
+        }
+    };
+
+    // Từ chối lời mời kết bạn
+    const handleDeclineRequest = async () => {
+        if (!receivedRequest || !user) return;
+
+        try {
+            await NotificationService.declineFriend({
+                notificationId: receivedRequest._id,
+            });
+
+            await invalidateNotifications(user.id);
+            await invalidateFriends(user.id);
+
+            toast.success('Đã từ chối lời mời kết bạn', {
+                id: 'declineRequest',
+            });
+        } catch (error) {
+            console.error(error);
+            toast.error('Đã có lỗi xảy ra khi từ chối lời mời kết bạn.', {
+                id: 'declineRequest',
             });
         }
     };
@@ -151,14 +250,20 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
                 mutationUnFriend({
                     friendId: userId,
                 });
-            } else if (isRequest) {
+            } else if (receivedRequest) {
+                // Có request nhận được → chấp nhận
+                await handleAcceptRequest();
+            } else if (isSentRequest) {
+                // Đã gửi request → hủy
                 handleRemoveRequest();
             } else {
+                // Chưa có request → gửi mới
                 await sendRequest({ receiverId: userId });
             }
 
             setCountClick(0);
         } catch (error) {
+            console.error(error);
             toast('Đã có lỗi xảy ra.', {
                 id: 'handleAddFriend',
                 position: 'bottom-left',
@@ -170,7 +275,8 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
     const getButtonText = () => {
         if (isLoadingBtn) return 'Đang tải...';
         if (isFriend) return 'Hủy';
-        if (isRequest) return 'Đã gửi';
+        if (receivedRequest) return 'Chấp nhận';
+        if (isSentRequest) return 'Đã gửi';
         return 'Kết bạn';
     };
 
@@ -181,7 +287,13 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
                 className
             )}
             variant={
-                isFriend ? 'secondary' : !isRequest ? 'primary' : 'secondary'
+                isFriend
+                    ? 'secondary'
+                    : receivedRequest
+                      ? 'primary'
+                      : !isSentRequest
+                        ? 'primary'
+                        : 'secondary'
             }
             size={'md'}
             onClick={handleAddFriend}

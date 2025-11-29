@@ -70,13 +70,15 @@ class UserServiceClass {
 
     /**
      * Unfriend a user
-     * TODO: Server API needs POST/DELETE /users/:id/friends endpoint
      */
-    async unfriend(userId: string): Promise<boolean> {
-        // TODO: Implement unfriend endpoint in server-api
-        // POST /users/:id/unfriend or DELETE /users/:id/friends
-        console.warn('unfriend not yet implemented via REST API');
-        throw new Error('Unfriend endpoint not yet implemented in REST API');
+    async unfriend(friendId: string): Promise<boolean> {
+        try {
+            const result = await userService.unfriend(friendId);
+            return result.success;
+        } catch (error) {
+            console.error('Error unfriending user:', error);
+            throw error;
+        }
     }
 
     /**

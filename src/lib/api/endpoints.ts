@@ -22,6 +22,7 @@ export const API_ENDPOINTS = {
         PICTURES: (userId: string) => `/users/${userId}/pictures`,
         AVATAR: (userId: string) => `/users/${userId}/avatar`,
         COVER_PHOTO: (userId: string) => `/users/${userId}/cover-photo`,
+        UNFRIEND: (friendId: string) => `/users/${friendId}/unfriend`,
     },
 
     // Posts endpoints
@@ -94,6 +95,12 @@ export const API_ENDPOINTS = {
         BY_RECEIVER: (receiverId: string) =>
             `/notifications/receiver/${receiverId}`,
         BY_SENDER: (senderId: string) => `/notifications/sender/${senderId}`,
+        SEND_REQUEST: '/notifications/request',
+        BY_USERS: '/notifications/by-users',
+        ACCEPT: (notificationId: string) =>
+            `/notifications/${notificationId}/accept`,
+        DECLINE: (notificationId: string) =>
+            `/notifications/${notificationId}/decline`,
     },
 
     // Search endpoints

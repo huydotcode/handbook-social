@@ -79,4 +79,13 @@ export const userService = {
             data
         );
     },
+
+    /**
+     * Unfriend a user
+     */
+    unfriend: (friendId: string) => {
+        return apiClient.post<{ success: boolean }>(
+            API_ENDPOINTS.USERS.UNFRIEND(friendId)
+        );
+    },
 };

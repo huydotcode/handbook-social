@@ -26,4 +26,46 @@ export const notificationService = {
             { params }
         );
     },
+
+    /**
+     * Send friend request
+     */
+    sendFriendRequest: (data: { receiver: string }) => {
+        return apiClient.post<INotification>(
+            API_ENDPOINTS.NOTIFICATIONS.SEND_REQUEST,
+            data
+        );
+    },
+
+    /**
+     * Delete notification by users (sender and receiver)
+     */
+    deleteNotificationByUsers: (data: { sender: string; receiver: string }) => {
+        return apiClient.delete<{ success: boolean }>(
+            API_ENDPOINTS.NOTIFICATIONS.BY_USERS,
+            {
+                data,
+            }
+        );
+    },
+
+    /**
+     * Accept friend request
+     */
+    acceptFriendRequest: (notificationId: string) => {
+        return apiClient.post<{
+            success: boolean;
+            notification: INotification;
+            conversation?: IConversation;
+        }>(API_ENDPOINTS.NOTIFICATIONS.ACCEPT(notificationId));
+    },
+
+    /**
+     * Decline friend request
+     */
+    declineFriendRequest: (notificationId: string) => {
+        return apiClient.post<{ success: boolean }>(
+            API_ENDPOINTS.NOTIFICATIONS.DECLINE(notificationId)
+        );
+    },
 };

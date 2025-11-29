@@ -7,7 +7,6 @@ import {
     NotificationType,
 } from '@/enums/EnumNotification';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ConversationService from '@/lib/services/conversation.service';
 import NotificationService from '@/lib/services/notification.service';
 import { cn } from '@/lib/utils';
 import { useCallback, useState } from 'react';
@@ -27,110 +26,94 @@ const NotificationItem = ({
         useQueryInvalidation();
 
     const [showRemove, setShowRemove] = useState(false);
+    const [isAccepting, setIsAccepting] = useState(false);
+    const [isDeclining, setIsDeclining] = useState(false);
 
-    // Chấp nhận lời mời kết bạn // Xử lý phía người nhận
+    // Chấp nhận lời mời kết bạn
     const handleAcceptFriend = useCallback(async () => {
+        if (!user || isAccepting) return;
+
+        setIsAccepting(true);
         try {
-            const notificatonRequestAddFriend =
-                await NotificationService.getTypeAcceptFriendByUser(
-                    user?.id as string
-                );
-
-            if (!notificatonRequestAddFriend) {
-                toast.error('Không tìm thấy thông báo. Vui lòng thử lại!');
-
-                await invalidateNotifications(user?.id as string);
-
-                return;
-            }
-
-            // Chấp nhận lời mời kết bạn
-            const acceptSuccess = await NotificationService.acceptFriend({
-                senderId: notification.sender._id,
-                notificationId: notificatonRequestAddFriend._id,
+            // Chấp nhận lời mời kết bạn sử dụng notification hiện tại
+            // Server sẽ tự động tạo conversation khi accept friend request
+            const result = await NotificationService.acceptFriend({
+                notificationId: notification._id,
             });
 
-            if (!acceptSuccess) {
+            if (!result.success) {
                 toast.error('Chấp nhận lời mời kết bạn thất bại!');
                 return;
             }
 
-            const newConversation =
-                await ConversationService.createAfterAcceptFriend({
-                    userId: notification.receiver._id,
-                    friendId: notification.sender._id,
-                });
+            // Cập nhật lại danh sách bạn bè và notifications
+            // Server đã tự tạo accept notification và conversation rồi
+            await invalidateNotifications(user.id);
+            await invalidateFriends(user.id);
 
-            if (!newConversation) {
-                toast.error('Tạo cuộc trò chuyện thất bại!');
-                return;
-            }
-
-            // Cập nhật lại danh sách bạn bè
-            await invalidateNotifications(user?.id as string);
-            await invalidateFriends(user?.id as string);
-
-            //Tạo thông báo cho người gửi
-            const notificationAcceptFriend =
-                await NotificationService.createNotificationAcceptFriend({
-                    senderId: notification.receiver._id,
-                    receiverId: notification.sender._id,
-                });
-
-            if (socket && notificationAcceptFriend) {
-                // Join room
+            // Join room cho cả 2 users nếu conversation đã được tạo
+            if (socket && result.conversation) {
                 socketEmitor.joinRoom({
-                    roomId: newConversation._id,
+                    roomId: result.conversation._id,
                     userId: notification.receiver._id,
                 });
 
                 socketEmitor.joinRoom({
-                    roomId: newConversation._id,
+                    roomId: result.conversation._id,
                     userId: notification.sender._id,
                 });
-
-                // Gửi thông báo cho người gửi
-                socketEmitor.receiveNotification({
-                    notification: notificationAcceptFriend,
-                });
             }
+
+            toast.success('Đã chấp nhận lời mời kết bạn');
         } catch (error) {
+            console.error('Error accepting friend request:', error);
             toast.error(
                 'Không thể chấp nhận lời mời kết bạn. Vui lòng thử lại!'
             );
+        } finally {
+            setIsAccepting(false);
         }
     }, [
+        user,
+        isAccepting,
+        notification,
         invalidateFriends,
         invalidateNotifications,
-        notification,
-        user?.id,
         socket,
         socketEmitor,
     ]);
 
     // Từ chối lời mời kết bạn
     const handleDeclineFriend = async () => {
+        if (!user || isDeclining) return;
+
+        setIsDeclining(true);
         try {
             await NotificationService.declineFriend({
                 notificationId: notification._id,
-                senderId: notification.sender._id,
             });
 
-            await invalidateNotifications(user?.id as string);
-            await invalidateFriends(user?.id as string);
+            await invalidateNotifications(user.id);
+            await invalidateFriends(user.id);
             toast.success('Đã từ chối lời mời kết bạn');
         } catch (error) {
+            console.error('Error declining friend request:', error);
             toast.error('Không thể từ chối lời mời kết bạn. Vui lòng thử lại!');
+        } finally {
+            setIsDeclining(false);
         }
     };
 
     const removeNotification = async () => {
+        if (!user) return;
+
         try {
             await NotificationService.deleteNotification(notification._id);
 
-            await invalidateNotifications(user?.id as string);
+            await invalidateNotifications(user.id);
             toast.success('Đã xóa thông báo');
         } catch (error) {
+            console.error('Error removing notification:', error);
             toast.error('Không thể xóa thông báo. Vui lòng thử lại!');
         }
     };
@@ -162,7 +145,7 @@ const NotificationItem = ({
                         {notification.type ===
                             NotificationType.REQUEST_ADD_FRIEND && (
                             <span>
-                                {NotificationMessage.REJECT_FRIEND_REQUEST}
+                                {NotificationMessage.REQUEST_ADD_FRIEND}
                             </span>
                         )}
                         {notification.type ===
@@ -175,18 +158,36 @@ const NotificationItem = ({
                             <span>{NotificationMessage.FOLLOW_USER}</span>
                         )}
                     </p>
-                    {notification.type === 'request-add-friend' && (
+                    {notification.type ===
+                        NotificationType.REQUEST_ADD_FRIEND && (
                         <div className="mt-2 flex items-center">
                             <Button
                                 className="mr-2"
                                 variant={'primary'}
                                 size={'sm'}
                                 onClick={handleAcceptFriend}
+                                disabled={isAccepting || isDeclining}
                             >
-                                {showMessage ? 'Chấp nhận' : <Icons.Tick />}
+                                {isAccepting ? (
+                                    <Icons.Loading />
+                                ) : showMessage ? (
+                                    'Chấp nhận'
+                                ) : (
+                                    <Icons.Tick />
+                                )}
                             </Button>
-                            <Button size={'sm'} onClick={handleDeclineFriend}>
-                                {showMessage ? 'Từ chối' : <Icons.Close />}
+                            <Button
+                                size={'sm'}
+                                onClick={handleDeclineFriend}
+                                disabled={isAccepting || isDeclining}
+                            >
+                                {isDeclining ? (
+                                    <Icons.Loading />
+                                ) : showMessage ? (
+                                    'Từ chối'
+                                ) : (
+                                    <Icons.Close />
+                                )}
                             </Button>
                         </div>
                     )}
