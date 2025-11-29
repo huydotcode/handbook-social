@@ -35,7 +35,7 @@ export function ProtectedRoute({
 
     // Show loading while checking auth
     if (isLoading) {
-        return <Loading />;
+        return <Loading fullScreen />;
     }
 
     // Don't render children if auth check fails
