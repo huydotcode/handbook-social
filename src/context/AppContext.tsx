@@ -165,7 +165,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
             'message',
             '/assets/sounds/message-notification.mp3'
         );
-        soundManager.preload('phone-ring', '/assets/sounds/phone-ring.mp3');
+        soundManager.preload('phone-ring', '/assets/sounds/phone-ringing.mp3');
     }, []);
 
     return (
