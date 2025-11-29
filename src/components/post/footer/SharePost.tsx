@@ -28,42 +28,69 @@ const SharePost: React.FC<Props> = ({ post }) => {
     const { user } = useAuth();
     const { data: friends } = useFriends(user?.id);
     const [sended, setSended] = useState<string[]>([]);
+    const [sharingFriendId, setSharingFriendId] = useState<string | null>(null);
     const { socketEmitor } = useSocket();
 
     const handleShare = async (friendId: string) => {
-        if (!user) return;
+        if (!user) {
+            toast.error('Bạn cần đăng nhập để chia sẻ bài viết!', {
+                position: 'bottom-left',
+            });
+            return;
+        }
+
+        setSharingFriendId(friendId);
 
         try {
-            await PostService.share(post._id);
-
-            const { isNew, conversation } =
+            // Get or create conversation
+            const { conversation } =
                 await ConversationService.getPrivateConversation({
                     userId: user.id,
                     friendId,
                 });
 
-            if (conversation) {
-                setSended([...sended, friendId]);
-
-                const newMsg = await MessageService.send({
-                    roomId: conversation._id,
-                    text: `${BASE_URL}/posts/${post._id}`,
+            if (!conversation) {
+                toast.error('Không tìm thấy cuộc trò chuyện!', {
+                    position: 'bottom-left',
                 });
-
-                if (!newMsg) {
-                    toast.error('Không thể chia sẻ bài viết!');
-                    return;
-                }
-
-                socketEmitor.sendMessage({
-                    roomId: conversation._id,
-                    message: newMsg,
-                });
+                setSharingFriendId(null);
+                return;
             }
+
+            // Share post
+            await PostService.share(post._id);
+
+            // Send message with post link
+            const newMsg = await MessageService.send({
+                roomId: conversation._id,
+                text: `${BASE_URL}/posts/${post._id}`,
+            });
+
+            if (!newMsg) {
+                toast.error('Không thể gửi tin nhắn!', {
+                    position: 'bottom-left',
+                });
+                setSharingFriendId(null);
+                return;
+            }
+
+            // Send socket notification
+            socketEmitor.sendMessage({
+                roomId: conversation._id,
+                message: newMsg,
+            });
+
+            // Update state
+            setSended([...sended, friendId]);
 
             toast.success('Đã chia sẻ bài viết!', { position: 'bottom-left' });
         } catch (error) {
-            toast.error('Không thể chia sẻ bài viết!');
+            console.error('Error sharing post:', error);
+            toast.error('Không thể chia sẻ bài viết. Vui lòng thử lại!', {
+                position: 'bottom-left',
+            });
+        } finally {
+            setSharingFriendId(null);
         }
     };
 
@@ -108,27 +135,31 @@ const SharePost: React.FC<Props> = ({ post }) => {
                                     </div>
 
                                     {isSend ? (
-                                        <Button
-                                            disabled={sended.includes(
-                                                friend._id
-                                            )}
-                                            className="flex items-center gap-1"
-                                        >
-                                            {sended.includes(friend._id) ? (
-                                                <Icons.Send className="text-green-500" />
-                                            ) : (
-                                                <Icons.Send />
-                                            )}
+                                        <Button disabled variant={'secondary'}>
+                                            <Icons.Send className="text-green-500" />
                                             <span>Đã gửi</span>
                                         </Button>
                                     ) : (
                                         <Button
+                                            disabled={
+                                                sharingFriendId === friend._id
+                                            }
                                             onClick={() =>
                                                 handleShare(friend._id)
                                             }
+                                            variant={'secondary'}
                                         >
-                                            <Icons.Send />
-                                            <span>Gửi</span>
+                                            {sharingFriendId === friend._id ? (
+                                                <>
+                                                    <Icons.Loading className="h-4 w-4" />
+                                                    <span>Đang gửi...</span>
+                                                </>
+                                            ) : (
+                                                <>
+                                                    <Icons.Send />
+                                                    <span>Gửi</span>
+                                                </>
+                                            )}
                                         </Button>
                                     )}
                                 </div>

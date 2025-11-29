@@ -165,4 +165,14 @@ export const postService = {
             interaction: any;
         }>(API_ENDPOINTS.POSTS.SAVE(postId));
     },
+
+    /**
+     * Share/Unshare a post (toggle)
+     */
+    share: (postId: string) => {
+        return apiClient.post<{
+            action: 'added' | 'removed';
+            interaction: any;
+        }>(API_ENDPOINTS.POSTS.SHARE(postId));
+    },
 };

@@ -129,13 +129,16 @@ class PostServiceClass {
 
     /**
      * Share a post
-     * TODO: Server API needs POST /posts/:id/share endpoint
+     * Toggles share state: adds share if not shared, removes share if already shared
      */
-    async share(postId: string): Promise<boolean> {
-        // TODO: Implement share endpoint in server-api
-        // POST /posts/:id/share
-        console.warn('share not yet implemented via REST API');
-        throw new Error('Share endpoint not yet implemented in REST API');
+    async share(postId: string): Promise<{ action: 'added' | 'removed' }> {
+        try {
+            const result = await apiPostService.share(postId);
+            return { action: result.action };
+        } catch (error) {
+            console.error('Error sharing post:', error);
+            throw error;
+        }
     }
 
     /**
