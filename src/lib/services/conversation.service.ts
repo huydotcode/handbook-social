@@ -26,7 +26,7 @@ class ConversationServiceClass {
 
     /**
      * Get private conversation between two users
-     * TODO: Server API needs GET /conversations/private?user_id=:userId&friend_id=:friendId endpoint
+     * Returns existing conversation or creates a new one
      */
     public async getPrivateConversation({
         userId,
@@ -34,14 +34,20 @@ class ConversationServiceClass {
     }: {
         userId: string;
         friendId: string;
-    }) {
-        // TODO: Implement getPrivateConversation endpoint in server-api
-        // GET /conversations/private?user_id=:userId&friend_id=:friendId
-        console.warn('getPrivateConversation not yet implemented via REST API');
-        return {
-            isNew: false,
-            conversation: null as any,
-        };
+    }): Promise<{ isNew: boolean; conversation: IConversation | null }> {
+        try {
+            const result = await apiConversationService.getPrivateConversation({
+                user_id: userId,
+                friend_id: friendId,
+            });
+            return {
+                isNew: result.isNew,
+                conversation: result.conversation,
+            };
+        } catch (error) {
+            console.error('Error getting private conversation:', error);
+            throw error;
+        }
     }
 
     /**

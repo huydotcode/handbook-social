@@ -18,6 +18,11 @@ export interface ConversationQueryParams {
     page_size?: number;
 }
 
+export interface PrivateConversationQueryParams {
+    user_id?: string;
+    friend_id: string;
+}
+
 export interface AddParticipantDto {
     participantId: string;
 }
@@ -43,6 +48,16 @@ export const conversationService = {
     getById: (id: string) => {
         return apiClient.get<IConversation>(
             API_ENDPOINTS.CONVERSATIONS.BY_ID(id)
+        );
+    },
+
+    /**
+     * Get or create private conversation between two users
+     */
+    getPrivateConversation: (params: PrivateConversationQueryParams) => {
+        return apiClient.get<{ isNew: boolean; conversation: IConversation }>(
+            API_ENDPOINTS.CONVERSATIONS.PRIVATE,
+            { params }
         );
     },
 

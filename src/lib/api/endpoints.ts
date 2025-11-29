@@ -43,6 +43,7 @@ export const API_ENDPOINTS = {
             `/posts/group/${groupId}/member/${userId}`,
         LIKE: (postId: string) => `/posts/${postId}/like`,
         SAVE: (postId: string) => `/posts/${postId}/save`,
+        SHARE: (postId: string) => `/posts/${postId}/share`,
     },
 
     // Comments endpoints
@@ -77,6 +78,7 @@ export const API_ENDPOINTS = {
         PIN: (id: string) => `/conversations/${id}/pin`,
         UNPIN: (id: string, messageId: string) =>
             `/conversations/${id}/pin/${messageId}`,
+        PRIVATE: '/conversations/private',
     },
 
     // Groups endpoints
