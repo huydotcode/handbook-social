@@ -5,11 +5,12 @@ import SkeletonPost from '@/components/post/SkeletonPost';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
-import React, { createContext, useContext, useState } from 'react';
+import React, { createContext, useContext, useMemo, useState } from 'react';
 import { FooterPost } from '.';
 import VideoPlayer from '../ui/VideoPlayer';
 import { PostParams } from './InfinityPostComponent';
 import PostHeader from './PostHeader';
+import DOMPurify from 'isomorphic-dompurify';
 
 interface Props {
     data: IPost;
@@ -35,14 +36,17 @@ const Post: React.FC<Props> = React.memo(
         const pathname = usePathname();
         const { user } = useAuth();
 
-        const showInPrivate =
-            post &&
-            post.option === 'private' &&
-            pathname == `/profile/${post.author._id}` &&
-            user?.id == post.author._id;
+        const showInPrivate = useMemo(
+            () =>
+                post &&
+                post.option === 'private' &&
+                pathname === `/profile/${post.author?._id}` &&
+                user?.id === post.author?._id,
+            [post, pathname, user?.id]
+        );
 
         if (!post) return <SkeletonPost />;
-        if (post.option == 'private' && !showInPrivate) return null;
+        if (post.option === 'private' && !showInPrivate) return null;
 
         return (
             <PostContext.Provider value={{ postParams: params || {} }}>
@@ -59,12 +63,29 @@ const Post: React.FC<Props> = React.memo(
     }
 );
 
-const PostContent = ({ post }: { post: IPost }) => {
-    const [contentLength, setContentLength] = useState(post.text.length);
+const PostContent = React.memo(({ post }: { post: IPost }) => {
+    const [contentLength, setContentLength] = useState(() =>
+        post.text.length > 100 ? 100 : post.text.length
+    );
 
-    const content = post.text.slice(0, contentLength).replace(/\n/g, '<br/>');
-    const images = post.media.filter((m) => m.resourceType === 'image');
-    const videos = post.media.filter((m) => m.resourceType === 'video');
+    const content = useMemo(() => {
+        const textContent = post.text
+            .slice(0, contentLength)
+            .replace(/\n/g, '<br/>');
+        return DOMPurify.sanitize(textContent, {
+            ALLOWED_TAGS: ['br'],
+            ALLOWED_ATTR: [],
+        });
+    }, [post.text, contentLength]);
+
+    const images = useMemo(
+        () => post.media.filter((m) => m.resourceType === 'image'),
+        [post.media]
+    );
+    const videos = useMemo(
+        () => post.media.filter((m) => m.resourceType === 'video'),
+        [post.media]
+    );
 
     return (
         <div className="post-content my-2">
@@ -85,7 +106,7 @@ const PostContent = ({ post }: { post: IPost }) => {
                     }}
                 >
                     {post?.text.length > 100 &&
-                        contentLength != post.text.length &&
+                        contentLength !== post.text.length &&
                         'Xem thêm'}
                     {contentLength === post.text.length && 'Ẩn bớt'}
                 </Button>
@@ -114,7 +135,9 @@ const PostContent = ({ post }: { post: IPost }) => {
             )}
         </div>
     );
-};
+});
+
+PostContent.displayName = 'PostContent';
 
 Post.displayName = 'Post';
 
