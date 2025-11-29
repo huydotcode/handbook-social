@@ -6,7 +6,6 @@ import queryKey from '@/lib/queryKey';
 import PostService from '@/lib/services/post.service';
 import { cn } from '@/lib/utils';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
 import { useAuth } from '@/context/AuthContext';
 import React from 'react';
 import toast from 'react-hot-toast';
@@ -27,7 +26,6 @@ const SavePost: React.FC<Props> = ({ post }) => {
 
     const { postParams } = usePostContext();
 
-    const pathName = usePathname();
     const isSaved = post.userHasSaved;
 
     const { mutate, isPending } = useMutation({
@@ -43,15 +41,9 @@ const SavePost: React.FC<Props> = ({ post }) => {
 
         try {
             if (isSaved) {
-                await PostService.unsavePost({
-                    postId: post._id,
-                    path: pathName,
-                });
+                await PostService.unsavePost(post._id);
             } else {
-                await PostService.savePost({
-                    postId: post._id,
-                    path: pathName,
-                });
+                await PostService.savePost(post._id);
             }
 
             await queryClient.setQueryData<InfinityPostData>(

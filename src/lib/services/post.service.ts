@@ -153,16 +153,13 @@ class PostServiceClass {
 
     /**
      * Update post status
-     * TODO: Server API needs PUT /posts/:id/status endpoint or include in update
      */
     async updateStatus({
         postId,
         status,
-        path,
     }: {
         postId: string;
         status: string;
-        path: string;
     }): Promise<boolean> {
         try {
             // Use update endpoint with status field
@@ -178,36 +175,30 @@ class PostServiceClass {
 
     /**
      * Save a post
-     * TODO: Server API needs POST /posts/:id/save endpoint
+     * Toggles save state: adds save if not saved, removes save if already saved
      */
-    async savePost({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }): Promise<boolean> {
-        // TODO: Implement save endpoint in server-api
-        // POST /posts/:id/save
-        console.warn('savePost not yet implemented via REST API');
-        throw new Error('Save post endpoint not yet implemented in REST API');
+    async savePost(postId: string): Promise<boolean> {
+        try {
+            const result = await apiPostService.save(postId);
+            return result.action === 'added';
+        } catch (error) {
+            console.error('Error saving post:', error);
+            throw error;
+        }
     }
 
     /**
      * Unsave a post
-     * TODO: Server API needs DELETE /posts/:id/save endpoint
+     * Toggles save state: removes save if saved, adds save if not saved
      */
-    async unsavePost({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }): Promise<boolean> {
-        // TODO: Implement unsave endpoint in server-api
-        // DELETE /posts/:id/save
-        console.warn('unsavePost not yet implemented via REST API');
-        throw new Error('Unsave post endpoint not yet implemented in REST API');
+    async unsavePost(postId: string): Promise<boolean> {
+        try {
+            const result = await apiPostService.save(postId);
+            return result.action === 'removed';
+        } catch (error) {
+            console.error('Error unsaving post:', error);
+            throw error;
+        }
     }
 }
 

@@ -42,6 +42,7 @@ export const API_ENDPOINTS = {
         GROUP_MEMBER: (groupId: string, userId: string) =>
             `/posts/group/${groupId}/member/${userId}`,
         LIKE: (postId: string) => `/posts/${postId}/like`,
+        SAVE: (postId: string) => `/posts/${postId}/save`,
     },
 
     // Comments endpoints

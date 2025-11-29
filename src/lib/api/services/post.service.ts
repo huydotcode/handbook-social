@@ -155,4 +155,14 @@ export const postService = {
             interaction: any;
         }>(API_ENDPOINTS.POSTS.LIKE(postId));
     },
+
+    /**
+     * Save/Unsave a post (toggle)
+     */
+    save: (postId: string) => {
+        return apiClient.post<{
+            action: 'added' | 'removed';
+            interaction: any;
+        }>(API_ENDPOINTS.POSTS.SAVE(postId));
+    },
 };

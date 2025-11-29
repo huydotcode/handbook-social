@@ -1,7 +1,6 @@
 import { Button } from '@/components/ui/Button';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import PostService from '@/lib/services/post.service';
-import { usePathname } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { PostTypes } from './InfinityPostComponent';
 
@@ -11,7 +10,6 @@ interface Props {
 
 const ReviewPost = ({ post }: Props) => {
     const { invalidateNewFeedPosts, invalidatePost } = useQueryInvalidation();
-    const pathname = usePathname();
 
     const handleAcceptPost = async (accept: boolean) => {
         if (!post) return;
@@ -20,7 +18,6 @@ const ReviewPost = ({ post }: Props) => {
             await PostService.updateStatus({
                 postId: post._id,
                 status: accept ? 'active' : 'rejected',
-                path: pathname,
             });
 
             await invalidateNewFeedPosts({
