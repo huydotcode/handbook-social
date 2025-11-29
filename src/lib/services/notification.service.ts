@@ -120,7 +120,6 @@ class NotificationServiceClass {
 
     /**
      * Create follow user notification
-     * TODO: Server API needs POST /notifications endpoint
      */
     async createNotificationFollowUser({
         senderId,
@@ -129,14 +128,16 @@ class NotificationServiceClass {
         senderId: string;
         receiverId: string;
     }): Promise<INotification | null> {
-        // TODO: Implement createNotification endpoint in server-api
-        // POST /notifications
-        console.warn(
-            'createNotificationFollowUser not yet implemented via REST API'
-        );
-        throw new Error(
-            'Create notification endpoint not yet implemented in REST API'
-        );
+        try {
+            const notification =
+                await apiNotificationService.createFollowNotification({
+                    receiver: receiverId,
+                });
+            return notification;
+        } catch (error) {
+            console.error('Error creating follow notification:', error);
+            throw error;
+        }
     }
 
     /**

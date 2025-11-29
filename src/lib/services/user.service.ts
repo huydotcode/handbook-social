@@ -2,6 +2,7 @@ import { userService } from '../api';
 import { apiClient } from '../api/client';
 import { API_ENDPOINTS } from '../api/endpoints';
 import { searchService } from '../api/services/search.service';
+import { followService } from '../api/services/follow.service';
 
 class UserServiceClass {
     /**
@@ -83,24 +84,28 @@ class UserServiceClass {
 
     /**
      * Follow a user
-     * TODO: Server API needs POST /follows endpoint
      */
     async follow(userId: string): Promise<boolean> {
-        // TODO: Implement follow endpoint in server-api
-        // POST /follows with { following: userId }
-        console.warn('follow not yet implemented via REST API');
-        throw new Error('Follow endpoint not yet implemented in REST API');
+        try {
+            await followService.follow(userId);
+            return true;
+        } catch (error) {
+            console.error('Error following user:', error);
+            throw error;
+        }
     }
 
     /**
      * Unfollow a user
-     * TODO: Server API needs DELETE /follows/:userId endpoint
      */
     async unfollow(userId: string): Promise<boolean> {
-        // TODO: Implement unfollow endpoint in server-api
-        // DELETE /follows/:userId
-        console.warn('unfollow not yet implemented via REST API');
-        throw new Error('Unfollow endpoint not yet implemented in REST API');
+        try {
+            const result = await followService.unfollow(userId);
+            return result.success;
+        } catch (error) {
+            console.error('Error unfollowing user:', error);
+            throw error;
+        }
     }
 }
 

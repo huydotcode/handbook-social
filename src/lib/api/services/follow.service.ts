@@ -10,4 +10,22 @@ export const followService = {
             API_ENDPOINTS.FOLLOWS.FOLLOWINGS(userId)
         );
     },
+
+    /**
+     * Follow a user
+     */
+    follow: (followingId: string) => {
+        return apiClient.post<IFollow>(API_ENDPOINTS.FOLLOWS.FOLLOW, {
+            following: followingId,
+        });
+    },
+
+    /**
+     * Unfollow a user
+     */
+    unfollow: (userId: string) => {
+        return apiClient.delete<{ success: boolean }>(
+            API_ENDPOINTS.FOLLOWS.UNFOLLOW(userId)
+        );
+    },
 };

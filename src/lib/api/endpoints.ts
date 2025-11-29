@@ -96,6 +96,7 @@ export const API_ENDPOINTS = {
             `/notifications/receiver/${receiverId}`,
         BY_SENDER: (senderId: string) => `/notifications/sender/${senderId}`,
         SEND_REQUEST: '/notifications/request',
+        FOLLOW: '/notifications/follow',
         BY_USERS: '/notifications/by-users',
         ACCEPT: (notificationId: string) =>
             `/notifications/${notificationId}/accept`,
@@ -131,6 +132,8 @@ export const API_ENDPOINTS = {
     // Follow endpoints
     FOLLOWS: {
         FOLLOWINGS: (userId: string) => `/follows/${userId}/followings`,
+        FOLLOW: '/follows',
+        UNFOLLOW: (userId: string) => `/follows/${userId}`,
     },
 
     // Categories endpoints

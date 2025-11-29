@@ -38,6 +38,16 @@ export const notificationService = {
     },
 
     /**
+     * Create follow user notification
+     */
+    createFollowNotification: (data: { receiver: string }) => {
+        return apiClient.post<INotification>(
+            API_ENDPOINTS.NOTIFICATIONS.FOLLOW,
+            data
+        );
+    },
+
+    /**
      * Delete notification by users (sender and receiver)
      */
     deleteNotificationByUsers: (data: { sender: string; receiver: string }) => {
