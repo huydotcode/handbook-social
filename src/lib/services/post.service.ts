@@ -113,13 +113,18 @@ class PostServiceClass {
 
     /**
      * Send reaction (like) to a post
-     * TODO: Server API needs POST /posts/:id/like endpoint
+     * Toggles like state: adds like if not liked, removes like if already liked
      */
-    async sendReaction(postId: string): Promise<boolean> {
-        // TODO: Implement like endpoint in server-api
-        // POST /posts/:id/like
-        console.warn('sendReaction not yet implemented via REST API');
-        throw new Error('Like endpoint not yet implemented in REST API');
+    async sendReaction(
+        postId: string
+    ): Promise<{ action: 'added' | 'removed' }> {
+        try {
+            const result = await apiPostService.like(postId);
+            return { action: result.action };
+        } catch (error) {
+            console.error('Error sending reaction:', error);
+            throw error;
+        }
     }
 
     /**

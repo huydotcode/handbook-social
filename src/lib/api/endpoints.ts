@@ -41,6 +41,7 @@ export const API_ENDPOINTS = {
             `/posts/group/${groupId}/manage/pending`,
         GROUP_MEMBER: (groupId: string, userId: string) =>
             `/posts/group/${groupId}/member/${userId}`,
+        LIKE: (postId: string) => `/posts/${postId}/like`,
     },
 
     // Comments endpoints

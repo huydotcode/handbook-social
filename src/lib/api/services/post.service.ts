@@ -145,4 +145,14 @@ export const postService = {
     delete: (id: string) => {
         return apiClient.delete<void>(API_ENDPOINTS.POSTS.BY_ID(id));
     },
+
+    /**
+     * Like/Unlike a post (toggle reaction)
+     */
+    like: (postId: string) => {
+        return apiClient.post<{
+            action: 'added' | 'removed';
+            interaction: any;
+        }>(API_ENDPOINTS.POSTS.LIKE(postId));
+    },
 };
