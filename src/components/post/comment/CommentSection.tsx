@@ -3,6 +3,7 @@ import Comment from '@/components/post/comment/CommentItem';
 import SkeletonComment from '@/components/post/comment/SkeletonComment';
 import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/context';
 import { commentService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
 import CommentService from '@/lib/services/comment.service';
@@ -11,12 +12,11 @@ import {
     useMutation,
     useQueryClient,
 } from '@tanstack/react-query';
-import React, { useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Form, FormControl } from '../../ui/Form';
 import { Textarea } from '../../ui/textarea';
-import { useAuth } from '@/context';
 
 interface Props {
     post: IPost;
@@ -61,10 +61,6 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
         enabled: !!post._id,
         refetchOnWindowFocus: false,
         refetchInterval: false,
-        initialData: {
-            pages: [],
-            pageParams: [],
-        },
     });
 
     const form = useForm<FormData>({
@@ -72,13 +68,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
             text: '',
         },
     });
-    const {
-        handleSubmit,
-        reset,
-        setFocus,
-        formState: { isLoading },
-        setValue,
-    } = form;
+    const { handleSubmit, reset, setFocus, setValue } = form;
     const { mutate, isPending } = useMutation({
         mutationFn: async (data: FormData) => {
             await onSubmitComment(data);
@@ -88,65 +78,97 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
     const inputRef = useRef<HTMLTextAreaElement>(null);
 
     // Gửi bình luận
-    const onSubmitComment: SubmitHandler<FormData> = async (data) => {
-        const { text } = data;
-        if (!text || text.trim().length === 0) return;
+    const onSubmitComment: SubmitHandler<FormData> = useCallback(
+        async (data) => {
+            const { text } = data;
+            if (!text || text.trim().length === 0) return;
 
-        setCommentCount((prev) => prev + 1);
+            // Optimistic update - tăng comment count
+            setCommentCount((prev) => prev + 1);
 
-        reset();
-        setFocus('text');
-        setValue('text', '');
+            // Reset form
+            reset();
+            setFocus('text');
+            setValue('text', '');
 
-        try {
-            const newComment = await CommentService.create({
-                content: text,
-                replyTo: null,
-                postId: post._id,
-            });
+            try {
+                const newComment = await CommentService.create({
+                    content: text,
+                    replyTo: null,
+                    postId: post._id,
+                });
 
-            await queryClient.setQueryData(
-                queryKey.posts.id(post._id),
-                (oldData: IPost | undefined) => {
-                    if (!oldData) return oldData;
-                    return {
-                        ...oldData,
-                        commentsCount: oldData.commentsCount + 1,
-                    };
-                }
-            );
+                // Update post cache - tăng commentsCount
+                await queryClient.setQueryData(
+                    queryKey.posts.id(post._id),
+                    (oldData: IPost | undefined) => {
+                        if (!oldData) return oldData;
+                        return {
+                            ...oldData,
+                            commentsCount: (oldData.commentsCount || 0) + 1,
+                        };
+                    }
+                );
 
-            await queryClient.setQueryData(
-                queryKey.posts.comments(post._id),
-                (oldData: { pages: IComment[][]; pageParams: number[] }) => {
-                    if (!oldData) return oldData;
-                    return {
-                        pages: [[newComment], ...oldData.pages],
-                        pageParams: [1, ...oldData.pageParams],
-                    };
-                }
-            );
-        } catch (error: any) {
-            toast.error('Không thể gửi bình luận!', {
-                position: 'bottom-left',
-            });
-        }
-    };
+                // Update comments cache - thêm comment mới vào đầu
+                await queryClient.setQueryData(
+                    queryKey.posts.comments(post._id),
+                    (
+                        oldData:
+                            | {
+                                  pages: IComment[][];
+                                  pageParams: number[];
+                              }
+                            | undefined
+                    ) => {
+                        if (!oldData) {
+                            return {
+                                pages: [[newComment]],
+                                pageParams: [1],
+                            };
+                        }
+                        return {
+                            pages: [[newComment], ...oldData.pages],
+                            pageParams: [1, ...oldData.pageParams],
+                        };
+                    }
+                );
+            } catch (error: any) {
+                console.error('Error creating comment:', error);
+                // Rollback optimistic update
+                setCommentCount((prev) => Math.max(0, prev - 1));
+                toast.error('Không thể gửi bình luận!', {
+                    position: 'bottom-left',
+                });
+            }
+        },
+        [post._id, queryClient, reset, setFocus, setValue, setCommentCount]
+    );
 
-    const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-        // Nếu Shift + Enter thì xuống dòng
-        if (e.key === 'Enter' && e.shiftKey) return;
+    const handleKeyDown = useCallback(
+        (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+            // Nếu Shift + Enter thì xuống dòng
+            if (e.key === 'Enter' && e.shiftKey) return;
 
-        if (e.key === 'Enter') {
-            e.preventDefault();
+            if (e.key === 'Enter') {
+                e.preventDefault();
 
-            formRef.current?.dispatchEvent(
-                new Event('submit', { cancelable: true, bubbles: true })
-            );
-        }
-    };
+                formRef.current?.dispatchEvent(
+                    new Event('submit', { cancelable: true, bubbles: true })
+                );
+            }
+        },
+        []
+    );
 
-    if (!user || !comments || isLoadingComments)
+    // Memoize loading state check
+    const isLoading = useMemo(
+        () => isLoadingComments || !comments,
+        [isLoadingComments, comments]
+    );
+
+    // Early return cho loading state
+    if (isLoading) {
         return (
             <div className={'flex flex-col gap-4'}>
                 <SkeletonComment />
@@ -154,6 +176,12 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
                 <SkeletonComment />
             </div>
         );
+    }
+
+    // Early return nếu chưa đăng nhập
+    if (!user) {
+        return null;
+    }
 
     return (
         <>
@@ -191,8 +219,9 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
                                 className="right-0 w-10 rounded-l-none rounded-r-xl px-3 hover:cursor-pointer hover:bg-hover-1 dark:border-none dark:hover:bg-dark-hover-2"
                                 variant={'custom'}
                                 type="submit"
+                                disabled={isPending}
                             >
-                                {isLoading ? (
+                                {isPending ? (
                                     <Icons.Loading className="animate-spin" />
                                 ) : (
                                     <Icons.Send />
@@ -205,14 +234,13 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
 
             {isPending && <SkeletonComment />}
 
-            {!isLoadingComments && !isPending && comments.length === 0 && (
+            {!isPending && comments && comments.length === 0 && (
                 <div className="text-center text-xs text-secondary-1">
                     Không có bình luận
                 </div>
             )}
 
-            {!isLoadingComments &&
-                comments &&
+            {comments &&
                 comments.map((cmt) => (
                     <Comment
                         data={cmt}
@@ -221,7 +249,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
                     />
                 ))}
 
-            {!isLoadingComments && hasNextPage && (
+            {hasNextPage && (
                 <Button
                     className="text-secondary-1"
                     variant={'text'}
