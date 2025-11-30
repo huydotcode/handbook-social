@@ -4,7 +4,6 @@ import postAudience from '@/constants/postAudience.constant';
 import { timeConvert3 } from '@/utils/timeConvert';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { ActionPost } from '.';
 import { Avatar } from '../ui';
 import {
     Tooltip,
@@ -12,6 +11,7 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '../ui/tooltip';
+import ActionPost from './action/ActionPost';
 
 interface Props {
     post: IPost;

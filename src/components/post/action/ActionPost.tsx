@@ -1,4 +1,5 @@
 'use client';
+import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import {
     Popover,
@@ -8,10 +9,9 @@ import {
 import { useAuth } from '@/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-import Icons from '../ui/Icons';
-import DeletePostModal from './action/DeletePostModal';
-import EditPostModal from './action/EditPostModal';
-import SavePost from './footer/SavePost';
+import SavePost from '../footer/SavePost';
+import DeletePostModal from './DeletePostModal';
+import EditPostModal from './EditPostModal';
 
 interface Props {
     post: IPost;

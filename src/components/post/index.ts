@@ -1,4 +1,3 @@
-export { default as ActionPost } from './ActionPost';
 export { default as Comment } from './comment/CommentItem';
 export { default as FooterPost } from './footer/FooterPost';
 
