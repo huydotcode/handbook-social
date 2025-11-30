@@ -2,23 +2,25 @@
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
-import React, { useState } from 'react';
-import { PostParams } from '../InfinityPostComponent';
+import React, { useEffect, useState } from 'react';
 import CommentSection from './CommentSection';
 import ReactionPost from './ReactionPost';
 import SharePost from './SharePost';
 
 interface Props {
     post: IPost;
-    params: PostParams;
 }
 
-const FooterPost: React.FC<Props> = ({ post, params }) => {
+const FooterPost: React.FC<Props> = ({ post }) => {
     const [commentCount, setCommentCount] = useState<number>(
         post.commentsCount || 0
     );
     const [showCommentSection, setShowCommentSection] =
         useState<boolean>(false);
+
+    useEffect(() => {
+        setCommentCount(post.commentsCount || 0);
+    }, [post.commentsCount]);
 
     return (
         <>
@@ -48,23 +50,11 @@ const FooterPost: React.FC<Props> = ({ post, params }) => {
                     <ReactionPost post={post} />
 
                     <Button
-                        className="like-container mr-2 flex flex-1 items-center md:p-1"
+                        className="comment-container mr-2 flex flex-1 items-center md:p-1"
                         variant={'ghost'}
-                        onClick={() => setShowCommentSection(true)}
+                        onClick={() => setShowCommentSection((prev) => !prev)}
                     >
-                        <div className="con-like">
-                            <input
-                                className="like"
-                                type="checkbox"
-                                title="like"
-                                onChange={() => {}}
-                            />
-                            <div className="checkmark flex">
-                                {/* <Icons.Heart /> */}
-                                <Icons.Comment />
-                            </div>
-                        </div>
-
+                        <Icons.Comment />
                         <span className="ml-1 mr-2 min-w-[10px] text-sm sm:hidden">
                             Bình luận
                         </span>

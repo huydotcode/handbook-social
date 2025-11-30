@@ -50,9 +50,7 @@ const Post: React.FC<Props> = React.memo(
                 <div className="relative mb-4 rounded-xl bg-white px-4 py-2 shadow-md dark:bg-dark-secondary-1">
                     <PostHeader post={post} />
                     <PostContent post={post} />
-                    {!isManage && (
-                        <FooterPost post={post} params={params || {}} />
-                    )}
+                    {!isManage && <FooterPost post={post} />}
                     {isManage && <ReviewPost post={post} />}
                 </div>
             </PostContext.Provider>
