@@ -55,7 +55,11 @@ const Avatar: React.FC<Props> = ({
         return (
             <Image
                 className={cn(`rounded-${rounded}`, className)}
-                src={isError ? '/assets/img/user-profile.jpg' : userImage || ''}
+                src={
+                    isError
+                        ? '/assets/img/user-profile.jpg'
+                        : userImage || '/assets/img/user-profile.jpg'
+                }
                 alt={userName || ''}
                 priority={true}
                 onError={() => setIsError(true)}
@@ -71,7 +75,11 @@ const Avatar: React.FC<Props> = ({
         >
             <Image
                 className={cn(`rounded-${rounded}`, className)}
-                src={isError ? '/assets/img/user-profile.jpg' : userImage || ''}
+                src={
+                    isError
+                        ? '/assets/img/user-profile.jpg'
+                        : userImage || '/assets/img/user-profile.jpg'
+                }
                 alt={userName || ''}
                 priority={true}
                 onError={() => setIsError(true)}
