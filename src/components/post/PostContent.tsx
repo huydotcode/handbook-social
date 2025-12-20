@@ -2,7 +2,7 @@
 import PhotoGrid from '@/components/post/PhotoGrid';
 import { Button } from '@/components/ui/Button';
 import DOMPurify from 'isomorphic-dompurify';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import VideoPlayer from '../ui/VideoPlayer';
 
 const PostContent = React.memo(({ post }: { post: IPost }) => {
@@ -14,10 +14,7 @@ const PostContent = React.memo(({ post }: { post: IPost }) => {
         const textContent = post.text
             .slice(0, contentLength)
             .replace(/\n/g, '<br/>');
-        return DOMPurify.sanitize(textContent, {
-            ALLOWED_TAGS: ['br'],
-            ALLOWED_ATTR: [],
-        });
+        return DOMPurify.sanitize(textContent);
     }, [post.text, contentLength]);
 
     const images = useMemo(
