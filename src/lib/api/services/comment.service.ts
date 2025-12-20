@@ -4,7 +4,7 @@ import { API_ENDPOINTS } from '../endpoints';
 export interface CreateCommentDto {
     post: string;
     text: string;
-    parent?: string;
+    replyComment?: string;
     media?: string[];
 }
 

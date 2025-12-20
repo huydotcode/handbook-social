@@ -11,9 +11,9 @@ interface IComment {
     _id: string;
     text: string;
     author: IUser;
-    replyComment: IComment;
+    replyComment: string;
     loves: IUser[];
-    post: IPost;
+    post: string;
     isDeleted: boolean;
     hasReplies: boolean;
     createdAt: Date;

@@ -16,7 +16,7 @@ class CommentServiceClass {
         return await apiCommentService.create({
             post: postId,
             text: content,
-            parent: replyTo || undefined,
+            replyComment: replyTo || undefined,
         });
     }
 

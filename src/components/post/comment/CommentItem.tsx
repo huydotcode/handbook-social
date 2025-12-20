@@ -4,7 +4,6 @@ import { Button } from '@/components/ui/Button';
 import { Form, FormControl } from '@/components/ui/Form';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/context/AuthContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import { commentService as commentApiService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
 import CommentService from '@/lib/services/comment.service';
@@ -67,12 +66,8 @@ export const useReplyComments = ({
 
 const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
     const { user } = useAuth();
-    const { invalidateComments, invalidatePost, invalidateReplyComments } =
-        useQueryInvalidation();
-    const { data: replyComments } = useReplyComments({
-        commentId: comment._id,
-        enabled: comment.hasReplies,
-    });
+    const isDeleted = comment.isDeleted;
+
     const [showReplyComments, setShowReplyComments] = useState<boolean>(false);
     const queryClient = useQueryClient();
 
@@ -112,14 +107,14 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
             const newComment = await CommentService.create({
                 content: data.text,
                 replyTo: comment._id,
-                postId: comment.post._id,
+                postId: comment.post,
             });
 
             // Cập nhật hasReplies cho comment gốc
             if (!comment.hasReplies) {
                 if (comment.replyComment) {
                     await queryClient.setQueryData(
-                        queryKey.posts.replyComments(comment.replyComment._id),
+                        queryKey.posts.replyComments(comment.replyComment),
                         (oldData: {
                             pages: IComment[][];
                             pageParams: number[];
@@ -144,7 +139,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                     );
                 } else {
                     await queryClient.setQueryData(
-                        queryKey.posts.comments(comment.post._id),
+                        queryKey.posts.comments(comment.post),
                         (oldData: {
                             pages: IComment[][];
                             pageParams: number[];
@@ -198,7 +193,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
         setIsLoved((prev) => !prev);
 
         await queryClient.setQueryData(
-            queryKey.posts.comments(comment.post._id),
+            queryKey.posts.comments(comment.post),
             (oldData: any) => {
                 if (!oldData) return oldData;
 
@@ -226,7 +221,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
 
         if (comment.replyComment) {
             await queryClient.setQueryData(
-                queryKey.posts.replyComments(comment.replyComment._id),
+                queryKey.posts.replyComments(comment.replyComment),
                 (oldData: any) => {
                     if (!oldData) return oldData;
 
@@ -257,50 +252,36 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
     };
 
     const handleDeleteComment = async () => {
+        if (isDeleted) return;
+
         try {
             setCommentCount((prev) => prev - 1);
 
             await CommentService.delete(comment._id);
 
-            if (comment.replyComment) {
-                await queryClient.setQueryData(
-                    queryKey.posts.replyComments(comment.replyComment._id),
-                    (oldData: {
-                        pages: IComment[][];
-                        pageParams: number[];
-                    }) => {
-                        if (!oldData) return oldData;
+            await queryClient.setQueryData(
+                comment.replyComment
+                    ? queryKey.posts.replyComments(comment.replyComment)
+                    : queryKey.posts.comments(comment.post),
+                (oldData: { pages: IComment[][]; pageParams: number[] }) => {
+                    if (!oldData) return oldData;
 
-                        return {
-                            ...oldData,
-                            pages: oldData.pages.map((page) => {
-                                return page.filter(
-                                    (c: IComment) => c._id !== comment._id
-                                );
-                            }),
-                        };
-                    }
-                );
-            } else {
-                await queryClient.setQueryData(
-                    queryKey.posts.comments(comment.post._id),
-                    (oldData: {
-                        pages: IComment[][];
-                        pageParams: number[];
-                    }) => {
-                        if (!oldData) return oldData;
-
-                        return {
-                            ...oldData,
-                            pages: oldData.pages.map((page) => {
-                                return page.filter(
-                                    (c: IComment) => c._id !== comment._id
-                                );
-                            }),
-                        };
-                    }
-                );
-            }
+                    return {
+                        ...oldData,
+                        pages: oldData.pages.map((page) => {
+                            return page.map((c: IComment) => {
+                                if (c._id === comment._id) {
+                                    return {
+                                        ...c,
+                                        isDeleted: true,
+                                    };
+                                }
+                                return c;
+                            });
+                        }),
+                    };
+                }
+            );
         } catch (error) {
             console.error(error);
             toast.error('Có lỗi xảy ra khi xóa bình luận');
@@ -324,30 +305,46 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
     return (
         <div key={comment._id} className="mt-2">
             <div className="flex justify-between">
-                <Avatar
-                    imgSrc={comment.author.avatar}
-                    userUrl={comment.author._id}
-                    alt={comment.author.name}
-                />
+                {!isDeleted && (
+                    <Avatar
+                        imgSrc={comment.author.avatar}
+                        userUrl={comment.author._id}
+                        alt={comment.author.name}
+                    />
+                )}
+
+                {isDeleted && <Avatar />}
 
                 <div className=" ml-2 flex max-w-[calc(100%-32px)] flex-1 flex-col">
                     <div className="relative w-fit break-all rounded-xl bg-primary-1 px-4 py-1 text-sm dark:bg-dark-secondary-2">
-                        <div className={'mb-1 flex items-center'}>
-                            <Link
-                                href={`/profile/${comment.author._id}`}
-                                className="mr-1 p-0 text-xs font-bold hover:underline dark:text-dark-primary-1"
-                            >
-                                {comment.author.name}
-                            </Link>
+                        {!isDeleted && (
+                            <div className={'mb-1 flex items-center'}>
+                                <Link
+                                    href={`/profile/${comment.author._id}`}
+                                    className="mr-1 p-0 text-xs font-bold hover:underline dark:text-dark-primary-1"
+                                >
+                                    {comment.author.name}
+                                </Link>
 
-                            {comment.author.isVerified && <Icons.Verified />}
-                        </div>
+                                {comment.author.isVerified && (
+                                    <Icons.Verified />
+                                )}
+                            </div>
+                        )}
 
-                        <div
-                            dangerouslySetInnerHTML={{
-                                __html: comment.text,
-                            }}
-                        />
+                        {!isDeleted && (
+                            <div
+                                dangerouslySetInnerHTML={{
+                                    __html: comment.text,
+                                }}
+                            />
+                        )}
+
+                        {isDeleted && (
+                            <i className="dark:text-dark-primary-3 text-sm italic text-gray-500">
+                                Bình luận đã bị xóa
+                            </i>
+                        )}
 
                         <div className="absolute -bottom-2 -right-2 flex items-center">
                             {comment.loves.length > 0 && (
@@ -387,7 +384,7 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
                             Trả lời
                         </Button>
 
-                        {user?.id === comment.author._id && (
+                        {!isDeleted && user?.id === comment.author._id && (
                             <Button
                                 variant={'text'}
                                 size={'xs'}
