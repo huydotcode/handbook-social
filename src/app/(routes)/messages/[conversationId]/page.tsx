@@ -89,9 +89,9 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         // Kiểm tra nếu cuộc trò chuyện là nhóm và người dùng là thành viên của nhóm nhưng không phải là người tham gia cuộc trò chuyện
-        const isGroupMember =
-            conversation.group &&
-            conversation.group.members.some((m) => m.user._id === user?.id);
+        const isGroupMember = Boolean(
+            conversation.group?.members?.some((m) => m.user._id === user?.id)
+        );
         const isParticipant = conversation.participants.some(
             (p) => p._id === user?.id
         );

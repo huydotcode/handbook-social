@@ -11,7 +11,6 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import GroupService from '@/lib/services/group.service';
 import UserService from '@/lib/services/user.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
@@ -24,6 +23,7 @@ import React, { useEffect, useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sidebar } from '../_components';
+import { useCreateGroup } from '@/lib/hooks/api/useGroup';
 
 const INPUT_CLASSNAME =
     'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';
@@ -59,6 +59,7 @@ const CreateGroupPage: React.FC = ({}) => {
     const file = watch('file');
     const fileInputId = useId();
     const router = useRouter();
+    const createGroup = useCreateGroup();
 
     useEffect(() => {
         (async () => {
@@ -91,16 +92,14 @@ const CreateGroupPage: React.FC = ({}) => {
                 return;
             }
 
-            const newGroup = await GroupService.create({
+            const newGroup = await createGroup.mutateAsync({
                 ...data,
                 avatar: avatar._id,
                 members,
             });
-
-            toast.success('Tạo nhóm thành công!');
             router.push(`/groups/${newGroup?._id}`);
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi tạo nhóm, vui lòng thử lại!');
+            console.error('Error creating group:', error);
         }
     };
 
@@ -159,10 +158,12 @@ const CreateGroupPage: React.FC = ({}) => {
 
                             {/* Ảnh đại diện */}
                             <div>
-                                <label htmlFor="avatar">Ảnh đại diện</label>
+                                <label htmlFor={fileInputId}>
+                                    Ảnh đại diện
+                                </label>
                                 <label
                                     className="flex items-center"
-                                    htmlFor="avatar"
+                                    htmlFor={fileInputId}
                                 >
                                     <span className="mr-2 p-2">
                                         {file ? (
@@ -296,10 +297,12 @@ const CreateGroupPage: React.FC = ({}) => {
                                 className="mt-2"
                                 type="submit"
                                 variant="primary"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || createGroup.isPending}
                                 size={'sm'}
                             >
-                                {isSubmitting ? 'Đang tạo nhóm...' : 'Tạo nhóm'}
+                                {isSubmitting || createGroup.isPending
+                                    ? 'Đang tạo nhóm...'
+                                    : 'Tạo nhóm'}
                             </Button>
                         </form>
                     </Form>

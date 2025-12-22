@@ -1,6 +1,6 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
-import GroupService from '@/lib/services/group.service';
+import { groupService } from '@/lib/api/services/group.service';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 
@@ -24,7 +24,7 @@ const ManageLayout: React.FC<Props> = ({ children, params }) => {
             }
 
             try {
-                const group: IGroup = await GroupService.getById(groupId);
+                const group: IGroup = await groupService.getById(groupId);
 
                 if (!group) {
                     router.push('/groups');
@@ -32,17 +32,36 @@ const ManageLayout: React.FC<Props> = ({ children, params }) => {
                 }
 
                 if (group.creator._id !== user.id) {
-                    router.push(`/groups/${groupId}`);
-                    return;
-                }
+                    // Check admin role via paginated members
+                    const pageSize = 50;
+                    let page = 1;
+                    let isAdmin = false;
 
-                const isAdmin = group.members.find(
-                    (mem) => mem.user._id === user.id && mem.role === 'admin'
-                );
+                    while (true) {
+                        const res = await groupService.getMembers(groupId, {
+                            page,
+                            page_size: pageSize,
+                        });
 
-                if (!isAdmin) {
-                    router.push(`/groups/${groupId}`);
-                    return;
+                        if (
+                            res.data.some(
+                                (mem) =>
+                                    mem.user._id === user.id &&
+                                    mem.role === 'ADMIN'
+                            )
+                        ) {
+                            isAdmin = true;
+                            break;
+                        }
+
+                        if (!res.pagination?.hasNext) break;
+                        page += 1;
+                    }
+
+                    if (!isAdmin) {
+                        router.push(`/groups/${groupId}`);
+                        return;
+                    }
                 }
 
                 setIsAuthorized(true);

@@ -3,17 +3,17 @@ import { useAuth } from '@/context/AuthContext';
 import ConversationService from '@/lib/services/conversation.service';
 import GroupService from '@/lib/services/group.service';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 import Header from '../_components/Header';
 import Sidebar from '../_components/admin/Sidebar';
 
 interface Props {
-    params: { groupId: string };
+    params: Promise<{ groupId: string }>;
     children: React.ReactNode;
 }
 
 const GroupLayout: React.FC<Props> = ({ params, children }) => {
-    const { groupId } = params;
+    const { groupId } = use(params);
     const { user } = useAuth();
     const router = useRouter();
     const [group, setGroup] = useState<IGroup | null>(null);

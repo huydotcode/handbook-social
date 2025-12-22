@@ -1,7 +1,14 @@
-import { useQuery } from '@tanstack/react-query';
-import { groupService } from '@/lib/api/services/group.service';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+    groupService,
+    type CreateGroupPayload,
+} from '@/lib/api/services/group.service';
 import { queryKey } from '@/lib/queryKey';
-import { defaultQueryOptions } from '../utils';
+import {
+    defaultQueryOptions,
+    handleApiError,
+    showSuccessToast,
+} from '../utils';
 
 export interface GroupQueryParams {
     user_id?: string;
@@ -31,5 +38,224 @@ export const useGroup = (groupId: string, options?: { enabled?: boolean }) => {
         queryFn: () => groupService.getById(groupId),
         enabled: options?.enabled !== false && !!groupId,
         ...defaultQueryOptions,
+    });
+};
+
+/**
+ * Hook to create a group
+ */
+export const useCreateGroup = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (data: CreateGroupPayload) => groupService.create(data),
+        onSuccess: (data) => {
+            // Invalidate group caches (joined lists, detail, etc.)
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.admin.groups.index,
+            });
+            queryClient.setQueryData(queryKey.groups.id(data._id), data);
+            showSuccessToast('Tạo nhóm thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể tạo nhóm');
+        },
+    });
+};
+
+/**
+ * Hook to update a group
+ */
+export const useUpdateGroup = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({
+            groupId,
+            data,
+        }: {
+            groupId: string;
+            data: Partial<IGroup>;
+        }) => groupService.update(groupId, data),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(data._id),
+            });
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            showSuccessToast('Cập nhật nhóm thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể cập nhật nhóm');
+        },
+    });
+};
+
+/**
+ * Hook to delete a group
+ */
+export const useDeleteGroup = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (groupId: string) => groupService.delete(groupId),
+        onSuccess: (_data, groupId) => {
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(groupId),
+            });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.admin.groups.index,
+            });
+            showSuccessToast('Xóa nhóm thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa nhóm');
+        },
+    });
+};
+
+/**
+ * Hook to join a group
+ */
+export const useJoinGroup = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (groupId: string) => groupService.join(groupId),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(data._id),
+            });
+            showSuccessToast('Tham gia nhóm thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể tham gia nhóm');
+        },
+    });
+};
+
+/**
+ * Hook to leave a group
+ */
+export const useLeaveGroup = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (groupId: string) => groupService.leave(groupId),
+        onSuccess: (data) => {
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(data._id),
+            });
+            showSuccessToast('Rời nhóm thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể rời nhóm');
+        },
+    });
+};
+
+/**
+ * Hook to get members of a group (paginated)
+ */
+export const useGroupMembers = (
+    groupId: string,
+    params?: { page?: number; pageSize?: number },
+    options?: { enabled?: boolean }
+) => {
+    const page = params?.page ?? 1;
+    const pageSize = params?.pageSize ?? 20;
+
+    return useQuery({
+        queryKey: queryKey.groups.members(groupId, { page, pageSize }),
+        queryFn: () =>
+            groupService.getMembers(groupId, {
+                page,
+                page_size: pageSize,
+            }),
+        enabled: options?.enabled !== false && !!groupId,
+        ...defaultQueryOptions,
+    });
+};
+
+/**
+ * Hook to add a member (admin/creator)
+ */
+export const useAddGroupMember = (groupId: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (userId: string) => groupService.addMember(groupId, userId),
+        onSuccess: () => {
+            // Invalidate members list and group detail
+            queryClient.invalidateQueries({
+                queryKey: ['groups', 'members', groupId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(groupId),
+            });
+            // Invalidate group-related caches (covers joined lists)
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            showSuccessToast('Thêm thành viên thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể thêm thành viên');
+        },
+    });
+};
+
+/**
+ * Hook to remove a member (admin/creator)
+ */
+export const useRemoveGroupMember = (groupId: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (userId: string) =>
+            groupService.removeMember(groupId, userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['groups', 'members', groupId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(groupId),
+            });
+            queryClient.invalidateQueries({ queryKey: ['groups'] });
+            showSuccessToast('Xóa thành viên thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể xóa thành viên');
+        },
+    });
+};
+
+/**
+ * Hook to update a member's role (admin/creator)
+ */
+export const useUpdateGroupMemberRole = (groupId: string) => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({
+            userId,
+            role,
+        }: {
+            userId: string;
+            role: 'ADMIN' | 'MEMBER';
+        }) => groupService.updateMemberRole(groupId, userId, role),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: ['groups', 'members', groupId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: queryKey.groups.id(groupId),
+            });
+            showSuccessToast('Cập nhật quyền thành công');
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể cập nhật quyền thành viên');
+        },
     });
 };

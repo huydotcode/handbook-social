@@ -19,6 +19,7 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
+import { useGroupMembers } from '@/lib/hooks/api/useGroup';
 
 interface Props {
     group: IGroup;
@@ -32,6 +33,11 @@ interface FormValues {
 
 const Infomation: React.FC<Props> = ({ group }) => {
     const form = useForm<FormValues>();
+    const { data: membersData } = useGroupMembers(group._id, {
+        page: 1,
+        pageSize: 5,
+    });
+    const memberCount = membersData?.pagination?.total ?? 0;
 
     return (
         <>
@@ -47,7 +53,7 @@ const Infomation: React.FC<Props> = ({ group }) => {
 
                 <div className="p-2">
                     <h5 className="text-sm font-bold">Thành viên</h5>
-                    <p className="text-xs">{group.members.length} thành viên</p>
+                    <p className="text-xs">{memberCount} thành viên</p>
                 </div>
 
                 <div className="p-2">

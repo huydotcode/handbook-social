@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { GroupUserRole } from '@/enums/GroupRole';
-import GroupService from '@/lib/services/group.service';
+import { groupService } from '@/lib/api/services/group.service';
 import { FormatDate } from '@/utils/formatDate';
 import { splitName } from '@/utils/splitName';
 
@@ -13,8 +13,13 @@ const GroupPage = async ({
     params: Promise<{ groupId: string }>;
 }) => {
     const { groupId } = await params;
-    const group = await GroupService.getById(groupId);
-    const members = await GroupService.getMembers(groupId);
+    const group = await groupService.getById(groupId);
+    const membersResponse = await groupService.getMembers(groupId, {
+        page: 1,
+        page_size: 200,
+    });
+    const members = membersResponse.data;
+    const totalMembers = membersResponse.pagination.total;
 
     if (!members || !group) return null;
 
@@ -85,9 +90,9 @@ const GroupPage = async ({
                             </Button>
                         ))}
 
-                    {members.length > MAX_MEMBERS && (
+                    {totalMembers - members.length > 0 && (
                         <h5>
-                            và {members.length - MAX_MEMBERS} thành viên khác
+                            và {totalMembers - members.length} thành viên khác
                         </h5>
                     )}
                 </div>

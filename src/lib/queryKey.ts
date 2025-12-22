@@ -103,6 +103,10 @@ export const queryKey = {
         byId: (id: string) => ['groups', id],
         // Alias for backward compatibility
         id: (id: string) => ['group', id],
+        members: (
+            groupId: string,
+            params?: { page?: number; pageSize?: number }
+        ) => ['groups', 'members', groupId, params],
     },
 
     // Items

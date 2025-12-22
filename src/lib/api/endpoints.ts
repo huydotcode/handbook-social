@@ -85,6 +85,17 @@ export const API_ENDPOINTS = {
     GROUPS: {
         JOINED: '/groups/joined',
         BY_ID: (id: string) => `/groups/${id}`,
+        CREATE: '/groups',
+        UPDATE: (id: string) => `/groups/${id}`,
+        DELETE: (id: string) => `/groups/${id}`,
+        JOIN: (id: string) => `/groups/${id}/join`,
+        LEAVE: (id: string) => `/groups/${id}/leave`,
+        MEMBERS: (id: string) => `/groups/${id}/members`,
+        REMOVE_MEMBER: (id: string, userId: string) => `/groups/${id}/members/${userId}`,
+        UPDATE_MEMBER_ROLE: (id: string, userId: string) => `/groups/${id}/members/${userId}/role`,
+        RECOMMENDED: '/groups/recommended',
+        UPDATE_COVER_PHOTO: (id: string) => `/groups/${id}/cover-photo`,
+        UPDATE_AVATAR: (id: string) => `/groups/${id}/avatar`,
     },
 
     // Items endpoints

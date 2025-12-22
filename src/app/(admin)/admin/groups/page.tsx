@@ -77,7 +77,7 @@ const AdminGroupPage = () => {
                                 <TableCell>{group.type}</TableCell>
                                 <TableCell>{group.creator?.username}</TableCell>
                                 <TableCell>
-                                    {group.members.length} thành viên
+                                    {group.members?.length ?? 0} thành viên
                                 </TableCell>
                                 <TableCell>
                                     {new Date(

@@ -27,11 +27,11 @@ const Header: React.FC<Props> = ({ group }) => {
                         <h5 className="text-2xl font-black md:text-lg">
                             {group?.name}
                         </h5>
-                        <span className="text-sm">
+                        {/* <span className="text-sm">
                             Nhóm{' '}
                             {group.type == 'public' ? 'công khai' : 'riêng tư'}{' '}
                             - {group?.members.length} thành viên
-                        </span>
+                        </span> */}
                     </div>
                 </div>
 

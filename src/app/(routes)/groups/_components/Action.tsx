@@ -6,9 +6,13 @@ import { Button } from '@/components/ui/Button';
 import { useGroupsJoined } from '@/context/AppContext';
 import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { FormEventHandler, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import {
+    useDeleteGroup,
+    useJoinGroup,
+    useLeaveGroup,
+} from '@/lib/hooks/api/useGroup';
 interface Props {
     group: IGroup;
 }
@@ -18,10 +22,13 @@ const Action: React.FC<Props> = ({ group }) => {
     const { user } = useAuth();
     const router = useRouter();
     const { data: groupJoined } = useGroupsJoined(user?.id);
-    const [isPending, setIsPending] = useState(false);
     const { invalidateGroups, invalidateConversations } =
         useQueryInvalidation();
-    const path = usePathname();
+    const joinGroup = useJoinGroup();
+    const leaveGroup = useLeaveGroup();
+    const deleteGroup = useDeleteGroup();
+    const isPending =
+        joinGroup.isPending || leaveGroup.isPending || deleteGroup.isPending;
 
     const isJoinGroup = groupJoined?.some((item) => item._id === groupId);
 
@@ -34,61 +41,36 @@ const Action: React.FC<Props> = ({ group }) => {
     const handleJoinGroup: FormEventHandler = async (e) => {
         e.preventDefault();
 
-        setIsPending(true);
-
         try {
-            await GroupService.join({
-                groupId,
-                userId: user?.id as string,
-            });
-
+            await joinGroup.mutateAsync(groupId);
             await invalidateGroups(user?.id as string);
-
-            toast.success('Đã tham gia nhóm');
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi tham gia nhóm!');
-        } finally {
-            setIsPending(false);
+            console.error('Join group failed:', error);
         }
     };
 
     const handleOutGroup = async () => {
-        setIsPending(true);
-
         try {
-            await GroupService.leave({
-                groupId,
-                userId: user?.id as string,
-                path,
-            });
-
+            await leaveGroup.mutateAsync(groupId);
             await invalidateGroups(user?.id as string);
 
             await invalidateConversations();
 
-            toast.success('Đã rời khỏi nhóm');
-
             router.push('/groups');
         } catch (error) {
-            console.error(error);
-            toast.error('Có lỗi xảy ra khi rời khỏi nhóm!');
-        } finally {
-            setIsPending(false);
+            console.error('Leave group failed:', error);
         }
     };
 
     const handleDeleteGroup = async () => {
         try {
-            await GroupService.delete(groupId);
-
-            toast.success('Xóa nhóm thành công');
-
+            await deleteGroup.mutateAsync(groupId);
             await invalidateGroups(user?.id as string);
             await invalidateConversations();
 
             router.push('/groups');
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi xóa nhóm');
+            console.error('Delete group failed:', error);
         }
     };
 

@@ -3,10 +3,10 @@ import ActionMember from '@/app/(routes)/groups/_components/ActionMember';
 import { InfinityPostComponent } from '@/components/post';
 import { GroupUserRole } from '@/enums/GroupRole';
 import { useAuth } from '@/context/AuthContext';
-import GroupService from '@/lib/services/group.service';
 import UserService from '@/lib/services/user.service';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
+import { groupService } from '@/lib/api/services/group.service';
 
 interface Props {
     params: { memberId: string; groupId: string };
@@ -27,7 +27,7 @@ const MemberPage = ({ params }: Props) => {
             try {
                 const [userData, groupData] = await Promise.all([
                     UserService.getById(memberId),
-                    GroupService.getById(groupId),
+                    groupService.getById(groupId),
                 ]);
 
                 if (!groupData || !userData) {
@@ -35,9 +35,36 @@ const MemberPage = ({ params }: Props) => {
                     return;
                 }
 
-                const foundMember = groupData.members.find(
-                    (m) => m.user._id === memberId
-                );
+                // Fetch members paginated until the target member is found
+                const findMember = async (
+                    targetUserId: string
+                ): Promise<IMemberGroup | null> => {
+                    const pageSize = 50;
+                    let page = 1;
+
+                    while (true) {
+                        const res = await groupService.getMembers(groupId, {
+                            page,
+                            page_size: pageSize,
+                        });
+
+                        const found = res.data.find(
+                            (m) => m.user._id === targetUserId
+                        );
+
+                        if (found) return found;
+                        if (!res.pagination?.hasNext) break;
+
+                        page += 1;
+                    }
+
+                    return null;
+                };
+
+                const [foundMember, currentUserMember] = await Promise.all([
+                    findMember(memberId),
+                    user?.id ? findMember(user.id) : Promise.resolve(null),
+                ]);
 
                 if (!foundMember) {
                     router.push(`/groups/${groupId}/members`);
@@ -45,13 +72,10 @@ const MemberPage = ({ params }: Props) => {
                 }
 
                 setUserData(userData);
-                setGroup(groupData);
+                setGroup(groupData as IGroup);
                 setMember(foundMember);
 
-                const isAdmin =
-                    groupData.members.find(
-                        (member) => member.user._id === user?.id
-                    )?.role === GroupUserRole.ADMIN;
+                const isAdmin = currentUserMember?.role === GroupUserRole.ADMIN;
 
                 setIsShowAction(isAdmin && memberId !== user?.id);
             } catch (error) {

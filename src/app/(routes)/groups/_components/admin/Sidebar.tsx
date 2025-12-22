@@ -12,6 +12,7 @@ import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { useGroupMembers } from '@/lib/hooks/api/useGroup';
 
 interface Props {
     group: IGroup;
@@ -36,14 +37,19 @@ const Sidebar: React.FC<Props> = ({
     const [conversations, setConversations] =
         useState<IConversation[]>(initConversations);
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const { data: membersResponse } = useGroupMembers(currentGroup._id, {
+        page: 1,
+        pageSize: 200,
+    });
+    const members = membersResponse?.data ?? [];
 
     const canCreateConversation = useMemo(() => {
-        return currentGroup.members.some(
+        return members.some(
             (member) =>
                 member.user._id === user?.id &&
                 member.role === GroupUserRole.ADMIN
         );
-    }, [currentGroup, user?.id]);
+    }, [members, user?.id]);
 
     const {
         register,
@@ -58,7 +64,7 @@ const Sidebar: React.FC<Props> = ({
             setShowModalCreateConversation(false);
             setConversations((prev) => [...prev, newConversation]);
 
-            for (const mem of currentGroup.members) {
+            for (const mem of members) {
                 socket?.emit(socketEvent.JOIN_ROOM, {
                     roomId: newConversation._id,
                     userId: mem.user._id,
