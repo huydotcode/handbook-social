@@ -72,9 +72,9 @@ const ENDPOINTS: Record<PostType, string> = {
     'new-feed-friend': '/posts/new-feed-friend',
     profile: '/posts/profile',
     group: '/posts/group',
-    'manage-group-posts': '/posts/group/manage',
-    'post-by-member': '/posts/group/member',
-    'manage-group-posts-pending': '/posts/group/manage/pending',
+    'manage-group-posts': '/posts/group',
+    'post-by-member': '/posts/group',
+    'manage-group-posts-pending': '/posts/group',
     saved: '/posts/saved',
     'search-posts': '/search/posts',
 };
@@ -101,12 +101,13 @@ export const usePosts = ({
         (type: PostType) => {
             const baseEndpoint = ENDPOINTS[type];
             if (type === 'profile') return `${baseEndpoint}/${userId}`;
-            if (
-                type === 'group' ||
-                type === 'manage-group-posts' ||
-                type === 'manage-group-posts-pending'
-            )
-                return `${baseEndpoint}/${groupId}`;
+            if (type === 'group') return `${baseEndpoint}/${groupId}`;
+            if (type === 'manage-group-posts')
+                return `${baseEndpoint}/${groupId}/manage`;
+            if (type === 'manage-group-posts-pending')
+                return `${baseEndpoint}/${groupId}/manage/pending`;
+            if (type === 'post-by-member')
+                return `${baseEndpoint}/${groupId}/member/${userId}`;
             return baseEndpoint;
         },
         [userId, groupId]
