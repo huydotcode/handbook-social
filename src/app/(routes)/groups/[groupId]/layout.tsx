@@ -1,9 +1,12 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
-import ConversationService from '@/lib/services/conversation.service';
-import GroupService from '@/lib/services/group.service';
-import { useRouter, notFound } from 'next/navigation';
-import React, { use, useEffect, useState } from 'react';
+import {
+    useCheckGroupAccess,
+    useGroup,
+    useGroupConversations,
+} from '@/lib/hooks/api';
+import { notFound, useRouter } from 'next/navigation';
+import React, { use, useEffect } from 'react';
 import Header from '../_components/Header';
 import Sidebar from '../_components/admin/Sidebar';
 
@@ -16,55 +19,44 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
     const { groupId } = use(params);
     const { user } = useAuth();
     const router = useRouter();
-    const [group, setGroup] = useState<IGroup | null>(null);
-    const [conversations, setConversations] = useState<IConversation[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-    const [canAccess, setCanAccess] = useState(false);
-    const [accessDenied, setAccessDenied] = useState(false);
 
+    // Check access first
+    const {
+        data: accessData,
+        isLoading: isCheckingAccess,
+        isError: accessError,
+    } = useCheckGroupAccess(groupId, {
+        enabled: !!user?.id,
+    });
+
+    const hasAccess = accessData?.hasAccess ?? false;
+
+    // Only fetch group data if access is granted
+    const { data: group, isLoading: isLoadingGroup } = useGroup(groupId, {
+        enabled: !!user?.id && hasAccess,
+    });
+
+    // Only fetch conversations if access is granted
+    const { data: conversations = [], isLoading: isLoadingConversations } =
+        useGroupConversations(groupId, {
+            enabled: !!user?.id && hasAccess,
+        });
+
+    // Redirect to home if user is not logged in
     useEffect(() => {
-        const fetchData = async () => {
-            if (!user?.id) {
-                router.push('/');
-                return;
-            }
+        if (!user?.id) {
+            router.push('/');
+        }
+    }, [user?.id, router]);
 
-            try {
-                // Check access first before fetching data
-                const hasAccess = await GroupService.checkAccess(groupId);
-
-                if (!hasAccess) {
-                    setAccessDenied(true);
-                    return;
-                }
-
-                // Only fetch data if user has access
-                const [groupData, conversationsData] = await Promise.all([
-                    GroupService.getById(groupId),
-                    ConversationService.getByGroupId(groupId),
-                ]);
-
-                if (!groupData) {
-                    setAccessDenied(true);
-                    return;
-                }
-
-                setGroup(groupData);
-                setConversations(conversationsData || []);
-                setCanAccess(true);
-            } catch (error) {
-                setAccessDenied(true);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchData();
-    }, [groupId, user?.id, router]);
-
-    if (accessDenied && isLoading === false) {
+    // Show not found if access is denied
+    if (!isCheckingAccess && (!hasAccess || accessError)) {
         notFound();
     }
+
+    // Loading state
+    const isLoading =
+        isCheckingAccess || isLoadingGroup || isLoadingConversations;
 
     if (isLoading || !group) {
         return (
@@ -76,14 +68,14 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
 
     return (
         <div>
-            {canAccess && (
+            {hasAccess && (
                 <Sidebar group={group} conversations={conversations} />
             )}
 
             <div className="mx-auto w-full max-w-[1000px]">
                 <Header group={group} />
 
-                {canAccess && (
+                {hasAccess && (
                     <main className="mt-4 min-h-[150vh]">{children}</main>
                 )}
             </div>

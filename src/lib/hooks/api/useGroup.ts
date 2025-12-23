@@ -42,6 +42,71 @@ export const useGroup = (groupId: string, options?: { enabled?: boolean }) => {
 };
 
 /**
+ * Hook to check if user has access to a group
+ */
+export const useCheckGroupAccess = (
+    groupId: string,
+    options?: { enabled?: boolean }
+) => {
+    return useQuery({
+        queryKey: ['groups', 'access', groupId],
+        queryFn: () => groupService.checkAccess(groupId),
+        enabled: options?.enabled !== false && !!groupId,
+        retry: false,
+        staleTime: 0,
+    });
+};
+
+/**
+ * Hook to check if user is admin or creator of a group
+ */
+export const useCheckGroupAdmin = (
+    groupId: string,
+    userId?: string,
+    options?: { enabled?: boolean }
+) => {
+    return useQuery({
+        queryKey: ['groups', 'admin', groupId, userId],
+        queryFn: async () => {
+            if (!userId) return { isAdmin: false, isCreator: false };
+
+            const group = await groupService.getById(groupId);
+
+            // Check if creator
+            if (group.creator._id === userId) {
+                return { isAdmin: true, isCreator: true };
+            }
+
+            // Check if admin via members
+            let page = 1;
+            const pageSize = 50;
+            let isAdmin = false;
+
+            while (true) {
+                const res = await groupService.getMembers(groupId, {
+                    page,
+                    page_size: pageSize,
+                });
+
+                const member = res.data.find((mem) => mem.user._id === userId);
+                if (member && member.role === 'ADMIN') {
+                    isAdmin = true;
+                    break;
+                }
+
+                if (!res.pagination?.hasNext) break;
+                page += 1;
+            }
+
+            return { isAdmin, isCreator: false };
+        },
+        enabled: options?.enabled !== false && !!groupId && !!userId,
+        retry: false,
+        staleTime: 60000, // Cache for 1 minute
+    });
+};
+
+/**
  * Hook to create a group
  */
 export const useCreateGroup = () => {

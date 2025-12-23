@@ -20,6 +20,7 @@ import {
     defaultQueryOptions,
     defaultInfiniteQueryOptions,
 } from '../utils';
+import ConversationService from '@/lib/services/conversation.service';
 
 /**
  * Hook to get all conversations (infinite query)
@@ -55,6 +56,23 @@ export const useConversation = (
         queryKey: queryKey.conversations.id(conversationId),
         queryFn: () => conversationService.getById(conversationId),
         enabled: options?.enabled !== false && !!conversationId,
+        ...defaultQueryOptions,
+    });
+};
+
+/**
+ * Hook to get conversations by group ID
+ */
+export const useGroupConversations = (
+    groupId: string,
+    options?: { enabled?: boolean }
+) => {
+    return useQuery({
+        queryKey: ['conversations', 'group', groupId],
+        queryFn: async () => {
+            return ConversationService.getByGroupId(groupId);
+        },
+        enabled: options?.enabled !== false && !!groupId,
         ...defaultQueryOptions,
     });
 };

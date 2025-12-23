@@ -64,10 +64,16 @@ export {
     useRemoveParticipant,
     usePinMessage,
     useUnpinMessage,
+    useGroupConversations,
 } from './useConversation';
 
 // Group hooks
-export { useJoinedGroups, useGroup } from './useGroup';
+export {
+    useJoinedGroups,
+    useGroup,
+    useCheckGroupAccess,
+    useCheckGroupAdmin,
+} from './useGroup';
 
 // Item hooks
 export { useItems, useSearchItems, useItemsBySeller } from './useItem';

@@ -1,80 +1,50 @@
 'use client';
 import { useAuth } from '@/context/AuthContext';
-import { groupService } from '@/lib/api/services/group.service';
+import { useCheckGroupAdmin } from '@/lib/hooks/api';
 import { useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
+import { use, useEffect } from 'react';
 
 interface Props {
     children: React.ReactNode;
-    params: { groupId: string };
+    params: Promise<{ groupId: string }>;
 }
 
 const ManageLayout: React.FC<Props> = ({ children, params }) => {
-    const { groupId } = params;
+    const { groupId } = use(params);
     const { user } = useAuth();
     const router = useRouter();
-    const [isAuthorized, setIsAuthorized] = useState(false);
-    const [isLoading, setIsLoading] = useState(true);
 
+    // Check if user is admin or creator
+    const {
+        data: adminData,
+        isLoading,
+        isError,
+    } = useCheckGroupAdmin(groupId, user?.id, {
+        enabled: !!user?.id,
+    });
+
+    const isAuthorized = adminData?.isAdmin || adminData?.isCreator || false;
+
+    // Redirect if not logged in
     useEffect(() => {
-        const checkAccess = async () => {
-            if (!user?.id) {
-                router.push('/');
-                return;
-            }
+        if (!user?.id) {
+            router.push('/');
+        }
+    }, [user?.id, router]);
 
-            try {
-                const group: IGroup = await groupService.getById(groupId);
+    // Redirect if not authorized
+    useEffect(() => {
+        if (!isLoading && !isAuthorized && !isError) {
+            router.push(`/groups/${groupId}`);
+        }
+    }, [isLoading, isAuthorized, isError, groupId, router]);
 
-                if (!group) {
-                    router.push('/groups');
-                    return;
-                }
-
-                if (group.creator._id !== user.id) {
-                    // Check admin role via paginated members
-                    const pageSize = 50;
-                    let page = 1;
-                    let isAdmin = false;
-
-                    while (true) {
-                        const res = await groupService.getMembers(groupId, {
-                            page,
-                            page_size: pageSize,
-                        });
-
-                        if (
-                            res.data.some(
-                                (mem) =>
-                                    mem.user._id === user.id &&
-                                    mem.role === 'ADMIN'
-                            )
-                        ) {
-                            isAdmin = true;
-                            break;
-                        }
-
-                        if (!res.pagination?.hasNext) break;
-                        page += 1;
-                    }
-
-                    if (!isAdmin) {
-                        router.push(`/groups/${groupId}`);
-                        return;
-                    }
-                }
-
-                setIsAuthorized(true);
-            } catch (error) {
-                console.error('Error checking access:', error);
-                router.push('/groups');
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        checkAccess();
-    }, [groupId, user?.id, router]);
+    // Redirect on error
+    useEffect(() => {
+        if (isError) {
+            router.push('/groups');
+        }
+    }, [isError, router]);
 
     if (isLoading) {
         return (
