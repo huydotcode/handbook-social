@@ -11,7 +11,6 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import UserService from '@/lib/services/user.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { createGroupValidation } from '@/lib/validation';
@@ -19,7 +18,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useAuth } from '@/context';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useId, useState } from 'react';
+import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sidebar } from '../_components';
@@ -51,29 +50,14 @@ const CreateGroupPage: React.FC = ({}) => {
         watch,
         formState: { isSubmitting, errors },
     } = form;
-    const [members, setMembers] = useState<string[]>([]);
-
-    const [friends, setFriends] = useState<IFriend[]>([]);
-    const [searchFriendValue, setSearchFriendValue] = useState<string>('');
     const { user } = useAuth();
     const file = watch('file');
     const fileInputId = useId();
     const router = useRouter();
     const createGroup = useCreateGroup();
 
-    useEffect(() => {
-        (async () => {
-            if (!user?.id) return;
-            const friends = await UserService.getFriendsByUserId({
-                userId: user.id,
-            });
-
-            setFriends(friends);
-        })();
-    }, [user?.id]);
-
     const onSubmit = async (data: ICreateGroup) => {
-        if (isSubmitting) return;
+        if (isSubmitting || createGroup.isPending) return;
 
         try {
             if (!data.file) {
@@ -95,9 +79,11 @@ const CreateGroupPage: React.FC = ({}) => {
             const newGroup = await createGroup.mutateAsync({
                 ...data,
                 avatar: avatar._id,
-                members,
             });
-            router.push(`/groups/${newGroup?._id}`);
+
+            if (newGroup?._id) {
+                router.push(`/groups/${newGroup._id}`);
+            }
         } catch (error) {
             console.error('Error creating group:', error);
         }
@@ -226,72 +212,6 @@ const CreateGroupPage: React.FC = ({}) => {
                                     </FormItem>
                                 )}
                             />
-
-                            {/* Thêm thành viên */}
-                            <div className="flex flex-col">
-                                <label>Thêm thành viên</label>
-                                <input
-                                    className={cn(
-                                        INPUT_CLASSNAME,
-                                        'rounded-b-none border-b'
-                                    )}
-                                    placeholder="Tìm kiếm bạn bè"
-                                    value={searchFriendValue}
-                                    onChange={(e) =>
-                                        setSearchFriendValue(e.target.value)
-                                    }
-                                />
-
-                                {/* Thêm bạn vào nhóm */}
-                                <div className="max-h-[200px] overflow-y-scroll bg-primary-1 p-2 dark:bg-dark-primary-1">
-                                    {friends
-                                        .filter((friend) =>
-                                            friend.name
-                                                .toLowerCase()
-                                                .includes(
-                                                    searchFriendValue.toLowerCase()
-                                                )
-                                        )
-                                        .map((friend) => (
-                                            <div
-                                                key={friend._id}
-                                                className="mb-2 flex items-center space-x-2"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    id={friend._id}
-                                                    value={friend._id}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setMembers([
-                                                                ...members,
-                                                                friend._id,
-                                                            ]);
-                                                        } else {
-                                                            setMembers(
-                                                                members.filter(
-                                                                    (id) =>
-                                                                        id !==
-                                                                        friend._id
-                                                                )
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                                <Image
-                                                    src={friend.avatar}
-                                                    alt="avatar"
-                                                    width={32}
-                                                    height={32}
-                                                    className="rounded-full"
-                                                />
-                                                <label htmlFor={friend._id}>
-                                                    {friend.name}
-                                                </label>
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
 
                             <Button
                                 className="mt-2"
