@@ -15,7 +15,10 @@ class GroupServiceClass {
         description: string;
         avatar: string;
         type: string;
-        members?: Array<string | { user?: string; userId?: string; role?: 'ADMIN' | 'MEMBER' }>;
+        members?: Array<
+            | string
+            | { user?: string; userId?: string; role?: 'ADMIN' | 'MEMBER' }
+        >;
     }) {
         try {
             const payload = {
@@ -42,6 +45,19 @@ class GroupServiceClass {
         } catch (error) {
             console.error('Error getting group by ID:', error);
             throw error;
+        }
+    }
+
+    /**
+     * Check if user has access to group
+     */
+    public async checkAccess(groupId: string): Promise<boolean> {
+        try {
+            const result = await apiGroupService.checkAccess(groupId);
+            return result.hasAccess;
+        } catch (error) {
+            console.error('Error checking group access:', error);
+            return false;
         }
     }
 

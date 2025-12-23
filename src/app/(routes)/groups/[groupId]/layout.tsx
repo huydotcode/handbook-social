@@ -2,7 +2,7 @@
 import { useAuth } from '@/context/AuthContext';
 import ConversationService from '@/lib/services/conversation.service';
 import GroupService from '@/lib/services/group.service';
-import { useRouter } from 'next/navigation';
+import { useRouter, notFound } from 'next/navigation';
 import React, { use, useEffect, useState } from 'react';
 import Header from '../_components/Header';
 import Sidebar from '../_components/admin/Sidebar';
@@ -20,6 +20,7 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
     const [conversations, setConversations] = useState<IConversation[]>([]);
     const [isLoading, setIsLoading] = useState(true);
     const [canAccess, setCanAccess] = useState(false);
+    const [accessDenied, setAccessDenied] = useState(false);
 
     useEffect(() => {
         const fetchData = async () => {
@@ -29,26 +30,30 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
             }
 
             try {
+                // Check access first before fetching data
+                const hasAccess = await GroupService.checkAccess(groupId);
+
+                if (!hasAccess) {
+                    setAccessDenied(true);
+                    return;
+                }
+
+                // Only fetch data if user has access
                 const [groupData, conversationsData] = await Promise.all([
                     GroupService.getById(groupId),
                     ConversationService.getByGroupId(groupId),
                 ]);
 
                 if (!groupData) {
-                    router.push('/groups');
+                    setAccessDenied(true);
                     return;
                 }
 
                 setGroup(groupData);
                 setConversations(conversationsData || []);
-
-                const isMember = groupData.members.some(
-                    (member) => member.user._id === user.id
-                );
-                const access = isMember || groupData.type === 'public';
-                setCanAccess(access);
+                setCanAccess(true);
             } catch (error) {
-                router.push('/groups');
+                setAccessDenied(true);
             } finally {
                 setIsLoading(false);
             }
@@ -56,6 +61,10 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
 
         fetchData();
     }, [groupId, user?.id, router]);
+
+    if (accessDenied && isLoading === false) {
+        notFound();
+    }
 
     if (isLoading || !group) {
         return (

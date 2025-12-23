@@ -51,6 +51,15 @@ export const groupService = {
     },
 
     /**
+     * Check if user has access to group
+     */
+    checkAccess: (id: string) => {
+        return apiClient.get<{ hasAccess: boolean }>(
+            API_ENDPOINTS.GROUPS.CHECK_ACCESS(id)
+        );
+    },
+
+    /**
      * Create a new group
      */
     create: (data: CreateGroupPayload) => {
