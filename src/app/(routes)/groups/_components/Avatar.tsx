@@ -19,15 +19,17 @@ import toast from 'react-hot-toast';
 
 interface Props {
     group: IGroup;
+    onGroupUpdate?: (updatedGroup: IGroup) => void;
 }
 
-const Avatar: React.FC<Props> = ({ group }) => {
+const Avatar: React.FC<Props> = ({ group, onGroupUpdate }) => {
     const path = usePathname();
     const { user } = useAuth();
     const [hover, setHover] = useState(false);
     const canChangeAvatar = user?.id === group.creator._id;
     const [openModal, setOpenModal] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const [groupData, setGroupData] = useState<IGroup>(group);
 
     const handleChangeAvatar = async () => {
         setOpenModal(false);
@@ -59,6 +61,13 @@ const Avatar: React.FC<Props> = ({ group }) => {
                 path,
             });
 
+            // Cập nhật avatar ngay lập tức
+            const updatedGroup = { ...groupData, avatar };
+            setGroupData(updatedGroup);
+            if (onGroupUpdate) {
+                onGroupUpdate(updatedGroup);
+            }
+
             toast.success('Thay đổi ảnh đại diện thành công');
         } catch (error) {
             console.error(error);
@@ -77,8 +86,8 @@ const Avatar: React.FC<Props> = ({ group }) => {
                     'rounded-full transition-all duration-200',
                     hover && canChangeAvatar && 'opacity-80'
                 )}
-                src={group?.avatar.url || ''}
-                alt={group?.name || ''}
+                src={groupData?.avatar.url || ''}
+                alt={groupData?.name || ''}
                 fill
             />
 
