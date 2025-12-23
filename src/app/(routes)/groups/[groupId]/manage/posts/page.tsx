@@ -1,12 +1,14 @@
+'use client';
 import { InfinityPostComponent } from '@/components/post';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { use } from 'react';
 
 interface Props {
     params: Promise<{ groupId: string }>;
 }
 
-const ManagePostPage: React.FC<Props> = async ({ params }) => {
-    const { groupId } = await params;
+const ManagePostPage: React.FC<Props> = ({ params }) => {
+    const { groupId } = use(params);
 
     return (
         <>
