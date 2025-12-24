@@ -1,8 +1,8 @@
 import axios, {
+    AxiosError,
     AxiosInstance,
     AxiosRequestConfig,
     AxiosResponse,
-    AxiosError,
 } from 'axios';
 
 const API_BASE_URL =
@@ -188,6 +188,27 @@ class ApiClient {
     async get<T = any>(url: string, config?: AxiosRequestConfig): Promise<T> {
         const response = await this.client.get<ApiResponse<T>>(url, config);
         return response.data.data as T;
+    }
+
+    /**
+     * GET request with pagination
+     */
+    async getPaginated<T>(
+        url: string,
+        config?: AxiosRequestConfig
+    ): Promise<PaginationResult<T>> {
+        const response = await this.client.get<ApiResponse<T>>(url, config);
+        return {
+            data: response.data.data as T[],
+            pagination: {
+                hasNext: response.data.meta?.hasNext || false,
+                hasPrev: response.data.meta?.hasPrev || false,
+                page: response.data.meta?.page || 1,
+                pageSize: response.data.meta?.pageSize || 0,
+                total: response.data.meta?.total || 0,
+                totalPages: response.data.meta?.totalPages || 0,
+            },
+        };
     }
 
     /**
