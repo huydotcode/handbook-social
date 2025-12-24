@@ -98,7 +98,7 @@ export const groupService = {
      * Get group members (paginated)
      */
     getMembers: (id: string, params?: GroupQueryParams) => {
-        return apiClient.get<PaginationResult<IMemberGroup>>(
+        return apiClient.getPaginated<IMemberGroup>(
             API_ENDPOINTS.GROUPS.MEMBERS(id),
             {
                 params,

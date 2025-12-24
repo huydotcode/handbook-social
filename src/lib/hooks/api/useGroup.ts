@@ -246,6 +246,43 @@ export const useGroupMembers = (
 };
 
 /**
+ * Hook to get a specific member from a group
+ * Searches through paginated results to find the member
+ */
+export const useGroupMember = (
+    groupId: string,
+    memberId: string,
+    options?: { enabled?: boolean }
+) => {
+    return useQuery({
+        queryKey: ['groups', 'member', groupId, memberId],
+        queryFn: async () => {
+            const pageSize = 50;
+            let page = 1;
+
+            while (true) {
+                const res = await groupService.getMembers(groupId, {
+                    page,
+                    page_size: pageSize,
+                });
+
+                const found = res.data.find((m) => m.user._id === memberId);
+
+                if (found) return found;
+                if (!res.pagination?.hasNext) break;
+
+                page += 1;
+            }
+
+            return null;
+        },
+        enabled: options?.enabled !== false && !!groupId && !!memberId,
+        retry: false,
+        staleTime: 60000, // Cache for 1 minute
+    });
+};
+
+/**
  * Hook to add a member (admin/creator)
  */
 export const useAddGroupMember = (groupId: string) => {

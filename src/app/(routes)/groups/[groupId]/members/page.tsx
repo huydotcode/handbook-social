@@ -1,100 +1,134 @@
+'use client';
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { GroupUserRole } from '@/enums/GroupRole';
-import { groupService } from '@/lib/api/services/group.service';
+import { useGroup, useGroupMembers } from '@/lib/hooks/api';
 import { FormatDate } from '@/utils/formatDate';
 import { splitName } from '@/utils/splitName';
+import { notFound } from 'next/navigation';
+import { use } from 'react';
 
 const MAX_MEMBERS = 6;
 
-const GroupPage = async ({
-    params,
-}: {
-    params: Promise<{ groupId: string }>;
-}) => {
-    const { groupId } = await params;
-    const group = await groupService.getById(groupId);
-    const membersResponse = await groupService.getMembers(groupId, {
-        page: 1,
-        page_size: 200,
-    });
-    const members = membersResponse.data;
-    const totalMembers = membersResponse.pagination.total;
+const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
+    const { groupId } = use(params);
 
-    if (!members || !group) return null;
+    // Fetch group data using hook
+    const { data: group, isLoading: isLoadingGroup } = useGroup(groupId);
+
+    // Fetch members using hook
+    const { data: members, isLoading: isLoadingMembers } = useGroupMembers(
+        groupId,
+        { page: 1, pageSize: 200 }
+    );
+
+    const isLoading = isLoadingGroup || isLoadingMembers;
+
+    console.log('members', members);
+
+    if (isLoading) {
+        return (
+            <div className="rounded-xl bg-secondary-1 p-2 text-center dark:bg-dark-secondary-1">
+                Đang tải...
+            </div>
+        );
+    }
+
+    if (!group) {
+        return notFound();
+    }
 
     return (
         <div className="rounded-xl bg-secondary-1 p-2 dark:bg-dark-secondary-1">
             <div>
                 <h1 className="text-sm font-bold">Quản trị viên</h1>
                 <div className="mt-2">
-                    {members
-                        .filter((m) => m.role == GroupUserRole.ADMIN)
-                        .map((member) => (
-                            <Button
-                                href={`/groups/${group._id}/members/${member.user._id}`}
-                                className="min-w-[200px] justify-start"
-                                key={member._id}
-                                variant={'ghost'}
-                                size={'md'}
-                            >
-                                <Avatar
-                                    className="mr-2"
-                                    onlyImage
-                                    width={32}
-                                    height={32}
-                                    imgSrc={member.user.avatar}
-                                />
+                    {members &&
+                        members.data
+                            .filter((m) => m.role == GroupUserRole.ADMIN)
+                            .map((member) => (
+                                <Button
+                                    href={`/groups/${group._id}/members/${member.user._id}`}
+                                    className="min-w-[200px] justify-start"
+                                    key={member._id}
+                                    variant={'ghost'}
+                                    size={'md'}
+                                >
+                                    <Avatar
+                                        className="mr-2"
+                                        onlyImage
+                                        width={32}
+                                        height={32}
+                                        imgSrc={member.user.avatar}
+                                    />
 
-                                <span>{member.user.name}</span>
-                            </Button>
-                        ))}
+                                    <span>{member.user.name}</span>
+                                </Button>
+                            ))}
                 </div>
             </div>
 
             <div className="mt-2">
                 <h1 className="text-sm font-bold">Thành viên</h1>
                 <div className="mt-2 grid grid-cols-3 gap-2 lg:grid-cols-2 md:grid-cols-1">
-                    {members
-                        .filter((m) => m.role == GroupUserRole.MEMBER)
-                        .slice(0, MAX_MEMBERS)
-                        .map((member) => (
-                            <Button
-                                href={`/groups/${group._id}/members/${member.user._id}`}
-                                className="min-w-[200px] justify-start"
-                                key={member._id}
-                                variant={'ghost'}
-                                size={'md'}
-                            >
-                                <Avatar
-                                    onlyImage
-                                    className="mr-2"
-                                    width={32}
-                                    height={32}
-                                    imgSrc={member.user.avatar}
-                                />
+                    {members &&
+                        members.data
+                            .filter((m) => m.role == GroupUserRole.MEMBER)
+                            .slice(0, MAX_MEMBERS)
+                            .map((member) => (
+                                <Button
+                                    href={`/groups/${group._id}/members/${member.user._id}`}
+                                    className="min-w-[200px] justify-start"
+                                    key={member._id}
+                                    variant={'ghost'}
+                                    size={'md'}
+                                >
+                                    <Avatar
+                                        onlyImage
+                                        className="mr-2"
+                                        width={32}
+                                        height={32}
+                                        imgSrc={member.user.avatar}
+                                    />
 
-                                <div className="flex flex-col">
-                                    <span>
-                                        {splitName(member.user.name).firstName}{' '}
-                                        {splitName(member.user.name).lastName}
-                                    </span>
+                                    <div className="flex flex-col">
+                                        <span>
+                                            {
+                                                splitName(member.user.name)
+                                                    .firstName
+                                            }{' '}
+                                            {
+                                                splitName(member.user.name)
+                                                    .lastName
+                                            }
+                                        </span>
 
-                                    <span className="text-xs text-gray-500">
-                                        Tham gia vào{' '}
-                                        {FormatDate.formatISODateToDateTime(
-                                            member.joinedAt
-                                        )}
-                                    </span>
-                                </div>
-                            </Button>
-                        ))}
+                                        <span className="text-xs text-gray-500">
+                                            Tham gia vào{' '}
+                                            {FormatDate.formatISODateToDateTime(
+                                                member.joinedAt
+                                            )}
+                                        </span>
+                                    </div>
+                                </Button>
+                            ))}
 
-                    {totalMembers - members.length > 0 && (
-                        <h5>
-                            và {totalMembers - members.length} thành viên khác
-                        </h5>
-                    )}
+                    {members &&
+                        (() => {
+                            const totalMemberCount = members.data.filter(
+                                (m) => m.role === GroupUserRole.MEMBER
+                            ).length;
+                            const remainingMembers =
+                                totalMemberCount - MAX_MEMBERS;
+
+                            return (
+                                remainingMembers > 0 && (
+                                    <h5>
+                                        và {remainingMembers} thành viên khác
+                                    </h5>
+                                )
+                            );
+                        })()}
                 </div>
             </div>
         </div>

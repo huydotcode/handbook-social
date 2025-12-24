@@ -13,7 +13,7 @@ export {
 } from './useAuth';
 
 // User hooks
-export { useUsers, useUserFriends } from './useUser';
+export { useUsers, useUser, useUserFriends } from './useUser';
 
 // Post hooks
 export {
@@ -73,6 +73,10 @@ export {
     useGroup,
     useCheckGroupAccess,
     useCheckGroupAdmin,
+    useGroupMembers,
+    useGroupMember,
+    useAddGroupMember,
+    useRemoveGroupMember,
 } from './useGroup';
 
 // Item hooks
