@@ -1,5 +1,17 @@
 type TODO = any;
 
+type PaginationResult<T> = {
+    data: T[];
+    pagination: {
+        page: number;
+        pageSize: number;
+        total: number;
+        totalPages: number;
+        hasNext: boolean;
+        hasPrev: boolean;
+    };
+};
+
 interface ISessionUser {
     id: string;
     name: string;
