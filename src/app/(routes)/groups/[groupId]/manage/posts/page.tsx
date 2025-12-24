@@ -25,14 +25,14 @@ const ManagePostPage: React.FC<Props> = ({ params }) => {
                     <InfinityPostComponent
                         groupId={groupId}
                         type={'manage-group-posts'}
-                        title={'Quản lý bài viết đang chờ duyệt'}
+                        title={'Quản lý bài viết đã duyệt'}
                     />
                 </TabsContent>
                 <TabsContent value="pending">
                     <InfinityPostComponent
                         groupId={groupId}
                         type={'manage-group-posts-pending'}
-                        title={'Quản lý bài viết đã duyệt'}
+                        title={'Quản lý bài viết chờ duyệt'}
                     />
                 </TabsContent>
             </Tabs>
