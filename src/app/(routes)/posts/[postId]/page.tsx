@@ -39,10 +39,11 @@ const PostPage: React.FC<Props> = ({ params }) => {
     }
 
     return (
-        <div className="mx-auto mt-[64px] w-[800px] max-w-screen">
+        <div className="mx-auto mt-[64px] w-[600px] xl:w-[550px] md:w-full">
             <h1 className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">
                 Bài viết của {post?.author.name}
             </h1>
+
             <Post data={post} />
         </div>
     );
