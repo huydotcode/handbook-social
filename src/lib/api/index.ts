@@ -26,6 +26,7 @@ export { locationService } from './services/location.service';
 export { followService } from './services/follow.service';
 export { categoryService } from './services/category.service';
 export { adminService } from './services/admin.service';
+export { friendshipService } from './services/friendship.service';
 
 // Export types
 export type {

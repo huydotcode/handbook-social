@@ -1,8 +1,8 @@
-import { userService } from '../api';
 import { apiClient } from '../api/client';
 import { API_ENDPOINTS } from '../api/endpoints';
 import { searchService } from '../api/services/search.service';
 import { followService } from '../api/services/follow.service';
+import { friendshipService } from '../api/services/friendship.service';
 
 class UserServiceClass {
     /**
@@ -49,7 +49,7 @@ class UserServiceClass {
         userId: string;
     }): Promise<IFriend[]> {
         try {
-            const data = await userService.getFriends(userId);
+            const data = await friendshipService.getFriends(userId);
             return data;
         } catch (error) {
             console.error('Error getting friends:', error);
@@ -74,8 +74,8 @@ class UserServiceClass {
      */
     async unfriend(friendId: string): Promise<boolean> {
         try {
-            const result = await userService.unfriend(friendId);
-            return result.success;
+            const result = await friendshipService.removeFriend(friendId);
+            return !!result?.success;
         } catch (error) {
             console.error('Error unfriending user:', error);
             throw error;

@@ -5,7 +5,8 @@ import {
 } from '@/lib/api/services/conversation.service';
 import { followService } from '@/lib/api/services/follow.service';
 import { messageService } from '@/lib/api/services/message.service';
-import { userService, UserQueryParams } from '@/lib/api/services/user.service';
+import { UserQueryParams } from '@/lib/api/services/user.service';
+import { friendshipService } from '@/lib/api/services/friendship.service';
 import queryKey from '@/lib/queryKey';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
@@ -21,7 +22,9 @@ export const useFriends = (userId: string | undefined) =>
             if (!userId) return [];
 
             const params: UserQueryParams = { page: 1, page_size: 100 };
-            return userService.getFriends(userId, params);
+            const friends = await friendshipService.getFriends(userId);
+            // Simple client-side limit for now
+            return friends.slice(0, params.page_size ?? 100);
         },
         enabled: !!userId,
         refetchOnMount: false,

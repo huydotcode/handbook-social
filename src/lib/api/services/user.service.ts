@@ -16,15 +16,6 @@ export const userService = {
     },
 
     /**
-     * Get friends of a user
-     */
-    getFriends: (userId: string, params?: UserQueryParams) => {
-        return apiClient.get<IFriend[]>(API_ENDPOINTS.USERS.FRIENDS(userId), {
-            params,
-        });
-    },
-
-    /**
      * Get user profile
      */
     getProfile: (userId: string) => {
@@ -81,11 +72,18 @@ export const userService = {
     },
 
     /**
-     * Unfriend a user
+     * Deprecated: use friendshipService.getFriends
      */
-    unfriend: (friendId: string) => {
-        return apiClient.post<{ success: boolean }>(
-            API_ENDPOINTS.USERS.UNFRIEND(friendId)
-        );
+    getFriends: async (userId: string) => {
+        const { friendshipService } = await import('./friendship.service');
+        return friendshipService.getFriends(userId);
+    },
+
+    /**
+     * Deprecated: use friendshipService.removeFriend
+     */
+    unfriend: async (friendId: string) => {
+        const { friendshipService } = await import('./friendship.service');
+        return friendshipService.removeFriend(friendId);
     },
 };

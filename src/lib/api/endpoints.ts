@@ -16,13 +16,22 @@ export const API_ENDPOINTS = {
     // Users endpoints
     USERS: {
         LIST: '/users',
-        FRIENDS: (userId: string) => `/users/${userId}/friends`,
         PROFILE: (userId: string) => `/users/${userId}/profile`,
         BIO: (userId: string) => `/users/${userId}/bio`,
         PICTURES: (userId: string) => `/users/${userId}/pictures`,
         AVATAR: (userId: string) => `/users/${userId}/avatar`,
         COVER_PHOTO: (userId: string) => `/users/${userId}/cover-photo`,
-        UNFRIEND: (friendId: string) => `/users/${friendId}/unfriend`,
+    },
+
+    // Friendships endpoints
+    FRIENDSHIPS: {
+        BY_USER: (userId: string) => `/friendships/${userId}`,
+        COUNT: (userId: string) => `/friendships/${userId}/count`,
+        COMMON: (userId1: string, userId2: string) =>
+            `/friendships/${userId1}/common/${userId2}`,
+        CHECK: (userId: string) => `/friendships/check/${userId}`,
+        CREATE: '/friendships',
+        REMOVE: (userId: string) => `/friendships/${userId}`,
     },
 
     // Posts endpoints
