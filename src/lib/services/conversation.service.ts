@@ -95,7 +95,7 @@ class ConversationServiceClass {
     }
 
     /**
-     * Join a conversation (add participant) using REST API
+     * Join a conversation (add member) using REST API
      */
     public async join({
         conversationId,
@@ -118,8 +118,6 @@ class ConversationServiceClass {
 
     /**
      * Delete conversation by user (soft delete)
-     * TODO: Server API needs DELETE /conversations/:id/user endpoint
-     * For now, use removeParticipant as workaround
      */
     public async deleteByUser({
         conversationId,
@@ -128,9 +126,6 @@ class ConversationServiceClass {
         conversationId: string;
         userId: string;
     }) {
-        // TODO: Implement deleteByUser endpoint in server-api
-        // DELETE /conversations/:id/user or similar
-        // For now, this is a soft delete - user is removed from participants
         try {
             await apiConversationService.removeParticipant(
                 conversationId,

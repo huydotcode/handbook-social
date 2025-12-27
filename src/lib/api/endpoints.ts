@@ -81,9 +81,13 @@ export const API_ENDPOINTS = {
         LIST: '/conversations',
         CREATE: '/conversations',
         BY_ID: (id: string) => `/conversations/${id}`,
-        PARTICIPANTS: (id: string) => `/conversations/${id}/participants`,
-        REMOVE_PARTICIPANT: (id: string, participantId: string) =>
-            `/conversations/${id}/participants/${participantId}`,
+        // Members (new) - use participants routes for now
+        MEMBERS: (id: string) => `/conversations/${id}/members`,
+        ADD_MEMBER: (id: string) => `/conversations/${id}/participants`,
+        REMOVE_MEMBER: (id: string, userId: string) =>
+            `/conversations/${id}/participants/${userId}`,
+        SET_MEMBER_ROLE: (id: string, userId: string) =>
+            `/conversations/${id}/members/${userId}/role`,
         PIN: (id: string) => `/conversations/${id}/pin`,
         UNPIN: (id: string, messageId: string) =>
             `/conversations/${id}/pin/${messageId}`,

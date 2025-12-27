@@ -8,6 +8,7 @@ import { cn } from '@/lib/utils';
 import { timeConvert3 } from '@/utils/timeConvert';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 
 interface Props {
     openInfo: boolean;
@@ -31,16 +32,14 @@ const ChatHeader: React.FC<Props> = ({
 
     const roomType = currentRoom.type;
     const isGroup = roomType === 'group';
+    const { members } = useConversationMembers(currentRoom._id);
 
     const partner = useMemo(() => {
         if (isGroup) return null;
-        if (!currentRoom.participants || currentRoom.participants.length < 2) {
-            return null;
-        }
         if (!user) return null;
-
-        return currentRoom.participants.find((p) => p._id !== user.id);
-    }, [isGroup, currentRoom.participants, user]);
+        const other = members.find((m) => m.user._id !== user.id)?.user;
+        return other || null;
+    }, [isGroup, members, user]);
 
     const title = useMemo(() => {
         if (roomType == 'group') {

@@ -51,16 +51,11 @@ const NotificationItem = ({
             await invalidateNotifications(user.id);
             await invalidateFriends(user.id);
 
-            // Join room cho cả 2 users nếu conversation đã được tạo
-            if (socket && result.conversation) {
+            // Join room chỉ cho current user nếu conversation đã được tạo
+            if (socket && result.conversation && user?.id) {
                 socketEmitor.joinRoom({
                     roomId: result.conversation._id,
-                    userId: notification.receiver._id,
-                });
-
-                socketEmitor.joinRoom({
-                    roomId: result.conversation._id,
-                    userId: notification.sender._id,
+                    userId: user.id,
                 });
             }
 

@@ -5,6 +5,7 @@ import { useAuth, useSocket } from '@/context';
 import { useConversation } from '@/context/SocialContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ConversationService from '@/lib/services/conversation.service';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { useParams, useSearchParams } from 'next/navigation';
 import React, { useEffect, useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -59,6 +60,8 @@ const ConversationPage: React.FC<Props> = ({}) => {
         error: conversationError,
     } = useConversation(conversationId as string);
 
+    const { members } = useConversationMembers(conversationId as string);
+
     const error = useMemo(() => {
         if (isLoadingConversation) return null;
 
@@ -92,10 +95,8 @@ const ConversationPage: React.FC<Props> = ({}) => {
         const isGroupMember = Boolean(
             conversation.group?.members?.some((m) => m.user._id === user?.id)
         );
-        const isParticipant = conversation.participants.some(
-            (p) => p._id === user?.id
-        );
-        if (isGroupMember && !isParticipant) {
+        const isMember = members.some((m) => m.user._id === user?.id);
+        if (isGroupMember && !isMember) {
             return {
                 message: 'Bạn chưa tham gia cuộc trò chuyện nhóm này.',
                 type: NOT_JOINED,
@@ -103,7 +104,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         // Kiểm tra nếu người dùng không phải là người tham gia cuộc trò chuyện
-        if (!isParticipant) {
+        if (!isMember) {
             return {
                 message: 'Bạn không có quyền truy cập cuộc trò chuyện này',
                 type: NOT_ALLOWED,
@@ -111,7 +112,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         return { message: '', type: '' };
-    }, [conversation, isLoadingConversation, user?.id]);
+    }, [conversation, isLoadingConversation, user?.id, members]);
 
     useEffect(() => {
         if (!socketEmitor) return;

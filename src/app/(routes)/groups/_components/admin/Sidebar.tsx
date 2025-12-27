@@ -155,9 +155,7 @@ const Sidebar: React.FC<Props> = ({
                             {conversations
                                 .filter(
                                     (conversation) =>
-                                        conversation.participants.some(
-                                            (p) => p._id === user?.id
-                                        ) && conversation.type === 'group'
+                                        conversation.type === 'group'
                                 )
                                 .map((conversation) => (
                                     <Button
@@ -186,9 +184,7 @@ const Sidebar: React.FC<Props> = ({
                             {conversations
                                 .filter(
                                     (conversation) =>
-                                        conversation.participants.some(
-                                            (p) => p._id !== user?.id
-                                        ) && conversation.type === 'group'
+                                        conversation.type === 'group'
                                 )
                                 .map((conversation) => (
                                     <Button

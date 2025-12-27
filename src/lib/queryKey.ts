@@ -95,6 +95,11 @@ export const queryKey = {
             conversationId,
         ],
         userId: (userId: string | undefined) => ['conversations', userId],
+        members: (conversationId: string | undefined) => [
+            'conversation',
+            'members',
+            conversationId,
+        ],
     },
 
     // Groups

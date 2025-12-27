@@ -52,12 +52,7 @@ const Sidebar: React.FC<Props> = ({}) => {
             ? true
             : conversation.title
                   .toLowerCase()
-                  .includes(filter.query.toLowerCase()) ||
-              conversation.participants.some((participant) =>
-                  participant.name
-                      .toLowerCase()
-                      .includes(filter.query.toLowerCase())
-              );
+                  .includes(filter.query.toLowerCase());
 
         const matchesType = (() => {
             switch (filter.type) {

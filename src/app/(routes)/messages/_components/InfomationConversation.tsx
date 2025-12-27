@@ -13,6 +13,7 @@ import { useSocket } from '@/context';
 import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ConversationService from '@/lib/services/conversation.service';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
@@ -36,6 +37,7 @@ const InfomationConversation: React.FC<Props> = ({
     const { socketEmitor } = useSocket();
     const router = useRouter();
     const { invalidateConversations } = useQueryInvalidation();
+    const { members } = useConversationMembers(conversation._id);
 
     const [openSlideShow, setOpenSlideShow] = useState<boolean>(false);
     const [startImageIndex, setStartImageIndex] = useState<number>(0);
@@ -67,13 +69,9 @@ const InfomationConversation: React.FC<Props> = ({
         if (conversation.group) {
             return null;
         } else {
-            if (conversation.participants[0]._id === user?.id) {
-                return conversation.participants[1];
-            } else {
-                return conversation.participants[0];
-            }
+            return members.find((m) => m.user._id !== user?.id)?.user || null;
         }
-    }, [conversation.group, conversation.participants, user?.id]);
+    }, [conversation.group, members, user?.id]);
 
     const title = useMemo(() => {
         if (conversation.group) {
@@ -186,11 +184,11 @@ const InfomationConversation: React.FC<Props> = ({
             label: 'Thành viên',
             children: (
                 <div>
-                    {conversation.participants.slice(0, 5).map((part) => (
+                    {members.slice(0, 5).map((member) => (
                         <Items.User
                             className={'h-10 text-xs shadow-none'}
-                            data={part}
-                            key={part._id}
+                            data={member.user}
+                            key={member._id}
                         />
                     ))}
                 </div>

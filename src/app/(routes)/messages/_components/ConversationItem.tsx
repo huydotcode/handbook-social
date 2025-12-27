@@ -16,6 +16,7 @@ import {
 import { useSocket } from '@/context';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import ConversationService from '@/lib/services/conversation.service';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { cn } from '@/lib/utils';
 import { splitName } from '@/utils/splitName';
 import { timeConvert3 } from '@/utils/timeConvert';
@@ -35,14 +36,15 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     const { invalidateConversations } = useQueryInvalidation();
     const path = usePathname();
     const router = useRouter();
+    const { members } = useConversationMembers(conversation._id);
 
     const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
     const partner = useMemo(() => {
         return conversation.group
             ? null
-            : conversation.participants.find((p) => p._id !== user?.id);
-    }, [conversation, user]);
+            : members.find((m) => m.user._id !== user?.id)?.user;
+    }, [conversation.group, members, user]);
 
     const isSelect = useMemo(() => {
         return path.includes(conversation._id);

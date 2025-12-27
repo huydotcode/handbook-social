@@ -177,7 +177,6 @@ interface IConversation {
     _id: string;
     title: string;
     creator: IUser;
-    participants: IUser[];
     lastMessage: IMessage;
     group?: IGroup;
     type: string;
@@ -189,11 +188,11 @@ interface IConversation {
     updatedAt: Date;
 }
 
-interface IConversationRole {
+interface IConversationMember {
     _id: string;
-    conversationId: string;
-    userId: string;
-    role: string;
+    conversation: string;
+    user: IUser;
+    role: 'admin' | 'member';
     createdAt: Date;
     updatedAt: Date;
 }

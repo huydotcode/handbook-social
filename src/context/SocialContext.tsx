@@ -120,8 +120,7 @@ function SocialProvider({ children }: { children: React.ReactNode }) {
         if (!user?.id || !conversations || !isConnected) return;
 
         conversations.forEach((conversation) => {
-            if (!conversation.participants.some((p) => p._id === user.id))
-                return;
+            // Conversations returned here are already scoped by membership.
             if (conversation.isDeletedBy?.includes(user.id)) return;
 
             socketEmitor.joinRoom({
