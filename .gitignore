@@ -21,6 +21,8 @@
 /.env.local
 /.env.development.local
 /.env.test.local
+production.env
+client.env
 
 # production
 /build
