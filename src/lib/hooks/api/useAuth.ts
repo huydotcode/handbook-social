@@ -18,50 +18,20 @@ import {
  * Hook for user login
  */
 export const useLogin = () => {
-    const { setUser } = useAuth();
+    const { setAccessToken, setUser } = useAuth();
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (data: LoginDto) => authService.login(data),
         onSuccess: (data: LoginResponse) => {
-            // Store token
-            if (typeof window !== 'undefined' && data.token) {
-                localStorage.setItem('accessToken', data.token);
+            // Store access token in memory via context
+            if (data.accessToken) {
+                setAccessToken(data.accessToken);
 
-                // Set user in context if provided
+                // User will be set automatically in setAccessToken,
+                // but if provided explicitly, use it
                 if (data.user) {
                     setUser(data.user);
-                } else {
-                    // Decode token to get user info
-                    try {
-                        const base64Url = data.token.split('.')[1];
-                        const base64 = base64Url
-                            .replace(/-/g, '+')
-                            .replace(/_/g, '/');
-                        const jsonPayload = decodeURIComponent(
-                            atob(base64)
-                                .split('')
-                                .map(
-                                    (c) =>
-                                        '%' +
-                                        (
-                                            '00' + c.charCodeAt(0).toString(16)
-                                        ).slice(-2)
-                                )
-                                .join('')
-                        );
-                        const decoded = JSON.parse(jsonPayload);
-                        setUser({
-                            id: decoded.id,
-                            name: decoded.name,
-                            email: decoded.email,
-                            username: decoded.username || '',
-                            avatar: decoded.picture || '',
-                            role: decoded.role || 'user',
-                        });
-                    } catch (error) {
-                        console.error('Error decoding token:', error);
-                    }
                 }
             }
 

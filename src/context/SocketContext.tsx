@@ -65,7 +65,7 @@ export const SocketContext = createContext<SocketContextType>({
 export const useSocket = () => useContext(SocketContext);
 
 function SocketProvider({ children }: { children: React.ReactNode }) {
-    const { user } = useAuth();
+    const { user, accessToken, refreshAccessToken } = useAuth();
     const queryClient = useQueryClient();
     const {
         queryClientAddMessage,
@@ -207,9 +207,29 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         setIsConnected(false);
     };
 
-    const onConnectError = (err: any) => {
+    const onConnectError = async (err: any) => {
         setIsConnected(false);
         console.error('Socket connection error:', err);
+
+        // Attempt token refresh on auth errors
+        const message = typeof err === 'string' ? err : err?.message;
+        if (
+            message &&
+            (message.includes('Unauthorized') ||
+                message.includes('Authentication'))
+        ) {
+            try {
+                await refreshAccessToken();
+                if (socket) {
+                    socket.disconnect();
+                }
+            } catch (refreshErr) {
+                console.error(
+                    'Failed to refresh token for socket:',
+                    refreshErr
+                );
+            }
+        }
     };
 
     const onReceiveMessage = useCallback(
@@ -329,9 +349,8 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
 
     // Khởi tạo socket
     useEffect(() => {
-        if (!user?.id) return;
-
-        const accessToken = localStorage.getItem('accessToken');
+        // Require both user and access token for socket auth
+        if (!user?.id || !accessToken) return;
 
         const socketIO = ClientIO(socketConfig.url, {
             withCredentials: true,
@@ -346,13 +365,13 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         socketIO.on('disconnect', onDisconnect);
         socketIO.on('connect_error', onConnectError);
 
-        // Cleanup khi component unmount hoặc user thay đổi
+        // Cleanup khi component unmount hoặc auth changes
         return () => {
             socketIO.disconnect();
             setSocket(null);
         };
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [user?.id]);
+    }, [user?.id, accessToken]);
 
     // Gắn và gỡ các event listener khi socket hoặc các hàm callback thay đổi
     useEffect(() => {

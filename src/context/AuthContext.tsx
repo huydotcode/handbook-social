@@ -1,4 +1,5 @@
 'use client';
+import { axiosAuth } from '@/lib/axios';
 import { useQueryClient } from '@tanstack/react-query';
 import {
     createContext,
@@ -6,6 +7,7 @@ import {
     useCallback,
     useContext,
     useEffect,
+    useRef,
     useState,
 } from 'react';
 
@@ -20,10 +22,13 @@ interface User {
 
 interface AuthContextType {
     user: User | null;
+    accessToken: string | null;
     isLoading: boolean;
     isAuthenticated: boolean;
     setUser: (user: User | null) => void;
-    logout: () => void;
+    setAccessToken: (token: string | null) => void;
+    logout: () => Promise<void>;
+    refreshAccessToken: () => Promise<void>;
 }
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -71,72 +76,93 @@ function decodeToken(token: string): User | null {
 
 /**
  * Auth Provider - Manages user authentication state
- * Replaces NextAuth session management
+ * Uses access token in memory + refresh token in httpOnly cookie
  */
 export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUserState] = useState<User | null>(null);
+    const [accessToken, setAccessTokenState] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
     const queryClient = useQueryClient();
+    const initializingRef = useRef(false);
 
-    // Load user from token on mount
+    // Refresh access token from cookie on mount
     useEffect(() => {
-        const loadUser = () => {
-            if (typeof window === 'undefined') {
-                setIsLoading(false);
+        const initAuth = async () => {
+            if (typeof window === 'undefined' || initializingRef.current) {
                 return;
             }
 
-            const token = localStorage.getItem('accessToken');
-            if (token) {
-                const decodedUser = decodeToken(token);
+            initializingRef.current = true;
+
+            try {
+                const response = await axiosAuth.post('/auth/refresh');
+                const newAccessToken = response.data.data.accessToken;
+
+                setAccessTokenState(newAccessToken);
+                const decodedUser = decodeToken(newAccessToken);
                 setUserState(decodedUser);
-            } else {
-                setUserState(null);
+            } catch (error) {
+                console.log('No valid refresh token');
+            } finally {
+                setIsLoading(false);
             }
-            setIsLoading(false);
         };
 
-        loadUser();
+        initAuth();
     }, []);
 
-    // Listen for storage changes (logout from other tabs)
-    useEffect(() => {
-        const handleStorageChange = (e: StorageEvent) => {
-            if (e.key === 'accessToken') {
-                if (!e.newValue) {
-                    // Token was removed, clear user
-                    setUserState(null);
-                    queryClient.clear();
-                } else {
-                    // Token was added, decode and set user
-                    const decodedUser = decodeToken(e.newValue);
-                    setUserState(decodedUser);
-                }
-            }
-        };
+    const setAccessToken = useCallback((token: string | null) => {
+        setAccessTokenState(token);
+        setIsLoading(false);
+        if (token) {
+            const decodedUser = decodeToken(token);
+            setUserState(decodedUser);
+        } else {
+            setUserState(null);
+        }
+    }, []);
 
-        window.addEventListener('storage', handleStorageChange);
-        return () => window.removeEventListener('storage', handleStorageChange);
-    }, [queryClient]);
+    const refreshAccessToken = useCallback(async () => {
+        try {
+            const response = await axiosAuth.post('/auth/refresh');
+            const newAccessToken = response.data.data.accessToken;
+            setAccessTokenState(newAccessToken);
+            const decodedUser = decodeToken(newAccessToken);
+            setUserState(decodedUser);
+        } catch (error) {
+            setAccessTokenState(null);
+            setUserState(null);
+            throw error;
+        }
+    }, []);
 
     const setUser = useCallback((newUser: User | null) => {
         setUserState(newUser);
     }, []);
 
-    const logout = useCallback(() => {
-        localStorage.removeItem('accessToken');
-        setUserState(null);
-        queryClient.clear();
+    const logout = useCallback(async () => {
+        try {
+            await axiosAuth.post('/auth/logout');
+        } catch (error) {
+            console.error('Logout error:', error);
+        } finally {
+            setAccessTokenState(null);
+            setUserState(null);
+            queryClient.clear();
+        }
     }, [queryClient]);
 
     return (
         <AuthContext.Provider
             value={{
                 user,
+                accessToken,
                 isLoading,
                 isAuthenticated: !!user,
                 setUser,
+                setAccessToken,
                 logout,
+                refreshAccessToken,
             }}
         >
             {children}

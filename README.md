@@ -101,19 +101,17 @@ npm install
 # Tạo file môi trường
 cp .env
 
-# Sau đó điền các biến môi trường cần thiết (API_URL, NEXTAUTH_SECRET,...)
+# Sau đó điền các biến môi trường cần thiết (API_URL,...)
 GOOGLE_API_KEY=
 MONGODB_URI=
 SERVER_API=
 NEXTAUTH_URL_INTERNAL=
 NEXTAUTH_URL=
-NEXTAUTH_SECRET=
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 CLOUDINARY_NAME=
 CLOUDINARY_KEY=
 CLOUDINARY_SECRET=
-JWT_SECRET=
 
 # Chạy dự án
 npm run dev

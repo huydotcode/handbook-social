@@ -37,7 +37,7 @@ export interface ResetPasswordDto {
 }
 
 export interface LoginResponse {
-    token: string;
+    accessToken: string;
     user?: {
         id: string;
         email: string;
@@ -46,6 +46,10 @@ export interface LoginResponse {
         role: string;
         username: string;
     };
+}
+
+export interface RefreshResponse {
+    accessToken: string;
 }
 
 export const authService = {
