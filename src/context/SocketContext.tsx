@@ -28,15 +28,10 @@ type SocketContextType = {
     socket: Socket | null;
     socketEmitor: {
         joinRoom: (args: { roomId: string; userId: string }) => void;
-        sendMessage: (args: { roomId: string; message: IMessage }) => void;
-        receiveNotification: (args: { notification: INotification }) => void;
         deleteMessage: (args: { message: IMessage }) => void;
         pinMessage: (args: { message: IMessage }) => void;
         unpinMessage: (args: { message: IMessage }) => void;
-        sendRequestAddFriend: (args: { request: INotification }) => void;
-        sendNotification: (args: { notification: INotification }) => void;
         readMessage: (args: { roomId: string; userId: string }) => void;
-        likePost: (args: { postId: string; authorId: string }) => void;
         leaveRoom: (args: { roomId: string; userId: string }) => void;
     };
     isConnected: boolean;
@@ -47,15 +42,10 @@ export const SocketContext = createContext<SocketContextType>({
     socket: null,
     socketEmitor: {
         joinRoom: () => {},
-        sendMessage: () => {},
-        receiveNotification: () => {},
         deleteMessage: () => {},
-        sendRequestAddFriend: () => {},
-        sendNotification: () => {},
-        readMessage: () => {},
         pinMessage: () => {},
         unpinMessage: () => {},
-        likePost: () => {},
+        readMessage: () => {},
         leaveRoom: () => {},
     },
     isConnected: false,
@@ -77,14 +67,11 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const rawPathname = usePathname();
     const [pathname, setPathname] = useState(rawPathname);
-
     const { play: playMessageSound } = useSound(soundTypes.MESSAGE);
 
     const [socket, setSocket] = useState<Socket | null>(null);
     const [isConnected, setIsConnected] = useState<boolean>(false);
     const [isLoading, setIsLoading] = useState<boolean>(true);
-
-    // --- Tách các hàm emit ra thành các hằng số riêng ---
 
     const emitJoinRoom = useCallback(
         (args: { roomId: string; userId: string }) => {
@@ -93,37 +80,9 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         [socket]
     );
 
-    const emitSendMessage = useCallback(
-        (args: { roomId: string; message: IMessage }) => {
-            socket?.emit(socketEvent.SEND_MESSAGE, args);
-        },
-        [socket]
-    );
-
-    const emitReceiveNotification = useCallback(
-        (args: { notification: INotification }) => {
-            socket?.emit(socketEvent.RECEIVE_NOTIFICATION, args);
-        },
-        [socket]
-    );
-
     const emitDeleteMessage = useCallback(
         (args: { message: IMessage }) => {
             socket?.emit(socketEvent.DELETE_MESSAGE, args);
-        },
-        [socket]
-    );
-
-    const emitSendRequestAddFriend = useCallback(
-        (args: { request: INotification }) => {
-            socket?.emit(socketEvent.SEND_REQUEST_ADD_FRIEND, args);
-        },
-        [socket]
-    );
-
-    const emitReadMessage = useCallback(
-        (args: { roomId: string; userId: string }) => {
-            socket?.emit(socketEvent.READ_MESSAGE, args);
         },
         [socket]
     );
@@ -142,9 +101,9 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         [socket]
     );
 
-    const emitLikePost = useCallback(
-        (args: { postId: string; authorId: string }) => {
-            socket?.emit(socketEvent.LIKE_POST, args);
+    const emitReadMessage = useCallback(
+        (args: { roomId: string; userId: string }) => {
+            socket?.emit(socketEvent.READ_MESSAGE, args);
         },
         [socket]
     );
@@ -156,40 +115,22 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
         [socket]
     );
 
-    const emitSendNotification = useCallback(
-        (args: { notification: INotification }) => {
-            socket?.emit(socketEvent.SEND_NOTIFICATION, args);
-        },
-        [socket]
-    );
-
-    // Tạo đối tượng socketEmitor bằng useMemo
     const socketEmitor = useMemo(
         () => ({
             joinRoom: emitJoinRoom,
-            sendMessage: emitSendMessage,
-            receiveNotification: emitReceiveNotification,
             deleteMessage: emitDeleteMessage,
-            sendRequestAddFriend: emitSendRequestAddFriend,
-            readMessage: emitReadMessage,
             pinMessage: emitPinMessage,
             unpinMessage: emitUnpinMessage,
-            likePost: emitLikePost,
+            readMessage: emitReadMessage,
             leaveRoom: emitLeaveRoom,
-            sendNotification: emitSendNotification,
         }),
         [
             emitJoinRoom,
-            emitSendMessage,
-            emitReceiveNotification,
             emitDeleteMessage,
-            emitSendRequestAddFriend,
-            emitReadMessage,
             emitPinMessage,
             emitUnpinMessage,
-            emitLikePost,
+            emitReadMessage,
             emitLeaveRoom,
-            emitSendNotification,
         ]
     );
 
@@ -234,55 +175,114 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
 
     const onReceiveMessage = useCallback(
         (message: IMessage) => {
-            // Bỏ qua tin nhắn do chính user gửi đi
-            if (!user || user.id === message.sender._id) return;
+            console.log('On Receive Message');
 
-            if (pathname.includes(`/messages/${message.conversation._id}`)) {
-                queryClientAddMessage(message);
+            if (!user) return;
 
+            // Prefer flattened conversationId to avoid relying on populated conversation
+            const conversationId =
+                // @ts-ignore allow backward compatibility
+                (message as any).conversationId || message.conversation?._id;
+
+            // If still missing, skip to avoid crashes
+            if (!conversationId) return;
+
+            // If the message is sent by current user, skip (optimistic already updated)
+            if (message.sender?._id === user.id) return;
+
+            // Check if message already exists in cache (optimistic update from same tab)
+            const existingMessages = queryClient.getQueryData<{
+                pages: IMessage[][];
+                pageParams: (number | undefined)[];
+            }>(queryKey.messages.conversationId(conversationId));
+
+            const messageExists = existingMessages?.pages.some((page) =>
+                page.some((msg) => msg._id === message._id)
+            );
+
+            // Skip if message already exists (sent from this tab via REST API)
+            if (messageExists) return;
+
+            // Always add message to cache (whether in page or not)
+            queryClientAddMessage({
+                ...message,
+                // normalize conversationId for downstream consumers
+                // @ts-ignore keeping backward compatibility with existing IMessage
+                conversationId,
+            } as IMessage);
+
+            const isInConversationPage = pathname.includes(
+                `/messages/${conversationId}`
+            );
+
+            // Mark as read only if viewing the conversation and message is from others
+            if (isInConversationPage && user.id !== message.sender._id) {
                 socketEmitor.readMessage({
-                    roomId: message.conversation._id,
+                    roomId: conversationId,
                     userId: user.id,
                 });
-            } else {
-                queryClientAddMessage(message);
+            }
 
+            // Show toast/sound only if NOT viewing the conversation and message is from others
+            if (!isInConversationPage && user.id !== message.sender._id) {
                 // Phát âm thanh thông báo khi nhận được tin nhắn mới
                 playMessageSound();
 
                 toast(
                     <Link
                         className="flex items-center text-primary-2"
-                        href={`/messages/${message.conversation._id}`}
+                        href={`/messages/${conversationId}`}
                     >
                         <Icons.Message className="text-3xl" />
                         <p className="ml-2 text-sm text-primary-1">
                             Tin nhắn mới từ{' '}
                             <span className="font-semibold">
-                                {message.conversation.group
-                                    ? message.conversation.title
+                                {message.conversation?.group
+                                    ? message.conversation?.title
                                     : message.sender.name}
                             </span>
                         </p>
                     </Link>,
                     {
-                        id: message.conversation._id,
+                        id: conversationId,
                         position: 'bottom-left',
                     }
                 );
             }
         },
-        [user, pathname, queryClientAddMessage, socketEmitor, playMessageSound]
+        [
+            user,
+            pathname,
+            queryClient,
+            queryClientAddMessage,
+            socketEmitor,
+            playMessageSound,
+        ]
     );
 
     const onDeleteMessage = useCallback(
         (message: IMessage) => {
+            // Normalize conversation id to handle payloads lacking populated conversation
+            const conversationId =
+                // @ts-ignore legacy flatten
+                (message as any).conversationId ||
+                (message as any).conversation?._id ||
+                (message as any).conversation;
+
+            if (!conversationId) return;
+
             if (
                 !user ||
                 user.id !== message.sender._id ||
-                pathname.includes(`/messages/${message.conversation._id}`)
+                pathname.includes(`/messages/${conversationId}`)
             ) {
-                queryClientDeleteMessage(message);
+                queryClientDeleteMessage({
+                    ...message,
+                    conversationId,
+                    conversation:
+                        (message as any).conversation ||
+                        ({ _id: conversationId } as any),
+                } as IMessage);
             }
         },
         [user, pathname, queryClientDeleteMessage]

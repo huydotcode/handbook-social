@@ -64,13 +64,6 @@ const FollowAction: React.FC<Props> = ({ className = '', userId }) => {
         onSuccess: async (notification) => {
             await invalidateFollowings(user?.id as string);
 
-            // Send socket notification
-            if (socket && notification) {
-                socketEmitor.sendNotification({
-                    notification: notification,
-                });
-            }
-
             toast.success('Đã theo dõi', {
                 id: 'follow',
                 position: 'bottom-left',

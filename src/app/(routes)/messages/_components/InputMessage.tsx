@@ -1,15 +1,14 @@
 'use client';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
 import { useAuth } from '@/context/AuthContext';
 import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import React, { ChangeEvent, useEffect, useId, useMemo } from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import React, { ChangeEvent, useId } from 'react';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -23,11 +22,9 @@ interface IFormData {
 }
 
 const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
-    const { socketEmitor } = useSocket();
     const { user } = useAuth();
     const formRef = React.useRef<HTMLFormElement>(null);
-    const { queryClientAddMessage, invalidateConversation } =
-        useQueryInvalidation();
+    const { queryClientAddMessage } = useQueryInvalidation();
     const fileInputId = useId();
     const form = useForm<IFormData>({
         defaultValues: {
@@ -93,12 +90,10 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
                 return;
             }
 
-            queryClientAddMessage(newMsg);
-
-            socketEmitor.sendMessage({
-                roomId: currentRoom._id,
-                message: newMsg,
-            });
+            queryClientAddMessage({
+                ...newMsg,
+                conversationId: currentRoom._id,
+            } as IMessage);
         } catch (error: any) {
             console.error(error);
             toast.error('Không thể gửi tin nhắn!');

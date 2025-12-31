@@ -1,7 +1,6 @@
 'use client';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
 import { useAuth } from '@/context/AuthContext';
 import queryKey from '@/lib/queryKey';
 import PostService from '@/lib/services/post.service';
@@ -19,8 +18,6 @@ interface Props {
 const ReactionPost: React.FC<Props> = ({ post }) => {
     const { user } = useAuth();
     const queryClient = useQueryClient();
-
-    const { socketEmitor } = useSocket();
     const { postParams } = usePostContext();
 
     const isReacted = post.userHasLoved;
@@ -62,14 +59,6 @@ const ReactionPost: React.FC<Props> = ({ post }) => {
                 );
 
                 await PostService.sendReaction(post._id);
-
-                // Kiểm tra nếu người dùng không phải là tác giả bài viết và tương tác bài viết
-                if (!isReacted && user.id !== post.author._id) {
-                    socketEmitor.likePost({
-                        postId: post._id,
-                        authorId: post.author._id,
-                    });
-                }
             } catch (error: any) {
                 console.error(error);
             }

@@ -56,10 +56,6 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
 
             if (!data) return;
 
-            socketEmitor.sendRequestAddFriend({
-                request: data,
-            });
-
             toast.success('Gửi lời mời kết bạn thành công', {
                 id: 'sendRequest',
                 position: 'bottom-left',

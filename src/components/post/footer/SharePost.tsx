@@ -29,7 +29,6 @@ const SharePost: React.FC<Props> = ({ post }) => {
     const { data: friends } = useFriends(user?.id);
     const [sended, setSended] = useState<string[]>([]);
     const [sharingFriendId, setSharingFriendId] = useState<string | null>(null);
-    const { socketEmitor } = useSocket();
 
     const handleShare = async (friendId: string) => {
         if (!user) {
@@ -73,12 +72,6 @@ const SharePost: React.FC<Props> = ({ post }) => {
                 setSharingFriendId(null);
                 return;
             }
-
-            // Send socket notification
-            socketEmitor.sendMessage({
-                roomId: conversation._id,
-                message: newMsg,
-            });
 
             // Update state
             setSended([...sended, friendId]);
