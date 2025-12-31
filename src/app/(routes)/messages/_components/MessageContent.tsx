@@ -223,7 +223,6 @@ const MessageContent = ({
                                     <TooltipContent
                                         className={'p-1'}
                                         side={isOwnMsg ? 'left' : 'right'}
-                                        asChild
                                     >
                                         <div
                                             className={
@@ -289,13 +288,13 @@ const MessageContent = ({
                 </div>
             )}
 
-            <Popover open={openPopover} onOpenChange={setOpenPopover}>
-                <PopoverTrigger
-                    asChild
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    {msg.text.trim().length > 0 && (
+            {msg.text.trim().length > 0 && (
+                <Popover open={openPopover} onOpenChange={setOpenPopover}>
+                    <PopoverTrigger
+                        asChild
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
                         <div
                             className={cn(
                                 'relative max-w-[70%] break-words rounded-xl px-3 py-2',
@@ -382,17 +381,17 @@ const MessageContent = ({
                                 {FormatDate.formatISODateToHHMM(msg.createdAt)}
                             </div>
                         </div>
-                    )}
-                </PopoverTrigger>
+                    </PopoverTrigger>
 
-                {isOwnMsg && !isPin && !isSearchMessage && (
-                    <MessageAction
-                        msg={msg}
-                        messages={messages}
-                        index={index}
-                    />
-                )}
-            </Popover>
+                    {isOwnMsg && !isPin && !isSearchMessage && (
+                        <MessageAction
+                            msg={msg}
+                            messages={messages}
+                            index={index}
+                        />
+                    )}
+                </Popover>
+            )}
 
             <SlideShow
                 show={showSlideShow}
