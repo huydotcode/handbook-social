@@ -9,6 +9,13 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
+import {
+    AuthContainer,
+    AuthHeader,
+    OrDivider,
+    RedirectLink,
+    SocialButton,
+} from '@/features/auth';
 import type { ErrorResponse } from '@/lib/api/client';
 import { authService } from '@/lib/api/services/auth.service';
 import { signUpValidation } from '@/lib/validation';
@@ -16,11 +23,6 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import AuthContainer from '../_components/AuthContainer';
-import AuthHeader from '../_components/AuthHeader';
-import OrDivider from '../_components/OrDivider';
-import RedirectLink from '../_components/RedirectLink';
-import SocialButton from '../_components/SocialButton';
 
 type FormSignupData = {
     email: string;

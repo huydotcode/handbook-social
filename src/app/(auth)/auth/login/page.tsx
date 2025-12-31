@@ -9,15 +9,16 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
+import {
+    AuthContainer,
+    AuthHeader,
+    OrDivider,
+    RedirectLink,
+    SocialButton,
+} from '@/features/auth';
 import { useLogin } from '@/lib/hooks/api/useAuth';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import AuthContainer from '../_components/AuthContainer';
-import AuthHeader from '../_components/AuthHeader';
-import OrDivider from '../_components/OrDivider';
-import RedirectLink from '../_components/RedirectLink';
-import SocialButton from '../_components/SocialButton';
 
 interface FormLoginData {
     email: string;
