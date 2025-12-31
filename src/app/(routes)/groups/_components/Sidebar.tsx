@@ -3,7 +3,7 @@ import SidebarCollapse from '@/components/layout/SidebarCollapse';
 import { Items } from '@/components/shared';
 import { Loading } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import queryKey from '@/lib/queryKey';
 import GroupService from '@/lib/services/group.service';
 import { useInfiniteQuery } from '@tanstack/react-query';

@@ -5,7 +5,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import VideoPlayer from '@/components/ui/VideoPlayer';
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
-import { timeConvert, timeConvert4 } from '@/utils/timeConvert';
+import { timeConvert, timeConvert4 } from '@/shared';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';

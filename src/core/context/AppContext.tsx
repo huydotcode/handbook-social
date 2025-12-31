@@ -1,7 +1,6 @@
 'use client';
-import { notificationType } from '@/constants/notificationType';
-import { socketEvent } from '@/constants/socketEvent.constant';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { socketEvent } from '@/shared/constants';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { categoryService } from '@/lib/api/services/category.service';
 import { groupService } from '@/lib/api/services/group.service';
 import { locationService } from '@/lib/api/services/location.service';
@@ -17,6 +16,7 @@ import toast from 'react-hot-toast';
 import { useSocket } from '.';
 import { useAuth } from './AuthContext';
 import { SidebarCollapseContext } from './SidebarContext';
+import { notificationType } from '@/shared/constants';
 
 const PAGE_SIZE = 10;
 

@@ -9,9 +9,9 @@ import {
     SlideShow,
 } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
-import { useAuth } from '@/context/AuthContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import ConversationService from '@/lib/services/conversation.service';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { useRouter } from 'next/navigation';

@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, MouseEvent } from 'react';
 import { Play, Pause, Volume2, VolumeX, Maximize2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { useVideoVolume } from '@/hooks/useVideoVolume';
+import { useVideoVolume } from '@/shared/hooks';
 
 interface VideoPlayerProps {
     src: string;

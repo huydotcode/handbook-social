@@ -7,10 +7,10 @@ import {
     PopoverTrigger,
 } from '@/components/ui/Popover';
 import { Badge } from '@/components/ui/badge';
-import { useNotifications } from '@/context/AppContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useNotifications } from '@/core/context/AppContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Icons from '../ui/Icons';

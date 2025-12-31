@@ -2,8 +2,8 @@
 
 import { ConfirmModal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { GroupUserRole } from '@/enums/GroupRole';
-import { timeConvert4 } from '@/utils/timeConvert';
+import { GroupUserRole } from '@/types/enums/GroupRole';
+import { timeConvert4 } from '@/shared';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import { useRemoveGroupMember } from '@/lib/hooks/api/useGroup';

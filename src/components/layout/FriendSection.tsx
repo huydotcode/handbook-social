@@ -14,8 +14,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useConversations, useFriends } from '@/context/SocialContext';
-import { useAuth } from '@/context/AuthContext';
+import { useConversations, useFriends } from '@/core/context/SocialContext';
+import { useAuth } from '@/core/context/AuthContext';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';

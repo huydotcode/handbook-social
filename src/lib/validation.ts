@@ -1,7 +1,4 @@
-import {
-    ALLOWED_TYPE_IMAGES,
-    ALLOWED_TYPE_VIDEOS,
-} from '@/constants/allowTypeMedia';
+import { ALLOWED_TYPE_IMAGES, ALLOWED_TYPE_VIDEOS } from '@/shared/constants';
 import { z } from 'zod';
 
 export const fileSchema = z

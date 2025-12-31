@@ -1,14 +1,11 @@
 'use client';
 import { Icons } from '@/components/ui';
-import { socketConfig } from '@/config/socket';
-import { socketEvent } from '@/constants/socketEvent.constant';
-import { soundTypes } from '@/constants/soundType';
-import { useSound } from '@/hooks';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { socketConfig } from '@/core/config/socket';
 import queryKey from '@/lib/queryKey';
+import { socketEvent, soundTypes } from '@/shared/constants';
+import { useQueryInvalidation, useSound } from '@/shared/hooks';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
-import { useAuth } from './AuthContext';
 import { usePathname } from 'next/navigation';
 import {
     createContext,
@@ -21,6 +18,7 @@ import {
 import toast from 'react-hot-toast';
 import { Socket } from 'socket.io';
 import { io as ClientIO } from 'socket.io-client';
+import { useAuth } from './AuthContext';
 
 const HEARTBEAT_INTERVAL = 60000; // 1 minute
 

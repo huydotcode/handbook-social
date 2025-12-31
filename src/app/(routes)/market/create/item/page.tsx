@@ -19,9 +19,9 @@ import {
     SelectValue,
 } from '@/components/ui/select';
 import { Textarea } from '@/components/ui/textarea';
-import { useAuth } from '@/context';
-import { useCategories, useLocations } from '@/context/AppContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useAuth } from '@/core/context';
+import { useCategories, useLocations } from '@/core/context/AppContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import ItemService from '@/lib/services/item.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { createItemValidation, CreateItemValidation } from '@/lib/validation';

@@ -1,14 +1,14 @@
 'use client';
 import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/context';
-import { useVideoCall } from '@/context/VideoCallContext';
-import useBreakpoint from '@/hooks/useBreakpoint';
+import { useAuth } from '@/core/context';
+import { useVideoCall } from '@/core/context/VideoCallContext';
 import { cn } from '@/lib/utils';
-import { timeConvert3 } from '@/utils/timeConvert';
+import { timeConvert3 } from '@/shared';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import { useBreakpoint } from '@/shared/hooks';
 
 interface Props {
     openInfo: boolean;

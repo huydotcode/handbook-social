@@ -6,7 +6,7 @@ import {
     SocialProvider,
     SocketProvider,
     VideoCallProvider,
-} from '@/context';
+} from '@/core/context';
 import { AxiosInterceptor } from '@/features/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';

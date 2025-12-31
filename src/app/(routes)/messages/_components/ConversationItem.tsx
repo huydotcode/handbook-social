@@ -13,16 +13,15 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ConversationService from '@/lib/services/conversation.service';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import ConversationService from '@/lib/services/conversation.service';
 import { cn } from '@/lib/utils';
-import { splitName } from '@/utils/splitName';
-import { timeConvert3 } from '@/utils/timeConvert';
-import { useAuth } from '@/context/AuthContext';
+import { splitName, timeConvert3 } from '@/shared';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Props {

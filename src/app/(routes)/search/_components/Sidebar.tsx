@@ -1,9 +1,9 @@
 'use client';
 import SidebarCollapse from '@/components/layout/SidebarCollapse';
 import { Button } from '@/components/ui/Button';
-import { searchType } from '@/constants/searchType';
-import { useSidebarCollapse } from '@/context/SidebarContext';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { cn } from '@/lib/utils';
+import { searchType } from '@/shared/constants';
 import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 
 const Sidebar = () => {

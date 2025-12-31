@@ -2,7 +2,7 @@ import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
 import { useMessages } from '@/app/(routes)/messages/_components/ChatBox';
 
-export const useMessageHandling = (conversationId: string) => {
+const useMessageHandling = (conversationId: string) => {
     const [isFind, setIsFind] = useState(false);
     const {
         data: messages,
@@ -65,3 +65,5 @@ export const useMessageHandling = (conversationId: string) => {
         fetchNextPage,
     };
 };
+
+export default useMessageHandling;

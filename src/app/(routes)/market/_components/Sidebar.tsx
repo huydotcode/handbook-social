@@ -2,11 +2,11 @@
 
 import { Button } from '@/components/ui/Button';
 import Icons, { IconsArray } from '@/components/ui/Icons';
-import { useCategories } from '@/context/AppContext';
+import { useCategories } from '@/core/context/AppContext';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import SearchMarket from './SearchMarket';
-import { useSidebarCollapse } from '@/context/SidebarContext';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import SidebarCollapse from '@/components/layout/SidebarCollapse';
 import Link from 'next/link';
 

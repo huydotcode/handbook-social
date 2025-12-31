@@ -1,12 +1,12 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useAuth, useSocket } from '@/context';
+import { useAuth, useSocket } from '@/core/context';
 import {
     NotificationMessage,
     NotificationType,
-} from '@/enums/EnumNotification';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+} from '@/types/enums/EnumNotification';
+import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
 import { cn } from '@/lib/utils';
 import { useCallback, useState } from 'react';

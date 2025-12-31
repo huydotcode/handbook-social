@@ -9,8 +9,8 @@ import {
     SelectLabel,
     SelectTrigger,
 } from '@/components/ui/select';
-import { useAuth } from '@/context/AuthContext';
-import { useConversations } from '@/context/SocialContext';
+import { useAuth } from '@/core/context/AuthContext';
+import { useConversations } from '@/core/context/SocialContext';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';

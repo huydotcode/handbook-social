@@ -18,7 +18,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { useLocations } from '@/context/AppContext';
+import { useLocations } from '@/core/context/AppContext';
 import { adminService } from '@/lib/api/services/admin.service';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';

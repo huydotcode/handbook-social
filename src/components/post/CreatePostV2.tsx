@@ -5,9 +5,8 @@ import { ChangeEvent, FC, useCallback, useId, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
-import postAudience from '@/constants/postAudience.constant';
-import { useAuth } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useAuth } from '@/core/context';
+import { useQueryInvalidation } from '@/shared/hooks';
 import PostService from '@/lib/services/post.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
@@ -26,6 +25,7 @@ import {
 } from '../ui/tooltip';
 import Video from '../ui/video';
 import TagInput from './TagInput';
+import { postAudience } from '@/shared/constants';
 
 interface Props {
     className?: string;

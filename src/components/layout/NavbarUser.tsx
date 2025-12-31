@@ -6,17 +6,14 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/Popover';
-import {
-    INavbarUserMenu,
-    navbarUserMenu,
-} from '@/constants/navbar-user-menu.constant';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import { useLogout } from '@/features/auth';
 import Image from 'next/image';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import Icons from '../ui/Icons';
+import { INavbarUserMenu, navbarUserMenu } from '@/shared/constants';
 
 const NavbarUser = () => {
     const { user, isLoading } = useAuth();

@@ -3,7 +3,7 @@ import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
-import { useVideoCall } from '@/context/VideoCallContext';
+import { useVideoCall } from '@/core/context/VideoCallContext';
 import { webRTCService } from '@/lib/services/webrtc.service';
 
 interface Props {

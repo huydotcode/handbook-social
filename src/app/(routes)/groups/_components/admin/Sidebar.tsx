@@ -2,17 +2,17 @@
 import SidebarCollapse from '@/components/layout/SidebarCollapse';
 import { Avatar, Icons, Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { socketEvent } from '@/constants/socketEvent.constant';
-import { useAuth, useSocket } from '@/context';
-import { GroupUserRole } from '@/enums/GroupRole';
-import useBreakPoint from '@/hooks/useBreakpoint';
+import { socketEvent } from '@/shared/constants';
+import { useAuth, useSocket } from '@/core/context';
+import { GroupUserRole } from '@/types/enums/GroupRole';
 import ConversationService from '@/lib/services/conversation.service';
-import { timeConvert } from '@/utils/timeConvert';
+import { timeConvert } from '@/shared';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useGroupMembers } from '@/lib/hooks/api/useGroup';
+import { useBreakpoint } from '@/shared/hooks';
 
 interface Props {
     group: IGroup;
@@ -29,7 +29,7 @@ const Sidebar: React.FC<Props> = ({
 }) => {
     const { socket } = useSocket();
     const { user } = useAuth();
-    const { breakpoint } = useBreakPoint();
+    const { breakpoint } = useBreakpoint();
     const isMobile = breakpoint === 'sm' || breakpoint === 'md';
     const nameInputId = useId();
     const [showModalCreateConversation, setShowModalCreateConversation] =

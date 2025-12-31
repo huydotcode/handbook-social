@@ -1,9 +1,9 @@
 'use client';
 import { Loading } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useAuth, useSocket } from '@/context';
-import { useConversation } from '@/context/SocialContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useAuth, useSocket } from '@/core/context';
+import { useConversation } from '@/core/context/SocialContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import ConversationService from '@/lib/services/conversation.service';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { useParams, useSearchParams } from 'next/navigation';

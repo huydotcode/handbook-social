@@ -1,12 +1,11 @@
 'use client';
-import { navGroup } from '@/constants/navLink';
-import Image from 'next/image';
-import React from 'react';
-import { TabItem } from '@/components/shared';
-import Action from './Action';
-import { usePathname } from 'next/navigation';
-import CoverPhoto from '@/app/(routes)/groups/_components/CoverPhoto';
 import Avatar from '@/app/(routes)/groups/_components/Avatar';
+import CoverPhoto from '@/app/(routes)/groups/_components/CoverPhoto';
+import { TabItem } from '@/components/shared';
+import { navGroup } from '@/shared/constants';
+import { usePathname } from 'next/navigation';
+import React from 'react';
+import Action from './Action';
 
 interface Props {
     group: IGroup;

@@ -1,7 +1,7 @@
 'use client';
 import ReviewPost from '@/components/post/ReviewPost';
 import SkeletonPost from '@/components/post/SkeletonPost';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useMemo } from 'react';
 import { FooterPost } from '.';

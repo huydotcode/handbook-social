@@ -1,5 +1,4 @@
 import { Icons } from '@/components/ui';
-import { useDebounce } from '@/hooks';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/components/ui/Input';
 import {
@@ -10,6 +9,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { IFilterConversation } from './Sidebar';
+import { useDebounce } from '@/shared/hooks';
 
 interface Props {
     setFilter: React.Dispatch<React.SetStateAction<IFilterConversation>>;

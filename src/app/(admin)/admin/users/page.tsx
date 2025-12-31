@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/table';
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
-import { FormatDate } from '@/utils/formatDate';
+import { FormatDate } from '@/shared';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React from 'react';

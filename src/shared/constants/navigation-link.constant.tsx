@@ -1,5 +1,5 @@
 import Icons from '@/components/ui/Icons';
-import { UserRole } from '@/enums/UserRole';
+import { UserRole } from '@/types/enums/UserRole';
 import React from 'react';
 
 interface NavLink {

@@ -6,13 +6,13 @@ import 'swiper/css';
 import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
-import { downloadImage } from '@/utils/downloadFile';
 import React, { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
 
 import Icons from './Icons';
 import { Button } from '@/components/ui/Button';
+import { downloadImage } from '@/shared';
 
 interface Props {
     show: boolean;

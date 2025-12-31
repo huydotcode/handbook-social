@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { useVideoCall } from '@/context/VideoCallContext';
+import { useVideoCall } from '@/core/context/VideoCallContext';
 import VideoCallModal from './VideoCallModal';
 
 const VideoCallWrapper: React.FC = () => {

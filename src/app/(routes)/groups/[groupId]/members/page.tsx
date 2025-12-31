@@ -1,10 +1,9 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { GroupUserRole } from '@/enums/GroupRole';
+import { GroupUserRole } from '@/types/enums/GroupRole';
 import { useGroup, useGroupMembers } from '@/lib/hooks/api';
-import { FormatDate } from '@/utils/formatDate';
-import { splitName } from '@/utils/splitName';
+import { FormatDate, splitName } from '@/shared';
 import { notFound } from 'next/navigation';
 import { use } from 'react';
 

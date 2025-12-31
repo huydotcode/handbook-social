@@ -1,7 +1,7 @@
 'use client';
 import { Navbar } from '@/components/layout';
-import { useAuth } from '@/context/AuthContext';
-import { UserRole } from '@/enums/UserRole';
+import { useAuth } from '@/core/context/AuthContext';
+import { UserRole } from '@/types/enums/UserRole';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { Sidebar } from '../_components';

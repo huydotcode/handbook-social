@@ -2,13 +2,13 @@
 import { Avatar } from '@/components/ui';
 import { cn } from '@/lib/utils';
 import React, { useEffect, useId, useRef } from 'react';
-import { useAuth } from '@/context/AuthContext';
-import { useSocket } from '@/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { useSocket } from '@/core/context';
 import MessageContent from './MessageContent';
 import ReadMessage from './ReadMessage';
 import { useInView } from 'react-intersection-observer';
 import { useQueryClient } from '@tanstack/react-query';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useQueryInvalidation } from '@/shared/hooks';
 
 interface Props {
     data: IMessage;

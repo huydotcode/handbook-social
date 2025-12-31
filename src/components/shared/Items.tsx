@@ -2,7 +2,7 @@
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { Button } from '@/components/ui/Button';
-import { timeConvert, timeConvert3 } from '@/utils/timeConvert';
+import { timeConvert, timeConvert3 } from '@/shared';
 import { Avatar } from '@/components/ui';
 import {
     Tooltip,

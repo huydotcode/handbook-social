@@ -15,7 +15,7 @@ import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { createGroupValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';

@@ -1,9 +1,9 @@
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import queryKey from '@/lib/queryKey';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 
-export const useQueryInvalidation = () => {
+const useQueryInvalidation = () => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
 
@@ -467,3 +467,5 @@ export const useQueryInvalidation = () => {
         invalidateUser,
     };
 };
+
+export default useQueryInvalidation;

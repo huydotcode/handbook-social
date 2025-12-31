@@ -1,10 +1,10 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import Icons from '@/components/ui/Icons';
-import { useSocket } from '@/context';
-import { useAuth } from '@/context/AuthContext';
-import { useFollowing } from '@/context/SocialContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { useFollowing } from '@/core/context/SocialContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
 import UserService from '@/lib/services/user.service';
 import { cn } from '@/lib/utils';

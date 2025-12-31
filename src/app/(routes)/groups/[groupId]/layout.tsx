@@ -1,5 +1,5 @@
 'use client';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import {
     useCheckGroupAccess,
     useGroup,

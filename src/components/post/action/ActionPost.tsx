@@ -6,7 +6,7 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/components/ui/Popover';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import SavePost from '../footer/SavePost';

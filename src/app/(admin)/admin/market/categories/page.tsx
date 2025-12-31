@@ -19,7 +19,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/components/ui/table';
-import { useCategories } from '@/context/AppContext';
+import { useCategories } from '@/core/context/AppContext';
 import CategoryService from '@/lib/services/category.service';
 import { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';

@@ -1,8 +1,8 @@
 'use client';
 import ActionMember from '@/app/(routes)/groups/_components/ActionMember';
 import { InfinityPostComponent } from '@/components/post';
-import { useAuth } from '@/context/AuthContext';
-import { GroupUserRole } from '@/enums/GroupRole';
+import { useAuth } from '@/core/context/AuthContext';
+import { GroupUserRole } from '@/types/enums/GroupRole';
 import { useGroup, useGroupMember, useUser } from '@/lib/hooks/api';
 import { notFound, useRouter } from 'next/navigation';
 import { use, useEffect, useMemo } from 'react';

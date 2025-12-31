@@ -1,5 +1,5 @@
 'use client';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import { setAccessTokenGetter, setRefreshTokenCallback } from '@/lib/axios';
 import { useEffect, useRef } from 'react';
 

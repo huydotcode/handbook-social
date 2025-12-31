@@ -1,7 +1,7 @@
 'use client';
 import { InfinityPostComponent } from '@/components/post';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import GroupService from '@/lib/services/group.service';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';

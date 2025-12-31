@@ -1,7 +1,6 @@
 'use client';
 import VerifiedUser from '@/components/VerifiedUser';
-import postAudience from '@/constants/postAudience.constant';
-import { timeConvert3 } from '@/utils/timeConvert';
+import { timeConvert3 } from '@/shared';
 import Link from 'next/link';
 import { useMemo } from 'react';
 import { Avatar } from '../ui';
@@ -12,6 +11,7 @@ import {
     TooltipTrigger,
 } from '../ui/tooltip';
 import ActionPost from './action/ActionPost';
+import { postAudience } from '@/shared/constants';
 
 interface Props {
     post: IPost;

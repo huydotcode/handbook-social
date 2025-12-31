@@ -2,8 +2,8 @@
 import { Post } from '@/components/post';
 import { PostTypes, usePosts } from '@/components/post/InfinityPostComponent';
 import { Loading } from '@/components/ui';
-import { useAuth } from '@/context';
-import { useFriends } from '@/context/SocialContext';
+import { useAuth } from '@/core/context';
+import { useFriends } from '@/core/context/SocialContext';
 import { searchService } from '@/lib/api';
 import {
     useSearchGroups,

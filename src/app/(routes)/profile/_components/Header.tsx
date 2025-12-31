@@ -11,8 +11,8 @@ import {
     DropdownMenuItem,
     DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { navProfile } from '@/constants/navLink';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
+import { navProfile } from '@/shared/constants';
 import React from 'react';
 import AddFriendAction from './AddFriendAction';
 

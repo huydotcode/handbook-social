@@ -9,7 +9,7 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import ImageService from '@/lib/services/image.service';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';

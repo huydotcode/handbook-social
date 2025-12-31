@@ -7,9 +7,8 @@ interface Audience {
     icon?: React.JSXElementConstructor<React.SVGProps<SVGSVGElement>>;
 }
 
-const postAudience: Audience[] = [
+export const postAudience: Audience[] = [
     { value: 'public', label: 'Công khai', icon: Icons.Public },
     { value: 'friends', label: 'Chỉ bạn bè', icon: Icons.Users },
     { value: 'private', label: 'Chỉ mình tôi', icon: Icons.Private },
 ];
-export default postAudience;

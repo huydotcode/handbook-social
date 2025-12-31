@@ -3,7 +3,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { FC, useCallback, useState } from 'react';
 
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import { Modal } from '../ui';
 import CreatePostV2 from './CreatePostV2';
 

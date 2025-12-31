@@ -1,7 +1,7 @@
 'use client';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import { cn } from '@/lib/utils';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';

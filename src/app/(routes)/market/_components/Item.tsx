@@ -2,7 +2,7 @@
 import { Button } from '@/components/ui/Button';
 import Image, { ErrorImage } from '@/components/ui/image';
 import { cn } from '@/lib/utils';
-import { formatMoney } from '@/utils/formatMoney';
+import { formatMoney } from '@/shared';
 import React from 'react';
 import EditItem from './EditItem';
 

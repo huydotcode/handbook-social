@@ -1,4 +1,4 @@
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import AuthService from '@/features/auth/services/auth.service';
 import type {
     LoginDto,

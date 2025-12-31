@@ -6,14 +6,13 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { navbarLink, navLink } from '@/constants/navLink';
-import { UserRole } from '@/enums/UserRole';
+import { useAuth } from '@/core/context/AuthContext';
+import { UserRole } from '@/types/enums/UserRole';
 import { cn } from '@/lib/utils';
-import { useAuth } from '@/context/AuthContext';
+import { navbarLink, navLink } from '@/shared/constants';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
-import DarkmodeButton from '../ui/DarkmodeButton';
 import Icons from '../ui/Icons';
 import NavbarNotification from './NavbarNotification';
 import NavbarSearch from './NavbarSearch';

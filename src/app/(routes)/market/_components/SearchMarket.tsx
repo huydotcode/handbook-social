@@ -2,8 +2,8 @@
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useDebounce } from '@/hooks';
 import { cn } from '@/lib/utils';
+import { useDebounce } from '@/shared/hooks';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 

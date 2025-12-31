@@ -1,12 +1,12 @@
 'use client';
 import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
-import { useFriends } from '@/context/SocialContext';
+import { useSocket } from '@/core/context';
+import { useFriends } from '@/core/context/SocialContext';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
 import PostService from '@/lib/services/post.service';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 import {

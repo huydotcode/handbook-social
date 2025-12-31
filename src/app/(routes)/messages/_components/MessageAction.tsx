@@ -2,11 +2,11 @@
 import { ConfirmModal, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { PopoverContent } from '@/components/ui/Popover';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useSocket } from '@/core/context';
+import { useQueryInvalidation } from '@/shared/hooks';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 

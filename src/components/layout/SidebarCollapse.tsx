@@ -1,10 +1,10 @@
 'use client';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSidebarCollapse } from '@/context/SidebarContext';
-import { useOutsideAlerter } from '@/hooks';
-import useBreakPoint, { Breakpoint } from '@/hooks/useBreakpoint';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { cn } from '@/lib/utils';
+import { useBreakpoint, useOutsideAlerter } from '@/shared/hooks';
+import { Breakpoint } from '@/shared/hooks/useBreakpoint';
 import React, { useEffect, useRef } from 'react';
 
 interface Props {
@@ -16,7 +16,7 @@ const SidebarCollapse: React.FC<Props> = ({
     children,
     collapseBreakpoints = ['sm', 'md', 'lg'],
 }) => {
-    const { breakpoint } = useBreakPoint();
+    const { breakpoint } = useBreakpoint();
     const sidebarRef = useRef(null);
     const isMobile = collapseBreakpoints.includes(breakpoint);
     const { isSidebarOpen, setIsSidebarOpen } = useSidebarCollapse();

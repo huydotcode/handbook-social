@@ -3,9 +3,9 @@ import { ConfirmModal } from '@/components/ui';
 import Icons from '@/components/ui/Icons';
 
 import { Button } from '@/components/ui/Button';
-import { useGroupsJoined } from '@/context/AppContext';
-import { useAuth } from '@/context/AuthContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useGroupsJoined } from '@/core/context/AppContext';
+import { useAuth } from '@/core/context/AuthContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { useRouter } from 'next/navigation';
 import React, { FormEventHandler, useMemo, useState } from 'react';
 import {

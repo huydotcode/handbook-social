@@ -1,6 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import { useAuth, useSocket } from '@/context';
+import { useAuth, useSocket } from '@/core/context';
 import ConversationService from '@/lib/services/conversation.service';
 import { cn } from '@/lib/utils';
 import { useRouter } from 'next/navigation';

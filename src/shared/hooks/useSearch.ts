@@ -1,5 +1,5 @@
-import useDebounce from '@/hooks/useDebounce';
 import { useCallback, useEffect, useState } from 'react';
+import useDebounce from './useDebounce';
 
 interface ISearch {
     fn: (value: string) => Promise<any>;

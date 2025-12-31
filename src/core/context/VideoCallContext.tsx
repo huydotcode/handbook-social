@@ -1,5 +1,5 @@
 'use client';
-import { useSocket } from '@/context/SocketContext';
+import { useSocket } from '@/core/context/SocketContext';
 import { videoCallSocketService } from '@/lib/services/videoCallSocket.service';
 import { webRTCService } from '@/lib/services/webrtc.service';
 import React, {

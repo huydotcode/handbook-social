@@ -10,14 +10,14 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import VideoPlayer from '@/components/ui/VideoPlayer';
-import { useSocket } from '@/context';
-import { useAuth } from '@/context/AuthContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
 import { cn } from '@/lib/utils';
-import { FormatDate } from '@/utils/formatDate';
-import { urlRegex } from '@/utils/regex';
+import { FormatDate } from '@/shared';
+import { urlRegex } from '@/shared';
 import Link from 'next/link';
 import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

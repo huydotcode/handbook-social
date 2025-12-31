@@ -2,7 +2,7 @@
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 
-export const usePreventMultiClick = ({
+const usePreventMultiClick = ({
     maxCount = 5,
     message,
 }: {
@@ -37,3 +37,5 @@ export const usePreventMultiClick = ({
 
     return { countClick, handleClick, canClick };
 };
+
+export default usePreventMultiClick;

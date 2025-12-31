@@ -1,7 +1,7 @@
 import { Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import ProfileService from '@/lib/services/profile.service';
 import { useRouter } from 'next/navigation';
 import React from 'react';

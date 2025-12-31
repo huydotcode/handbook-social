@@ -1,5 +1,5 @@
 'use client';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 import React, { ChangeEvent, FC, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 
@@ -7,11 +7,11 @@ import { Avatar, Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { EditorField } from '@/components/ui/EditorV2';
 import Icons from '@/components/ui/Icons';
-import postAudience from '@/constants/postAudience.constant';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
 import PostService from '@/lib/services/post.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { editPostValidation } from '@/lib/validation';
+import { postAudience } from '@/shared/constants';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';

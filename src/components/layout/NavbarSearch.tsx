@@ -1,13 +1,13 @@
 'use client';
 import { Items } from '@/components/shared';
 import { Button } from '@/components/ui/Button';
-import { useAuth } from '@/context/AuthContext';
-import { useDebounce } from '@/hooks';
+import { useAuth } from '@/core/context/AuthContext';
 import UserService from '@/lib/services/user.service';
 import { Collapse } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Icons from '../ui/Icons';
+import { useDebounce } from '@/shared/hooks';
 
 const NavbarSearch = () => {
     const { user } = useAuth();

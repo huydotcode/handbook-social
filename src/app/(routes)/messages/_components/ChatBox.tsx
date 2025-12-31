@@ -4,17 +4,16 @@ import { FileUploaderWrapper } from '@/components/shared/FileUploader';
 import MessageSkeleton from '@/components/skeleton/MessageSkeleton';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
-import useBreakpoint from '@/hooks/useBreakpoint';
-import { useMessageHandling } from '@/hooks/useMessageHandling';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { messageService } from '@/lib/api/services/message.service';
 import queryKey from '@/lib/queryKey';
 import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
+import { useBreakpoint, useMessageHandling } from '@/shared/hooks';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useAuth } from '@/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import React, {
     KeyboardEventHandler,
@@ -23,7 +22,6 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 import ChatHeader from './ChatHeader';

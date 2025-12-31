@@ -1,8 +1,8 @@
 'use client';
 import { Button } from '@/components/ui/Button';
-import { navAdmin } from '@/constants/navLink';
-import { useAuth } from '@/context';
+import { useAuth } from '@/core/context';
 import { cn } from '@/lib/utils';
+import { navAdmin } from '@/shared/constants';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 

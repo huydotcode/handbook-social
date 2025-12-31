@@ -7,7 +7,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import { useAuth } from '@/context/AuthContext';
+import { useAuth } from '@/core/context/AuthContext';
 interface Props {
     msg: IMessage;
     index: number;

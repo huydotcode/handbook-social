@@ -1,4 +1,4 @@
-import { socketEvent } from '@/constants/socketEvent.constant';
+import { socketEvent } from '@/shared/constants';
 import { Socket } from 'socket.io-client';
 
 export interface VideoCallUser {

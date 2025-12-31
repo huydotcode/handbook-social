@@ -1,5 +1,5 @@
 'use client';
-import '@/styles/ui.scss';
+import '@/shared/styles/ui.scss';
 
 import { Button } from '@/components/ui/Button';
 import { MenuBarEditorIcons } from '@/components/ui/Icons';

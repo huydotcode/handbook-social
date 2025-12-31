@@ -1,8 +1,8 @@
 'use client';
-import { navLink } from '@/constants/navLink';
-import { useAuth } from '@/context';
-import { UserRole } from '@/enums/UserRole';
+import { useAuth } from '@/core/context';
+import { UserRole } from '@/types/enums/UserRole';
 import { cn } from '@/lib/utils';
+import { navLink } from '@/shared/constants';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
