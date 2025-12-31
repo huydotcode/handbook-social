@@ -1,5 +1,6 @@
 import { useAuth } from '@/core/context';
 import queryKey from '@/lib/queryKey';
+import { IConversation, IMessage } from '@/types/entites';
 import { useQueryClient } from '@tanstack/react-query';
 import { useCallback } from 'react';
 

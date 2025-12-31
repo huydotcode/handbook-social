@@ -1,5 +1,6 @@
 import toast from 'react-hot-toast';
 import { uploadService } from './api/services/upload.service';
+import { IMedia } from '@/types/entites';
 
 /**
  * Upload images from base64 strings (deprecated - use uploadService directly)

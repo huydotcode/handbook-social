@@ -5,14 +5,15 @@ import {
 } from '@/lib/api/services/conversation.service';
 import { followService } from '@/lib/api/services/follow.service';
 import { messageService } from '@/lib/api/services/message.service';
-import { UserQueryParams } from '@/lib/api/services/user.service';
+
 import { friendshipService } from '@/lib/api/services/friendship.service';
 import queryKey from '@/lib/queryKey';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
-import { IConversation, IFollows, IMessage } from '@/types/entites';
+import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
+import { UserQueryParams } from '@/features/user';
 
 const PAGE_SIZE = 10;
 

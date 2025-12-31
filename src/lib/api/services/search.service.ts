@@ -1,3 +1,4 @@
+import { IGroup, IPost, IUser } from '@/types/entites';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../endpoints';
 

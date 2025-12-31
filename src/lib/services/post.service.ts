@@ -1,3 +1,4 @@
+import { IPost } from '@/types/entites';
 import { postService as apiPostService } from '../api/services/post.service';
 
 class PostServiceClass {

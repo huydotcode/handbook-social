@@ -1,7 +1,7 @@
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { UserService } from '@/features/user';
 import ProfileService from '@/lib/services/profile.service';
-import UserService from '@/lib/services/user.service';
 import React from 'react';
 import { PhotosSection } from '../../_components';
 

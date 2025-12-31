@@ -1,4 +1,5 @@
 'use client';
+import { IPostFormData } from '@/features/post';
 import React, { useCallback, useRef } from 'react';
 import { ControllerRenderProps } from 'react-hook-form';
 

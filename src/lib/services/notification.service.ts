@@ -1,3 +1,9 @@
+import {
+    IConversation,
+    INotification,
+    IUser,
+    NOTIFICATION_TYPES,
+} from '@/types/entites';
 import { notificationService as apiNotificationService } from '../api/services/notification.service';
 
 class NotificationServiceClass {
@@ -26,7 +32,9 @@ class NotificationServiceClass {
             const notifications =
                 await apiNotificationService.getByReceiver(userId);
             return (
-                notifications.find((n) => n.type === 'accept-friend') || null
+                notifications.find(
+                    (n) => n.type === NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST
+                ) || null
             );
         } catch (error) {
             console.error('Error getting accept friend notification:', error);
@@ -114,7 +122,7 @@ class NotificationServiceClass {
         try {
             const notification = await apiNotificationService.create({
                 receiver: receiverId as unknown as IUser,
-                type: 'accept-friend',
+                type: NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST,
             });
             return notification;
         } catch (error) {

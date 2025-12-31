@@ -12,7 +12,7 @@ export { API_ENDPOINTS } from './endpoints';
 
 // API Services
 // export { authApi } from '../../features/auth/apis/auth.api';
-export { userService } from './services/user.service';
+// export { userService } from './services/user.service';
 export { postService } from './services/post.service';
 export { commentService } from './services/comment.service';
 export { messageService } from './services/message.service';

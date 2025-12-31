@@ -5,17 +5,17 @@ import ItemService from '@/lib/services/item.service';
 import { formatMoney } from '@/shared';
 import { IItem } from '@/types/entites';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
+import { use, useEffect, useState } from 'react';
 import ListItem from '../../_components/ListItem';
 import SwiperImagesItem from '../../_components/SwiperImagesItem';
 
 interface Props {
-    params: { itemId: string };
+    params: Promise<{ itemId: string }>;
 }
 
 export default function ItemPage({ params }: Props) {
     const { user } = useAuth();
-    const { itemId } = params;
+    const { itemId } = use(params);
     const [item, setItem] = useState<IItem | null>(null);
     const [itemsOther, setItemsOther] = useState<IItem[]>([]);
     const [isLoading, setIsLoading] = useState(true);

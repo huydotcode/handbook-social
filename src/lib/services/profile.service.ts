@@ -1,5 +1,6 @@
+import { UserService } from '@/features/user';
+import { ILocation, IMedia, IUser } from '@/types/entites';
 import { locationService as apiLocationService } from '../api/services/location.service';
-import { userService } from '../api/services/user.service';
 
 export interface IGetUserProfileResponse {
     _id: string;
@@ -20,7 +21,7 @@ class ProfileServiceClass {
      */
     async getByUserId(userId: string): Promise<IGetUserProfileResponse | null> {
         try {
-            const data = await userService.getProfile(userId);
+            const data = await UserService.getProfile(userId);
             if (!data) return null;
             return data;
         } catch (error) {
@@ -40,7 +41,7 @@ class ProfileServiceClass {
         newBio: string;
     }): Promise<boolean> {
         try {
-            const response = await userService.updateBio(userId, {
+            const response = await UserService.updateBio(userId, {
                 bio: newBio,
             });
             return response.success;
@@ -55,7 +56,7 @@ class ProfileServiceClass {
      */
     async getProfilePicturesAction(userId: string): Promise<IMedia[]> {
         try {
-            const data = await userService.getProfilePictures(userId);
+            const data = await UserService.getProfilePictures(userId);
             return data;
         } catch (error) {
             console.error('Error getting profile pictures:', error);
@@ -80,7 +81,7 @@ class ProfileServiceClass {
         dateOfBirth: Date;
     }): Promise<boolean> {
         try {
-            const data = await userService.updateProfile(userId, {
+            const data = await UserService.updateProfile(userId, {
                 work,
                 education,
                 location,
@@ -117,7 +118,7 @@ class ProfileServiceClass {
         avatar: string;
     }): Promise<boolean> {
         try {
-            const data = await userService.updateAvatar(userId, { avatar });
+            const data = await UserService.updateAvatar(userId, { avatar });
             return data.success;
         } catch (error) {
             console.error('Error updating avatar:', error);
@@ -136,7 +137,7 @@ class ProfileServiceClass {
         coverPhoto: string;
     }): Promise<boolean> {
         try {
-            const data = await userService.updateCoverPhoto(userId, {
+            const data = await UserService.updateCoverPhoto(userId, {
                 coverPhoto,
             });
 

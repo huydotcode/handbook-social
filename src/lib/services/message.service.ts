@@ -1,5 +1,6 @@
 import { messageService as apiMessageService } from '../api/services/message.service';
 import { conversationService as apiConversationService } from '../api/services/conversation.service';
+import { IMessage } from '@/types/entites';
 
 class MessageServiceClass {
     /**

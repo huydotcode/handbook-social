@@ -1,3 +1,4 @@
+import { IConversation } from '@/types/entites';
 import { conversationService as apiConversationService } from '../api/services/conversation.service';
 
 class ConversationServiceClass {

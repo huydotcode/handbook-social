@@ -27,7 +27,7 @@ const MarketPage: React.FC<Props> = () => {
         queryKey: queryKey.items.index,
         queryFn: ({ pageParam = 1 }) => {
             return itemService.getAll({
-                page: pageParam,
+                page: pageParam as number,
                 page_size: PAGE_SIZE,
             });
         },

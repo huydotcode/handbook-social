@@ -20,6 +20,7 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import ReplyComments from './ReplyComments';
 import SkeletonComment from './SkeletonComment';
+import { IComment, IUser } from '@/types/entites';
 
 interface Props {
     data: IComment;

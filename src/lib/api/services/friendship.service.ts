@@ -1,3 +1,4 @@
+import { IFriend } from '@/types/entites';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../endpoints';
 

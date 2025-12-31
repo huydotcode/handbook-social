@@ -4,6 +4,7 @@ import { Input } from '@/components/ui/Input';
 import { useAuth } from '@/core/context';
 import { useLocations } from '@/lib/hooks/api';
 import ProfileService from '@/lib/services/profile.service';
+import { IProfile } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';

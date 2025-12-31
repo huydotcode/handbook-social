@@ -1,3 +1,4 @@
+import { IFollows } from '@/types/entites';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../endpoints';
 
@@ -6,7 +7,7 @@ export const followService = {
      * Get followings of a user
      */
     getFollowings: (userId: string) => {
-        return apiClient.get<IFollow[]>(
+        return apiClient.get<IFollows[]>(
             API_ENDPOINTS.FOLLOWS.FOLLOWINGS(userId)
         );
     },
@@ -15,7 +16,7 @@ export const followService = {
      * Follow a user
      */
     follow: (followingId: string) => {
-        return apiClient.post<IFollow>(API_ENDPOINTS.FOLLOWS.FOLLOW, {
+        return apiClient.post<IFollows>(API_ENDPOINTS.FOLLOWS.FOLLOW, {
             following: followingId,
         });
     },

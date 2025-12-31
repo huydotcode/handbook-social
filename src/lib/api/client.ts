@@ -1,5 +1,6 @@
 import { AxiosRequestConfig } from 'axios';
 import axiosInstance from '../axios';
+import { PaginationResult } from '@/types';
 
 /**
  * Standardized API Response Interface

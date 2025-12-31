@@ -1,3 +1,4 @@
+import { IGroup, IMemberGroup } from '@/types/entites';
 import { groupService as apiGroupService } from '../api/services/group.service';
 
 class GroupServiceClass {

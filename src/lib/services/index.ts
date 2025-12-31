@@ -9,7 +9,6 @@ export * from './message.service';
 export * from './notification.service';
 export * from './post.service';
 export * from './profile.service';
-export * from './user.service';
 
 // Export video call services
 export * from './videoCallSocket.service';

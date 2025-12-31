@@ -3,6 +3,7 @@ import { Post } from '@/components/post';
 import { Loading } from '@/components/ui';
 import { postService } from '@/lib/api/services/post.service';
 import queryKey from '@/lib/queryKey';
+import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react';
 interface Props {

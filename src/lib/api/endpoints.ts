@@ -95,6 +95,11 @@ export const API_ENDPOINTS = {
         UNPIN: (id: string, messageId: string) =>
             `/conversations/${id}/pin/${messageId}`,
         PRIVATE: '/conversations/private',
+
+        PARTICIPANTS: (id: string) => `/conversations/${id}/participants`,
+        ADD_PARTICIPANT: (id: string) => `/conversations/${id}/participants`,
+        REMOVE_PARTICIPANT: (id: string, userId: string) =>
+            `/conversations/${id}/participants/${userId}`,
     },
 
     // Groups endpoints

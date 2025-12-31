@@ -1,3 +1,4 @@
+import { IConversation, IConversationMember } from '@/types/entites';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../endpoints';
 
@@ -6,15 +7,6 @@ export type ConversationMemberRole = 'admin' | 'member';
 export interface ConversationMemberDto {
     userId: string;
     role?: ConversationMemberRole;
-}
-
-export interface IConversationMember {
-    _id: string;
-    conversation: string;
-    user: IUser;
-    role: ConversationMemberRole;
-    createdAt: string;
-    updatedAt: string;
 }
 
 export const conversationMemberService = {

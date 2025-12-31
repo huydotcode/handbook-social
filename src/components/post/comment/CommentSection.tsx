@@ -7,6 +7,7 @@ import { useAuth } from '@/core/context';
 import { commentService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
 import CommentService from '@/lib/services/comment.service';
+import { IComment, IPost } from '@/types/entites';
 import {
     useInfiniteQuery,
     useMutation,

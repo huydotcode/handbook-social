@@ -1,3 +1,4 @@
+import { IItem } from '@/types/entites';
 import { itemService as apiItemService } from '../api/services/item.service';
 
 class ItemServiceClass {

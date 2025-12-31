@@ -1,5 +1,6 @@
 'use client';
 import { Button } from '@/components/ui/Button';
+import { IComment } from '@/types/entites';
 import { Comment } from '..';
 import { useReplyComments } from './CommentItem';
 import SkeletonComment from './SkeletonComment';

@@ -4,6 +4,7 @@ import { socketConfig } from '@/core/config/socket';
 import queryKey from '@/lib/queryKey';
 import { socketEvent, soundTypes } from '@/shared/constants';
 import { useQueryInvalidation, useSound } from '@/shared/hooks';
+import { IFriend, IMessage } from '@/types/entites';
 import { useQueryClient } from '@tanstack/react-query';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';

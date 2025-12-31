@@ -1,10 +1,8 @@
-import { apiClient } from '../client';
-import { API_ENDPOINTS } from '../endpoints';
-import { userService } from './user.service';
-import { postService } from './post.service';
-import { groupService } from './group.service';
-import { locationService } from './location.service';
+import { UserService } from '@/features/user';
+import { IGroup, IMedia } from '@/types/entites';
 import { categoryService } from './category.service';
+import { locationService } from './location.service';
+import { postService } from './post.service';
 
 export interface AdminQueryParams {
     page?: number;
@@ -17,7 +15,7 @@ export const adminService = {
      * Get all users (Admin)
      */
     getUsers: (params?: AdminQueryParams) => {
-        return userService.getAll(params);
+        return UserService.getAll(params);
     },
 
     /**
@@ -42,7 +40,7 @@ export const adminService = {
      * Get all locations (Admin)
      */
     getLocations: (params?: AdminQueryParams) => {
-        return locationService.getAll(params);
+        return locationService.getAll();
     },
 
     /**

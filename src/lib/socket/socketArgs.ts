@@ -1,3 +1,5 @@
+import { IMessage } from '@/types/entites';
+
 const socketArgs = {
     sendRequestAddFriend: ({ receiverId }: { receiverId: string }) => ({
         receiverId,

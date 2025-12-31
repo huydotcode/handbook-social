@@ -1,3 +1,4 @@
+import { IMedia } from '@/types/entites';
 import { saveAs } from 'file-saver';
 import toast from 'react-hot-toast';
 

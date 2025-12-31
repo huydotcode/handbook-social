@@ -17,6 +17,7 @@ import { useSocket } from '.';
 import { useAuth } from './AuthContext';
 import { SidebarCollapseContext } from './SidebarContext';
 import { notificationType } from '@/shared/constants';
+import { ICategory, ILocation, INotification } from '@/types/entites';
 
 const PAGE_SIZE = 10;
 

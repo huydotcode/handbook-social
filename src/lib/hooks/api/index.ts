@@ -4,7 +4,7 @@
  */
 
 // User hooks
-export { useUsers, useUser, useUserFriends } from './useUser';
+// export { useUsers, useUser, useUserFriends } from './useUser';
 
 // Post hooks
 export {
