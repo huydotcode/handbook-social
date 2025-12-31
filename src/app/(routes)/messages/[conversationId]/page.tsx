@@ -114,28 +114,6 @@ const ConversationPage: React.FC<Props> = ({}) => {
         return { message: '', type: '' };
     }, [conversation, isLoadingConversation, user?.id, members]);
 
-    useEffect(() => {
-        if (!socketEmitor) return;
-        if (!user) return;
-        if (!conversation) return;
-        if (error?.type !== '') return;
-
-        if (conversation) {
-            socketEmitor.joinRoom({
-                roomId: conversation._id,
-                userId: user.id,
-            });
-        }
-        return () => {
-            if (conversation) {
-                socketEmitor.leaveRoom({
-                    roomId: conversation._id,
-                    userId: user.id,
-                });
-            }
-        };
-    }, [conversation, error?.type, user, socketEmitor]);
-
     if (isLoadingConversation || isFetching || isPending) {
         return <Loading fullScreen />;
     }

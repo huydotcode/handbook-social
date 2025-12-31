@@ -65,6 +65,7 @@ export const useMessages = (conversationId: string) => {
         },
         refetchInterval: false,
         refetchOnWindowFocus: false,
+        refetchOnMount: false,
     });
 };
 
@@ -207,22 +208,6 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
             fetchNextPage();
         }
     }, [fetchNextPage, inView]);
-
-    useEffect(() => {
-        if (!user?.id) return;
-
-        socketEmitor.joinRoom({
-            roomId: conversation._id,
-            userId: user.id,
-        });
-
-        return () => {
-            socketEmitor.leaveRoom({
-                roomId: conversation._id,
-                userId: user.id,
-            });
-        };
-    }, [conversation._id, user?.id, socketEmitor]);
 
     // Kiểm tra nếu đang ở bottomRef thì không hiển thị nút scroll down
     useEffect(() => {
