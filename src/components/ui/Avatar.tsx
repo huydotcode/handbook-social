@@ -70,7 +70,7 @@ const Avatar: React.FC<Props> = ({
 
     return (
         <Link
-            className={className}
+            className={cn(className)}
             href={(isUser && `/profile/${userId}`) || (href && href) || ''}
         >
             <Image
