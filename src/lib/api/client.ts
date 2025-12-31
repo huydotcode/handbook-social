@@ -103,6 +103,22 @@ class ApiClient {
     }
 
     /**
+     * PATCH request
+     */
+    async patch<T = any>(
+        url: string,
+        data?: any,
+        config?: AxiosRequestConfig
+    ): Promise<T> {
+        const response = await this.client.patch<ApiResponse<T>>(
+            url,
+            data,
+            config
+        );
+        return response.data.data as T;
+    }
+
+    /**
      * DELETE request
      */
     async delete<T = any>(
