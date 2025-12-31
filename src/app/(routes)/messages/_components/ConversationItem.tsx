@@ -199,7 +199,14 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                                               ? lastMessage
                                                                     ?.sender
                                                                     .givenName
-                                                              : `${splitName(lastMessage?.sender.name).lastName}: `}
+                                                              : `${
+                                                                    splitName(
+                                                                        lastMessage
+                                                                            ?.sender
+                                                                            ?.name ||
+                                                                            ''
+                                                                    ).lastName
+                                                                }: `}
                                                     </span>
 
                                                     <span
