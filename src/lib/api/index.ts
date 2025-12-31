@@ -14,7 +14,6 @@ export { API_ENDPOINTS } from './endpoints';
 // export { authApi } from '../../features/auth/apis/auth.api';
 // export { userService } from './services/user.service';
 export { postService } from './services/post.service';
-export { commentService } from './services/comment.service';
 export { messageService } from './services/message.service';
 export { conversationService } from './services/conversation.service';
 export { groupService } from './services/group.service';
@@ -40,11 +39,7 @@ export type {
     UpdatePostDto,
     PostQueryParams,
 } from './services/post.service';
-export type {
-    CreateCommentDto,
-    UpdateCommentDto,
-    CommentQueryParams,
-} from './services/comment.service';
+
 export type {
     CreateConversationDto,
     UpdateConversationDto,

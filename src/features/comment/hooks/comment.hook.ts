@@ -1,8 +1,10 @@
-import type {
-    CreateCommentDto,
-    UpdateCommentDto,
-} from '@/lib/api/services/comment.service';
-import { commentService } from '@/lib/api/services/comment.service';
+import {
+    createGetNextPageParam,
+    defaultInfiniteQueryOptions,
+    defaultQueryOptions,
+    handleApiError,
+    showSuccessToast,
+} from '@/lib/hooks/utils';
 import { queryKey } from '@/lib/queryKey';
 import {
     useInfiniteQuery,
@@ -10,13 +12,8 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import {
-    createGetNextPageParam,
-    handleApiError,
-    showSuccessToast,
-    defaultQueryOptions,
-    defaultInfiniteQueryOptions,
-} from '../utils';
+import { CreateCommentDto, UpdateCommentDto } from '../apis/comment.api';
+import CommentService from '../services/comment.service';
 
 /**
  * Hook to get a comment by ID
@@ -27,7 +24,7 @@ export const useComment = (
 ) => {
     return useQuery({
         queryKey: queryKey.comments.id(commentId),
-        queryFn: () => commentService.getById(commentId),
+        queryFn: () => CommentService.getById(commentId),
         enabled: options?.enabled !== false && !!commentId,
         ...defaultQueryOptions,
     });
@@ -46,7 +43,7 @@ export const useCommentsByPost = (
     return useInfiniteQuery({
         queryKey: queryKey.posts.comments(postId),
         queryFn: ({ pageParam = 1 }) =>
-            commentService.getByPost(postId, {
+            CommentService.getByPost(postId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -66,7 +63,7 @@ export const useCommentCount = (
 ) => {
     return useQuery({
         queryKey: queryKey.posts.comments(postId),
-        queryFn: () => commentService.getCountByPost(postId),
+        queryFn: () => CommentService.getCountByPost(postId),
         enabled: options?.enabled !== false && !!postId,
         select: (data) => data.count,
         ...defaultQueryOptions,
@@ -86,7 +83,7 @@ export const useReplyComments = (
     return useInfiniteQuery({
         queryKey: queryKey.posts.replyComments(commentId),
         queryFn: ({ pageParam = 1 }) =>
-            commentService.getReplies(commentId, {
+            CommentService.getReplies(commentId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -104,7 +101,7 @@ export const useCreateComment = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: CreateCommentDto) => commentService.create(data),
+        mutationFn: (data: CreateCommentDto) => CommentService.create(data),
         onSuccess: (data, variables) => {
             // Invalidate comments list and count
             queryClient.invalidateQueries({
@@ -128,7 +125,7 @@ export const useUpdateComment = () => {
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateCommentDto }) =>
-            commentService.update(id, data),
+            CommentService.update(id, data),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(queryKey.comments.id(variables.id), data);
@@ -147,7 +144,7 @@ export const useDeleteComment = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (commentId: string) => commentService.delete(commentId),
+        mutationFn: (commentId: string) => CommentService.delete(commentId),
         onSuccess: (_, commentId) => {
             // Remove from cache
             queryClient.removeQueries({
@@ -172,7 +169,7 @@ export const useAddCommentLove = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (commentId: string) => commentService.addLove(commentId),
+        mutationFn: (commentId: string) => CommentService.love(commentId),
         onSuccess: (data, commentId) => {
             // Update cache
             queryClient.setQueryData(queryKey.comments.id(commentId), data);
@@ -191,7 +188,7 @@ export const useRemoveCommentLove = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (commentId: string) => commentService.removeLove(commentId),
+        mutationFn: (commentId: string) => CommentService.removeLove(commentId),
         onSuccess: (data, commentId) => {
             // Update cache
             queryClient.setQueryData(queryKey.comments.id(commentId), data);

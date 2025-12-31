@@ -24,19 +24,6 @@ export {
     useDeletePost,
 } from './usePost';
 
-// Comment hooks
-export {
-    useComment,
-    useCommentsByPost,
-    useCommentCount,
-    useReplyComments,
-    useCreateComment,
-    useUpdateComment,
-    useDeleteComment,
-    useAddCommentLove,
-    useRemoveCommentLove,
-} from './useComment';
-
 // Message hooks
 export {
     useMessages,

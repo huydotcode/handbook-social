@@ -1,6 +1,5 @@
 // Export existing services
 export * from './category.service';
-export * from './comment.service';
 export * from './conversation.service';
 export * from './group.service';
 export * from './image.service';

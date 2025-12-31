@@ -4,9 +4,7 @@ import { Button } from '@/components/ui/Button';
 import { Form, FormControl } from '@/components/ui/Form';
 import { Textarea } from '@/components/ui/textarea';
 import { useAuth } from '@/core/context/AuthContext';
-import { commentService as commentApiService } from '@/lib/api/services/comment.service';
 import queryKey from '@/lib/queryKey';
-import CommentService from '@/lib/services/comment.service';
 import { cn } from '@/lib/utils';
 import { timeConvert3 } from '@/shared';
 import {
@@ -21,6 +19,7 @@ import toast from 'react-hot-toast';
 import ReplyComments from './ReplyComments';
 import SkeletonComment from './SkeletonComment';
 import { IComment, IUser } from '@/types/entites';
+import CommentService from '@/features/comment/services/comment.service';
 
 interface Props {
     data: IComment;
@@ -45,7 +44,7 @@ export const useReplyComments = ({
         queryFn: async ({ pageParam = 1 }) => {
             if (!commentId) return [];
 
-            return commentApiService.getReplies(commentId, {
+            return CommentService.getReplies(commentId, {
                 page: pageParam,
                 page_size: PAGE_SIZE,
             });
@@ -106,9 +105,9 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
             setCommentCount((prev) => prev + 1);
 
             const newComment = await CommentService.create({
-                content: data.text,
-                replyTo: comment._id,
-                postId: comment.post,
+                post: comment.post,
+                text: data.text,
+                replyComment: comment._id,
             });
 
             // Cập nhật hasReplies cho comment gốc

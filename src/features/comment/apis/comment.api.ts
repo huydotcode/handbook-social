@@ -1,6 +1,5 @@
+import { API_ENDPOINTS, apiClient } from '@/lib/api';
 import { IComment } from '@/types/entites';
-import { apiClient } from '../client';
-import { API_ENDPOINTS } from '../endpoints';
 
 export interface CreateCommentDto {
     post: string;
@@ -19,7 +18,7 @@ export interface CommentQueryParams {
     page_size?: number;
 }
 
-export const commentService = {
+export const commentApi = {
     /**
      * Get comment by ID
      */

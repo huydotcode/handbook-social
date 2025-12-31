@@ -4,9 +4,8 @@ import SkeletonComment from '@/components/post/comment/SkeletonComment';
 import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/core/context';
-import { commentService } from '@/lib/api/services/comment.service';
+import CommentService from '@/features/comment/services/comment.service';
 import queryKey from '@/lib/queryKey';
-import CommentService from '@/lib/services/comment.service';
 import { IComment, IPost } from '@/types/entites';
 import {
     useInfiniteQuery,
@@ -44,7 +43,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
         queryFn: async ({ pageParam = 1 }) => {
             if (!post._id) return [];
 
-            return commentService.getByPost(post._id, {
+            return CommentService.getByPost(post._id, {
                 page: pageParam,
                 page_size: PAGE_SIZE,
             });
@@ -94,9 +93,8 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
 
             try {
                 const newComment = await CommentService.create({
-                    content: text,
-                    replyTo: null,
-                    postId: post._id,
+                    post: post._id,
+                    text,
                 });
 
                 // Update post cache - tăng commentsCount
