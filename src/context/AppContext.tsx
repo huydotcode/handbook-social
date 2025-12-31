@@ -141,7 +141,7 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
         socket.on(
             socketEvent.RECEIVE_NOTIFICATION,
-            async ({ notification }: { notification: INotification }) => {
+            async (notification: INotification) => {
                 if (notification.type === notificationType.ACCEPT_FRIEND) {
                     toast.success(
                         `${notification.sender.name} đã chấp nhận lời mời kết bạn`,
