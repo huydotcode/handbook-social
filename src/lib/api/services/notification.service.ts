@@ -8,6 +8,15 @@ export interface NotificationQueryParams {
 
 export const notificationService = {
     /**
+     * Get notification by ID
+     */
+    getById: (notificationId: string) => {
+        return apiClient.get<INotification>(
+            API_ENDPOINTS.NOTIFICATIONS.BY_ID(notificationId)
+        );
+    },
+
+    /**
      * Get notifications by receiver
      */
     getByReceiver: (receiverId: string, params?: NotificationQueryParams) => {
@@ -48,6 +57,16 @@ export const notificationService = {
     },
 
     /**
+     * Create notification (generic)
+     */
+    create: (data: Partial<INotification>) => {
+        return apiClient.post<INotification>(
+            API_ENDPOINTS.NOTIFICATIONS.CREATE,
+            data
+        );
+    },
+
+    /**
      * Delete notification by users (sender and receiver)
      */
     deleteNotificationByUsers: (data: { sender: string; receiver: string }) => {
@@ -56,6 +75,15 @@ export const notificationService = {
             {
                 data,
             }
+        );
+    },
+
+    /**
+     * Mark all notifications as read
+     */
+    markAllAsRead: () => {
+        return apiClient.put<{ success: boolean }>(
+            API_ENDPOINTS.NOTIFICATIONS.READ_ALL
         );
     },
 
@@ -76,6 +104,15 @@ export const notificationService = {
     declineFriendRequest: (notificationId: string) => {
         return apiClient.post<{ success: boolean }>(
             API_ENDPOINTS.NOTIFICATIONS.DECLINE(notificationId)
+        );
+    },
+
+    /**
+     * Delete a notification
+     */
+    delete: (notificationId: string) => {
+        return apiClient.delete<{ success: boolean }>(
+            API_ENDPOINTS.NOTIFICATIONS.BY_ID(notificationId)
         );
     },
 };

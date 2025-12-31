@@ -3,13 +3,16 @@ import { notificationService as apiNotificationService } from '../api/services/n
 class NotificationServiceClass {
     /**
      * Get notification by ID
-     * TODO: Server API needs GET /notifications/:id endpoint
      */
     async getById(notificationId: string): Promise<INotification | null> {
-        // TODO: Implement getById endpoint in server-api
-        // GET /notifications/:id
-        console.warn('getById notification not yet implemented via REST API');
-        return null;
+        try {
+            const notification =
+                await apiNotificationService.getById(notificationId);
+            return notification;
+        } catch (error) {
+            console.error('Error getting notification by id:', error);
+            throw error;
+        }
     }
 
     /**
@@ -108,14 +111,16 @@ class NotificationServiceClass {
         senderId: string;
         receiverId: string;
     }): Promise<INotification | null> {
-        // TODO: Implement createNotification endpoint in server-api
-        // POST /notifications
-        console.warn(
-            'createNotificationAcceptFriend not yet implemented via REST API'
-        );
-        throw new Error(
-            'Create notification endpoint not yet implemented in REST API'
-        );
+        try {
+            const notification = await apiNotificationService.create({
+                receiver: receiverId as unknown as IUser,
+                type: 'accept-friend',
+            });
+            return notification;
+        } catch (error) {
+            console.error('Error creating accept-friend notification:', error);
+            throw error;
+        }
     }
 
     /**
@@ -142,28 +147,28 @@ class NotificationServiceClass {
 
     /**
      * Mark all notifications as read
-     * TODO: Server API needs PUT /notifications/read-all endpoint
      */
     async markAllAsRead(): Promise<boolean> {
-        // TODO: Implement markAllAsRead endpoint in server-api
-        // PUT /notifications/read-all
-        console.warn('markAllAsRead not yet implemented via REST API');
-        throw new Error(
-            'Mark all as read endpoint not yet implemented in REST API'
-        );
+        try {
+            const result = await apiNotificationService.markAllAsRead();
+            return result.success;
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+            throw error;
+        }
     }
 
     /**
      * Delete a notification
-     * TODO: Server API needs DELETE /notifications/:id endpoint
      */
     async deleteNotification(notificationId: string): Promise<boolean> {
-        // TODO: Implement deleteNotification endpoint in server-api
-        // DELETE /notifications/:id
-        console.warn('deleteNotification not yet implemented via REST API');
-        throw new Error(
-            'Delete notification endpoint not yet implemented in REST API'
-        );
+        try {
+            const result = await apiNotificationService.delete(notificationId);
+            return result.success;
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+            throw error;
+        }
     }
 
     /**

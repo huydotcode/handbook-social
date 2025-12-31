@@ -4,6 +4,7 @@ export enum NotificationType {
     REJECT_FRIEND_REQUEST = 'reject-friend-request',
     MESSAGE = 'message',
     FOLLOW_USER = 'follow-user',
+    LIKE_POST = 'like-post',
 }
 
 export enum NotificationMessage {
@@ -12,4 +13,5 @@ export enum NotificationMessage {
     REJECT_FRIEND_REQUEST = 'đã từ chối lời mời kết bạn của bạn',
     MESSAGE = 'đã gửi cho bạn một tin nhắn',
     FOLLOW_USER = 'đã theo dõi bạn',
+    LIKE_POST = 'đã thích bài viết của bạn',
 }

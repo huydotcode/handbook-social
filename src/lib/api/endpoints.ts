@@ -68,12 +68,15 @@ export const API_ENDPOINTS = {
 
     // Messages endpoints
     MESSAGES: {
+        CREATE: '/messages',
+        BY_ID: (id: string) => `/messages/${id}`,
         BY_CONVERSATION: (conversationId: string) =>
             `/messages/conversation/${conversationId}`,
         PINNED: (conversationId: string) =>
             `/messages/conversation/${conversationId}/pinned`,
         SEARCH: (conversationId: string) =>
             `/messages/conversation/${conversationId}/search`,
+        READ: (roomId: string) => `/messages/${roomId}/read`,
     },
 
     // Conversations endpoints
@@ -126,9 +129,12 @@ export const API_ENDPOINTS = {
         BY_RECEIVER: (receiverId: string) =>
             `/notifications/receiver/${receiverId}`,
         BY_SENDER: (senderId: string) => `/notifications/sender/${senderId}`,
+        BY_ID: (notificationId: string) => `/notifications/${notificationId}`,
         SEND_REQUEST: '/notifications/request',
         FOLLOW: '/notifications/follow',
         BY_USERS: '/notifications/by-users',
+        CREATE: '/notifications',
+        READ_ALL: '/notifications/read-all',
         ACCEPT: (notificationId: string) =>
             `/notifications/${notificationId}/accept`,
         DECLINE: (notificationId: string) =>
