@@ -1,9 +1,9 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { GroupUserRole } from '@/types/enums/GroupRole';
 import { useGroup, useGroupMembers } from '@/lib/hooks/api';
 import { FormatDate, splitName } from '@/shared';
+import { GROUP_ROLES } from '@/types/entites';
 import { notFound } from 'next/navigation';
 import { use } from 'react';
 
@@ -44,7 +44,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
                 <div className="mt-2">
                     {members &&
                         members.data
-                            .filter((m) => m.role == GroupUserRole.ADMIN)
+                            .filter((m) => m.role == GROUP_ROLES.ADMIN)
                             .map((member) => (
                                 <Button
                                     href={`/groups/${group._id}/members/${member.user._id}`}
@@ -72,7 +72,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
                 <div className="mt-2 grid grid-cols-3 gap-2 lg:grid-cols-2 md:grid-cols-1">
                     {members &&
                         members.data
-                            .filter((m) => m.role == GroupUserRole.MEMBER)
+                            .filter((m) => m.role == GROUP_ROLES.MEMBER)
                             .slice(0, MAX_MEMBERS)
                             .map((member) => (
                                 <Button
@@ -115,7 +115,7 @@ const GroupPage = ({ params }: { params: Promise<{ groupId: string }> }) => {
                     {members &&
                         (() => {
                             const totalMemberCount = members.data.filter(
-                                (m) => m.role === GroupUserRole.MEMBER
+                                (m) => m.role === GROUP_ROLES.MEMBER
                             ).length;
                             const remainingMembers =
                                 totalMemberCount - MAX_MEMBERS;

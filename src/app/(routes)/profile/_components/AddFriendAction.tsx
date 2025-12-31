@@ -5,7 +5,6 @@ import { useSocket } from '@/core/context';
 import { useNotifications, useRequests } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFriends } from '@/core/context/SocialContext';
-import { NotificationType } from '@/types/enums/EnumNotification';
 import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
 import UserService from '@/lib/services/user.service';
@@ -13,6 +12,7 @@ import { cn } from '@/lib/utils';
 import { useMutation } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
+import { NOTIFICATION_TYPES } from '@/types/entites';
 
 interface Props {
     className?: string;
@@ -114,7 +114,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             requests.some(
                 (request) =>
                     request.receiver._id === userId &&
-                    request.type === NotificationType.REQUEST_ADD_FRIEND
+                    request.type === NOTIFICATION_TYPES.REQUEST_ADD_FRIEND
             ),
         [requests, userId]
     );
@@ -127,7 +127,8 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
                 (notification) =>
                     notification.sender._id === userId &&
                     notification.receiver._id === user?.id &&
-                    notification.type === NotificationType.REQUEST_ADD_FRIEND &&
+                    notification.type ===
+                        NOTIFICATION_TYPES.REQUEST_ADD_FRIEND &&
                     !notification.isDeleted
             ),
         [notifications, userId, user?.id]
@@ -141,7 +142,7 @@ const AddFriendAction: React.FC<Props> = ({ className = '', userId }) => {
             await NotificationService.deleteNotificationByUsers({
                 senderId: user.id,
                 receiverId: userId,
-                type: NotificationType.REQUEST_ADD_FRIEND,
+                type: NOTIFICATION_TYPES.REQUEST_ADD_FRIEND,
             });
 
             await invalidateRequests(user?.id as string);

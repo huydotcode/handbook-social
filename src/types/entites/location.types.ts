@@ -1,0 +1,8 @@
+export interface ILocation {
+    _id: string;
+    name: string;
+    slug: string;
+    type: string;
+    nameWithType: string;
+    code: string;
+}

@@ -7,9 +7,9 @@ import {
     TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { useAuth } from '@/core/context/AuthContext';
-import { UserRole } from '@/types/enums/UserRole';
 import { cn } from '@/lib/utils';
 import { navbarLink, navLink } from '@/shared/constants';
+import { USER_ROLES } from '@/types/entites';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import React, { useEffect, useState } from 'react';
@@ -77,8 +77,8 @@ const Navbar = () => {
                     >
                         {navbarLink.map((link) => {
                             if (
-                                link.role === UserRole.ADMIN &&
-                                user?.role !== UserRole.ADMIN
+                                link.role === USER_ROLES.ADMIN &&
+                                user?.role !== USER_ROLES.ADMIN
                             )
                                 return null;
 
@@ -142,8 +142,8 @@ const Navbar = () => {
                     >
                         {navLink.map((link, index) => {
                             if (
-                                link.role === UserRole.ADMIN &&
-                                user?.role !== UserRole.ADMIN
+                                link.role === USER_ROLES.ADMIN &&
+                                user?.role !== USER_ROLES.ADMIN
                             )
                                 return null;
 

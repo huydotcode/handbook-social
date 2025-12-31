@@ -1,8 +1,8 @@
 'use client';
 import { useAuth } from '@/core/context';
-import { UserRole } from '@/types/enums/UserRole';
 import { cn } from '@/lib/utils';
 import { navLink } from '@/shared/constants';
+import { USER_ROLES } from '@/types/entites';
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
@@ -46,8 +46,8 @@ const Sidebar = () => {
                     };
 
                     if (
-                        link.role === UserRole.ADMIN &&
-                        user?.role !== UserRole.ADMIN
+                        link.role === USER_ROLES.ADMIN &&
+                        user?.role !== USER_ROLES.ADMIN
                     )
                         return null;
 

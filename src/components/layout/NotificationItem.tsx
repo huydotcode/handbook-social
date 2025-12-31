@@ -2,16 +2,13 @@
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useAuth, useSocket } from '@/core/context';
-import {
-    NotificationMessage,
-    NotificationType,
-} from '@/types/enums/EnumNotification';
 import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
 import { cn } from '@/lib/utils';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import Icons from '../ui/Icons';
+import { NOTIFICATION_MESSAGES, NOTIFICATION_TYPES } from '@/types/entites';
 
 const NotificationItem = ({
     data: notification,
@@ -138,26 +135,27 @@ const NotificationItem = ({
                     >
                         <strong>{notification.sender.name}</strong>{' '}
                         {notification.type ===
-                            NotificationType.REQUEST_ADD_FRIEND && (
+                            NOTIFICATION_TYPES.REQUEST_ADD_FRIEND && (
                             <span>
-                                {NotificationMessage.REQUEST_ADD_FRIEND}
+                                {NOTIFICATION_MESSAGES.REQUEST_ADD_FRIEND}
                             </span>
                         )}
                         {notification.type ===
-                            NotificationType.ACCEPT_FRIEND_REQUEST && (
+                            NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST && (
                             <span>
-                                {NotificationMessage.ACCEPT_FRIEND_REQUEST}
+                                {NOTIFICATION_MESSAGES.ACCEPT_FRIEND_REQUEST}
                             </span>
                         )}
-                        {notification.type === NotificationType.FOLLOW_USER && (
-                            <span>{NotificationMessage.FOLLOW_USER}</span>
+                        {notification.type ===
+                            NOTIFICATION_TYPES.FOLLOW_USER && (
+                            <span>{NOTIFICATION_MESSAGES.FOLLOW_USER}</span>
                         )}
-                        {notification.type === NotificationType.LIKE_POST && (
-                            <span>{NotificationMessage.LIKE_POST}</span>
+                        {notification.type === NOTIFICATION_TYPES.LIKE_POST && (
+                            <span>{NOTIFICATION_MESSAGES.LIKE_POST}</span>
                         )}
                     </p>
                     {notification.type ===
-                        NotificationType.REQUEST_ADD_FRIEND && (
+                        NOTIFICATION_TYPES.REQUEST_ADD_FRIEND && (
                         <div className="mt-2 flex items-center">
                             <Button
                                 className="mr-2"

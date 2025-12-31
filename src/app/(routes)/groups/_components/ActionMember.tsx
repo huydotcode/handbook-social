@@ -2,11 +2,11 @@
 
 import { ConfirmModal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { GroupUserRole } from '@/types/enums/GroupRole';
+import { useRemoveGroupMember } from '@/lib/hooks/api/useGroup';
 import { timeConvert4 } from '@/shared';
+import { GROUP_ROLES } from '@/types/entites';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
-import { useRemoveGroupMember } from '@/lib/hooks/api/useGroup';
 
 interface Props {
     member: IMemberGroup;
@@ -37,9 +37,9 @@ const ActionMember = ({ member, group }: Props) => {
             </p>
             <p className={'text-secondary-3 text-sm'}>
                 Vai trò:{' '}
-                {member.role === GroupUserRole.MEMBER
+                {member.role === GROUP_ROLES.MEMBER
                     ? 'Thành viên'
-                    : member.role === GroupUserRole.ADMIN
+                    : member.role === GROUP_ROLES.ADMIN
                       ? 'Quản trị viên'
                       : 'Chủ nhóm'}
             </p>

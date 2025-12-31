@@ -1,11 +1,11 @@
 'use client';
 import { Navbar } from '@/components/layout';
+import { Loading } from '@/components/ui';
 import { useAuth } from '@/core/context/AuthContext';
-import { UserRole } from '@/types/enums/UserRole';
+import { USER_ROLES } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { Sidebar } from '../_components';
-import { Loading } from '@/components/ui';
 
 interface Props {
     children: React.ReactNode;
@@ -16,7 +16,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
     const router = useRouter();
 
     useEffect(() => {
-        if (!isLoading && (!user || user.role !== UserRole.ADMIN)) {
+        if (!isLoading && (!user || user.role !== USER_ROLES.ADMIN)) {
             router.push('/');
         }
     }, [user, isLoading, router]);
@@ -25,7 +25,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
         return <Loading />;
     }
 
-    if (!user || user.role !== UserRole.ADMIN) {
+    if (!user || user.role !== USER_ROLES.ADMIN) {
         return null;
     }
 

@@ -2,8 +2,8 @@
 import ActionMember from '@/app/(routes)/groups/_components/ActionMember';
 import { InfinityPostComponent } from '@/components/post';
 import { useAuth } from '@/core/context/AuthContext';
-import { GroupUserRole } from '@/types/enums/GroupRole';
 import { useGroup, useGroupMember, useUser } from '@/lib/hooks/api';
+import { GROUP_ROLES } from '@/types/entites';
 import { notFound, useRouter } from 'next/navigation';
 import { use, useEffect, useMemo } from 'react';
 
@@ -40,7 +40,7 @@ const MemberPage = ({ params }: Props) => {
     // Check if current user is admin
     const isShowAction = useMemo(() => {
         if (!currentUserMember || !user?.id) return false;
-        const isAdmin = currentUserMember.role === GroupUserRole.ADMIN;
+        const isAdmin = currentUserMember.role === GROUP_ROLES.ADMIN;
         return isAdmin && memberId !== user.id;
     }, [currentUserMember, user?.id, memberId]);
 
