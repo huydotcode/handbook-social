@@ -1,13 +1,13 @@
 'use client';
+import { VideoCallWrapper } from '@/components/video-call';
 import {
     AppProvider,
+    AuthProvider,
     SocialProvider,
     SocketProvider,
     VideoCallProvider,
-    AuthProvider,
 } from '@/context';
-import { AxiosInterceptor } from '@/components/auth/AxiosInterceptor';
-import { VideoCallWrapper } from '@/components/video-call';
+import { AxiosInterceptor } from '@/features/auth';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';

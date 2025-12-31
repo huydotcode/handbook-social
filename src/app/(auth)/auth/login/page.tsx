@@ -15,8 +15,8 @@ import {
     OrDivider,
     RedirectLink,
     SocialButton,
+    useLogin,
 } from '@/features/auth';
-import { useLogin } from '@/lib/hooks/api/useAuth';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 

@@ -1,18 +1,15 @@
-import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { authService } from '@/lib/api/services/auth.service';
+import { useAuth } from '@/context/AuthContext';
+import AuthService from '@/features/auth/services/auth.service';
 import type {
     LoginDto,
+    LoginResponse,
+    ResetPasswordDto,
     SendOTPDto,
     VerifyOTPDto,
-    ResetPasswordDto,
-    LoginResponse,
-} from '@/lib/api/services/auth.service';
-import { useAuth } from '@/context/AuthContext';
+} from '@/features/auth';
+import { handleApiError, showSuccessToast } from '@/lib/hooks/utils';
 import { queryKey } from '@/lib/queryKey';
-import {
-    handleApiError,
-    showSuccessToast,
-} from '../utils';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**
  * Hook for user login
@@ -22,7 +19,7 @@ export const useLogin = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: LoginDto) => authService.login(data),
+        mutationFn: (data: LoginDto) => AuthService.login(data),
         onSuccess: (data: LoginResponse) => {
             // Store access token in memory via context
             if (data.accessToken) {
@@ -73,7 +70,7 @@ export const useLogout = () => {
  */
 export const useSendOTP = () => {
     return useMutation({
-        mutationFn: (data: SendOTPDto) => authService.sendOTP(data),
+        mutationFn: (data: SendOTPDto) => AuthService.sendOTP(data.email),
         onSuccess: () => {
             showSuccessToast('OTP đã được gửi đến email của bạn');
         },
@@ -88,7 +85,8 @@ export const useSendOTP = () => {
  */
 export const useVerifyOTP = () => {
     return useMutation({
-        mutationFn: (data: VerifyOTPDto) => authService.verifyOTP(data),
+        mutationFn: (data: VerifyOTPDto) =>
+            AuthService.verifyOTP({ email: data.email, otp: data.otp }),
         onSuccess: () => {
             showSuccessToast('Xác thực OTP thành công');
         },
@@ -103,7 +101,11 @@ export const useVerifyOTP = () => {
  */
 export const useResetPassword = () => {
     return useMutation({
-        mutationFn: (data: ResetPasswordDto) => authService.resetPassword(data),
+        mutationFn: (data: ResetPasswordDto) =>
+            AuthService.resetPassword({
+                email: data.email,
+                newPassword: data.newPassword,
+            }),
         onSuccess: () => {
             showSuccessToast('Đặt lại mật khẩu thành công');
         },

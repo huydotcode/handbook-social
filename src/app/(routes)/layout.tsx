@@ -1,7 +1,7 @@
 'use client';
 import { Navbar } from '@/components/layout';
 import ChatWithAI from '@/components/layout/ChatWithAI';
-import { ProtectedRoute } from '@/components/auth/ProtectedRoute';
+import { ProtectedRoute } from '@/features/auth';
 import React from 'react';
 
 interface Props {

@@ -14,7 +14,7 @@ interface ProtectedRouteProps {
  * ProtectedRoute component - Handles client-side authentication redirects
  * Replaces NextAuth middleware functionality
  */
-export function ProtectedRoute({
+export default function ProtectedRoute({
     children,
     redirectTo = '/auth/login',
     requireAuth = true,

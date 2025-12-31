@@ -3,7 +3,7 @@ import { useAuth } from '@/context';
 import { setAccessTokenGetter, setRefreshTokenCallback } from '@/lib/axios';
 import { useEffect, useRef } from 'react';
 
-export function AxiosInterceptor() {
+export default function AxiosInterceptor() {
     const { accessToken, refreshAccessToken } = useAuth();
     const isSetupRef = useRef(false);
 

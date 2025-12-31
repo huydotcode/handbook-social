@@ -3,15 +3,6 @@
  * All React Query hooks for API services are exported from here
  */
 
-// Auth hooks
-export {
-    useLogin,
-    useLogout,
-    useSendOTP,
-    useVerifyOTP,
-    useResetPassword,
-} from './useAuth';
-
 // User hooks
 export { useUsers, useUser, useUserFriends } from './useUser';
 

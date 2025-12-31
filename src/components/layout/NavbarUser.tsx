@@ -11,13 +11,12 @@ import {
     navbarUserMenu,
 } from '@/constants/navbar-user-menu.constant';
 import { useAuth } from '@/context/AuthContext';
-import { useLogout } from '@/lib/hooks/api/useAuth';
+import { useLogout } from '@/features/auth';
 import Image from 'next/image';
 import Link from 'next/link';
-import { useState } from 'react';
-import toast from 'react-hot-toast';
-import Icons from '../ui/Icons';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import Icons from '../ui/Icons';
 
 const NavbarUser = () => {
     const { user, isLoading } = useAuth();

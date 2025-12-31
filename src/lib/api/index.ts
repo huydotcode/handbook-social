@@ -11,7 +11,7 @@ export type { ApiResponse, ErrorResponse } from './client';
 export { API_ENDPOINTS } from './endpoints';
 
 // API Services
-export { authService } from './services/auth.service';
+// export { authApi } from '../../features/auth/apis/auth.api';
 export { userService } from './services/user.service';
 export { postService } from './services/post.service';
 export { commentService } from './services/comment.service';
@@ -29,12 +29,12 @@ export { adminService } from './services/admin.service';
 export { friendshipService } from './services/friendship.service';
 
 // Export types
-export type {
-    LoginDto,
-    SendOTPDto,
-    VerifyOTPDto,
-    ResetPasswordDto,
-} from './services/auth.service';
+// export type {
+//     LoginDto,
+//     SendOTPDto,
+//     VerifyOTPDto,
+//     ResetPasswordDto,
+// } from '../../features/auth/apis/auth.api';
 export type {
     CreatePostDto,
     UpdatePostDto,
