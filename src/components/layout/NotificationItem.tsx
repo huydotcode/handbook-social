@@ -120,7 +120,7 @@ const NotificationItem = ({
                 onMouseEnter={() => setShowRemove(true)}
                 onMouseLeave={() => setShowRemove(false)}
             >
-                <div className="mr-4">
+                <div className="relative mr-2 h-full min-w-[40px]">
                     <Avatar
                         width={40}
                         height={40}
@@ -129,7 +129,7 @@ const NotificationItem = ({
                     />
                 </div>
 
-                <div>
+                <div className="flex-1">
                     <p
                         className={cn(
                             'text-sm dark:text-dark-primary-1',
@@ -151,6 +151,9 @@ const NotificationItem = ({
                         )}
                         {notification.type === NotificationType.FOLLOW_USER && (
                             <span>{NotificationMessage.FOLLOW_USER}</span>
+                        )}
+                        {notification.type === NotificationType.LIKE_POST && (
+                            <span>{NotificationMessage.LIKE_POST}</span>
                         )}
                     </p>
                     {notification.type ===
