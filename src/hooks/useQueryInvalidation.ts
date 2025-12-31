@@ -7,10 +7,39 @@ export const useQueryInvalidation = () => {
     const queryClient = useQueryClient();
     const { user } = useAuth();
 
+    // Helper: Extract last message from cache after filtering deleted message
+    const getLastMessage = useCallback(
+        (conversationId: string, excludeMessageId?: string) => {
+            const messages = queryClient.getQueryData<{
+                pages: IMessage[][];
+                pageParams: (number | undefined)[];
+            }>(queryKey.messages.conversationId(conversationId));
+
+            const allMessages = messages?.pages.flat() || [];
+
+            if (!allMessages || allMessages.length === 0) {
+                return null;
+            }
+
+            if (!excludeMessageId) {
+                return allMessages[0];
+            }
+
+            const index = allMessages.findIndex(
+                (msg: IMessage) => msg._id === excludeMessageId
+            );
+
+            return index === -1
+                ? allMessages[0]
+                : allMessages[index - 1] || allMessages[index + 1] || null;
+        },
+        [queryClient]
+    );
+
     // Các hàm invalidate cho từng loại query
     const invalidateMessages = useCallback(
-        async (conversationId: string) => {
-            await queryClient.invalidateQueries({
+        (conversationId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.messages.conversationId(conversationId),
             });
         },
@@ -19,39 +48,68 @@ export const useQueryInvalidation = () => {
 
     const queryClientAddMessage = useCallback(
         (message: IMessage) => {
+            // Normalize conversationId to avoid relying on populated conversation object
+            const conversationId =
+                (message as any).conversationId ||
+                (message as any).conversation?._id ||
+                (message as any).conversation;
+
+            if (!conversationId) {
+                console.warn('queryClientAddMessage missing conversationId');
+                return;
+            }
+
+            const normalizedMessage = {
+                ...message,
+                conversationId,
+            } as IMessage;
+
             queryClient.setQueryData(
-                queryKey.messages.conversationId(message.conversation._id),
+                queryKey.messages.conversationId(conversationId),
                 (
-                    oldMessages:
+                    oldData:
                         | {
                               pages: IMessage[][];
                               pageParams: (number | undefined)[];
                           }
                         | undefined
                 ) => {
-                    if (!oldMessages) return oldMessages;
-
-                    if (oldMessages.pages.length === 0) {
+                    if (!oldData) {
                         return {
-                            pages: [[message]],
+                            pages: [[normalizedMessage]],
                             pageParams: [1],
                         };
                     }
 
-                    const newPage = [message, ...oldMessages.pages[0]];
+                    if (!oldData.pages || oldData.pages.length === 0) {
+                        return {
+                            pages: [[normalizedMessage]],
+                            pageParams: [1],
+                        };
+                    }
+
+                    const alreadyExists = oldData.pages.some((page) =>
+                        page.some((msg) => msg._id === normalizedMessage._id)
+                    );
+
+                    if (alreadyExists) {
+                        return oldData;
+                    }
 
                     return {
-                        pages: [newPage, ...oldMessages.pages.slice(1)],
-                        pageParams: oldMessages.pageParams,
+                        pages: [
+                            [normalizedMessage, ...oldData.pages[0]],
+                            ...oldData.pages.slice(1),
+                        ],
+                        pageParams: oldData.pageParams,
                     };
                 }
             );
 
             queryClient.setQueryData(
-                queryKey.conversations.userId(message.conversation._id),
+                queryKey.conversations.userId(conversationId),
                 (oldConversation: IConversation | undefined) => {
                     if (!oldConversation) return oldConversation;
-
                     return {
                         ...oldConversation,
                         lastMessage: message,
@@ -63,24 +121,19 @@ export const useQueryInvalidation = () => {
                 queryKey.conversations.userId(user?.id as string),
                 (oldConversations: IConversation[] | undefined | null) => {
                     if (!oldConversations) return oldConversations;
-
-                    return oldConversations.map((conversation) => {
-                        if (conversation._id === message.conversation._id) {
-                            return {
-                                ...conversation,
-                                lastMessage: message,
-                            };
-                        }
-                        return conversation;
-                    });
+                    return oldConversations.map((conversation) =>
+                        conversation._id === conversationId
+                            ? { ...conversation, lastMessage: message }
+                            : conversation
+                    );
                 }
             );
         },
         [queryClient, user?.id]
     );
 
-    const queryClientAddPinnedMessage = useCallback(
-        (message: IMessage) => {
+    const updateMessagePin = useCallback(
+        (message: IMessage, isPinned: boolean) => {
             queryClient.setQueryData(
                 queryKey.messages.conversationId(message.conversation._id),
                 (
@@ -92,65 +145,42 @@ export const useQueryInvalidation = () => {
                         | undefined
                 ) => {
                     if (!oldMessages) return oldMessages;
-
                     return {
-                        pages: oldMessages.pages.map((page) => {
-                            return page.map((msg) => {
-                                if (msg._id === message._id) {
-                                    return {
-                                        ...msg,
-                                        isPin: true,
-                                    };
-                                }
-                                return msg;
-                            });
-                        }),
+                        pages: oldMessages.pages.map((page) =>
+                            page.map((msg) =>
+                                msg._id === message._id
+                                    ? { ...msg, isPin: isPinned }
+                                    : msg
+                            )
+                        ),
                         pageParams: oldMessages.pageParams,
                     };
                 }
             );
         },
         [queryClient]
+    );
+
+    const queryClientAddPinnedMessage = useCallback(
+        (message: IMessage) => {
+            updateMessagePin(message, true);
+        },
+        [updateMessagePin]
     );
 
     const queryClientRemovePinnedMessage = useCallback(
         (message: IMessage) => {
-            queryClient.setQueryData(
-                queryKey.messages.conversationId(message.conversation._id),
-                (
-                    oldMessages:
-                        | {
-                              pages: IMessage[][];
-                              pageParams: (number | undefined)[];
-                          }
-                        | undefined
-                ) => {
-                    if (!oldMessages) return oldMessages;
-
-                    return {
-                        pages: oldMessages.pages.map((page) => {
-                            return page.map((msg) => {
-                                if (msg._id === message._id) {
-                                    return {
-                                        ...msg,
-                                        isPin: false,
-                                    };
-                                }
-                                return msg;
-                            });
-                        }),
-                        pageParams: oldMessages.pageParams,
-                    };
-                }
-            );
+            updateMessagePin(message, false);
         },
-        [queryClient]
+        [updateMessagePin]
     );
 
     const queryClientDeleteMessage = useCallback(
         (message: IMessage) => {
+            const conversationId = message.conversation._id;
+
             queryClient.setQueryData(
-                queryKey.messages.conversationId(message.conversation._id),
+                queryKey.messages.conversationId(conversationId),
                 (
                     oldMessages:
                         | {
@@ -160,102 +190,43 @@ export const useQueryInvalidation = () => {
                         | undefined
                 ) => {
                     if (!oldMessages) return oldMessages;
-
-                    const newPages = oldMessages.pages.map((page) =>
-                        page.filter((msg) => msg._id !== message._id)
-                    );
-
                     return {
-                        pages: newPages,
+                        pages: oldMessages.pages.map((page) =>
+                            page.filter((msg) => msg._id !== message._id)
+                        ),
                         pageParams: oldMessages.pageParams,
                     };
                 }
             );
 
+            const updateLastMessage = (
+                conversation: IConversation | undefined
+            ) => {
+                if (!conversation) return conversation;
+                return {
+                    ...conversation,
+                    lastMessage: getLastMessage(conversationId, message._id),
+                };
+            };
+
             queryClient.setQueryData(
-                queryKey.conversations.id(message.conversation._id),
-                (oldConversation: IConversation | undefined) => {
-                    if (!oldConversation) return oldConversation;
-
-                    const messages = queryClient.getQueryData<{
-                        pages: IMessage[][];
-                        pageParams: (number | undefined)[];
-                    }>(
-                        queryKey.messages.conversationId(
-                            message.conversation._id
-                        )
-                    );
-
-                    const allMessages = messages?.pages.flat() || [];
-
-                    if (!allMessages || allMessages.length === 0) {
-                        return {
-                            ...oldConversation,
-                            lastMessage: null,
-                        };
-                    }
-
-                    const index = allMessages.findIndex(
-                        (msg: IMessage) => msg._id === message._id
-                    );
-
-                    return {
-                        ...oldConversation,
-                        lastMessage:
-                            index === -1
-                                ? allMessages[0]
-                                : allMessages[index - 1] ||
-                                  allMessages[index + 1] ||
-                                  null,
-                    };
-                }
+                queryKey.conversations.id(conversationId),
+                updateLastMessage
             );
 
             queryClient.setQueryData(
                 queryKey.conversations.userId(user?.id as string),
                 (oldConversations: IConversation[] | undefined | null) => {
                     if (!oldConversations) return oldConversations;
-
-                    return oldConversations.map((conversation) => {
-                        if (conversation._id === message.conversation._id) {
-                            const messages = queryClient.getQueryData<{
-                                pages: IMessage[][];
-                                pageParams: (number | undefined)[];
-                            }>(
-                                queryKey.messages.conversationId(
-                                    conversation._id
-                                )
-                            );
-
-                            const allMessages = messages?.pages.flat() || [];
-
-                            if (!allMessages || allMessages.length === 0) {
-                                return {
-                                    ...conversation,
-                                    lastMessage: null,
-                                };
-                            }
-
-                            const index = allMessages.findIndex(
-                                (msg: IMessage) => msg._id === message._id
-                            );
-
-                            return {
-                                ...conversation,
-                                lastMessage:
-                                    index === -1
-                                        ? allMessages[0]
-                                        : allMessages[index - 1] ||
-                                          allMessages[index + 1] ||
-                                          null,
-                            };
-                        }
-                        return conversation;
-                    });
+                    return oldConversations.map((conversation) =>
+                        conversation._id === conversationId
+                            ? updateLastMessage(conversation)
+                            : conversation
+                    );
                 }
             );
         },
-        [queryClient, user?.id]
+        [queryClient, user?.id, getLastMessage]
     );
 
     const queryClientReadMessage = useCallback(
@@ -272,23 +243,23 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidatePinnedMessages = useCallback(
-        async (conversationId: string) => {
-            await queryClient.invalidateQueries({
+        (conversationId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.messages.pinnedMessages(conversationId),
             });
         },
         [queryClient]
     );
 
-    const invalidateConversations = useCallback(async () => {
-        await queryClient.invalidateQueries({
+    const invalidateConversations = useCallback(() => {
+        queryClient.invalidateQueries({
             queryKey: queryKey.conversations.userId(user?.id as string),
         });
     }, [queryClient, user?.id]);
 
     const invalidateProfile = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.profile(userId),
             });
         },
@@ -296,8 +267,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateConversation = useCallback(
-        async (conversationId: string) => {
-            await queryClient.invalidateQueries({
+        (conversationId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.conversations.id(conversationId),
             });
         },
@@ -305,24 +276,23 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateAfterSendMessage = useCallback(
-        async (conversationId: string) => {
-            await queryClient.invalidateQueries({
+        (conversationId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.messages.conversationId(conversationId),
             });
-            await queryClient.invalidateQueries({
+            queryClient.invalidateQueries({
                 queryKey: queryKey.conversations.userId(user?.id as string),
             });
-            await queryClient.invalidateQueries({
+            queryClient.invalidateQueries({
                 queryKey: queryKey.messages.pinnedMessages(conversationId),
             });
         },
         [queryClient, user?.id]
     );
 
-    // Tạo các hook với các key bên dưới
     const invalidateSearch = useCallback(
-        async (q: string, type: string) => {
-            await queryClient.invalidateQueries({
+        (q: string, type: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.search.general(q, type),
             });
         },
@@ -330,8 +300,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateFollowings = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.followings(userId),
             });
         },
@@ -339,8 +309,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateFriends = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.friends(userId),
             });
         },
@@ -348,8 +318,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateRequests = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.requests(userId),
             });
         },
@@ -357,8 +327,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateNotifications = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.notifications(userId),
             });
         },
@@ -366,8 +336,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateGroups = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.groups(userId),
             });
         },
@@ -375,7 +345,7 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateNewFeedPosts = useCallback(
-        async ({
+        ({
             type,
             userId,
             groupId,
@@ -386,7 +356,7 @@ export const useQueryInvalidation = () => {
             groupId?: string;
             username?: string;
         }) => {
-            await queryClient.invalidateQueries({
+            queryClient.invalidateQueries({
                 queryKey: queryKey.posts.newFeed({
                     type,
                     userId,
@@ -398,15 +368,15 @@ export const useQueryInvalidation = () => {
         [queryClient]
     );
 
-    const invalidatePosts = useCallback(async () => {
-        await queryClient.invalidateQueries({
+    const invalidatePosts = useCallback(() => {
+        queryClient.invalidateQueries({
             queryKey: queryKey.posts.all(),
         });
     }, [queryClient]);
 
     const invalidatePost = useCallback(
-        async (postId: string) => {
-            await queryClient.invalidateQueries({
+        (postId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.posts.id(postId),
             });
         },
@@ -414,8 +384,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateComments = useCallback(
-        async (postId: string) => {
-            await queryClient.invalidateQueries({
+        (postId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.posts.comments(postId),
             });
         },
@@ -423,35 +393,35 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateReplyComments = useCallback(
-        async (commentId: string) => {
-            await queryClient.invalidateQueries({
+        (commentId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.posts.replyComments(commentId),
             });
         },
         [queryClient]
     );
 
-    const invalidateLocations = useCallback(async () => {
-        await queryClient.invalidateQueries({
+    const invalidateLocations = useCallback(() => {
+        queryClient.invalidateQueries({
             queryKey: queryKey.locations.list(),
         });
     }, [queryClient]);
 
-    const invalidateCategories = useCallback(async () => {
-        await queryClient.invalidateQueries({
+    const invalidateCategories = useCallback(() => {
+        queryClient.invalidateQueries({
             queryKey: queryKey.categories.list(),
         });
     }, [queryClient]);
 
-    const invalidateItems = useCallback(async () => {
-        await queryClient.invalidateQueries({
+    const invalidateItems = useCallback(() => {
+        queryClient.invalidateQueries({
             queryKey: queryKey.items.list(),
         });
     }, [queryClient]);
 
     const invalidateItemsBySeller = useCallback(
-        async (sellerId: string) => {
-            await queryClient.invalidateQueries({
+        (sellerId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.items.bySeller(sellerId),
             });
         },
@@ -459,8 +429,8 @@ export const useQueryInvalidation = () => {
     );
 
     const invalidateUser = useCallback(
-        async (userId: string) => {
-            await queryClient.invalidateQueries({
+        (userId: string) => {
+            queryClient.invalidateQueries({
                 queryKey: queryKey.user.id(userId),
             });
         },
