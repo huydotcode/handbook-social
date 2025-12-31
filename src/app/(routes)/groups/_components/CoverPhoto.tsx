@@ -12,6 +12,7 @@ import { useAuth } from '@/core/context';
 import GroupService from '@/lib/services/group.service';
 import ImageService from '@/lib/services/image.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
+import { IGroup } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';

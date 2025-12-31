@@ -2,6 +2,7 @@
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { cn } from '@/lib/utils';
+import { IPost } from '@/types/entites';
 import React, { useEffect, useState } from 'react';
 import CommentSection from '../comment/CommentSection';
 import ReactionPost from './ReactionPost';

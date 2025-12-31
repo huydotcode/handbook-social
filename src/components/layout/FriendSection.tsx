@@ -1,6 +1,6 @@
 'use client';
 import { FixedSidebar } from '@/components/layout';
-import { Icons, Loading } from '@/components/ui';
+import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import {
     DropdownMenu,
@@ -14,13 +14,14 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/components/ui/tooltip';
-import { useConversations, useFriends } from '@/core/context/SocialContext';
 import { useAuth } from '@/core/context/AuthContext';
+import { useConversations, useFriends } from '@/core/context/SocialContext';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { cn } from '@/lib/utils';
+import { IConversation } from '@/types/entites';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import ConversationItemSkeleton from '../skeleton/ConversationItemSkeleton';
 
 interface Props {}

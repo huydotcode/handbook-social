@@ -12,12 +12,12 @@ import {
 import VideoPlayer from '@/components/ui/VideoPlayer';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import { useQueryInvalidation } from '@/shared/hooks';
 import ConversationService from '@/lib/services/conversation.service';
 import MessageService from '@/lib/services/message.service';
 import { cn } from '@/lib/utils';
-import { FormatDate } from '@/shared';
-import { urlRegex } from '@/shared';
+import { FormatDate, urlRegex } from '@/shared';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IMessage } from '@/types/entites';
 import Link from 'next/link';
 import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

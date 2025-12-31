@@ -15,6 +15,7 @@ import {
     defaultInfiniteQueryOptions,
 } from '@/lib/hooks/utils';
 import queryKey from '@/lib/queryKey';
+import { IGroup, IPost, IUser } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { useCallback, useEffect, useMemo } from 'react';

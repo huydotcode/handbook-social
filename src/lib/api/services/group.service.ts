@@ -1,18 +1,7 @@
+import { PaginationResult } from '@/types';
+import { IGroup, IMemberGroup } from '@/types/entites';
 import { apiClient } from '../client';
 import { API_ENDPOINTS } from '../endpoints';
-
-// Local pagination result type to type responses
-type PaginationResult<T> = {
-    data: T[];
-    pagination: {
-        page: number;
-        pageSize: number;
-        total: number;
-        totalPages: number;
-        hasNext: boolean;
-        hasPrev: boolean;
-    };
-};
 
 export interface GroupQueryParams {
     user_id?: string;

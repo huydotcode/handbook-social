@@ -13,8 +13,9 @@ import { useAuth } from '@/core/context';
 import ImageService from '@/lib/services/image.service';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { IProfile } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -58,7 +59,6 @@ const CoverPhoto: React.FC<Props> = ({ profile }) => {
             await ProfileService.updateCoverPhoto({
                 coverPhoto: coverPhotoUrl,
                 userId: profile.user._id,
-                path,
             });
 
             // Reset files sau khi upload thành công

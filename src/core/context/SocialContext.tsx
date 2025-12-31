@@ -12,6 +12,7 @@ import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
+import { IConversation, IFollows, IMessage } from '@/types/entites';
 
 const PAGE_SIZE = 10;
 
@@ -98,7 +99,7 @@ export const useMessages = (conversationId: string | undefined) =>
     });
 
 export const useFollowing = (userId: string | undefined) =>
-    useQuery<IFollow[]>({
+    useQuery<IFollows[]>({
         queryKey: queryKey.user.followings(userId),
         queryFn: async () => {
             if (!userId) return [];

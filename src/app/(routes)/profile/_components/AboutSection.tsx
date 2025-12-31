@@ -3,6 +3,7 @@ import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/core/context';
 import { cn } from '@/lib/utils';
+import { IProfile } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import ModalEditBio from './ModalEditBio';

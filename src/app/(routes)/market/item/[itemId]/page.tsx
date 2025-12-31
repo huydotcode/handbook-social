@@ -3,6 +3,7 @@ import { MessageAction } from '@/components/shared';
 import { useAuth } from '@/core/context/AuthContext';
 import ItemService from '@/lib/services/item.service';
 import { formatMoney } from '@/shared';
+import { IItem } from '@/types/entites';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import ListItem from '../../_components/ListItem';

@@ -12,6 +12,7 @@ import { useAuth } from '@/core/context';
 import GroupService from '@/lib/services/group.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
+import { IGroup } from '@/types/entites';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';

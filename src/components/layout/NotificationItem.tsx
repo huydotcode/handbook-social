@@ -8,7 +8,11 @@ import { cn } from '@/lib/utils';
 import { useCallback, useState } from 'react';
 import toast from 'react-hot-toast';
 import Icons from '../ui/Icons';
-import { NOTIFICATION_MESSAGES, NOTIFICATION_TYPES } from '@/types/entites';
+import {
+    INotification,
+    NOTIFICATION_MESSAGES,
+    NOTIFICATION_TYPES,
+} from '@/types/entites';
 
 const NotificationItem = ({
     data: notification,

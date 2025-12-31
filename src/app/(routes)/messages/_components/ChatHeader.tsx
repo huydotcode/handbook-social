@@ -3,12 +3,13 @@ import { Avatar, Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/core/context';
 import { useVideoCall } from '@/core/context/VideoCallContext';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { cn } from '@/lib/utils';
 import { timeConvert3 } from '@/shared';
+import { useBreakpoint } from '@/shared/hooks';
+import { IConversation } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
-import { useBreakpoint } from '@/shared/hooks';
 
 interface Props {
     openInfo: boolean;

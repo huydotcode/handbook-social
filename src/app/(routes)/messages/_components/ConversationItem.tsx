@@ -15,11 +15,12 @@ import {
 } from '@/components/ui/tooltip';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import { useQueryInvalidation } from '@/shared/hooks';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import ConversationService from '@/lib/services/conversation.service';
 import { cn } from '@/lib/utils';
 import { splitName, timeConvert3 } from '@/shared';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IConversation } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

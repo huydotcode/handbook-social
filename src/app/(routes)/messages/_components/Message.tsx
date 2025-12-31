@@ -1,14 +1,14 @@
 'use client';
 import { Avatar } from '@/components/ui';
-import { cn } from '@/lib/utils';
-import React, { useEffect, useId, useRef } from 'react';
-import { useAuth } from '@/core/context/AuthContext';
 import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { cn } from '@/lib/utils';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IMessage } from '@/types/entites';
+import React, { useEffect, useId } from 'react';
+import { useInView } from 'react-intersection-observer';
 import MessageContent from './MessageContent';
 import ReadMessage from './ReadMessage';
-import { useInView } from 'react-intersection-observer';
-import { useQueryClient } from '@tanstack/react-query';
-import { useQueryInvalidation } from '@/shared/hooks';
 
 interface Props {
     data: IMessage;

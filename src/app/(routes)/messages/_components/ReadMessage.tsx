@@ -5,9 +5,10 @@ import {
     TooltipContent,
     TooltipProvider,
 } from '@/components/ui/tooltip';
-import { cn } from '@/lib/utils';
-import { TooltipTrigger } from '@radix-ui/react-tooltip';
 import { useAuth } from '@/core/context/AuthContext';
+import { cn } from '@/lib/utils';
+import { IMessage } from '@/types/entites';
+import { TooltipTrigger } from '@radix-ui/react-tooltip';
 interface Props {
     msg: IMessage;
     index: number;

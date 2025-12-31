@@ -4,6 +4,7 @@ import { Loading } from '@/components/ui';
 import { useAuth } from '@/core/context';
 import { itemService } from '@/lib/api/services/item.service';
 import queryKey from '@/lib/queryKey';
+import { IItem } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 
 const ManageItemPage = () => {

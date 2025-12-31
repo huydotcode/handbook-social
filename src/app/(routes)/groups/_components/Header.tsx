@@ -3,7 +3,7 @@ import Avatar from '@/app/(routes)/groups/_components/Avatar';
 import CoverPhoto from '@/app/(routes)/groups/_components/CoverPhoto';
 import { TabItem } from '@/components/shared';
 import { navGroup } from '@/shared/constants';
-import { usePathname } from 'next/navigation';
+import { IGroup } from '@/types/entites';
 import React from 'react';
 import Action from './Action';
 
@@ -12,8 +12,6 @@ interface Props {
 }
 
 const Header: React.FC<Props> = ({ group }) => {
-    const path = usePathname();
-
     return (
         <header className="w-full rounded-b-xl bg-white pb-2 dark:bg-dark-secondary-1">
             <CoverPhoto group={group} />

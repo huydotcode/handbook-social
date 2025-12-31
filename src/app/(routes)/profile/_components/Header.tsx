@@ -13,6 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/core/context/AuthContext';
 import { navProfile } from '@/shared/constants';
+import { IProfile } from '@/types/entites';
 import React from 'react';
 import AddFriendAction from './AddFriendAction';
 

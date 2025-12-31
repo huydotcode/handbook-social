@@ -2,6 +2,7 @@
 import ReviewPost from '@/components/post/ReviewPost';
 import SkeletonPost from '@/components/post/SkeletonPost';
 import { useAuth } from '@/core/context/AuthContext';
+import { IPost } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useMemo } from 'react';
 import { FooterPost } from '.';

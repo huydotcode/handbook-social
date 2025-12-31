@@ -9,11 +9,12 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
+import { useUpdateGroup } from '@/lib/hooks/api/useGroup';
 import { createGroupValidation } from '@/lib/validation';
+import { IGroup } from '@/types/entites';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import { useUpdateGroup } from '@/lib/hooks/api/useGroup';
 
 const INPUT_CLASSNAME =
     'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';

@@ -1,6 +1,7 @@
 import ProfileService from '@/lib/services/profile.service';
 import UserService from '@/lib/services/user.service';
 import { cn } from '@/lib/utils';
+import { IProfile } from '@/types/entites';
 import React from 'react';
 import { AboutSection, FriendsSection, PhotosSection } from '.';
 

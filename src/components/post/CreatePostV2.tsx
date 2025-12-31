@@ -6,11 +6,13 @@ import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { useAuth } from '@/core/context';
-import { useQueryInvalidation } from '@/shared/hooks';
+import { IPostFormData } from '@/features/post';
 import PostService from '@/lib/services/post.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { createPostValidation } from '@/lib/validation';
+import { postAudience } from '@/shared/constants';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { FileUploaderWrapper } from '../shared/FileUploader';
@@ -25,7 +27,6 @@ import {
 } from '../ui/tooltip';
 import Video from '../ui/video';
 import TagInput from './TagInput';
-import { postAudience } from '@/shared/constants';
 
 interface Props {
     className?: string;

@@ -1,6 +1,7 @@
 'use client';
 import { itemService } from '@/lib/api/services/item.service';
 import queryKey from '@/lib/queryKey';
+import { IItem } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -21,7 +22,7 @@ const MarketSearchPage = () => {
         queryFn: ({ pageParam = 1 }) => {
             return itemService.search({
                 q: query,
-                page: pageParam,
+                page: pageParam as number,
                 page_size: PAGE_SIZE,
             });
         },

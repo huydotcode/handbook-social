@@ -3,6 +3,7 @@
 import React from 'react';
 import Item from './Item';
 import { cn } from '@/lib/utils';
+import { IItem } from '@/types/entites';
 
 interface Props {
     className?: string;

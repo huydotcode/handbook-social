@@ -9,18 +9,19 @@ import {
     SlideShow,
 } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import Image from '@/components/ui/image';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import { useQueryInvalidation } from '@/shared/hooks';
-import ConversationService from '@/lib/services/conversation.service';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import ConversationService from '@/lib/services/conversation.service';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IConversation, IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { usePinnedMessages } from './ChatBox';
 import Message from './Message';
 import SideHeader from './SideHeader';
-import Image from '@/components/ui/image';
 
 interface Props {
     conversation: IConversation;

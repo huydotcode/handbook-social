@@ -1,6 +1,7 @@
 'use client';
 import { Avatar } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { IGroup } from '@/types/entites';
 
 const SearchGroupItem = ({ data }: { data: IGroup }) => {
     return (

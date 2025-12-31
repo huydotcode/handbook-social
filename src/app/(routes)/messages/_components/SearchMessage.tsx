@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { messageService } from '@/lib/api/services/message.service';
 import { useBreakpoint } from '@/shared/hooks';
+import { IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';

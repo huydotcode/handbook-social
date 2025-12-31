@@ -8,6 +8,7 @@ import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Icons from '../ui/Icons';
 import { useDebounce } from '@/shared/hooks';
+import { IUser } from '@/types/entites';
 
 const NavbarSearch = () => {
     const { user } = useAuth();

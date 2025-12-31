@@ -5,6 +5,7 @@ import { useAuth } from '@/core/context/AuthContext';
 import queryKey from '@/lib/queryKey';
 import PostService from '@/lib/services/post.service';
 import { cn } from '@/lib/utils';
+import { IPost } from '@/types/entites';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
 import toast from 'react-hot-toast';

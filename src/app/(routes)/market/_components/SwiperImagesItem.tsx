@@ -1,11 +1,12 @@
 'use client';
-import { useCallback, useRef } from 'react';
-import Image from 'next/image';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
-import { Swiper as SwiperType } from 'swiper';
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
+import { IMedia } from '@/types/entites';
+import Image from 'next/image';
+import { useCallback, useRef } from 'react';
+import { Swiper as SwiperType } from 'swiper';
+import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
 
 interface Props {
     images: IMedia[];

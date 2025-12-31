@@ -6,6 +6,7 @@ import GroupService from '@/lib/services/group.service';
 import Image from 'next/image';
 import { useEffect, useState } from 'react';
 import { Sidebar } from './_components';
+import { IGroup } from '@/types/entites';
 
 const GroupsPage = () => {
     const { user } = useAuth();

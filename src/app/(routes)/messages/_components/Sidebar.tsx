@@ -16,6 +16,7 @@ import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import ConversationItem from './ConversationItem';
 import SearchConversation from './SearchConversation';
+import { IConversation } from '@/types/entites';
 
 interface Props {}
 

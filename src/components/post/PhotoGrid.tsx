@@ -2,6 +2,7 @@
 import { FC, useState } from 'react';
 import SlideShow from '../ui/SlideShow';
 import Image from '../ui/image';
+import { IMedia } from '@/types/entites';
 
 interface Props {
     images: IMedia[];

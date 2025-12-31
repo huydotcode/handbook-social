@@ -5,6 +5,7 @@ import { cn } from '@/lib/utils';
 import { formatMoney } from '@/shared';
 import React from 'react';
 import EditItem from './EditItem';
+import { IItem } from '@/types/entites';
 
 interface Props {
     className?: string;

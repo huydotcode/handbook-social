@@ -1,7 +1,5 @@
 'use client';
 import { ReadMoreParagraph } from '@/components/shared';
-import React, { useState } from 'react';
-import { Button } from '@/components/ui/Button';
 import {
     Dialog,
     DialogContent,
@@ -9,7 +7,6 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/components/ui/dialog';
-import { useForm } from 'react-hook-form';
 import {
     Form,
     FormControl,
@@ -20,6 +17,9 @@ import {
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
 import { useGroupMembers } from '@/lib/hooks/api/useGroup';
+import { IGroup } from '@/types/entites';
+import React from 'react';
+import { useForm } from 'react-hook-form';
 
 interface Props {
     group: IGroup;

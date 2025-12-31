@@ -6,6 +6,15 @@ export const USER_ROLES = {
 
 export type UserRole = (typeof USER_ROLES)[keyof typeof USER_ROLES];
 
+export interface IFriend {
+    _id: string;
+    name: string;
+    username: string;
+    avatar: string;
+    isOnline: boolean;
+    lastAccessed: Date;
+}
+
 export interface User {
     comparePassword(password: string): unknown;
     id: string;

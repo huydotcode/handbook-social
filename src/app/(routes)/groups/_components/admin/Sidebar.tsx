@@ -8,7 +8,12 @@ import ConversationService from '@/lib/services/conversation.service';
 import { timeConvert } from '@/shared';
 import { socketEvent } from '@/shared/constants';
 import { useBreakpoint } from '@/shared/hooks';
-import { GROUP_ROLES } from '@/types/entites';
+import {
+    GROUP_ROLES,
+    IConversation,
+    IGroup,
+    IMemberGroup,
+} from '@/types/entites';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -41,11 +46,14 @@ const Sidebar: React.FC<Props> = ({
         page: 1,
         pageSize: 200,
     });
-    const members = membersResponse?.data ?? [];
+    const members = useMemo(
+        () => membersResponse?.data || [],
+        [membersResponse]
+    );
 
     const canCreateConversation = useMemo(() => {
         return members.some(
-            (member) =>
+            (member: IMemberGroup) =>
                 member.user._id === user?.id &&
                 member.role === GROUP_ROLES.ADMIN
         );

@@ -9,6 +9,7 @@ import {
     handleApiError,
     showSuccessToast,
 } from '../utils';
+import { IGroup } from '@/types/entites';
 
 export interface GroupQueryParams {
     user_id?: string;

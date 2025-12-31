@@ -1,8 +1,9 @@
 'use client';
 import PhotoGrid from '@/components/post/PhotoGrid';
 import { Button } from '@/components/ui/Button';
+import { IPost } from '@/types/entites';
 import DOMPurify from 'isomorphic-dompurify';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import VideoPlayer from '../ui/VideoPlayer';
 
 const PostContent = React.memo(({ post }: { post: IPost }) => {

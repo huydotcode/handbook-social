@@ -12,6 +12,7 @@ import React, { useState } from 'react';
 import SavePost from '../footer/SavePost';
 import DeletePostModal from './DeletePostModal';
 import EditPostModal from './EditPostModal';
+import { IPost } from '@/types/entites';
 
 interface Props {
     post: IPost;

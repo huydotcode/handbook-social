@@ -1,10 +1,11 @@
 'use client';
 import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/core/context/AuthContext';
 import { apiClient } from '@/lib/api/client';
 import queryKey from '@/lib/queryKey';
 import { cn } from '@/lib/utils';
+import { IPost } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useAuth } from '@/core/context/AuthContext';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';

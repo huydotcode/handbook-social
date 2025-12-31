@@ -5,14 +5,14 @@ import { useSocket } from '@/core/context';
 import { useNotifications, useRequests } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFriends } from '@/core/context/SocialContext';
-import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
 import UserService from '@/lib/services/user.service';
 import { cn } from '@/lib/utils';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { NOTIFICATION_TYPES } from '@/types/entites';
 import { useMutation } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { NOTIFICATION_TYPES } from '@/types/entites';
 
 interface Props {
     className?: string;

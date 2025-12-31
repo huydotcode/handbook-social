@@ -9,6 +9,7 @@ import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import ListItem from './_components/ListItem';
 import SearchMarket from './_components/SearchMarket';
+import { IItem } from '@/types/entites';
 
 interface Props {}
 

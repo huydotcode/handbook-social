@@ -2,10 +2,11 @@
 import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/core/context/AuthContext';
-import { useQueryInvalidation } from '@/shared/hooks';
 import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IConversation, IMessage } from '@/types/entites';
 import Image from 'next/image';
 import React, { ChangeEvent, useId } from 'react';
 import { useForm } from 'react-hook-form';

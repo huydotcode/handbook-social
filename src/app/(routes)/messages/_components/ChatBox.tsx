@@ -6,13 +6,17 @@ import { Icons } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import { useQueryInvalidation } from '@/shared/hooks';
 import { messageService } from '@/lib/api/services/message.service';
 import queryKey from '@/lib/queryKey';
 import MessageService from '@/lib/services/message.service';
 import { uploadImagesWithFiles } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
-import { useBreakpoint, useMessageHandling } from '@/shared/hooks';
+import {
+    useBreakpoint,
+    useMessageHandling,
+    useQueryInvalidation,
+} from '@/shared/hooks';
+import { IConversation, IMessage } from '@/types/entites';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, {

@@ -1,13 +1,12 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import Icons from '@/components/ui/Icons';
-import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFollowing } from '@/core/context/SocialContext';
-import { useQueryInvalidation } from '@/shared/hooks';
 import NotificationService from '@/lib/services/notification.service';
 import UserService from '@/lib/services/user.service';
 import { cn } from '@/lib/utils';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { useMutation } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
 import toast from 'react-hot-toast';
@@ -20,7 +19,6 @@ interface Props {
 const FollowAction: React.FC<Props> = ({ className = '', userId }) => {
     const { user } = useAuth();
     const { invalidateFollowings } = useQueryInvalidation();
-    const { socket, socketEmitor } = useSocket();
 
     const { data: followings, isLoading: isLoadingFollowings } = useFollowing(
         user?.id

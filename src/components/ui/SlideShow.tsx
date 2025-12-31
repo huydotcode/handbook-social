@@ -13,6 +13,7 @@ import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
 import Icons from './Icons';
 import { Button } from '@/components/ui/Button';
 import { downloadImage } from '@/shared';
+import { IMedia } from '@/types/entites';
 
 interface Props {
     show: boolean;

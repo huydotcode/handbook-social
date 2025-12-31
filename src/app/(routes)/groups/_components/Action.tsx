@@ -5,14 +5,15 @@ import Icons from '@/components/ui/Icons';
 import { Button } from '@/components/ui/Button';
 import { useGroupsJoined } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
-import { useQueryInvalidation } from '@/shared/hooks';
-import { useRouter } from 'next/navigation';
-import React, { FormEventHandler, useMemo, useState } from 'react';
 import {
     useDeleteGroup,
     useJoinGroup,
     useLeaveGroup,
 } from '@/lib/hooks/api/useGroup';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IGroup } from '@/types/entites';
+import { useRouter } from 'next/navigation';
+import React, { FormEventHandler, useMemo, useState } from 'react';
 interface Props {
     group: IGroup;
 }

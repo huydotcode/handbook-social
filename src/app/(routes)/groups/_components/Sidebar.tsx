@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/core/context';
 import queryKey from '@/lib/queryKey';
 import GroupService from '@/lib/services/group.service';
+import { IGroup } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
 

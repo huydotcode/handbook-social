@@ -14,6 +14,7 @@ import {
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { FormatDate } from '@/shared';
+import { IUser } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React from 'react';

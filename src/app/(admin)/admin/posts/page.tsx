@@ -17,6 +17,7 @@ import {
 } from '@/components/ui/tooltip';
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
+import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 

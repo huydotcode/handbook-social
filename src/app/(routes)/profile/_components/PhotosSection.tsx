@@ -3,6 +3,7 @@ import { SlideShow } from '@/components/ui';
 import Image from '@/components/ui/image';
 import ImageService from '@/lib/services/image.service';
 import { cn } from '@/lib/utils';
+import { IMedia } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 

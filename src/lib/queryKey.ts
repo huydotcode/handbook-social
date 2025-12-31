@@ -116,6 +116,7 @@ export const queryKey = {
 
     // Items
     items: {
+        index: ['items'],
         list: (params?: { page?: number; pageSize?: number }) => [
             'items',
             'list',
