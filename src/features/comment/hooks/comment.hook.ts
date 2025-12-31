@@ -12,8 +12,8 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import { CreateCommentDto, UpdateCommentDto } from '../apis/comment.api';
 import CommentService from '../services/comment.service';
+import { CreateCommentDto, UpdateCommentDto } from '../types/comment.type';
 
 /**
  * Hook to get a comment by ID

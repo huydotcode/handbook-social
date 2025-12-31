@@ -1,9 +1,9 @@
+import { commentApi } from '../apis/comment.api';
 import {
-    commentApi,
     CommentQueryParams,
     CreateCommentDto,
     UpdateCommentDto,
-} from '../apis/comment.api';
+} from '../types/comment.type';
 
 class CommentServiceClass {
     /**
