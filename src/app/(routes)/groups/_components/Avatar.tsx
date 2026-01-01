@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from '@/components/ui/dialog';
 import { useAuth } from '@/core/context';
-import GroupService from '@/lib/services/group.service';
+import GroupService from '@/features/group/services/group.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';
 import { cn } from '@/lib/utils';
 import { IGroup } from '@/types/entites';

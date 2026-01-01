@@ -16,7 +16,7 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import { useGroupMembers } from '@/lib/hooks/api/useGroup';
+import { useGroupMembers } from '@/features/group/hooks/group.hook';
 import { IGroup } from '@/types/entites';
 import React from 'react';
 import { useForm } from 'react-hook-form';

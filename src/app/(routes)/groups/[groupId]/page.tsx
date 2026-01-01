@@ -1,5 +1,5 @@
 import { InfinityPostComponent } from '@/components/post';
-import GroupService from '@/lib/services/group.service';
+import GroupService from '@/features/group/services/group.service';
 import React from 'react';
 import Infomation from '../_components/Infomation';
 

@@ -2,7 +2,6 @@
 import { socketEvent } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { categoryService } from '@/lib/api/services/category.service';
-import { groupService } from '@/lib/api/services/group.service';
 import { locationService } from '@/lib/api/services/location.service';
 import {
     notificationService,
@@ -18,6 +17,7 @@ import { useAuth } from './AuthContext';
 import { SidebarCollapseContext } from './SidebarContext';
 import { notificationType } from '@/shared/constants';
 import { ICategory, ILocation, INotification } from '@/types/entites';
+import GroupService from '@/features/group/services/group.service';
 
 const PAGE_SIZE = 10;
 
@@ -65,7 +65,7 @@ export const useGroupsJoined = (userId: string | undefined) => {
         queryFn: async ({ pageParam = 1 }) => {
             if (!userId) return [];
 
-            return groupService.getJoined({
+            return GroupService.getJoined({
                 user_id: userId,
                 page: pageParam,
                 page_size: PAGE_SIZE,

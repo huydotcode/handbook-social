@@ -2,7 +2,7 @@
 
 import { ConfirmModal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
-import { useRemoveGroupMember } from '@/lib/hooks/api/useGroup';
+import { useRemoveGroupMember } from '@/features/group/hooks/group.hook';
 import { timeConvert4 } from '@/shared';
 import { GROUP_ROLES, IGroup, IMemberGroup } from '@/types/entites';
 import { useState } from 'react';

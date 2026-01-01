@@ -55,7 +55,7 @@ export {
     useGroupMember,
     useAddGroupMember,
     useRemoveGroupMember,
-} from './useGroup';
+} from '../../../features/group/hooks/group.hook';
 
 // Item hooks
 export { useItems, useSearchItems, useItemsBySeller } from './useItem';

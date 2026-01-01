@@ -9,7 +9,7 @@ import {
     FormMessage,
 } from '@/components/ui/Form';
 import { Input } from '@/components/ui/Input';
-import { useUpdateGroup } from '@/lib/hooks/api/useGroup';
+import { useUpdateGroup } from '@/features/group/hooks/group.hook';
 import { createGroupValidation } from '@/lib/validation';
 import { IGroup } from '@/types/entites';
 import { zodResolver } from '@hookform/resolvers/zod';

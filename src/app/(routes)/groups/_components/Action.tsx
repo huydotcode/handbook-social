@@ -9,7 +9,7 @@ import {
     useDeleteGroup,
     useJoinGroup,
     useLeaveGroup,
-} from '@/lib/hooks/api/useGroup';
+} from '@/features/group/hooks/group.hook';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IGroup } from '@/types/entites';
 import { useRouter } from 'next/navigation';

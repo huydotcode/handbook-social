@@ -1,30 +1,10 @@
 import { PaginationResult } from '@/types';
 import { IGroup, IMemberGroup } from '@/types/entites';
-import { apiClient } from '../client';
-import { API_ENDPOINTS } from '../endpoints';
+import { apiClient } from '../../../lib/api/client';
+import { API_ENDPOINTS } from '../../../lib/api/endpoints';
+import { CreateGroupPayload, GroupQueryParams } from '../types/group.types';
 
-export interface GroupQueryParams {
-    user_id?: string;
-    page?: number;
-    page_size?: number;
-}
-
-export type CreateGroupPayload = {
-    name: string;
-    description: string;
-    avatar: string; // media id
-    type: string;
-    members?: Array<
-        | string
-        | {
-              user?: string;
-              userId?: string;
-              role?: 'ADMIN' | 'MEMBER';
-          }
-    >;
-};
-
-export const groupService = {
+export const groupApi = {
     /**
      * Get joined groups
      */

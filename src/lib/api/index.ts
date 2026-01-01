@@ -16,7 +16,6 @@ export { API_ENDPOINTS } from './endpoints';
 export { postService } from './services/post.service';
 export { messageService } from './services/message.service';
 export { conversationService } from './services/conversation.service';
-export { groupService } from './services/group.service';
 export { itemService } from './services/item.service';
 export { notificationService } from './services/notification.service';
 export { searchService } from './services/search.service';

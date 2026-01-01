@@ -29,7 +29,7 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
         enabled: !!user?.id,
     });
 
-    const hasAccess = accessData?.hasAccess ?? false;
+    const hasAccess = accessData ?? false;
 
     // Only fetch group data if access is granted
     const { data: group, isLoading: isLoadingGroup } = useGroup(groupId, {

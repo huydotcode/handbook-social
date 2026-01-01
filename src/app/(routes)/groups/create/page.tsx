@@ -22,7 +22,7 @@ import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sidebar } from '../_components';
-import { useCreateGroup } from '@/lib/hooks/api/useGroup';
+import { useCreateGroup } from '@/features/group/hooks/group.hook';
 
 const INPUT_CLASSNAME =
     'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';

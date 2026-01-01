@@ -1,19 +1,14 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import {
-    groupService,
-    type CreateGroupPayload,
-} from '@/lib/api/services/group.service';
+
 import { queryKey } from '@/lib/queryKey';
+import { IGroup } from '@/types/entites';
 import {
     defaultQueryOptions,
     handleApiError,
     showSuccessToast,
-} from '../utils';
-import { IGroup } from '@/types/entites';
-
-export interface GroupQueryParams {
-    user_id?: string;
-}
+} from '../../../lib/hooks/utils';
+import GroupService from '../services/group.service';
+import { CreateGroupPayload, GroupQueryParams } from '../types/group.types';
 
 /**
  * Hook to get joined groups
@@ -24,7 +19,7 @@ export const useJoinedGroups = (
 ) => {
     return useQuery({
         queryKey: queryKey.user.groups(params?.user_id),
-        queryFn: () => groupService.getJoined(params),
+        queryFn: () => GroupService.getJoined(params),
         enabled: options?.enabled !== false,
         ...defaultQueryOptions,
     });
@@ -36,7 +31,7 @@ export const useJoinedGroups = (
 export const useGroup = (groupId: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: queryKey.groups.id(groupId),
-        queryFn: () => groupService.getById(groupId),
+        queryFn: () => GroupService.getById(groupId),
         enabled: options?.enabled !== false && !!groupId,
         ...defaultQueryOptions,
     });
@@ -51,7 +46,7 @@ export const useCheckGroupAccess = (
 ) => {
     return useQuery({
         queryKey: ['groups', 'access', groupId],
-        queryFn: () => groupService.checkAccess(groupId),
+        queryFn: () => GroupService.checkAccess(groupId),
         enabled: options?.enabled !== false && !!groupId,
         retry: false,
         staleTime: 0,
@@ -71,7 +66,7 @@ export const useCheckGroupAdmin = (
         queryFn: async () => {
             if (!userId) return { isAdmin: false, isCreator: false };
 
-            const group = await groupService.getById(groupId);
+            const group = await GroupService.getById(groupId);
 
             // Check if creator
             if (group.creator._id === userId) {
@@ -84,7 +79,7 @@ export const useCheckGroupAdmin = (
             let isAdmin = false;
 
             while (true) {
-                const res = await groupService.getMembers(groupId, {
+                const res = await GroupService.getMembers(groupId, {
                     page,
                     page_size: pageSize,
                 });
@@ -114,7 +109,7 @@ export const useCreateGroup = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: CreateGroupPayload) => groupService.create(data),
+        mutationFn: (data: CreateGroupPayload) => GroupService.create(data),
         onSuccess: (data) => {
             // Invalidate group caches (joined lists, detail, etc.)
             queryClient.invalidateQueries({ queryKey: ['groups'] });
@@ -143,7 +138,13 @@ export const useUpdateGroup = () => {
         }: {
             groupId: string;
             data: Partial<IGroup>;
-        }) => groupService.update(groupId, data),
+        }) =>
+            GroupService.update({
+                description: data.description || '',
+                groupId,
+                name: data.name || '',
+                type: data.type || 'public',
+            }),
         onSuccess: (data) => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.groups.id(data._id),
@@ -164,7 +165,7 @@ export const useDeleteGroup = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (groupId: string) => groupService.delete(groupId),
+        mutationFn: (groupId: string) => GroupService.delete(groupId),
         onSuccess: (_data, groupId) => {
             queryClient.invalidateQueries({ queryKey: ['groups'] });
             queryClient.invalidateQueries({
@@ -188,7 +189,7 @@ export const useJoinGroup = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (groupId: string) => groupService.join(groupId),
+        mutationFn: (groupId: string) => GroupService.join({ groupId }),
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['groups'] });
             queryClient.invalidateQueries({
@@ -209,7 +210,7 @@ export const useLeaveGroup = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (groupId: string) => groupService.leave(groupId),
+        mutationFn: (groupId: string) => GroupService.leave({ groupId }),
         onSuccess: (data) => {
             queryClient.invalidateQueries({ queryKey: ['groups'] });
             queryClient.invalidateQueries({
@@ -237,7 +238,7 @@ export const useGroupMembers = (
     return useQuery({
         queryKey: queryKey.groups.members(groupId, { page, pageSize }),
         queryFn: () =>
-            groupService.getMembers(groupId, {
+            GroupService.getMembers(groupId, {
                 page,
                 page_size: pageSize,
             }),
@@ -262,7 +263,7 @@ export const useGroupMember = (
             let page = 1;
 
             while (true) {
-                const res = await groupService.getMembers(groupId, {
+                const res = await GroupService.getMembers(groupId, {
                     page,
                     page_size: pageSize,
                 });
@@ -290,7 +291,7 @@ export const useAddGroupMember = (groupId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (userId: string) => groupService.addMember(groupId, userId),
+        mutationFn: (userId: string) => GroupService.addMember(groupId, userId),
         onSuccess: () => {
             // Invalidate members list and group detail
             queryClient.invalidateQueries({
@@ -317,7 +318,7 @@ export const useRemoveGroupMember = (groupId: string) => {
 
     return useMutation({
         mutationFn: (userId: string) =>
-            groupService.removeMember(groupId, userId),
+            GroupService.removeMember(groupId, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['groups', 'members', groupId],
@@ -347,7 +348,7 @@ export const useUpdateGroupMemberRole = (groupId: string) => {
         }: {
             userId: string;
             role: 'ADMIN' | 'MEMBER';
-        }) => groupService.updateMemberRole(groupId, userId, role),
+        }) => GroupService.updateMemberRole(groupId, userId, role),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['groups', 'members', groupId],

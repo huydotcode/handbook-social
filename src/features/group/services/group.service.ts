@@ -1,5 +1,7 @@
+import { PaginationResult } from '@/types';
 import { IGroup, IMemberGroup } from '@/types/entites';
-import { groupService as apiGroupService } from '../api/services/group.service';
+import { groupApi as apiGroupService } from '../apis/group.api';
+import { GroupQueryParams } from '../types/group.types';
 
 class GroupServiceClass {
     /**
@@ -63,7 +65,20 @@ class GroupServiceClass {
     }
 
     /**
+     * Get joined groups
+     */
+    public async getJoined(params?: GroupQueryParams) {
+        try {
+            return await apiGroupService.getJoined(params);
+        } catch (error) {
+            console.error('Error getting joined groups:', error);
+            return [];
+        }
+    }
+
+    /**
      * Get groups by user ID using REST API
+     * @deprecated Use getJoined instead
      */
     public async getByUserId({
         userId,
@@ -99,16 +114,37 @@ class GroupServiceClass {
     /**
      * Get members of a group
      */
-    public async getMembers(groupId: string): Promise<IMemberGroup[]> {
+    public async getMembers(
+        groupId: string,
+        params?: GroupQueryParams
+    ): Promise<PaginationResult<IMemberGroup>> {
         try {
-            const result = await apiGroupService.getMembers(groupId, {
-                page: 1,
-                page_size: 20,
-            });
-            return result.data as IMemberGroup[];
+            return await apiGroupService.getMembers(groupId, params);
         } catch (error) {
             console.error('Error getting group members:', error);
-            return [] as IMemberGroup[];
+            return {
+                data: [],
+                pagination: {
+                    page: 1,
+                    pageSize: 20,
+                    total: 0,
+                    totalPages: 0,
+                    hasNext: false,
+                    hasPrev: false,
+                },
+            };
+        }
+    }
+
+    /**
+     * Admin: list all groups (paginated)
+     */
+    public async getAllAdmin(params?: GroupQueryParams) {
+        try {
+            return await apiGroupService.getAllAdmin(params);
+        } catch (error) {
+            console.error('Error getting all groups (admin):', error);
+            throw error;
         }
     }
 
@@ -184,13 +220,7 @@ class GroupServiceClass {
     /**
      * Join a group
      */
-    public async join({
-        groupId,
-        userId,
-    }: {
-        groupId: string;
-        userId: string;
-    }) {
+    public async join({ groupId }: { groupId: string }) {
         try {
             // server uses authenticated user; userId not required
             return await apiGroupService.join(groupId);
@@ -203,15 +233,7 @@ class GroupServiceClass {
     /**
      * Leave a group
      */
-    public async leave({
-        groupId,
-        userId,
-        path,
-    }: {
-        groupId: string;
-        userId: string;
-        path?: string;
-    }) {
+    public async leave({ groupId }: { groupId: string }) {
         try {
             // server uses authenticated user; userId not required
             return await apiGroupService.leave(groupId);

@@ -3,7 +3,7 @@ import SidebarCollapse from '@/components/layout/SidebarCollapse';
 import { Avatar, Icons, Modal } from '@/components/ui';
 import { Button } from '@/components/ui/Button';
 import { useAuth, useSocket } from '@/core/context';
-import { useGroupMembers } from '@/lib/hooks/api/useGroup';
+import { useGroupMembers } from '@/features/group/hooks/group.hook';
 import ConversationService from '@/lib/services/conversation.service';
 import { timeConvert } from '@/shared';
 import { socketEvent } from '@/shared/constants';
