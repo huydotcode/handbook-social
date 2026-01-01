@@ -1,11 +1,4 @@
-export interface WebRTCEventHandlers {
-    onLocalStream?: (stream: MediaStream) => void;
-    onRemoteStream?: (stream: MediaStream) => void;
-    onConnectionStateChange?: (state: RTCPeerConnectionState) => void;
-    onIceCandidate?: (candidate: RTCIceCandidate) => void;
-    onRenegotiationNeeded?: (offer: RTCSessionDescriptionInit) => void;
-    onError?: (error: Error) => void;
-}
+import { env } from '@/core/config/env.config';
 
 export interface WebRTCEventHandlers {
     onLocalStream?: (stream: MediaStream) => void;
@@ -23,8 +16,8 @@ interface ICEServerConfig {
     credential?: string;
 }
 
-const TURN_USERNAME = process.env.NEXT_PUBLIC_TURN_USERNAME;
-const TURN_CREDENTIAL = process.env.NEXT_PUBLIC_TURN_CREDENTIAL;
+const TURN_USERNAME = env.NEXT_PUBLIC_TURN_USERNAME;
+const TURN_CREDENTIAL = env.NEXT_PUBLIC_TURN_CREDENTIAL;
 
 class WebRTCService {
     private peerConnection: RTCPeerConnection | null = null;

@@ -1,11 +1,12 @@
+import { env } from '@/core/config/env.config';
 import axios from 'axios';
 
 let BASE_URL;
 
-if (process.env.NODE_ENV === 'development') {
+if (env.NODE_ENV === 'development') {
     BASE_URL = 'http://localhost:8000/api/v1';
 } else {
-    BASE_URL = process.env.NEXT_PUBLIC_SERVER_API;
+    BASE_URL = env.NEXT_PUBLIC_SERVER_API;
 }
 
 // Main axios instance with interceptors

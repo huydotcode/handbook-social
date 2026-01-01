@@ -1,4 +1,5 @@
 'use client';
+import { env } from '@/core/config/env.config';
 import { VideoCallWrapper } from '@/shared/components/video-call';
 import {
     AppProvider,
@@ -87,7 +88,7 @@ const Providers: FunctionComponent<ProvidersProps> = ({ children }) => {
                 </SocketProvider>
             </AuthProvider>
             {/* React Query DevTools - only in development */}
-            {process.env.NODE_ENV === 'development' && (
+            {env.NODE_ENV === 'development' && (
                 <ReactQueryDevtools initialIsOpen={false} />
             )}
         </QueryClientProvider>
