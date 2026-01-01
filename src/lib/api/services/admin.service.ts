@@ -1,6 +1,6 @@
+import { CategoryService } from '@/features/category';
 import { UserService } from '@/features/user';
 import { IGroup, IMedia } from '@/types/entites';
-import { categoryService } from './category.service';
 import { locationService } from './location.service';
 import { postService } from './post.service';
 
@@ -66,7 +66,7 @@ export const adminService = {
      * Get all categories (Admin)
      */
     getCategories: (params?: AdminQueryParams) => {
-        return categoryService.getAll(params);
+        return CategoryService.getAll(params);
     },
 
     /**

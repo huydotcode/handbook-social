@@ -74,18 +74,6 @@ export {
     useSearchGroups,
 } from './useSearch';
 
-// Category hooks
-export {
-    useCategories,
-    useAllCategories,
-    useSearchCategories,
-    useCategoryBySlug,
-    useCategory,
-    useCreateCategory,
-    useUpdateCategory,
-    useDeleteCategory,
-} from './useCategory';
-
 // Location hooks
 export { useLocations } from './useLocation';
 

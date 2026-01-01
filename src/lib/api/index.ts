@@ -13,18 +13,17 @@
 // API Services
 // export { authApi } from '../../features/auth/apis/auth.api';
 // export { userService } from './services/user.service';
-export { postService } from './services/post.service';
-export { messageService } from './services/message.service';
+export { adminService } from './services/admin.service';
 export { conversationService } from './services/conversation.service';
+export { followService } from './services/follow.service';
+export { friendshipService } from './services/friendship.service';
 export { itemService } from './services/item.service';
+export { locationService } from './services/location.service';
+export { messageService } from './services/message.service';
 export { notificationService } from './services/notification.service';
+export { postService } from './services/post.service';
 export { searchService } from './services/search.service';
 export { uploadService } from './services/upload.service';
-export { locationService } from './services/location.service';
-export { followService } from './services/follow.service';
-export { categoryService } from './services/category.service';
-export { adminService } from './services/admin.service';
-export { friendshipService } from './services/friendship.service';
 
 // Export types
 // export type {
@@ -35,17 +34,12 @@ export { friendshipService } from './services/friendship.service';
 // } from '../../features/auth/apis/auth.api';
 export type {
     CreatePostDto,
-    UpdatePostDto,
     PostQueryParams,
+    UpdatePostDto,
 } from './services/post.service';
 
 export type {
+    ConversationQueryParams,
     CreateConversationDto,
     UpdateConversationDto,
-    ConversationQueryParams,
 } from './services/conversation.service';
-export type {
-    CreateCategoryDto,
-    UpdateCategoryDto,
-    CategoryQueryParams,
-} from './services/category.service';

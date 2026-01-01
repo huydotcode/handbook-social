@@ -1,24 +1,25 @@
 import {
-    useQuery,
-    useMutation,
     useInfiniteQuery,
+    useMutation,
+    useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import { categoryService } from '@/lib/api/services/category.service';
-import { queryKey } from '@/lib/queryKey';
-import type {
-    CreateCategoryDto,
-    UpdateCategoryDto,
+import {
     CategoryQueryParams,
     CategorySearchParams,
-} from '@/lib/api/services/category.service';
+    CreateCategoryDto,
+    UpdateCategoryDto,
+} from '../types/category.types';
+
 import {
     createGetNextPageParam,
+    defaultInfiniteQueryOptions,
+    defaultQueryOptions,
     handleApiError,
     showSuccessToast,
-    defaultQueryOptions,
-    defaultInfiniteQueryOptions,
-} from '../utils';
+} from '@/lib/hooks/utils';
+import queryKey from '@/lib/queryKey';
+import { CategoryService } from '../services/category.service';
 
 /**
  * Hook to get all categories (paginated)
@@ -26,7 +27,7 @@ import {
 export const useCategories = (params?: CategoryQueryParams) => {
     return useQuery({
         queryKey: queryKey.categories.list(),
-        queryFn: () => categoryService.getAll(params),
+        queryFn: () => CategoryService.getAll(params),
         ...defaultQueryOptions,
     });
 };
@@ -37,7 +38,7 @@ export const useCategories = (params?: CategoryQueryParams) => {
 export const useAllCategories = () => {
     return useQuery({
         queryKey: queryKey.categories.all(),
-        queryFn: () => categoryService.getAllCategories(),
+        queryFn: () => CategoryService.getAllCategories(),
         ...defaultQueryOptions,
     });
 };
@@ -54,7 +55,7 @@ export const useSearchCategories = (
     return useInfiniteQuery({
         queryKey: queryKey.categories.search(searchParams.q),
         queryFn: ({ pageParam = 1 }) =>
-            categoryService.search({
+            CategoryService.search({
                 ...searchParams,
                 page: pageParam,
             }),
@@ -74,7 +75,7 @@ export const useCategoryBySlug = (
 ) => {
     return useQuery({
         queryKey: queryKey.categories.bySlug(slug),
-        queryFn: () => categoryService.getBySlug(slug),
+        queryFn: () => CategoryService.getBySlug(slug),
         enabled: options?.enabled !== false && !!slug,
         ...defaultQueryOptions,
     });
@@ -89,7 +90,7 @@ export const useCategory = (
 ) => {
     return useQuery({
         queryKey: queryKey.categories.byId(categoryId),
-        queryFn: () => categoryService.getById(categoryId),
+        queryFn: () => CategoryService.getById(categoryId),
         enabled: options?.enabled !== false && !!categoryId,
         ...defaultQueryOptions,
     });
@@ -102,7 +103,7 @@ export const useCreateCategory = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: CreateCategoryDto) => categoryService.create(data),
+        mutationFn: (data: CreateCategoryDto) => CategoryService.create(data),
         onSuccess: () => {
             // Invalidate categories list
             queryClient.invalidateQueries({
@@ -127,7 +128,7 @@ export const useUpdateCategory = () => {
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdateCategoryDto }) =>
-            categoryService.update(id, data),
+            CategoryService.update(id, data),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(
@@ -156,7 +157,7 @@ export const useDeleteCategory = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (categoryId: string) => categoryService.delete(categoryId),
+        mutationFn: (categoryId: string) => CategoryService.delete(categoryId),
         onSuccess: (_, categoryId) => {
             // Remove from cache
             queryClient.removeQueries({

@@ -1,4 +1,6 @@
 'use client';
+import { useCategories } from '@/core/context/AppContext';
+import { CategoryService } from '@/features/category';
 import { ConfirmModal, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -19,8 +21,6 @@ import {
     TableHeader,
     TableRow,
 } from '@/shared/components/ui/table';
-import { useCategories } from '@/core/context/AppContext';
-import CategoryService from '@/lib/services/category.service';
 import { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';

@@ -1,23 +1,22 @@
 'use client';
-import { socketEvent } from '@/shared/constants';
-import { useQueryInvalidation } from '@/shared/hooks';
-import { categoryService } from '@/lib/api/services/category.service';
+import { CategoryService } from '@/features/category';
+import GroupService from '@/features/group/services/group.service';
 import { locationService } from '@/lib/api/services/location.service';
 import {
-    notificationService,
     NotificationQueryParams,
+    notificationService,
 } from '@/lib/api/services/notification.service';
 import queryKey from '@/lib/queryKey';
 import { soundManager } from '@/lib/soundManager';
+import { notificationType, socketEvent } from '@/shared/constants';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { ICategory, ILocation, INotification } from '@/types/entites';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
 import { useSocket } from '.';
 import { useAuth } from './AuthContext';
 import { SidebarCollapseContext } from './SidebarContext';
-import { notificationType } from '@/shared/constants';
-import { ICategory, ILocation, INotification } from '@/types/entites';
-import GroupService from '@/features/group/services/group.service';
 
 const PAGE_SIZE = 10;
 
@@ -55,7 +54,7 @@ export const useCategories = () =>
     useQuery<ICategory[]>({
         queryKey: queryKey.categories.list(),
         queryFn: async () => {
-            return categoryService.getAll();
+            return CategoryService.getAll();
         },
     });
 

@@ -1,5 +1,4 @@
 // Export existing services
-export * from './category.service';
 export * from './conversation.service';
 export * from '../../features/group/services/group.service';
 export * from './image.service';

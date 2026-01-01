@@ -1,4 +1,4 @@
-import CategoryService from '@/lib/services/category.service';
+import { CategoryService } from '@/features/category';
 import ItemService from '@/lib/services/item.service';
 import React from 'react';
 import ListItem from '../../_components/ListItem';

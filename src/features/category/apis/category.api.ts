@@ -1,30 +1,14 @@
 import { ICategory } from '@/types/entites';
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
+import {
+    CategoryQueryParams,
+    CategorySearchParams,
+    CreateCategoryDto,
+    UpdateCategoryDto,
+} from '../types/category.types';
 
-export interface CreateCategoryDto {
-    name: string;
-    slug: string;
-    description?: string;
-}
-
-export interface UpdateCategoryDto {
-    name?: string;
-    description?: string;
-}
-
-export interface CategoryQueryParams {
-    page?: number;
-    page_size?: number;
-}
-
-export interface CategorySearchParams {
-    q: string;
-    page?: number;
-    page_size?: number;
-}
-
-export const categoryService = {
+export const categoryApi = {
     /**
      * Get all categories (paginated)
      */
