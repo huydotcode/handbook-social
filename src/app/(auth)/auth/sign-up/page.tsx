@@ -17,12 +17,12 @@ import {
     SocialButton,
 } from '@/features/auth';
 import AuthService from '@/features/auth/services/auth.service';
-import type { ErrorResponse } from '@/core/api/api-client';
 import { signUpValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { ErrorResponse } from '@/types';
 
 type FormSignupData = {
     email: string;
