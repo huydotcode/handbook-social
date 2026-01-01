@@ -1,38 +1,6 @@
+import { ApiResponse, PaginationResult } from '@/types';
 import { AxiosRequestConfig } from 'axios';
 import axiosInstance from '../../lib/axios';
-import { PaginationResult } from '@/types';
-
-/**
- * Standardized API Response Interface
- */
-export interface ApiResponse<T = any> {
-    success: boolean;
-    message: string;
-    data?: T;
-    meta?: {
-        page?: number;
-        pageSize?: number;
-        total?: number;
-        totalPages?: number;
-        hasNext?: boolean;
-        hasPrev?: boolean;
-    };
-    timestamp: string;
-    path?: string;
-}
-
-/**
- * Error Response Interface
- */
-export interface ErrorResponse {
-    success: false;
-    error: string;
-    message: string;
-    statusCode: number;
-    details?: any;
-    timestamp: string;
-    path?: string;
-}
 
 /**
  * API Client Class
