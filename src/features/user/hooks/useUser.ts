@@ -1,11 +1,11 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
+import { friendshipService } from '@/lib/api/services/friendship.service';
 import { queryKey } from '@/lib/queryKey';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
     defaultQueryOptions,
-} from '@/lib/hooks/utils';
-import { friendshipService } from '@/lib/api/services/friendship.service';
+} from '@/lib/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { userApi } from '../apis/user.api';
 import UserService from '../services/user.service';
 import type { UserQueryParams } from '../types/user.types';

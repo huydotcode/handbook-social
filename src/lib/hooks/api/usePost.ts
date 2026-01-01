@@ -1,23 +1,22 @@
-import {
-    useQuery,
-    useMutation,
-    useInfiniteQuery,
-    useQueryClient,
-} from '@tanstack/react-query';
-import { postService } from '@/lib/api/services/post.service';
-import { queryKey } from '@/lib/queryKey';
 import type {
     CreatePostDto,
-    UpdatePostDto,
     PostQueryParams,
+    UpdatePostDto,
 } from '@/lib/api/services/post.service';
+import { postService } from '@/lib/api/services/post.service';
+import { queryKey } from '@/lib/queryKey';
 import {
     createGetNextPageParam,
-    handleApiError,
-    showSuccessToast,
-    defaultQueryOptions,
     defaultInfiniteQueryOptions,
-} from '../utils';
+    defaultQueryOptions,
+} from '@/lib/react-query';
+import { handleApiError, showSuccessToast } from '@/shared';
+import {
+    useInfiniteQuery,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query';
 
 /**
  * Hook to get a single post by ID

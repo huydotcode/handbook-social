@@ -1,12 +1,12 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
+import type { SearchQueryParams } from '@/lib/api/services/search.service';
 import { searchService } from '@/lib/api/services/search.service';
 import { queryKey } from '@/lib/queryKey';
-import type { SearchQueryParams } from '@/lib/api/services/search.service';
 import {
     createGetNextPageParam,
     createSearchGetNextPageParam,
     defaultInfiniteQueryOptions,
-} from '../utils';
+} from '@/lib/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 /**
  * Hook for general search (users, posts, groups)

@@ -1,12 +1,9 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { queryKey } from '@/lib/queryKey';
+import { defaultQueryOptions } from '@/lib/react-query';
+import { handleApiError, showSuccessToast } from '@/shared';
 import { IGroup } from '@/types/entites';
-import {
-    defaultQueryOptions,
-    handleApiError,
-    showSuccessToast,
-} from '../../../lib/hooks/utils';
 import GroupService from '../services/group.service';
 import { CreateGroupPayload, GroupQueryParams } from '../types/group.types';
 

@@ -1,4 +1,5 @@
 export * from './download-file';
+export * from './error-handler';
 export * from './format-date';
 export * from './format-money';
 export * from './generate-username-from-email';

@@ -1,10 +1,10 @@
-import { useInfiniteQuery } from '@tanstack/react-query';
 import { notificationService } from '@/lib/api/services/notification.service';
 import { queryKey } from '@/lib/queryKey';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
-} from '../utils';
+} from '@/lib/react-query';
+import { useInfiniteQuery } from '@tanstack/react-query';
 
 export interface NotificationQueryParams {
     page?: number;

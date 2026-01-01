@@ -1,9 +1,6 @@
 import { useMutation } from '@tanstack/react-query';
 import { uploadService } from '@/lib/api/services/upload.service';
-import {
-    handleApiError,
-    showSuccessToast,
-} from '../utils';
+import { handleApiError, showSuccessToast } from '@/shared';
 
 /**
  * Hook to upload an image

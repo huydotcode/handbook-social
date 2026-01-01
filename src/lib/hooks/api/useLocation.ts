@@ -1,7 +1,7 @@
 import { locationService } from '@/lib/api/services/location.service';
 import { queryKey } from '@/lib/queryKey';
+import { defaultQueryOptions } from '@/lib/react-query';
 import { useQuery } from '@tanstack/react-query';
-import { defaultQueryOptions } from '../utils';
 
 /**
  * Hook to get all locations (infinite query)

@@ -1,11 +1,11 @@
-import { useQuery, useInfiniteQuery } from '@tanstack/react-query';
 import { messageService } from '@/lib/api/services/message.service';
 import { queryKey } from '@/lib/queryKey';
 import {
     createGetNextPageParam,
-    defaultQueryOptions,
     defaultInfiniteQueryOptions,
-} from '../utils';
+    defaultQueryOptions,
+} from '@/lib/react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 export interface MessageQueryParams {
     page?: number;

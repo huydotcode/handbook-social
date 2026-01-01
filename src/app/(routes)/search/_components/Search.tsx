@@ -1,10 +1,4 @@
 'use client';
-import { Post } from '@/shared/components/post';
-import {
-    PostTypes,
-    usePosts,
-} from '@/shared/components/post/InfinityPostComponent';
-import { Loading } from '@/shared/components/ui';
 import { useAuth } from '@/core/context';
 import { useFriends } from '@/core/context/SocialContext';
 import { searchService } from '@/lib/api';
@@ -13,11 +7,17 @@ import {
     useSearchPosts,
     useSearchUsers,
 } from '@/lib/hooks/api';
+import queryKey from '@/lib/queryKey';
 import {
     createSearchGetNextPageParam,
     defaultInfiniteQueryOptions,
-} from '@/lib/hooks/utils';
-import queryKey from '@/lib/queryKey';
+} from '@/lib/react-query';
+import { Post } from '@/shared/components/post';
+import {
+    PostTypes,
+    usePosts,
+} from '@/shared/components/post/InfinityPostComponent';
+import { Loading } from '@/shared/components/ui';
 import { IGroup, IPost, IUser } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';

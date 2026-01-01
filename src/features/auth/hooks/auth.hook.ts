@@ -1,5 +1,4 @@
 import { useAuth } from '@/core/context/AuthContext';
-import AuthService from '@/features/auth/services/auth.service';
 import type {
     LoginDto,
     LoginResponse,
@@ -7,8 +6,9 @@ import type {
     SendOTPDto,
     VerifyOTPDto,
 } from '@/features/auth';
-import { handleApiError, showSuccessToast } from '@/lib/hooks/utils';
+import AuthService from '@/features/auth/services/auth.service';
 import { queryKey } from '@/lib/queryKey';
+import { handleApiError, showSuccessToast } from '@/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
 /**

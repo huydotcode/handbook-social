@@ -1,11 +1,10 @@
+import { queryKey } from '@/lib/queryKey';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
     defaultQueryOptions,
-    handleApiError,
-    showSuccessToast,
-} from '@/lib/hooks/utils';
-import { queryKey } from '@/lib/queryKey';
+} from '@/lib/react-query';
+import { handleApiError, showSuccessToast } from '@/shared';
 import {
     useInfiniteQuery,
     useMutation,
@@ -26,7 +25,7 @@ export const useComment = (
         queryKey: queryKey.comments.id(commentId),
         queryFn: () => CommentService.getById(commentId),
         enabled: options?.enabled !== false && !!commentId,
-        ...defaultQueryOptions,
+        ...defaultInfiniteQueryOptions,
     });
 };
 

@@ -1,26 +1,25 @@
-import {
-    useQuery,
-    useMutation,
-    useInfiniteQuery,
-    useQueryClient,
-} from '@tanstack/react-query';
+import type {
+    AddParticipantDto,
+    ConversationQueryParams,
+    CreateConversationDto,
+    PinMessageDto,
+    UpdateConversationDto,
+} from '@/lib/api/services/conversation.service';
 import { conversationService } from '@/lib/api/services/conversation.service';
 import { queryKey } from '@/lib/queryKey';
-import type {
-    CreateConversationDto,
-    UpdateConversationDto,
-    ConversationQueryParams,
-    AddParticipantDto,
-    PinMessageDto,
-} from '@/lib/api/services/conversation.service';
 import {
     createGetNextPageParam,
-    handleApiError,
-    showSuccessToast,
-    defaultQueryOptions,
     defaultInfiniteQueryOptions,
-} from '../utils';
+    defaultQueryOptions,
+} from '@/lib/react-query';
 import ConversationService from '@/lib/services/conversation.service';
+import { handleApiError, showSuccessToast } from '@/shared';
+import {
+    useInfiniteQuery,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query';
 
 /**
  * Hook to get all conversations (infinite query)
