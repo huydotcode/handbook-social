@@ -1,18 +1,9 @@
-import type {
-    AddParticipantDto,
-    ConversationQueryParams,
-    CreateConversationDto,
-    PinMessageDto,
-    UpdateConversationDto,
-} from '@/lib/api/services/conversation.service';
-import { conversationService } from '@/lib/api/services/conversation.service';
 import { queryKey } from '@/lib/queryKey';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
     defaultQueryOptions,
 } from '@/lib/react-query';
-import ConversationService from '@/lib/services/conversation.service';
 import { handleApiError, showSuccessToast } from '@/shared';
 import {
     useInfiniteQuery,
@@ -20,6 +11,14 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
+import { ConversationService } from '../services/conversation.service';
+import {
+    AddParticipantDto,
+    ConversationQueryParams,
+    CreateConversationDto,
+    PinMessageDto,
+    UpdateConversationDto,
+} from '../types/conversation.type';
 
 /**
  * Hook to get all conversations (infinite query)
@@ -33,7 +32,7 @@ export const useConversations = (
     return useInfiniteQuery({
         queryKey: queryKey.conversations.userId(params?.user_id),
         queryFn: ({ pageParam = 1 }) =>
-            conversationService.getAll({
+            ConversationService.getAll({
                 ...params,
                 page: pageParam,
             }),
@@ -53,7 +52,7 @@ export const useConversation = (
 ) => {
     return useQuery({
         queryKey: queryKey.conversations.id(conversationId),
-        queryFn: () => conversationService.getById(conversationId),
+        queryFn: () => ConversationService.getById(conversationId),
         enabled: options?.enabled !== false && !!conversationId,
         ...defaultQueryOptions,
     });
@@ -84,7 +83,7 @@ export const useCreateConversation = () => {
 
     return useMutation({
         mutationFn: (data: CreateConversationDto) =>
-            conversationService.create(data),
+            ConversationService.create(data),
         onSuccess: (data) => {
             // Invalidate conversations list
             queryClient.invalidateQueries({
@@ -113,7 +112,7 @@ export const useUpdateConversation = () => {
         }: {
             id: string;
             data: UpdateConversationDto;
-        }) => conversationService.update(id, data),
+        }) => ConversationService.update(id, data),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(
@@ -140,7 +139,7 @@ export const useDeleteConversation = () => {
 
     return useMutation({
         mutationFn: (conversationId: string) =>
-            conversationService.delete(conversationId),
+            ConversationService.delete(conversationId),
         onSuccess: (_, conversationId) => {
             // Remove from cache
             queryClient.removeQueries({
@@ -166,7 +165,7 @@ export const useAddParticipant = () => {
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: AddParticipantDto }) =>
-            conversationService.addParticipant(id, data),
+            ConversationService.addParticipant(id, data),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(
@@ -194,7 +193,7 @@ export const useRemoveParticipant = () => {
         }: {
             id: string;
             participantId: string;
-        }) => conversationService.removeParticipant(id, participantId),
+        }) => ConversationService.removeParticipant(id, participantId),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(
@@ -217,7 +216,7 @@ export const usePinMessage = () => {
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: PinMessageDto }) =>
-            conversationService.pinMessage(id, data),
+            ConversationService.pinMessage(id, data),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(
@@ -244,7 +243,7 @@ export const useUnpinMessage = () => {
 
     return useMutation({
         mutationFn: ({ id, messageId }: { id: string; messageId: string }) =>
-            conversationService.unpinMessage(id, messageId),
+            ConversationService.unpinMessage(id, messageId),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(
@@ -259,6 +258,33 @@ export const useUnpinMessage = () => {
         },
         onError: (error) => {
             handleApiError(error, 'Không thể bỏ ghim tin nhắn');
+        },
+    });
+};
+/**
+ * Hook to get or create private conversation
+ */
+export const usePrivateConversation = () => {
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: ({
+            userId,
+            friendId,
+        }: {
+            userId: string;
+            friendId: string;
+        }) => ConversationService.getPrivateConversation({ userId, friendId }),
+        onSuccess: (data) => {
+            if (data.isNew) {
+                // Invalidate conversations list if new conversation created
+                queryClient.invalidateQueries({
+                    queryKey: queryKey.conversations.list(undefined),
+                });
+            }
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể lấy cuộc trò chuyện');
         },
     });
 };

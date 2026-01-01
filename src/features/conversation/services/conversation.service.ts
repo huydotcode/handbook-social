@@ -1,13 +1,36 @@
 import { IConversation } from '@/types/entites';
-import { conversationService as apiConversationService } from '../api/services/conversation.service';
+import { conversationApi } from '../apis/conversation.api';
+import {
+    ConversationQueryParams,
+    CreateConversationDto,
+} from '../types/conversation.type';
 
 class ConversationServiceClass {
+    /**
+     * Get all conversations by user id
+     */
+    public async getAll(params: ConversationQueryParams) {
+        try {
+            return await conversationApi.getAll(params);
+        } catch (error) {
+            console.error('Error getting conversations by user ID:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Update a conversation
+     */
+    public async update(id: string, data: any) {
+        return await conversationApi.update(id, data);
+    }
+
     /**
      * Get conversation by ID using REST API
      */
     public async getById(conversationId: string) {
         try {
-            return await apiConversationService.getById(conversationId);
+            return await conversationApi.getById(conversationId);
         } catch (error) {
             console.error('Error getting conversation by ID:', error);
             throw error;
@@ -37,7 +60,7 @@ class ConversationServiceClass {
         friendId: string;
     }): Promise<{ isNew: boolean; conversation: IConversation | null }> {
         try {
-            const result = await apiConversationService.getPrivateConversation({
+            const result = await conversationApi.getPrivateConversation({
                 user_id: userId,
                 friend_id: friendId,
             });
@@ -54,26 +77,8 @@ class ConversationServiceClass {
     /**
      * Create a new conversation using REST API
      */
-    public async create({
-        creator,
-        participantsUserId,
-        status = 'active',
-        title,
-        groupId = null,
-        type = 'private',
-    }: {
-        participantsUserId: string[];
-        creator: string;
-        title?: string;
-        status?: string;
-        groupId?: string | null;
-        type?: string;
-    }) {
-        return await apiConversationService.create({
-            type: type || 'private',
-            participants: participantsUserId,
-            name: title,
-        });
+    public async create(data: CreateConversationDto) {
+        return await conversationApi.create(data);
     }
 
     /**
@@ -89,9 +94,8 @@ class ConversationServiceClass {
     }) {
         // Use regular create method
         return await this.create({
-            creator: userId,
-            participantsUserId: [userId, friendId],
             type: 'private',
+            participants: [userId, friendId],
         });
     }
 
@@ -105,7 +109,7 @@ class ConversationServiceClass {
         conversationId: string;
         userId: string;
     }) {
-        await apiConversationService.addParticipant(conversationId, {
+        await conversationApi.addParticipant(conversationId, {
             participantId: userId,
         });
     }
@@ -114,7 +118,7 @@ class ConversationServiceClass {
      * Delete a conversation using REST API
      */
     public async delete(conversationId: string) {
-        await apiConversationService.delete(conversationId);
+        await conversationApi.delete(conversationId);
     }
 
     /**
@@ -128,10 +132,7 @@ class ConversationServiceClass {
         userId: string;
     }) {
         try {
-            await apiConversationService.removeParticipant(
-                conversationId,
-                userId
-            );
+            await conversationApi.removeParticipant(conversationId, userId);
         } catch (error) {
             console.error('Error deleting conversation by user:', error);
             throw error;
@@ -141,29 +142,38 @@ class ConversationServiceClass {
     /**
      * Pin a message in conversation using REST API
      */
-    public async addPinMessage({
-        conversationId,
-        messageId,
-    }: {
-        conversationId: string;
-        messageId: string;
-    }) {
-        await apiConversationService.pinMessage(conversationId, {
-            messageId,
-        });
+    /**
+     * Add participant to conversation using REST API
+     */
+    public async addParticipant(id: string, data: { participantId: string }) {
+        return await conversationApi.addParticipant(id, data);
+    }
+
+    /**
+     * Remove participant from conversation - Wrapper
+     */
+    public async removeParticipant(
+        conversationId: string,
+        participantId: string
+    ) {
+        await conversationApi.removeParticipant(conversationId, participantId);
+    }
+
+    /**
+     * Pin a message in conversation using REST API
+     */
+    public async pinMessage(
+        conversationId: string,
+        data: { messageId: string }
+    ) {
+        return await conversationApi.pinMessage(conversationId, data);
     }
 
     /**
      * Unpin a message in conversation using REST API
      */
-    public async removePinMessage({
-        conversationId,
-        messageId,
-    }: {
-        conversationId: string;
-        messageId: string;
-    }) {
-        await apiConversationService.unpinMessage(conversationId, messageId);
+    public async unpinMessage(conversationId: string, messageId: string) {
+        return await conversationApi.unpinMessage(conversationId, messageId);
     }
 
     /**
@@ -176,7 +186,7 @@ class ConversationServiceClass {
         conversationId: string;
         userId: string;
     }) {
-        await apiConversationService.removeParticipant(conversationId, userId);
+        await this.removeParticipant(conversationId, userId);
     }
 
     /**
@@ -194,7 +204,7 @@ class ConversationServiceClass {
         // POST /conversations/:id/restore or re-add participant
         // For now, re-add the user as participant
         try {
-            await apiConversationService.addParticipant(conversationId, {
+            await this.addParticipant(conversationId, {
                 participantId: userId,
             });
         } catch (error) {
@@ -204,5 +214,4 @@ class ConversationServiceClass {
     }
 }
 
-const ConversationService = new ConversationServiceClass();
-export default ConversationService;
+export const ConversationService = new ConversationServiceClass();

@@ -31,20 +31,6 @@ export {
     useSearchMessages,
 } from './useMessage';
 
-// Conversation hooks
-export {
-    useConversations,
-    useConversation,
-    useCreateConversation,
-    useUpdateConversation,
-    useDeleteConversation,
-    useAddParticipant,
-    useRemoveParticipant,
-    usePinMessage,
-    useUnpinMessage,
-    useGroupConversations,
-} from './useConversation';
-
 // Group hooks
 export {
     useJoinedGroups,

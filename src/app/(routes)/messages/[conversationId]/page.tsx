@@ -1,13 +1,13 @@
 'use client';
-import { Loading } from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/Button';
 import { useAuth, useSocket } from '@/core/context';
 import { useConversation } from '@/core/context/SocialContext';
-import { useQueryInvalidation } from '@/shared/hooks';
-import ConversationService from '@/lib/services/conversation.service';
+import { ConversationService } from '@/features/conversation';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { useParams, useSearchParams } from 'next/navigation';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { ChatBox } from '../_components';
 

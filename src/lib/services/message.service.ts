@@ -1,6 +1,7 @@
-import { messageService as apiMessageService } from '../api/services/message.service';
-import { conversationService as apiConversationService } from '../api/services/conversation.service';
 import { IMessage } from '@/types/entites';
+
+import { conversationApi } from '@/features/conversation';
+import { messageService as apiMessageService } from '../api/services/message.service';
 
 class MessageServiceClass {
     /**
@@ -62,7 +63,7 @@ class MessageServiceClass {
         }
 
         try {
-            await apiConversationService.pinMessage(conversationId, {
+            await conversationApi.pinMessage(conversationId, {
                 messageId: messageId,
             });
             return true;
@@ -86,10 +87,7 @@ class MessageServiceClass {
         }
 
         try {
-            await apiConversationService.unpinMessage(
-                conversationId,
-                messageId
-            );
+            await conversationApi.unpinMessage(conversationId, messageId);
             return true;
         } catch (error: any) {
             console.error('Error unpinning message:', error);

@@ -1,11 +1,11 @@
 'use client';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
+import MessageService from '@/lib/services/message.service';
 import { ConfirmModal, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { PopoverContent } from '@/shared/components/ui/Popover';
-import { useSocket } from '@/core/context';
-import { useAuth } from '@/core/context/AuthContext';
-import ConversationService from '@/lib/services/conversation.service';
-import MessageService from '@/lib/services/message.service';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IMessage } from '@/types/entites';
 import { FormEventHandler, useMemo, useState } from 'react';
@@ -44,9 +44,8 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         try {
             if (!socket || msg.isPin) return;
 
-            await ConversationService.addPinMessage({
+            await ConversationService.pinMessage(msg.conversation._id, {
                 messageId: msg._id,
-                conversationId: msg.conversation._id,
             });
 
             toast.success('Đã ghim tin nhắn!', { id: 'pin-message' });
@@ -67,10 +66,10 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         try {
             if (!socket || !msg.isPin) return;
 
-            await ConversationService.removePinMessage({
-                messageId: msg._id,
-                conversationId: msg.conversation._id,
-            });
+            await ConversationService.unpinMessage(
+                msg.conversation._id,
+                msg._id
+            );
 
             toast.success('Đã hủy ghim tin nhắn!', { id: 'unpin-message' });
 
@@ -100,10 +99,10 @@ const MessageAction = ({ msg, index, messages }: Props) => {
             });
 
             if (msg.isPin) {
-                await ConversationService.removePinMessage({
-                    messageId: msg._id,
-                    conversationId: msg.conversation._id,
-                });
+                await ConversationService.unpinMessage(
+                    msg.conversation._id,
+                    msg._id
+                );
             }
 
             toast.success('Đã xóa tin nhắn!', { id: 'delete-message' });

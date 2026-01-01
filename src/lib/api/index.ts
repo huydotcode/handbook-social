@@ -14,7 +14,6 @@
 // export { authApi } from '../../features/auth/apis/auth.api';
 // export { userService } from './services/user.service';
 export { adminService } from './services/admin.service';
-export { conversationService } from './services/conversation.service';
 export { followService } from './services/follow.service';
 export { friendshipService } from './services/friendship.service';
 export { locationService } from './services/location.service';
@@ -36,9 +35,3 @@ export type {
     PostQueryParams,
     UpdatePostDto,
 } from './services/post.service';
-
-export type {
-    ConversationQueryParams,
-    CreateConversationDto,
-    UpdateConversationDto,
-} from './services/conversation.service';

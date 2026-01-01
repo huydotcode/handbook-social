@@ -1,11 +1,11 @@
 'use client';
+import { useAuth, useSocket } from '@/core/context';
+import { ConversationService } from '@/features/conversation';
+import { useGroupMembers } from '@/features/group/hooks/group.hook';
+import { timeConvert } from '@/shared';
 import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
 import { Avatar, Icons, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useAuth, useSocket } from '@/core/context';
-import { useGroupMembers } from '@/features/group/hooks/group.hook';
-import ConversationService from '@/lib/services/conversation.service';
-import { timeConvert } from '@/shared';
 import { socketEvent } from '@/shared/constants';
 import { useBreakpoint } from '@/shared/hooks';
 import {
@@ -89,12 +89,9 @@ const Sidebar: React.FC<Props> = ({
     const mutateCreateConversation = (data: FormData) => {
         if (!user) return toast.error('Chưa đăng nhập');
         createGroupConversation({
-            creator: user.id,
-            participantsUserId: [user.id],
-            title: data.name,
-            groupId: currentGroup._id,
+            participants: [user.id],
             type: 'group',
-            status: 'active',
+            name: data.name,
         });
     };
 

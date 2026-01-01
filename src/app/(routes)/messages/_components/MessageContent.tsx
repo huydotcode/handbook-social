@@ -1,4 +1,10 @@
 'use client';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
+import MessageService from '@/lib/services/message.service';
+import { cn } from '@/lib/utils';
+import { FormatDate, urlRegex } from '@/shared';
 import { Icons, SlideShow } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import Image from '@/shared/components/ui/image';
@@ -10,12 +16,6 @@ import {
     TooltipTrigger,
 } from '@/shared/components/ui/tooltip';
 import VideoPlayer from '@/shared/components/ui/VideoPlayer';
-import { useSocket } from '@/core/context';
-import { useAuth } from '@/core/context/AuthContext';
-import ConversationService from '@/lib/services/conversation.service';
-import MessageService from '@/lib/services/message.service';
-import { cn } from '@/lib/utils';
-import { FormatDate, urlRegex } from '@/shared';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IMessage } from '@/types/entites';
 import Link from 'next/link';
@@ -111,9 +111,8 @@ const MessageContent = ({
         try {
             if (!socket || msg.isPin) return;
 
-            await ConversationService.addPinMessage({
+            await ConversationService.pinMessage(msg.conversation._id, {
                 messageId: msg._id,
-                conversationId: msg.conversation._id,
             });
 
             toast.success('Đã ghim tin nhắn!', { id: 'pin-message' });
@@ -134,10 +133,10 @@ const MessageContent = ({
         try {
             if (!socket || !msg.isPin) return;
 
-            await ConversationService.removePinMessage({
-                messageId: msg._id,
-                conversationId: msg.conversation._id,
-            });
+            await ConversationService.unpinMessage(
+                msg.conversation._id,
+                msg._id
+            );
 
             toast.success('Đã hủy ghim tin nhắn!', { id: 'unpin-message' });
 
@@ -160,17 +159,17 @@ const MessageContent = ({
 
             await MessageService.delete({
                 messageId: msg._id,
-                conversationId: msg.conversation._id,
                 prevMessageId: messages[index - 1]
                     ? messages[index - 1]._id
                     : null,
+                conversationId: msg.conversation._id,
             });
 
             if (msg.isPin) {
-                await ConversationService.removePinMessage({
-                    messageId: msg._id,
-                    conversationId: msg.conversation._id,
-                });
+                await ConversationService.unpinMessage(
+                    msg.conversation._id,
+                    msg._id
+                );
             }
 
             toast.success('Đã xóa tin nhắn!', { id: 'delete-message' });

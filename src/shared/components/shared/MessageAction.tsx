@@ -1,8 +1,8 @@
 'use client';
-import { Button } from '@/shared/components/ui/Button';
 import { useAuth, useSocket } from '@/core/context';
-import ConversationService from '@/lib/services/conversation.service';
+import { ConversationService } from '@/features/conversation';
 import { cn } from '@/lib/utils';
+import { Button } from '@/shared/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 

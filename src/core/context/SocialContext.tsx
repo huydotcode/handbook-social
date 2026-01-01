@@ -1,19 +1,19 @@
 'use client';
-import {
-    conversationService,
-    ConversationQueryParams,
-} from '@/lib/api/services/conversation.service';
 import { followService } from '@/lib/api/services/follow.service';
 import { messageService } from '@/lib/api/services/message.service';
 
+import {
+    ConversationQueryParams,
+    ConversationService,
+} from '@/features/conversation';
+import { UserQueryParams } from '@/features/user';
 import { friendshipService } from '@/lib/api/services/friendship.service';
 import queryKey from '@/lib/queryKey';
+import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';
 import { useAuth } from './AuthContext';
 import { useSocket } from './SocketContext';
-import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
-import { UserQueryParams } from '@/features/user';
 
 const PAGE_SIZE = 10;
 
@@ -45,7 +45,7 @@ export const useConversations = (userId: string | undefined) =>
                 page: 1,
                 page_size: PAGE_SIZE,
             };
-            return conversationService.getAll(params);
+            return ConversationService.getAll(params);
         },
         enabled: !!userId,
         refetchOnMount: false,
@@ -61,7 +61,7 @@ export const useConversation = (conversationId: string | undefined) => {
         queryFn: async () => {
             try {
                 if (!conversationId) return null;
-                return conversationService.getById(conversationId);
+                return ConversationService.getById(conversationId);
             } catch (error) {
                 return null;
             }

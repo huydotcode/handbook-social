@@ -1,4 +1,3 @@
-import ConversationService from '@/lib/services/conversation.service';
 import React from 'react';
 
 interface Props {

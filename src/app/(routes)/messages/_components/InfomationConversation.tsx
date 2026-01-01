@@ -1,4 +1,8 @@
 'use client';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { Items } from '@/shared/components/shared';
 import {
     Avatar,
@@ -10,10 +14,6 @@ import {
 } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import Image from '@/shared/components/ui/image';
-import { useSocket } from '@/core/context';
-import { useAuth } from '@/core/context/AuthContext';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
-import ConversationService from '@/lib/services/conversation.service';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IConversation, IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
