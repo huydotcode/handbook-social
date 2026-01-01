@@ -1,6 +1,6 @@
 import { IGroup, IPost, IUser } from '@/types/entites';
-import { apiClient } from '../client';
-import { API_ENDPOINTS } from '../endpoints';
+import { apiClient } from '../../../core/api/api-client';
+import { API_ENDPOINTS } from '../../../core/api/endpoints';
 
 export interface SearchQueryParams {
     q: string;

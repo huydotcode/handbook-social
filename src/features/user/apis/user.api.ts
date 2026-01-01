@@ -1,5 +1,5 @@
-import { apiClient } from '@/lib/api/client';
-import { API_ENDPOINTS } from '@/lib/api/endpoints';
+import { apiClient } from '@/core/api/api-client';
+import { API_ENDPOINTS } from '@/core/api/endpoints';
 import type { IUser, IProfile, IMedia } from '@/types/entites';
 import type {
     IGetUserProfileResponse,

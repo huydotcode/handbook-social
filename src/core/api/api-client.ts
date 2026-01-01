@@ -1,5 +1,5 @@
 import { AxiosRequestConfig } from 'axios';
-import axiosInstance from '../axios';
+import axiosInstance from '../../lib/axios';
 import { PaginationResult } from '@/types';
 
 /**

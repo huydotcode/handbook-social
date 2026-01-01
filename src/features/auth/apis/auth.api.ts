@@ -1,5 +1,4 @@
-import { apiClient } from '../../../lib/api/client';
-import { API_ENDPOINTS } from '../../../lib/api/endpoints';
+import { API_ENDPOINTS, apiClient } from '@/core/api';
 import {
     LoginDto,
     LoginResponse,

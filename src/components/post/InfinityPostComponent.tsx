@@ -1,7 +1,7 @@
 'use client';
 import { Button } from '@/components/ui/Button';
 import { useAuth } from '@/core/context/AuthContext';
-import { apiClient } from '@/lib/api/client';
+import { apiClient } from '@/core/api/api-client';
 import queryKey from '@/lib/queryKey';
 import { cn } from '@/lib/utils';
 import { IPost } from '@/types/entites';

@@ -1,7 +1,6 @@
+import { API_ENDPOINTS, apiClient } from '@/core/api';
 import { PaginationResult } from '@/types';
 import { IGroup, IMemberGroup } from '@/types/entites';
-import { apiClient } from '../../../lib/api/client';
-import { API_ENDPOINTS } from '../../../lib/api/endpoints';
 import { CreateGroupPayload, GroupQueryParams } from '../types/group.types';
 
 export const groupApi = {

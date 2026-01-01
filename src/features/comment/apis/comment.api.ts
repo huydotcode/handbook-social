@@ -1,4 +1,4 @@
-import { API_ENDPOINTS, apiClient } from '@/lib/api';
+import { API_ENDPOINTS, apiClient } from '@/core/api';
 import { IComment } from '@/types/entites';
 import {
     CommentQueryParams,
