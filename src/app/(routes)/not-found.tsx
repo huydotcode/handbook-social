@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { Navbar } from '@/components/layout';
+import { Navbar } from '@/shared/components/layout';
 
 const NotFoundPage = () => {
     return (

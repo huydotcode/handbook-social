@@ -1,7 +1,7 @@
 'use client';
-import { ConfirmModal, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { PopoverContent } from '@/components/ui/Popover';
+import { ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { PopoverContent } from '@/shared/components/ui/Popover';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import ConversationService from '@/lib/services/conversation.service';

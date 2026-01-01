@@ -1,4 +1,4 @@
-import { Icons } from '@/components/ui';
+import { Icons } from '@/shared/components/ui';
 import React, { JSX } from 'react';
 
 interface Audience {

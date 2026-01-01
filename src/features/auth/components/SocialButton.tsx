@@ -1,6 +1,6 @@
 'use client';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import toast from 'react-hot-toast';

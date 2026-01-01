@@ -1,6 +1,6 @@
 'use client';
-import { Avatar, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Avatar, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
 import { useVideoCall } from '@/core/context/VideoCallContext';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';

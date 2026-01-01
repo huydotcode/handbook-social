@@ -1,6 +1,6 @@
 'use client';
-import { Avatar } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Avatar } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useGroup, useGroupMembers } from '@/lib/hooks/api';
 import { FormatDate, splitName } from '@/shared';
 import { GROUP_ROLES } from '@/types/entites';

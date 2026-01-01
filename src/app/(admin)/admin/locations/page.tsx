@@ -1,6 +1,6 @@
 'use client';
-import { Loading, Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Loading, Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -8,8 +8,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Table,
     TableBody,
@@ -17,7 +17,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/shared/components/ui/table';
 import { useLocations } from '@/core/context/AppContext';
 import { adminService } from '@/lib/api/services/admin.service';
 import React, { useState } from 'react';

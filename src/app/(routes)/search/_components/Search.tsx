@@ -1,7 +1,10 @@
 'use client';
-import { Post } from '@/components/post';
-import { PostTypes, usePosts } from '@/components/post/InfinityPostComponent';
-import { Loading } from '@/components/ui';
+import { Post } from '@/shared/components/post';
+import {
+    PostTypes,
+    usePosts,
+} from '@/shared/components/post/InfinityPostComponent';
+import { Loading } from '@/shared/components/ui';
 import { useAuth } from '@/core/context';
 import { useFriends } from '@/core/context/SocialContext';
 import { searchService } from '@/lib/api';

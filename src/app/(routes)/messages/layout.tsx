@@ -1,7 +1,7 @@
-import FixedLayout from '@/components/layout/FixedLayout';
+import FixedLayout from '@/shared/components/layout/FixedLayout';
 import React from 'react';
 import { Sidebar } from './_components';
-import { Navbar } from '@/components/layout';
+import { Navbar } from '@/shared/components/layout';
 interface Props {
     children: React.ReactNode;
 }

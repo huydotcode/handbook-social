@@ -1,5 +1,5 @@
-import { Avatar } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Avatar } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { UserService } from '@/features/user';
 import ProfileService from '@/lib/services/profile.service';
 import React from 'react';

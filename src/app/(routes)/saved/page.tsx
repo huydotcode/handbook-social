@@ -1,6 +1,6 @@
 'use client';
-import { FriendSection, Sidebar } from '@/components/layout';
-import { InfinityPostComponent } from '@/components/post';
+import { FriendSection, Sidebar } from '@/shared/components/layout';
+import { InfinityPostComponent } from '@/shared/components/post';
 
 const SavedPage = () => {
     return (

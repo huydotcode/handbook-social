@@ -1,5 +1,5 @@
 'use client';
-import { Avatar } from '@/components/ui';
+import { Avatar } from '@/shared/components/ui';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { cn } from '@/lib/utils';

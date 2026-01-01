@@ -1,7 +1,7 @@
 'use client';
-import { Items } from '@/components/shared';
-import { Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Items } from '@/shared/components/shared';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Table,
     TableBody,
@@ -10,7 +10,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/shared/components/ui/table';
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { FormatDate } from '@/shared';

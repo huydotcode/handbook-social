@@ -1,14 +1,14 @@
 'use client';
-import FileUploader from '@/components/shared/FileUploader';
-import { ConfirmModal, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import FileUploader from '@/shared/components/shared/FileUploader';
+import { ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import {
     Form,
     FormControl,
@@ -16,16 +16,16 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
+} from '@/shared/components/ui/select';
+import { Textarea } from '@/shared/components/ui/textarea';
 import { useAuth } from '@/core/context';
 import { useCategories, useLocations } from '@/core/context/AppContext';
 import ItemService from '@/lib/services/item.service';

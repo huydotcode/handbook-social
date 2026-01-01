@@ -1,5 +1,5 @@
-import FileUploader from '@/components/shared/FileUploader';
-import { Button } from '@/components/ui/Button';
+import FileUploader from '@/shared/components/shared/FileUploader';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Dialog,
     DialogContent,
@@ -7,7 +7,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import { useAuth } from '@/core/context';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImageWithFile } from '@/lib/uploadImage';

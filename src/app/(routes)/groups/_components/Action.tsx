@@ -1,8 +1,8 @@
 'use client';
-import { ConfirmModal } from '@/components/ui';
-import Icons from '@/components/ui/Icons';
+import { ConfirmModal } from '@/shared/components/ui';
+import Icons from '@/shared/components/ui/Icons';
 
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/components/ui/Button';
 import { useGroupsJoined } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
 import {

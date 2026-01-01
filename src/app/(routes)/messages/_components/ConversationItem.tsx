@@ -1,18 +1,18 @@
 'use client';
-import { Avatar, ConfirmModal, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Avatar, ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@/components/ui/Popover';
+} from '@/shared/components/ui/Popover';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@/shared/components/ui/tooltip';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';

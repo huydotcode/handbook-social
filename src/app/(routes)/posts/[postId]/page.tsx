@@ -1,6 +1,6 @@
 'use client';
-import { Post } from '@/components/post';
-import { Loading } from '@/components/ui';
+import { Post } from '@/shared/components/post';
+import { Loading } from '@/shared/components/ui';
 import { postService } from '@/lib/api/services/post.service';
 import queryKey from '@/lib/queryKey';
 import { IPost } from '@/types/entites';

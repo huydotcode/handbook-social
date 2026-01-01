@@ -1,6 +1,11 @@
 'use client';
-import { InfinityPostComponent } from '@/components/post';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { InfinityPostComponent } from '@/shared/components/post';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/shared/components/ui/tabs';
 import { use } from 'react';
 
 interface Props {

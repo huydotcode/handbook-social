@@ -1,8 +1,13 @@
 'use client';
-import { ConfirmModal, Icons, Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import VideoPlayer from '@/components/ui/VideoPlayer';
+import { ConfirmModal, Icons, Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/shared/components/ui/tabs';
+import VideoPlayer from '@/shared/components/ui/VideoPlayer';
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { timeConvert, timeConvert4 } from '@/shared';

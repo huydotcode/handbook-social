@@ -1,4 +1,4 @@
-import { Icons } from '@/components/ui';
+import { Icons } from '@/shared/components/ui';
 
 export const searchType = [
     {

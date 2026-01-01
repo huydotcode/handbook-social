@@ -1,7 +1,7 @@
 'use client';
 import Avatar from '@/app/(routes)/groups/_components/Avatar';
 import CoverPhoto from '@/app/(routes)/groups/_components/CoverPhoto';
-import { TabItem } from '@/components/shared';
+import { TabItem } from '@/shared/components/shared';
 import { navGroup } from '@/shared/constants';
 import { IGroup } from '@/types/entites';
 import React from 'react';

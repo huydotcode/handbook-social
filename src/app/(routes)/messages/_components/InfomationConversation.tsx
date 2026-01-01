@@ -1,5 +1,5 @@
 'use client';
-import { Items } from '@/components/shared';
+import { Items } from '@/shared/components/shared';
 import {
     Avatar,
     Collapse,
@@ -7,9 +7,9 @@ import {
     Icons,
     Modal,
     SlideShow,
-} from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import Image from '@/components/ui/image';
+} from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import Image from '@/shared/components/ui/image';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';

@@ -1,6 +1,6 @@
 'use client';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
 import { cn } from '@/lib/utils';
 import { IProfile } from '@/types/entites';

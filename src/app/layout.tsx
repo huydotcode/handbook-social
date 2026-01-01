@@ -1,4 +1,4 @@
-import Providers from '@/components/layout/Providers';
+import Providers from '@/shared/components/layout/Providers';
 import type { Metadata } from 'next';
 import { Be_Vietnam_Pro } from 'next/font/google';
 import '@/shared/styles/globals.scss';

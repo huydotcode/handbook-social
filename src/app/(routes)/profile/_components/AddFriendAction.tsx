@@ -1,6 +1,6 @@
 'use client';
-import { Button } from '@/components/ui/Button';
-import Icons from '@/components/ui/Icons';
+import { Button } from '@/shared/components/ui/Button';
+import Icons from '@/shared/components/ui/Icons';
 import { useSocket } from '@/core/context';
 import { useNotifications, useRequests } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';

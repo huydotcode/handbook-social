@@ -1,15 +1,15 @@
 'use client';
-import { Icons, SlideShow } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import Image from '@/components/ui/image';
-import { Popover, PopoverTrigger } from '@/components/ui/Popover';
+import { Icons, SlideShow } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import Image from '@/shared/components/ui/image';
+import { Popover, PopoverTrigger } from '@/shared/components/ui/Popover';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
-import VideoPlayer from '@/components/ui/VideoPlayer';
+} from '@/shared/components/ui/tooltip';
+import VideoPlayer from '@/shared/components/ui/VideoPlayer';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import ConversationService from '@/lib/services/conversation.service';

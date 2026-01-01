@@ -1,7 +1,7 @@
 'use client';
-import { Icons, Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import Image from '@/components/ui/image';
+import { Icons, Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import Image from '@/shared/components/ui/image';
 import {
     Table,
     TableBody,
@@ -11,13 +11,13 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/shared/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@/shared/components/ui/tooltip';
 import { adminService } from '@/lib/api/services/admin.service';
 import queryKey from '@/lib/queryKey';
 import { IGroup } from '@/types/entites';

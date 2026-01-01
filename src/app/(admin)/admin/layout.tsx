@@ -1,6 +1,6 @@
 'use client';
-import { Navbar } from '@/components/layout';
-import { Loading } from '@/components/ui';
+import { Navbar } from '@/shared/components/layout';
+import { Loading } from '@/shared/components/ui';
 import { useAuth } from '@/core/context/AuthContext';
 import { USER_ROLES } from '@/types/entites';
 import { useRouter } from 'next/navigation';

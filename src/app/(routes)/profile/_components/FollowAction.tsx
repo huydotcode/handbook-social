@@ -1,6 +1,6 @@
 'use client';
-import { Button } from '@/components/ui/Button';
-import Icons from '@/components/ui/Icons';
+import { Button } from '@/shared/components/ui/Button';
+import Icons from '@/shared/components/ui/Icons';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFollowing } from '@/core/context/SocialContext';
 import { UserService } from '@/features/user';

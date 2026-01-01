@@ -1,4 +1,4 @@
-import { DarkmodeButton, Icons } from '@/components/ui';
+import { DarkmodeButton, Icons } from '@/shared/components/ui';
 import { JSX } from 'react';
 
 export type INavbarUserMenu = {

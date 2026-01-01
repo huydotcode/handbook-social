@@ -1,10 +1,10 @@
 'use client';
-import { Avatar } from '@/components/ui';
+import { Avatar } from '@/shared/components/ui';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
-} from '@/components/ui/tooltip';
+} from '@/shared/components/ui/tooltip';
 import { useAuth } from '@/core/context/AuthContext';
 import { cn } from '@/lib/utils';
 import { IMessage } from '@/types/entites';

@@ -1,6 +1,6 @@
 'use client';
 import ActionMember from '@/app/(routes)/groups/_components/ActionMember';
-import { InfinityPostComponent } from '@/components/post';
+import { InfinityPostComponent } from '@/shared/components/post';
 import { useAuth } from '@/core/context/AuthContext';
 import { useUser } from '@/features/user';
 import { useGroup, useGroupMember } from '@/lib/hooks/api';

@@ -2,15 +2,15 @@
 import Avatar from '@/app/(routes)/profile/_components/Avatar';
 import CoverPhoto from '@/app/(routes)/profile/_components/CoverPhoto';
 import FollowAction from '@/app/(routes)/profile/_components/FollowAction';
-import { MessageAction, TabItem } from '@/components/shared';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { MessageAction, TabItem } from '@/shared/components/shared';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     DropdownMenu,
     DropdownMenuContent,
     DropdownMenuItem,
     DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+} from '@/shared/components/ui/dropdown-menu';
 import { useAuth } from '@/core/context/AuthContext';
 import { navProfile } from '@/shared/constants';
 import { IProfile } from '@/types/entites';

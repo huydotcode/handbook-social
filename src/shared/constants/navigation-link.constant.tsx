@@ -1,4 +1,4 @@
-import Icons from '@/components/ui/Icons';
+import Icons from '@/shared/components/ui/Icons';
 import { USER_ROLES } from '@/types/entites';
 import React from 'react';
 

@@ -1,6 +1,6 @@
 'use client';
 import ListItem from '@/app/(routes)/market/_components/ListItem';
-import { Loading } from '@/components/ui';
+import { Loading } from '@/shared/components/ui';
 import { useAuth } from '@/core/context';
 import { itemService } from '@/lib/api/services/item.service';
 import queryKey from '@/lib/queryKey';

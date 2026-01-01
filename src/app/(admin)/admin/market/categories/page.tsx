@@ -1,6 +1,6 @@
 'use client';
-import { ConfirmModal, Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { ConfirmModal, Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -8,9 +8,9 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import Icons, { IconsArray } from '@/components/ui/Icons';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import Icons, { IconsArray } from '@/shared/components/ui/Icons';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Table,
     TableBody,
@@ -18,7 +18,7 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/shared/components/ui/table';
 import { useCategories } from '@/core/context/AppContext';
 import CategoryService from '@/lib/services/category.service';
 import { useId, useState } from 'react';

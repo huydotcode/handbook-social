@@ -1,5 +1,5 @@
 'use client';
-import { MessageAction } from '@/components/shared';
+import { MessageAction } from '@/shared/components/shared';
 import { useAuth } from '@/core/context/AuthContext';
 import ItemService from '@/lib/services/item.service';
 import { formatMoney } from '@/shared';

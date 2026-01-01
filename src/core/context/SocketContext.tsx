@@ -1,5 +1,5 @@
 'use client';
-import { Icons } from '@/components/ui';
+import { Icons } from '@/shared/components/ui';
 import { socketConfig } from '@/core/config/socket';
 import queryKey from '@/lib/queryKey';
 import { socketEvent, soundTypes } from '@/shared/constants';

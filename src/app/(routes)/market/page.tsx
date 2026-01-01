@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/components/ui/Button';
 import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { itemService } from '@/lib/api/services/item.service';
 import queryKey from '@/lib/queryKey';

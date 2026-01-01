@@ -1,6 +1,6 @@
 'use client';
-import ConversationItemSkeleton from '@/components/skeleton/ConversationItemSkeleton';
-import { Icons } from '@/components/ui';
+import ConversationItemSkeleton from '@/shared/components/skeleton/ConversationItemSkeleton';
+import { Icons } from '@/shared/components/ui';
 import {
     Select,
     SelectContent,
@@ -8,7 +8,7 @@ import {
     SelectItem,
     SelectLabel,
     SelectTrigger,
-} from '@/components/ui/select';
+} from '@/shared/components/ui/select';
 import { useAuth } from '@/core/context/AuthContext';
 import { useConversations } from '@/core/context/SocialContext';
 import { cn } from '@/lib/utils';

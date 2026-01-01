@@ -1,7 +1,7 @@
 'use client';
-import SidebarCollapse from '@/components/layout/SidebarCollapse';
-import { Avatar, Icons, Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
+import { Avatar, Icons, Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useAuth, useSocket } from '@/core/context';
 import { useGroupMembers } from '@/features/group/hooks/group.hook';
 import ConversationService from '@/lib/services/conversation.service';

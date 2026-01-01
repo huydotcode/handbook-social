@@ -1,5 +1,5 @@
-import Avatar from '@/components/ui/Avatar';
-import { Button } from '@/components/ui/Button';
+import Avatar from '@/shared/components/ui/Avatar';
+import { Button } from '@/shared/components/ui/Button';
 import { cn } from '@/lib/utils';
 import { IFriend } from '@/types/entites';
 import React from 'react';

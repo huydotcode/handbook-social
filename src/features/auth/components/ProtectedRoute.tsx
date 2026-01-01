@@ -2,7 +2,7 @@
 import { useAuth } from '@/core/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, ReactNode } from 'react';
-import { Loading } from '@/components/ui';
+import { Loading } from '@/shared/components/ui';
 
 interface ProtectedRouteProps {
     children: ReactNode;

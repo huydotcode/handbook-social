@@ -1,12 +1,12 @@
 'use client';
-import { ReadMoreParagraph } from '@/components/shared';
+import { ReadMoreParagraph } from '@/shared/components/shared';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import {
     Form,
     FormControl,
@@ -14,8 +14,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import { useGroupMembers } from '@/features/group/hooks/group.hook';
 import { IGroup } from '@/types/entites';
 import React from 'react';

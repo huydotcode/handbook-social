@@ -1,6 +1,6 @@
 'use client';
-import SidebarCollapse from '@/components/layout/SidebarCollapse';
-import { Button } from '@/components/ui/Button';
+import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
+import { Button } from '@/shared/components/ui/Button';
 import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { cn } from '@/lib/utils';
 import { searchType } from '@/shared/constants';

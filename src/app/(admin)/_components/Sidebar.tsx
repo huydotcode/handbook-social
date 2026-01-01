@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
 import { cn } from '@/lib/utils';
 import { navAdmin } from '@/shared/constants';

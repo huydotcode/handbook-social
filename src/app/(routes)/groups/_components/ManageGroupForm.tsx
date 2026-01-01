@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -7,8 +7,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import { useUpdateGroup } from '@/features/group/hooks/group.hook';
 import { createGroupValidation } from '@/lib/validation';
 import { IGroup } from '@/types/entites';

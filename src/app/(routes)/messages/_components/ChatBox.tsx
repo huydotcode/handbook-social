@@ -1,9 +1,9 @@
 'use client';
 import SearchMessage from '@/app/(routes)/messages/_components/SearchMessage';
-import { FileUploaderWrapper } from '@/components/shared/FileUploader';
-import MessageSkeleton from '@/components/skeleton/MessageSkeleton';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { FileUploaderWrapper } from '@/shared/components/shared/FileUploader';
+import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { messageService } from '@/lib/api/services/message.service';

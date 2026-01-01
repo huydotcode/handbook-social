@@ -1,6 +1,6 @@
 'use client';
-import { Navbar } from '@/components/layout';
-import ChatWithAI from '@/components/layout/ChatWithAI';
+import { Navbar } from '@/shared/components/layout';
+import ChatWithAI from '@/shared/components/layout/ChatWithAI';
 import { ProtectedRoute } from '@/features/auth';
 import React from 'react';
 

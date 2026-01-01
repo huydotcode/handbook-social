@@ -1,6 +1,6 @@
 'use client';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { IMedia } from '@/types/entites';
 import Image from 'next/image';
 import { useCallback, useRef } from 'react';

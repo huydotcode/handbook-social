@@ -1,6 +1,6 @@
 'use client';
-import { Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useAuth, useSocket } from '@/core/context';
 import { useConversation } from '@/core/context/SocialContext';
 import { useQueryInvalidation } from '@/shared/hooks';

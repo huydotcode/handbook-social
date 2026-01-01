@@ -1,6 +1,6 @@
 'use client';
-import { Navbar } from '@/components/layout';
-import { Button } from '@/components/ui/Button';
+import { Navbar } from '@/shared/components/layout';
+import { Button } from '@/shared/components/ui/Button';
 
 const ErrorPage = () => {
     return (

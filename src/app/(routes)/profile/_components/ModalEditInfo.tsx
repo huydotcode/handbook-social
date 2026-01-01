@@ -1,6 +1,6 @@
-import { Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
+import { Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { Input } from '@/shared/components/ui/Input';
 import { useAuth } from '@/core/context';
 import { useLocations } from '@/lib/hooks/api';
 import ProfileService from '@/lib/services/profile.service';

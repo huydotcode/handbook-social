@@ -1,4 +1,4 @@
-import { Loading } from '@/components/ui';
+import { Loading } from '@/shared/components/ui';
 
 const LoadingPage = () => {
     return <Loading fullScreen />;
