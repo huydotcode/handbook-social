@@ -125,6 +125,8 @@ export const API_ENDPOINTS = {
     // Items endpoints
     ITEMS: {
         LIST: '/items',
+        CREATE: '/items',
+        BY_ID: (id: string) => `/items/${id}`,
         SEARCH: '/items/search',
         BY_SELLER: (sellerId: string) => `/items/seller/${sellerId}`,
     },

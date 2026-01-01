@@ -1,8 +1,8 @@
 'use client';
-import { MessageAction } from '@/shared/components/shared';
 import { useAuth } from '@/core/context/AuthContext';
-import ItemService from '@/lib/services/item.service';
+import { ItemService } from '@/features/item';
 import { formatMoney } from '@/shared';
+import { MessageAction } from '@/shared/components/shared';
 import { IItem } from '@/types/entites';
 import Image from 'next/image';
 import { use, useEffect, useState } from 'react';

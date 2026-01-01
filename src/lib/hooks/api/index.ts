@@ -57,9 +57,6 @@ export {
     useRemoveGroupMember,
 } from '../../../features/group/hooks/group.hook';
 
-// Item hooks
-export { useItems, useSearchItems, useItemsBySeller } from './useItem';
-
 // Notification hooks
 export {
     useNotificationsByReceiver,

@@ -1,9 +1,9 @@
 'use client';
 import ListItem from '@/app/(routes)/market/_components/ListItem';
-import { Loading } from '@/shared/components/ui';
 import { useAuth } from '@/core/context';
-import { itemService } from '@/lib/api/services/item.service';
+import { ItemService } from '@/features/item';
 import queryKey from '@/lib/queryKey';
+import { Loading } from '@/shared/components/ui';
 import { IItem } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 
@@ -13,7 +13,7 @@ const ManageItemPage = () => {
         queryKey: queryKey.items.bySeller(user?.id as string),
         queryFn: () => {
             if (!user?.id) return Promise.resolve([]);
-            return itemService.getBySeller(user.id);
+            return ItemService.getBySeller(user.id);
         },
         enabled: !!user?.id,
     });

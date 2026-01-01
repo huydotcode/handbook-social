@@ -124,6 +124,7 @@ export const queryKey = {
         ],
         bySeller: (sellerId: string) => ['items', 'seller', sellerId],
         search: (query: string) => ['items', 'search', query],
+        byId: (id: string) => ['items', id],
     },
 
     // Notifications

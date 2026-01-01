@@ -1,15 +1,15 @@
 'use client';
-import { Button } from '@/shared/components/ui/Button';
 import { useSidebarCollapse } from '@/core/context/SidebarContext';
-import { itemService } from '@/lib/api/services/item.service';
+import { ItemService } from '@/features/item';
 import queryKey from '@/lib/queryKey';
+import { Button } from '@/shared/components/ui/Button';
+import { IItem } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
 import { useInView } from 'react-intersection-observer';
 import ListItem from './_components/ListItem';
 import SearchMarket from './_components/SearchMarket';
-import { IItem } from '@/types/entites';
 
 interface Props {}
 
@@ -26,7 +26,7 @@ const MarketPage: React.FC<Props> = () => {
     } = useInfiniteQuery<IItem[]>({
         queryKey: queryKey.items.index,
         queryFn: ({ pageParam = 1 }) => {
-            return itemService.getAll({
+            return ItemService.getAll({
                 page: pageParam as number,
                 page_size: PAGE_SIZE,
             });
