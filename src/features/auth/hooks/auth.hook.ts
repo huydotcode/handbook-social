@@ -2,6 +2,7 @@ import { useAuth } from '@/core/context/AuthContext';
 import type {
     LoginDto,
     LoginResponse,
+    RegisterDto,
     ResetPasswordDto,
     SendOTPDto,
     VerifyOTPDto,
@@ -32,6 +33,18 @@ export const useLoginMutation = () => {
             // Invalidate auth query
             queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
             showSuccessToast('Đăng nhập thành công');
+        },
+    });
+};
+
+/**
+ * Hook for user signup
+ */
+export const useSignUpMutation = () => {
+    return useMutation({
+        mutationFn: (data: RegisterDto) => AuthService.register(data),
+        onSuccess: () => {
+            showSuccessToast('Đăng ký tài khoản thành công');
         },
     });
 };

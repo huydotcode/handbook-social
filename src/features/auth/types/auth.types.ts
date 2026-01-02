@@ -12,6 +12,7 @@ export interface RegisterDto {
     name: string;
     password: string;
     avatar?: string;
+    repassword?: string;
 }
 
 export interface SendOTPDto {

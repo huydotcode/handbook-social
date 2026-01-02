@@ -1,4 +1,14 @@
 'use client';
+import {
+    AuthContainer,
+    AuthHeader,
+    OrDivider,
+    RedirectLink,
+    signUpValidation,
+    SocialButton,
+    useSignUpMutation,
+} from '@/features/auth';
+import { getErrorMessage } from '@/shared';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
@@ -9,20 +19,12 @@ import {
     FormMessage,
 } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
-import {
-    AuthContainer,
-    AuthHeader,
-    OrDivider,
-    RedirectLink,
-    signUpValidation,
-    SocialButton,
-} from '@/features/auth';
-import AuthService from '@/features/auth/services/auth.service';
-import { zodResolver } from '@hookform/resolvers/zod';
-import { useRouter } from 'next/navigation';
-import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 import { ErrorResponse } from '@/types';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react';
+import { SubmitHandler, useForm } from 'react-hook-form';
 
 type FormSignupData = {
     email: string;
@@ -33,6 +35,12 @@ type FormSignupData = {
 };
 
 const SignUpPage = () => {
+    const router = useRouter();
+    const signUpMutation = useSignUpMutation();
+
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRePassword, setShowRePassword] = useState(false);
+
     const form = useForm<FormSignupData>({
         resolver: zodResolver(signUpValidation),
         defaultValues: {
@@ -44,40 +52,41 @@ const SignUpPage = () => {
         },
     });
 
-    const { handleSubmit, formState, setError } = form;
-    const router = useRouter();
-
-    const { errors, isSubmitting } = formState;
+    const { handleSubmit, formState, setError, clearErrors } = form;
+    const { isSubmitting } = formState;
 
     const signUp: SubmitHandler<FormSignupData> = async (data) => {
-        if (isSubmitting) return;
-
         if (data.password !== data.repassword) {
             setError('repassword', {
                 type: 'manual',
                 message: 'Mật khẩu không khớp',
             });
-
             return;
         }
 
         try {
-            await AuthService.register({
+            await signUpMutation.mutateAsync({
                 email: data.email,
                 username: data.username,
                 name: data.name,
                 password: data.password,
-            });
-
-            toast.success('Đăng ký thành công', {
-                id: 'sign-up-success',
+                repassword: data.repassword,
             });
             router.push('/auth/login');
         } catch (error) {
-            const apiError = error as ErrorResponse;
-            toast.error(apiError?.message || 'Có lỗi xảy ra khi đăng ký', {
-                id: 'sign-up-fail',
+            setError('root', {
+                message: getErrorMessage(error, 'Đăng ký thất bại'),
             });
+        }
+    };
+
+    const handleInputChange = (
+        e: React.ChangeEvent<HTMLInputElement>,
+        field: any
+    ) => {
+        field.onChange(e);
+        if (formState.errors.root) {
+            clearErrors('root');
         }
     };
 
@@ -89,18 +98,25 @@ const SignUpPage = () => {
                     <form
                         className={'space-y-4'}
                         onSubmit={handleSubmit(signUp)}
-                        method="POST"
                     >
                         <FormField
                             control={form.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Email</FormLabel>
+                                    <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                        Email
+                                    </FormLabel>
                                     <FormControl>
-                                        <Input placeholder="Email" {...field} />
+                                        <Input
+                                            placeholder="Email"
+                                            {...field}
+                                            onChange={(e) =>
+                                                handleInputChange(e, field)
+                                            }
+                                        />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-sm text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -110,14 +126,19 @@ const SignUpPage = () => {
                             name="username"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Tên đăng nhập</FormLabel>
+                                    <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                        Tên đăng nhập
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Tên đăng nhập"
                                             {...field}
+                                            onChange={(e) =>
+                                                handleInputChange(e, field)
+                                            }
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-sm text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -127,14 +148,19 @@ const SignUpPage = () => {
                             name="name"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Họ và tên</FormLabel>
+                                    <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                        Họ và tên
+                                    </FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Họ và tên"
                                             {...field}
+                                            onChange={(e) =>
+                                                handleInputChange(e, field)
+                                            }
                                         />
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-sm text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -144,15 +170,43 @@ const SignUpPage = () => {
                             name="password"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Mật khẩu</FormLabel>
+                                    <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                        Mật khẩu
+                                    </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="Mật khẩu"
-                                            {...field}
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                type={
+                                                    showPassword
+                                                        ? 'text'
+                                                        : 'password'
+                                                }
+                                                placeholder="Mật khẩu"
+                                                {...field}
+                                                onChange={(e) =>
+                                                    handleInputChange(e, field)
+                                                }
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                onClick={() =>
+                                                    setShowPassword(
+                                                        (prev) => !prev
+                                                    )
+                                                }
+                                            >
+                                                {showPassword ? (
+                                                    <Eye className="h-4 w-4 text-slate-500" />
+                                                ) : (
+                                                    <EyeOff className="h-4 w-4 text-slate-500" />
+                                                )}
+                                            </Button>
+                                        </div>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-sm text-red-500" />
                                 </FormItem>
                             )}
                         />
@@ -162,29 +216,70 @@ const SignUpPage = () => {
                             name="repassword"
                             render={({ field }) => (
                                 <FormItem>
-                                    <FormLabel>Nhập lại mật khẩu</FormLabel>
+                                    <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                        Nhập lại mật khẩu
+                                    </FormLabel>
                                     <FormControl>
-                                        <Input
-                                            type="password"
-                                            placeholder="Nhập lại mật khẩu"
-                                            {...field}
-                                        />
+                                        <div className="relative">
+                                            <Input
+                                                type={
+                                                    showRePassword
+                                                        ? 'text'
+                                                        : 'password'
+                                                }
+                                                placeholder="Nhập lại mật khẩu"
+                                                {...field}
+                                                onChange={(e) =>
+                                                    handleInputChange(e, field)
+                                                }
+                                            />
+                                            <Button
+                                                type="button"
+                                                variant="ghost"
+                                                size="sm"
+                                                className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                onClick={() =>
+                                                    setShowRePassword(
+                                                        (prev) => !prev
+                                                    )
+                                                }
+                                            >
+                                                {showRePassword ? (
+                                                    <Eye className="h-4 w-4 text-slate-500" />
+                                                ) : (
+                                                    <EyeOff className="h-4 w-4 text-slate-500" />
+                                                )}
+                                            </Button>
+                                        </div>
                                     </FormControl>
-                                    <FormMessage />
+                                    <FormMessage className="text-sm text-red-500" />
                                 </FormItem>
                             )}
                         />
+
+                        {formState.errors.root && (
+                            <div className="rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
+                                <FormMessage className="text-sm font-medium text-red-600 dark:text-red-400">
+                                    {formState.errors.root.message}
+                                </FormMessage>
+                            </div>
+                        )}
 
                         <Button
                             className="w-full"
                             size={'md'}
                             variant={'primary'}
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={isSubmitting || signUpMutation.isPending}
                         >
-                            <h5 className="text-lg">
-                                {isSubmitting ? 'Đang đăng ký...' : 'Đăng ký'}
-                            </h5>
+                            {isSubmitting || signUpMutation.isPending ? (
+                                <div className="flex items-center justify-center">
+                                    <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
+                                    Đang đăng ký...
+                                </div>
+                            ) : (
+                                'Đăng ký'
+                            )}
                         </Button>
                     </form>
                 </Form>
