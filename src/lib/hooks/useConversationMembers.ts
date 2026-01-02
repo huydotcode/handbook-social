@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { conversationMemberService } from '../api/services/conversation-member.service';
-import { queryKey } from '../queryKey';
+import { queryKey } from '../react-query/query-key';
 
 export function useConversationMembers(conversationId: string | undefined) {
     const enabled = Boolean(conversationId);

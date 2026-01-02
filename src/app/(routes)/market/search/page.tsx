@@ -1,6 +1,6 @@
 'use client';
 import { ItemService } from '@/features/item';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { IItem } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';

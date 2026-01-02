@@ -10,7 +10,7 @@ import {
 } from '@/shared/components/ui/dialog';
 import { useAuth } from '@/core/context';
 import GroupService from '@/features/group/services/group.service';
-import { uploadImageWithFile } from '@/lib/uploadImage';
+import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
 import { IGroup } from '@/types/entites';
 import Image from 'next/image';

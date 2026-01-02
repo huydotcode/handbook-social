@@ -7,9 +7,9 @@ import { Button } from '@/shared/components/ui/Button';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { messageService } from '@/lib/api/services/message.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import MessageService from '@/lib/services/message.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
 import {
     useBreakpoint,

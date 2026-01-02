@@ -1,6 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { queryKey } from '@/lib/queryKey';
+import { queryKey } from '@/lib/react-query/query-key';
 import { defaultQueryOptions } from '@/lib/react-query';
 import { handleApiError, showSuccessToast } from '@/shared';
 import { IGroup } from '@/types/entites';

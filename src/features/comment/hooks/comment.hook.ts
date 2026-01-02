@@ -1,4 +1,4 @@
-import { queryKey } from '@/lib/queryKey';
+import { queryKey } from '@/lib/react-query/query-key';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,

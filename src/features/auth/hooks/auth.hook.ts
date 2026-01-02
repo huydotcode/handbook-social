@@ -7,7 +7,7 @@ import type {
     VerifyOTPDto,
 } from '@/features/auth';
 import AuthService from '@/features/auth/services/auth.service';
-import { queryKey } from '@/lib/queryKey';
+import { queryKey } from '@/lib/react-query/query-key';
 import { handleApiError, showSuccessToast } from '@/shared';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 

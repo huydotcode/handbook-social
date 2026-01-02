@@ -2,7 +2,7 @@
 import ListItem from '@/app/(routes)/market/_components/ListItem';
 import { useAuth } from '@/core/context';
 import { ItemService } from '@/features/item';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { Loading } from '@/shared/components/ui';
 import { IItem } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';

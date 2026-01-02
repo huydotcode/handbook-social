@@ -1,5 +1,5 @@
 import { locationService } from '@/lib/api/services/location.service';
-import { queryKey } from '@/lib/queryKey';
+import { queryKey } from '@/lib/react-query/query-key';
 import { defaultQueryOptions } from '@/lib/react-query';
 import { useQuery } from '@tanstack/react-query';
 

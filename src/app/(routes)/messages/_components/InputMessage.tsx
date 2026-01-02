@@ -3,7 +3,7 @@ import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context/AuthContext';
 import MessageService from '@/lib/services/message.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IConversation, IMessage } from '@/types/entites';

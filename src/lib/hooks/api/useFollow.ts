@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { followService } from '@/lib/api/services/follow.service';
-import { queryKey } from '@/lib/queryKey';
+import { queryKey } from '@/lib/react-query/query-key';
 
 /**
  * Hook to get followings of a user

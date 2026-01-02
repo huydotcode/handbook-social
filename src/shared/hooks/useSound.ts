@@ -1,4 +1,4 @@
-import { soundManager } from '@/lib/soundManager';
+import { soundManager } from '@/shared/utils/sound-manager';
 
 export default function useSound(name: string) {
     return {

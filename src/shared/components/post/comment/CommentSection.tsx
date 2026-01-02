@@ -5,7 +5,7 @@ import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
 import CommentService from '@/features/comment/services/comment.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { IComment, IPost } from '@/types/entites';
 import {
     useInfiniteQuery,

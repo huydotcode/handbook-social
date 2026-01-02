@@ -19,7 +19,7 @@ import {
     TooltipTrigger,
 } from '@/shared/components/ui/tooltip';
 import { adminService } from '@/lib/api/services/admin.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { IGroup } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';

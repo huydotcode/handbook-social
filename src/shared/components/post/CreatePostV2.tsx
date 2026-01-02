@@ -8,7 +8,7 @@ import toast from 'react-hot-toast';
 import { useAuth } from '@/core/context';
 import { IPostFormData } from '@/features/post';
 import PostService from '@/lib/services/post.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
 import { createPostValidation } from '@/lib/validation';
 import { postAudience } from '@/shared/constants';

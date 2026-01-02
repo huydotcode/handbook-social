@@ -2,7 +2,7 @@
 import { Post } from '@/shared/components/post';
 import { Loading } from '@/shared/components/ui';
 import { postService } from '@/lib/api/services/post.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react';

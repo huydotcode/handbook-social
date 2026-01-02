@@ -11,7 +11,7 @@ import {
     FormMessage,
 } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
-import { uploadImageWithFile } from '@/lib/uploadImage';
+import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
 import { createGroupValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';

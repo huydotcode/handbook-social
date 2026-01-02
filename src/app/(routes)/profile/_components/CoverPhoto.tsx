@@ -12,7 +12,7 @@ import {
 import { useAuth } from '@/core/context';
 import ImageService from '@/lib/services/image.service';
 import ProfileService from '@/lib/services/profile.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IProfile } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';

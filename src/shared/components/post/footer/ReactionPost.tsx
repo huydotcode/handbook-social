@@ -2,7 +2,7 @@
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context/AuthContext';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import PostService from '@/lib/services/post.service';
 import { cn } from '@/lib/utils';
 import { IPost } from '@/types/entites';

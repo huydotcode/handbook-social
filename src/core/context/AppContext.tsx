@@ -6,8 +6,8 @@ import {
     NotificationQueryParams,
     notificationService,
 } from '@/lib/api/services/notification.service';
-import queryKey from '@/lib/queryKey';
-import { soundManager } from '@/lib/soundManager';
+import queryKey from '@/lib/react-query/query-key';
+import { soundManager } from '@/shared/utils/sound-manager';
 import { notificationType, socketEvent } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { ICategory, ILocation, INotification } from '@/types/entites';

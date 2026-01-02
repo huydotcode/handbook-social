@@ -4,7 +4,7 @@ import { Items } from '@/shared/components/shared';
 import { Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import GroupService from '@/features/group/services/group.service';
 import { IGroup } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';

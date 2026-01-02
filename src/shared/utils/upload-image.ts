@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { uploadService } from './api/services/upload.service';
+import { uploadService } from '../../lib/api/services/upload.service';
 import { IMedia } from '@/types/entites';
 
 /**

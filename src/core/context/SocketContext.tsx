@@ -1,7 +1,7 @@
 'use client';
 import { Icons } from '@/shared/components/ui';
 import { socketConfig } from '@/core/config/socket';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { socketEvent, soundTypes } from '@/shared/constants';
 import { useQueryInvalidation, useSound } from '@/shared/hooks';
 import { IFriend, IMessage } from '@/types/entites';

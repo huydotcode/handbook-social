@@ -8,7 +8,7 @@ import {
 } from '@/features/conversation';
 import { UserQueryParams } from '@/features/user';
 import { friendshipService } from '@/lib/api/services/friendship.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect } from 'react';

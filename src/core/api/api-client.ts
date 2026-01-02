@@ -1,6 +1,6 @@
 import { ApiResponse, PaginationResult } from '@/types';
 import { AxiosRequestConfig } from 'axios';
-import axiosInstance from '../../lib/axios';
+import axiosInstance from './axios-instance';
 
 /**
  * API Client Class

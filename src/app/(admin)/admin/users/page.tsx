@@ -12,7 +12,7 @@ import {
     TableRow,
 } from '@/shared/components/ui/table';
 import { adminService } from '@/lib/api/services/admin.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { FormatDate } from '@/shared';
 import { IUser } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';

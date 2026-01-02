@@ -9,7 +9,7 @@ import { EditorField } from '@/shared/components/ui/EditorV2';
 import Icons from '@/shared/components/ui/Icons';
 import { IPostFormData } from '@/features/post';
 import PostService from '@/lib/services/post.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { editPostValidation } from '@/lib/validation';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';

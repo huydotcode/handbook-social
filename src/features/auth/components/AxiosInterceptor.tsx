@@ -1,6 +1,9 @@
 'use client';
 import { useAuth } from '@/core/context';
-import { setAccessTokenGetter, setRefreshTokenCallback } from '@/lib/axios';
+import {
+    setAccessTokenGetter,
+    setRefreshTokenCallback,
+} from '@/core/api/axios-instance';
 import { useEffect, useRef } from 'react';
 
 export default function AxiosInterceptor() {

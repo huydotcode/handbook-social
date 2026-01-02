@@ -7,7 +7,7 @@ import {
     useSearchPosts,
     useSearchUsers,
 } from '@/lib/hooks/api';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import {
     createSearchGetNextPageParam,
     defaultInfiniteQueryOptions,

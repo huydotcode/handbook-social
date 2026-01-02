@@ -1,5 +1,5 @@
 'use client';
-import { axiosAuth } from '@/lib/axios';
+import { axiosAuth } from '@/core/api/axios-instance';
 import { useQueryClient } from '@tanstack/react-query';
 import {
     createContext,

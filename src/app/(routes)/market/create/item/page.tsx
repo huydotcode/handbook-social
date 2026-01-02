@@ -2,7 +2,7 @@
 import { useAuth } from '@/core/context';
 import { useCategories, useLocations } from '@/core/context/AppContext';
 import { ItemService } from '@/features/item';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { createItemValidation, CreateItemValidation } from '@/lib/validation';
 import FileUploader from '@/shared/components/shared/FileUploader';
 import { Loading } from '@/shared/components/ui';

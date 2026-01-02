@@ -1,6 +1,6 @@
 import type { SearchQueryParams } from '@/lib/api/services/search.service';
 import { searchService } from '@/lib/api/services/search.service';
-import { queryKey } from '@/lib/queryKey';
+import { queryKey } from '@/lib/react-query/query-key';
 import {
     createGetNextPageParam,
     createSearchGetNextPageParam,

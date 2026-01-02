@@ -1,7 +1,7 @@
 'use client';
 import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { ItemService } from '@/features/item';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { Button } from '@/shared/components/ui/Button';
 import { IItem } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';

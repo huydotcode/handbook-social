@@ -4,7 +4,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { Form, FormControl } from '@/shared/components/ui/Form';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAuth } from '@/core/context/AuthContext';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { cn } from '@/lib/utils';
 import { timeConvert3 } from '@/shared';
 import {

@@ -9,7 +9,7 @@ import {
 } from '@/shared/components/ui/tabs';
 import VideoPlayer from '@/shared/components/ui/VideoPlayer';
 import { adminService } from '@/lib/api/services/admin.service';
-import queryKey from '@/lib/queryKey';
+import queryKey from '@/lib/react-query/query-key';
 import { timeConvert, timeConvert4 } from '@/shared';
 import { IMedia } from '@/types/entites';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
