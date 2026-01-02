@@ -1,4 +1,15 @@
 'use client';
+import {
+    AuthContainer,
+    AuthHeader,
+    LoginValidation,
+    loginValidation,
+    OrDivider,
+    RedirectLink,
+    SocialButton,
+    useLoginMutation,
+} from '@/features/auth';
+import { getErrorMessage } from '@/shared';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
@@ -9,81 +20,39 @@ import {
     FormMessage,
 } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
-import {
-    AuthContainer,
-    AuthHeader,
-    OrDivider,
-    RedirectLink,
-    SocialButton,
-    useLogin,
-} from '@/features/auth';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-
-interface FormLoginData {
-    email: string;
-    password: string;
-}
 
 const LoginPage = () => {
     const router = useRouter();
-    const loginMutation = useLogin();
-    const form = useForm<FormLoginData>({
+
+    const loginMutation = useLoginMutation();
+    const loginForm = useForm<LoginValidation>({
         defaultValues: {
             email: '',
             password: '',
         },
+        resolver: zodResolver(loginValidation),
     });
-    const {
-        handleSubmit,
-        formState: { isSubmitting, errors },
-        setError,
-        reset,
-    } = form;
 
-    const loginWithCredentials: SubmitHandler<FormLoginData> = async (
+    const [showPassword, setShowPassword] = useState(false);
+
+    const loginWithCredentials: SubmitHandler<LoginValidation> = async (
         formData
     ) => {
         const { email, password } = formData;
 
         try {
-            await loginMutation.mutateAsync(
-                { email, password },
-                {
-                    onSuccess: () => {
-                        reset();
-                        router.push('/');
-                    },
-                    onError: (error: any) => {
-                        // Handle specific error types
-                        const errorMessage =
-                            error.message || 'Đăng nhập thất bại';
-
-                        if (
-                            errorMessage.includes('Email') ||
-                            errorMessage.includes('email')
-                        ) {
-                            setError('root', {
-                                message: 'Email không tồn tại trong hệ thống',
-                            });
-                        } else if (
-                            errorMessage.includes('Mật khẩu') ||
-                            errorMessage.includes('password')
-                        ) {
-                            setError('root', {
-                                message: 'Mật khẩu không chính xác',
-                            });
-                        } else {
-                            setError('root', {
-                                message: errorMessage,
-                            });
-                        }
-                    },
-                }
-            );
+            await loginMutation.mutateAsync({ email, password });
+            loginForm.reset();
+            router.push('/');
         } catch (error: any) {
-            // Error already handled in onError callback
-            console.error('Login error:', error);
+            loginForm.setError('root', {
+                message: getErrorMessage(error, 'Đăng nhập thất bại'),
+            });
         }
     };
 
@@ -91,14 +60,13 @@ const LoginPage = () => {
         <AuthContainer>
             <AuthHeader title="Đăng nhập" />
             <div className="space-y-4">
-                <Form {...form}>
+                <Form {...loginForm}>
                     <form
-                        method="POST"
-                        onSubmit={handleSubmit(loginWithCredentials)}
+                        onSubmit={loginForm.handleSubmit(loginWithCredentials)}
                         className="space-y-4"
                     >
                         <FormField
-                            control={form.control}
+                            control={loginForm.control}
                             name="email"
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
@@ -109,6 +77,17 @@ const LoginPage = () => {
                                         <Input
                                             placeholder="Nhập email của bạn"
                                             {...field}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                if (
+                                                    loginForm.formState.errors
+                                                        .root
+                                                ) {
+                                                    loginForm.clearErrors(
+                                                        'root'
+                                                    );
+                                                }
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage className="text-sm text-red-500" />
@@ -117,7 +96,7 @@ const LoginPage = () => {
                         />
 
                         <FormField
-                            control={form.control}
+                            control={loginForm.control}
                             name="password"
                             render={({ field }) => (
                                 <div>
@@ -126,11 +105,45 @@ const LoginPage = () => {
                                             Mật khẩu
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="password"
-                                                placeholder="••••••••"
-                                                {...field}
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    type={
+                                                        showPassword
+                                                            ? 'text'
+                                                            : 'password'
+                                                    }
+                                                    placeholder="Nhập mật khẩu của bạn"
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        if (
+                                                            loginForm.formState
+                                                                .errors.root
+                                                        ) {
+                                                            loginForm.clearErrors(
+                                                                'root'
+                                                            );
+                                                        }
+                                                    }}
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                    onClick={() =>
+                                                        setShowPassword(
+                                                            (prev) => !prev
+                                                        )
+                                                    }
+                                                >
+                                                    {showPassword ? (
+                                                        <Eye className="h-4 w-4 text-slate-500" />
+                                                    ) : (
+                                                        <EyeOff className="h-4 w-4 text-slate-500" />
+                                                    )}
+                                                </Button>
+                                            </div>
                                         </FormControl>
                                         <FormMessage className="text-sm text-red-500" />
                                     </FormItem>
@@ -149,10 +162,10 @@ const LoginPage = () => {
                             )}
                         />
 
-                        {errors.root && (
+                        {loginForm.formState.errors.root && (
                             <div className="rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
                                 <FormMessage className="text-sm font-medium text-red-600 dark:text-red-400">
-                                    {errors.root.message}
+                                    {loginForm.formState.errors.root.message}
                                 </FormMessage>
                             </div>
                         )}
@@ -162,9 +175,13 @@ const LoginPage = () => {
                             size={'md'}
                             variant={'primary'}
                             type="submit"
-                            disabled={isSubmitting || loginMutation.isPending}
+                            disabled={
+                                loginForm.formState.isSubmitting ||
+                                loginMutation.isPending
+                            }
                         >
-                            {isSubmitting || loginMutation.isPending ? (
+                            {loginForm.formState.isSubmitting ||
+                            loginMutation.isPending ? (
                                 <div className="flex items-center justify-center">
                                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                     Đang đăng nhập...

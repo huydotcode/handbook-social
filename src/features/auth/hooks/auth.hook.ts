@@ -14,19 +14,16 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 /**
  * Hook for user login
  */
-export const useLogin = () => {
+export const useLoginMutation = () => {
     const { setAccessToken, setUser } = useAuth();
     const queryClient = useQueryClient();
 
     return useMutation({
         mutationFn: (data: LoginDto) => AuthService.login(data),
         onSuccess: (data: LoginResponse) => {
-            // Store access token in memory via context
             if (data.accessToken) {
                 setAccessToken(data.accessToken);
 
-                // User will be set automatically in setAccessToken,
-                // but if provided explicitly, use it
                 if (data.user) {
                     setUser(data.user);
                 }
@@ -35,9 +32,6 @@ export const useLogin = () => {
             // Invalidate auth query
             queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
             showSuccessToast('Đăng nhập thành công');
-        },
-        onError: (error) => {
-            handleApiError(error, 'Đăng nhập thất bại');
         },
     });
 };
