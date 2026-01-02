@@ -29,8 +29,16 @@ export type SignUpValidation = z.infer<typeof signUpValidation>;
 
 // Login validation
 export const loginValidation = z.object({
-    email: z.string().email('Email không hợp lệ'),
-    password: z.string(),
+    account: z
+        .string()
+        .min(1, 'Vui lòng nhập email hoặc tên đăng nhập')
+        .refine((value) => {
+            if (value.includes('@')) {
+                return z.string().email().safeParse(value).success;
+            }
+            return true;
+        }, 'Email không hợp lệ'),
+    password: z.string().min(1, 'Vui lòng nhập mật khẩu'),
 });
 
 export type LoginValidation = z.infer<typeof loginValidation>;

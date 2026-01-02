@@ -32,7 +32,7 @@ const LoginPage = () => {
     const loginMutation = useLoginMutation();
     const loginForm = useForm<LoginValidation>({
         defaultValues: {
-            email: '',
+            account: '',
             password: '',
         },
         resolver: zodResolver(loginValidation),
@@ -43,10 +43,10 @@ const LoginPage = () => {
     const loginWithCredentials: SubmitHandler<LoginValidation> = async (
         formData
     ) => {
-        const { email, password } = formData;
+        const { account, password } = formData;
 
         try {
-            await loginMutation.mutateAsync({ email, password });
+            await loginMutation.mutateAsync({ account, password });
             loginForm.reset();
             router.push('/');
         } catch (error: any) {
@@ -67,15 +67,15 @@ const LoginPage = () => {
                     >
                         <FormField
                             control={loginForm.control}
-                            name="email"
+                            name="account"
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
-                                        Email của bạn
+                                        Tài khoản
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Nhập email của bạn"
+                                            placeholder="Nhập email hoặc tên đăng nhập"
                                             {...field}
                                             onChange={(e) => {
                                                 field.onChange(e);

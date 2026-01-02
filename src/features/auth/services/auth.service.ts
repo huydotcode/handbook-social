@@ -21,7 +21,7 @@ class AuthServiceClass {
     }
 
     /**
-     * Login user with email and password
+     * Login user with account (email or username) and password
      */
     public async login(data: LoginDto): Promise<LoginResponse> {
         try {
