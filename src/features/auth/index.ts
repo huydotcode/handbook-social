@@ -18,3 +18,6 @@ export * from './services/auth.service';
 
 // types
 export * from './types/auth.types';
+
+// schemas
+export * from './schemas/auth.schema';

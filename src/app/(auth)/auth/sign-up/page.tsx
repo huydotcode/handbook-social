@@ -14,10 +14,10 @@ import {
     AuthHeader,
     OrDivider,
     RedirectLink,
+    signUpValidation,
     SocialButton,
 } from '@/features/auth';
 import AuthService from '@/features/auth/services/auth.service';
-import { signUpValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { SubmitHandler, useForm } from 'react-hook-form';

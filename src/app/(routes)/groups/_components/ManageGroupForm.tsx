@@ -10,11 +10,11 @@ import {
 } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
 import { useUpdateGroup } from '@/features/group/hooks/group.hook';
-import { createGroupValidation } from '@/lib/validation';
 import { IGroup } from '@/types/entites';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { createGroupValidation } from '@/features/group';
 
 const INPUT_CLASSNAME =
     'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';

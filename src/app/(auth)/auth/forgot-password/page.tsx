@@ -14,11 +14,11 @@ import {
     AuthHeader,
     OrDivider,
     RedirectLink,
+    resetPasswordValidation,
     useResetPassword,
     useSendOTP,
     useVerifyOTP,
 } from '@/features/auth';
-import { resetPasswordValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';

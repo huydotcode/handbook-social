@@ -1,6 +1,9 @@
 'use client';
 import { Icons } from '@/shared/components/ui';
 
+import { useAuth } from '@/core/context';
+import { createGroupValidation } from '@/features/group';
+import { useCreateGroup } from '@/features/group/hooks/group.hook';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
@@ -12,17 +15,13 @@ import {
 } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
 import { uploadImageWithFile } from '@/shared/utils/upload-image';
-import { cn } from '@/lib/utils';
-import { createGroupValidation } from '@/lib/validation';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useAuth } from '@/core/context';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sidebar } from '../_components';
-import { useCreateGroup } from '@/features/group/hooks/group.hook';
 
 const INPUT_CLASSNAME =
     'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';

@@ -6,13 +6,12 @@ import { Controller, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 import { useAuth } from '@/core/context';
-import { IPostFormData } from '@/features/post';
+import { createPostValidation, IPostFormData } from '@/features/post';
 import PostService from '@/lib/services/post.service';
-import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
-import { createPostValidation } from '@/lib/validation';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { FileUploaderWrapper } from '../shared/FileUploader';
