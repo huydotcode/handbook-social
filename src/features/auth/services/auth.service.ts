@@ -80,6 +80,19 @@ class AuthServiceClass {
             throw error;
         }
     }
+
+    /**
+     * Login with Google
+     */
+    public async loginWithGoogle(code: string): Promise<LoginResponse> {
+        try {
+            const response = await authApi.loginWithGoogle({ code });
+            return response;
+        } catch (error) {
+            console.error('Error logging in with Google:', error);
+            throw error;
+        }
+    }
 }
 
 const AuthService = new AuthServiceClass();

@@ -38,6 +38,31 @@ export const useLoginMutation = () => {
 };
 
 /**
+ * Hook for user google login
+ */
+export const useGoogleLoginMutation = () => {
+    const { setAccessToken, setUser } = useAuth();
+    const queryClient = useQueryClient();
+
+    return useMutation({
+        mutationFn: (code: string) => AuthService.loginWithGoogle(code),
+        onSuccess: (data: LoginResponse) => {
+            if (data.accessToken) {
+                setAccessToken(data.accessToken);
+
+                if (data.user) {
+                    setUser(data.user);
+                }
+            }
+
+            // Invalidate auth query
+            queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
+            showSuccessToast('Đăng nhập Google thành công');
+        },
+    });
+};
+
+/**
  * Hook for user signup
  */
 export const useSignUpMutation = () => {

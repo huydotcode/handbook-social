@@ -15,6 +15,9 @@ const envSchema = z.object({
     NODE_ENV: z
         .enum(['development', 'production', 'test'])
         .default('development'),
+
+    // Google Client Id:
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: z.string(),
 });
 
 // Process env validation
@@ -25,6 +28,7 @@ const envProcess = envSchema.safeParse({
     NEXT_PUBLIC_TURN_USERNAME: process.env.NEXT_PUBLIC_TURN_USERNAME,
     NEXT_PUBLIC_TURN_CREDENTIAL: process.env.NEXT_PUBLIC_TURN_CREDENTIAL,
     NODE_ENV: process.env.NODE_ENV,
+    NEXT_PUBLIC_GOOGLE_CLIENT_ID: process.env.NEXT_PUBLIC_GOOGLE_CLIENT_ID,
 });
 
 if (!envProcess.success) {

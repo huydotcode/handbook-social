@@ -47,4 +47,14 @@ export const authApi = {
     resetPassword: (data: ResetPasswordDto) => {
         return apiClient.post(API_ENDPOINTS.AUTH.RESET_PASSWORD, data);
     },
+
+    /**
+     * Login with Google
+     */
+    loginWithGoogle: (data: { code: string }) => {
+        return apiClient.post<LoginResponse>(
+            API_ENDPOINTS.AUTH.GOOGLE_LOGIN,
+            data
+        );
+    },
 };

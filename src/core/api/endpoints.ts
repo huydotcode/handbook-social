@@ -11,6 +11,7 @@ export const API_ENDPOINTS = {
         SEND_OTP: '/auth/send-otp',
         VERIFY_OTP: '/auth/verify-otp',
         RESET_PASSWORD: '/auth/reset-password',
+        GOOGLE_LOGIN: '/auth/google',
     },
 
     // Users endpoints
