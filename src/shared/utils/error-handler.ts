@@ -1,20 +1,21 @@
-/**
- * Error handling utilities for API hooks
- */
 import toast from 'react-hot-toast';
+import { isAxiosError } from 'axios';
 
 export interface ApiError {
     message?: string;
     error?: string;
 }
 
-/**
- * Extracts error message from various error types
- */
 export const getErrorMessage = (
     error: unknown,
     defaultMessage: string
 ): string => {
+    if (isAxiosError(error)) {
+        const data = error.response?.data as ApiError;
+        if (data?.message) return data.message;
+        if (data?.error) return data.error;
+    }
+
     if (error instanceof Error) {
         return error.message || defaultMessage;
     }
@@ -32,9 +33,6 @@ export const getErrorMessage = (
     return defaultMessage;
 };
 
-/**
- * Handles API errors with toast notification
- */
 export const handleApiError = (
     error: unknown,
     defaultMessage: string
@@ -43,9 +41,6 @@ export const handleApiError = (
     toast.error(message);
 };
 
-/**
- * Shows success toast notification
- */
 export const showSuccessToast = (message: string): void => {
     toast.success(message);
 };
