@@ -20,6 +20,7 @@ import {
     useVerifyOTP,
 } from '@/features/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -57,6 +58,8 @@ const ForgotPassword = () => {
     } = form;
 
     const [step, setStep] = useState<Step>('send-otp');
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepassword, setShowRepassword] = useState(false);
 
     const handleSendOtp = async (email: string) => {
         try {
@@ -228,10 +231,36 @@ const ForgotPassword = () => {
                                             <FormControl>
                                                 <div className="relative">
                                                     <Input
-                                                        type="password"
+                                                        type={
+                                                            showPassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         placeholder="••••••••"
                                                         {...field}
                                                     />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        aria-label={
+                                                            showPassword
+                                                                ? 'Ẩn mật khẩu'
+                                                                : 'Hiện mật khẩu'
+                                                        }
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                        onClick={() =>
+                                                            setShowPassword(
+                                                                (prev) => !prev
+                                                            )
+                                                        }
+                                                    >
+                                                        {showPassword ? (
+                                                            <Eye className="h-4 w-4 text-slate-500" />
+                                                        ) : (
+                                                            <EyeOff className="h-4 w-4 text-slate-500" />
+                                                        )}
+                                                    </Button>
                                                     <div className="from-blue-500/10 pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-r to-cyan-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
                                                 </div>
                                             </FormControl>
@@ -251,10 +280,36 @@ const ForgotPassword = () => {
                                             <FormControl>
                                                 <div className="relative">
                                                     <Input
-                                                        type="password"
+                                                        type={
+                                                            showRepassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         placeholder="••••••••"
                                                         {...field}
                                                     />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        aria-label={
+                                                            showRepassword
+                                                                ? 'Ẩn mật khẩu'
+                                                                : 'Hiện mật khẩu'
+                                                        }
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                        onClick={() =>
+                                                            setShowRepassword(
+                                                                (prev) => !prev
+                                                            )
+                                                        }
+                                                    >
+                                                        {showRepassword ? (
+                                                            <Eye className="h-4 w-4 text-slate-500" />
+                                                        ) : (
+                                                            <EyeOff className="h-4 w-4 text-slate-500" />
+                                                        )}
+                                                    </Button>
                                                     <div className="from-blue-500/10 pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-r to-cyan-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
                                                 </div>
                                             </FormControl>
