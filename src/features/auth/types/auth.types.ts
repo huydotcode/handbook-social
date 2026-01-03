@@ -17,6 +17,7 @@ export interface RegisterDto {
 
 export interface SendOTPDto {
     email: string;
+    type: 'register' | 'forgot_password';
 }
 
 export interface VerifyOTPDto {
@@ -27,6 +28,7 @@ export interface VerifyOTPDto {
 export interface ResetPasswordDto {
     email: string;
     newPassword: string;
+    otp: string;
 }
 
 /**

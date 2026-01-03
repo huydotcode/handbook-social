@@ -61,7 +61,7 @@ const ForgotPassword = () => {
     const handleSendOtp = async (email: string) => {
         try {
             await sendOTPMutation.mutateAsync(
-                { email },
+                { email, type: 'forgot_password' },
                 {
                     onSuccess: () => {
                         setStep('verify-otp');
@@ -92,7 +92,7 @@ const ForgotPassword = () => {
     };
 
     const handleResetPassword = async (formData: FormForgotPasswordData) => {
-        const { email, password, repassword } = formData;
+        const { email, password, repassword, otp } = formData;
 
         if (password !== repassword) {
             setError('root', {
@@ -103,7 +103,7 @@ const ForgotPassword = () => {
 
         try {
             await resetPasswordMutation.mutateAsync(
-                { email, newPassword: password },
+                { email, newPassword: password, otp },
                 {
                     onSuccess: () => {
                         reset();

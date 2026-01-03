@@ -34,11 +34,14 @@ class AuthServiceClass {
     }
 
     /**
-     * Send OTP to user email for password reset
+     * Send OTP to user email (register or forgot_password)
      */
-    public async sendOTP(email: string): Promise<void> {
+    public async sendOTP(
+        email: string,
+        type: 'register' | 'forgot_password'
+    ): Promise<void> {
         try {
-            await authApi.sendOTP({ email });
+            await authApi.sendOTP({ email, type });
         } catch (error) {
             console.error('Error sending OTP:', error);
             throw error;
@@ -69,12 +72,14 @@ class AuthServiceClass {
     public async resetPassword({
         email,
         newPassword,
+        otp,
     }: {
         email: string;
         newPassword: string;
+        otp: string;
     }): Promise<void> {
         try {
-            await authApi.resetPassword({ email, newPassword });
+            await authApi.resetPassword({ email, newPassword, otp });
         } catch (error) {
             console.error('Error resetting password:', error);
             throw error;

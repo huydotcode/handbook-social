@@ -102,7 +102,8 @@ export const useLogout = () => {
  */
 export const useSendOTP = () => {
     return useMutation({
-        mutationFn: (data: SendOTPDto) => AuthService.sendOTP(data.email),
+        mutationFn: (data: SendOTPDto) =>
+            AuthService.sendOTP(data.email, data.type),
         onSuccess: () => {
             showSuccessToast('OTP đã được gửi đến email của bạn');
         },
@@ -137,6 +138,7 @@ export const useResetPassword = () => {
             AuthService.resetPassword({
                 email: data.email,
                 newPassword: data.newPassword,
+                otp: data.otp,
             }),
         onSuccess: () => {
             showSuccessToast('Đặt lại mật khẩu thành công');
