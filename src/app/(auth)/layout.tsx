@@ -1,5 +1,5 @@
 'use client';
-import { DarkmodeButton } from '@/shared/components/ui';
+import { DarkmodeButton, Loading } from '@/shared/components/ui';
 import { useAuth } from '@/core/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -67,9 +67,13 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
         }
     }, [isAuthenticated, isLoading, router]);
 
+    if (isLoading) {
+        return <Loading fullScreen />;
+    }
+
     // Avoid flashing auth pages when redirecting
     if (isAuthenticated) {
-        return null;
+        return <Loading fullScreen />;
     }
 
     return (
