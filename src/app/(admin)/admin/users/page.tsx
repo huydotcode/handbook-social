@@ -1,7 +1,7 @@
 'use client';
-import { Items } from '@/components/shared';
-import { Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Items } from '@/shared/components/shared';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Table,
     TableBody,
@@ -10,10 +10,11 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { fetchUsers } from '@/lib/actions/admin/user.action';
-import queryKey from '@/lib/queryKey';
-import { FormatDate } from '@/utils/formatDate';
+} from '@/shared/components/ui/table';
+import { adminService } from '@/lib/api/services/admin.service';
+import queryKey from '@/lib/react-query/query-key';
+import { FormatDate } from '@/shared';
+import { IUser } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React from 'react';
@@ -27,11 +28,9 @@ const AdminUsersPage = () => {
     } = useQuery<IUser[]>({
         queryKey: queryKey.admin.users.index,
         queryFn: async () => {
-            const users = await fetchUsers({
-                limit: 100, // You can adjust the limit as needed
+            return await adminService.getUsers({
+                page_size: 100, // You can adjust the limit as needed
             });
-
-            return users;
         },
         initialData: [],
     });

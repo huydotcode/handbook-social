@@ -1,9 +1,9 @@
 'use client';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import { useDebounce } from '@/hooks';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { Input } from '@/shared/components/ui/Input';
 import { cn } from '@/lib/utils';
+import { useDebounce } from '@/shared/hooks';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 

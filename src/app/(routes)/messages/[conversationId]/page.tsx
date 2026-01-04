@@ -1,13 +1,13 @@
 'use client';
-import { Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
-import { useConversation } from '@/context/SocialContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ConversationService from '@/lib/services/conversation.service';
-import { useSession } from 'next-auth/react';
+import { useAuth, useSocket } from '@/core/context';
+import { useConversation } from '@/core/context/SocialContext';
+import { ConversationService } from '@/features/conversation';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useQueryInvalidation } from '@/shared/hooks';
 import { useParams, useSearchParams } from 'next/navigation';
-import React, { useEffect, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import toast from 'react-hot-toast';
 import { ChatBox } from '../_components';
 
@@ -44,7 +44,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
     const { conversationId } = params;
     const findMessage = searchParams.get('find_msg') || '';
 
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socketEmitor } = useSocket();
     const {
         invalidateMessages,
@@ -60,6 +60,8 @@ const ConversationPage: React.FC<Props> = ({}) => {
         error: conversationError,
     } = useConversation(conversationId as string);
 
+    const { members } = useConversationMembers(conversationId as string);
+
     const error = useMemo(() => {
         if (isLoadingConversation) return null;
 
@@ -71,7 +73,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         const isDeleted = conversation.isDeletedBy?.some(
-            (user) => user === session?.user.id
+            (userId) => userId === user?.id
         );
         if (isDeleted) {
             return {
@@ -81,7 +83,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         // Kiểm tra nếu người dùng là người tạo cuộc trò chuyện thì không cần kiểm tra quyền truy cập
-        const isCreator = conversation.creator?._id === session?.user.id;
+        const isCreator = conversation.creator?._id === user?.id;
         if (isCreator) {
             return {
                 message: '',
@@ -90,15 +92,11 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         // Kiểm tra nếu cuộc trò chuyện là nhóm và người dùng là thành viên của nhóm nhưng không phải là người tham gia cuộc trò chuyện
-        const isGroupMember =
-            conversation.group &&
-            conversation.group.members.some(
-                (m) => m.user._id === session?.user.id
-            );
-        const isParticipant = conversation.participants.some(
-            (p) => p._id === session?.user.id
+        const isGroupMember = Boolean(
+            conversation.group?.members?.some((m) => m.user._id === user?.id)
         );
-        if (isGroupMember && !isParticipant) {
+        const isMember = members.some((m) => m.user._id === user?.id);
+        if (isGroupMember && !isMember) {
             return {
                 message: 'Bạn chưa tham gia cuộc trò chuyện nhóm này.',
                 type: NOT_JOINED,
@@ -106,7 +104,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         // Kiểm tra nếu người dùng không phải là người tham gia cuộc trò chuyện
-        if (!isParticipant) {
+        if (!isMember) {
             return {
                 message: 'Bạn không có quyền truy cập cuộc trò chuyện này',
                 type: NOT_ALLOWED,
@@ -114,36 +112,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
         }
 
         return { message: '', type: '' };
-    }, [conversation, isLoadingConversation, session?.user.id]);
-
-    useEffect(() => {
-        if (!socketEmitor) return;
-        if (!session) return;
-        if (!conversation) return;
-        if (error?.type !== '') return;
-
-        if (conversation) {
-            socketEmitor.joinRoom({
-                roomId: conversation._id,
-                userId: session?.user.id,
-            });
-        }
-        return () => {
-            if (conversation) {
-                socketEmitor.leaveRoom({
-                    roomId: conversation._id,
-                    userId: session?.user.id,
-                });
-            }
-        };
-    }, [conversation, error?.type, session, socketEmitor]);
-
-    // useEffect(() => {
-    //     if (!conversation) return;
-    //     if (!session?.user.id) return;
-
-    //     invalidateMessages(conversation._id);
-    // }, [conversation, invalidateMessages, session?.user.id]);
+    }, [conversation, isLoadingConversation, user?.id, members]);
 
     if (isLoadingConversation || isFetching || isPending) {
         return <Loading fullScreen />;
@@ -176,10 +145,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
                                 variant={'primary'}
                                 onClick={async () => {
                                     try {
-                                        if (
-                                            !conversation?._id ||
-                                            !session?.user.id
-                                        ) {
+                                        if (!conversation?._id || !user?.id) {
                                             return;
                                         }
 
@@ -187,7 +153,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
                                             {
                                                 conversationId:
                                                     conversation._id,
-                                                userId: session?.user.id,
+                                                userId: user.id,
                                             }
                                         );
 
@@ -203,7 +169,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
 
                                         socketEmitor?.joinRoom({
                                             roomId: conversation._id,
-                                            userId: session?.user.id,
+                                            userId: user.id,
                                         });
                                     } catch (error: any) {
                                         toast.error(
@@ -242,14 +208,14 @@ const ConversationPage: React.FC<Props> = ({}) => {
                                     try {
                                         if (
                                             !conversation.group?._id ||
-                                            !session?.user.id
+                                            !user?.id
                                         ) {
                                             return;
                                         }
 
                                         await ConversationService.join({
                                             conversationId: conversation._id,
-                                            userId: session?.user.id,
+                                            userId: user.id,
                                         });
 
                                         await invalidateConversation(
@@ -264,7 +230,7 @@ const ConversationPage: React.FC<Props> = ({}) => {
 
                                         socketEmitor?.joinRoom({
                                             roomId: conversation._id,
-                                            userId: session?.user.id,
+                                            userId: user.id,
                                         });
                                     } catch (error: any) {
                                         toast.error(

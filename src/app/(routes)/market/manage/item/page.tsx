@@ -1,28 +1,21 @@
 'use client';
 import ListItem from '@/app/(routes)/market/_components/ListItem';
-import { Loading } from '@/components/ui';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
-import queryKey from '@/lib/queryKey';
+import { useAuth } from '@/core/context';
+import { ItemService } from '@/features/item';
+import queryKey from '@/lib/react-query/query-key';
+import { Loading } from '@/shared/components/ui';
+import { IItem } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 
 const ManageItemPage = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { data: items, isLoading } = useQuery<IItem[]>({
-        queryKey: queryKey.items.bySeller(session?.user.id),
-        queryFn: async () => {
-            try {
-                const res = await axiosInstance.get(
-                    API_ROUTES.ITEMS.BY_SELLER(session?.user.id as string)
-                );
-
-                return res.data;
-            } catch (error) {
-                console.log(error);
-            }
+        queryKey: queryKey.items.bySeller(user?.id as string),
+        queryFn: () => {
+            if (!user?.id) return Promise.resolve([]);
+            return ItemService.getBySeller(user.id);
         },
-        enabled: !!session?.user.id,
+        enabled: !!user?.id,
     });
 
     return (

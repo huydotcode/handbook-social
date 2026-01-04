@@ -1,32 +1,67 @@
+'use client';
 import ActionMember from '@/app/(routes)/groups/_components/ActionMember';
-import { InfinityPostComponent } from '@/components/post';
-import { GroupUserRole } from '@/enums/GroupRole';
-import { getAuthSession } from '@/lib/auth';
-import GroupService from '@/lib/services/group.service';
-import UserService from '@/lib/services/user.service';
-import { notFound, redirect } from 'next/navigation';
+import { InfinityPostComponent } from '@/shared/components/post';
+import { useAuth } from '@/core/context/AuthContext';
+import { useUser } from '@/features/user';
+import { useGroup, useGroupMember } from '@/lib/hooks/api';
+import { GROUP_ROLES } from '@/types/entites';
+import { notFound, useRouter } from 'next/navigation';
+import { use, useEffect, useMemo } from 'react';
 
 interface Props {
     params: Promise<{ memberId: string; groupId: string }>;
 }
 
-const MemberPage = async ({ params }: Props) => {
-    const { memberId, groupId } = await params;
-    const session = await getAuthSession();
-    const user = await UserService.getById(memberId);
-    const group = await GroupService.getById(groupId);
-    const member = group.members.find((member) => member.user._id === memberId);
+const MemberPage = ({ params }: Props) => {
+    const { memberId, groupId } = use(params);
+    const { user } = useAuth();
+    const router = useRouter();
 
-    if (!group || !user) return notFound();
-    if (!member) {
-        redirect(`/groups/${groupId}/members`);
+    // Fetch user data
+    const { data: userData, isLoading: isLoadingUser } = useUser(memberId);
+
+    // Fetch group data
+    const { data: group, isLoading: isLoadingGroup } = useGroup(groupId);
+
+    // Fetch member data (target member)
+    const { data: member, isLoading: isLoadingMember } = useGroupMember(
+        groupId,
+        memberId
+    );
+
+    // Fetch current user's member data
+    const { data: currentUserMember } = useGroupMember(
+        groupId,
+        user?.id || '',
+        {
+            enabled: !!user?.id,
+        }
+    );
+
+    // Check if current user is admin
+    const isShowAction = useMemo(() => {
+        if (!currentUserMember || !user?.id) return false;
+        const isAdmin = currentUserMember.role === GROUP_ROLES.ADMIN;
+        return isAdmin && memberId !== user.id;
+    }, [currentUserMember, user?.id, memberId]);
+
+    const isLoading = isLoadingUser || isLoadingGroup || isLoadingMember;
+
+    // Redirect to groups list if member not found
+    useEffect(() => {
+        if (!isLoading && member === null) {
+            router.push(`/groups/${groupId}/members`);
+        }
+    }, [isLoading, member, groupId, router]);
+
+    // Show not found if group doesn't exist
+    if (!isLoading && !group) {
+        return notFound();
     }
 
-    const isAdmin =
-        group.members.find((member) => member.user._id === session?.user.id)
-            ?.role === GroupUserRole.ADMIN;
-
-    const isShowAction = isAdmin && memberId !== session?.user.id;
+    if (isLoading || !member || !group || !userData) {
+        return <div className="text-center">Đang tải...</div>;
+    }
 
     return (
         <div>
@@ -37,7 +72,7 @@ const MemberPage = async ({ params }: Props) => {
                 groupId={groupId}
                 userId={memberId}
                 showCreatePost={false}
-                title={`Các bài viết của thành viên ${user.name}`}
+                title={`Các bài viết của thành viên ${userData.name}`}
                 type={'post-by-member'}
             />
         </div>

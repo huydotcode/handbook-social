@@ -1,4 +1,4 @@
-import { DarkmodeButton } from '@/components/ui';
+import { DarkmodeButton } from '@/shared/components/ui';
 import React from 'react';
 
 import {

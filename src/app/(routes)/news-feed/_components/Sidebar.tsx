@@ -1,10 +1,10 @@
 'use client';
 import React from 'react';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { usePathname, useSearchParams } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import SidebarCollapse from '@/components/layout/SidebarCollapse';
+import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
 
 const sidebarItems = [
     {

@@ -1,12 +1,13 @@
 'use client';
-import SidebarCollapse from '@/components/layout/SidebarCollapse';
-import { Items } from '@/components/shared';
-import { Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import queryKey from '@/lib/queryKey';
-import GroupService from '@/lib/services/group.service';
+import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
+import { Items } from '@/shared/components/shared';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useAuth } from '@/core/context';
+import queryKey from '@/lib/react-query/query-key';
+import GroupService from '@/features/group/services/group.service';
+import { IGroup } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import React from 'react';
 
 interface Props {}
@@ -35,8 +36,8 @@ export const useGroups = (userId: string | undefined) =>
     });
 
 const Sidebar: React.FC<Props> = () => {
-    const { data: session } = useSession();
-    const { data: groups, isLoading } = useGroups(session?.user.id);
+    const { user } = useAuth();
+    const { data: groups, isLoading } = useGroups(user?.id);
 
     return (
         <>

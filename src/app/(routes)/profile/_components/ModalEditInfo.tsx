@@ -1,12 +1,12 @@
-import { Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { Input } from '@/components/ui/Input';
-import queryKey from '@/lib/queryKey';
+import { Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { Input } from '@/shared/components/ui/Input';
+import { useAuth } from '@/core/context';
+import { useLocations } from '@/lib/hooks/api';
 import ProfileService from '@/lib/services/profile.service';
-import logger from '@/utils/logger';
-import { useQuery } from '@tanstack/react-query';
-import { usePathname } from 'next/navigation';
-import React from 'react';
+import { IProfile } from '@/types/entites';
+import { useRouter } from 'next/navigation';
+import React, { useId } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -24,15 +24,15 @@ type FormInfo = {
 };
 
 const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
-    const { data: locations } = useQuery<ILocation[]>({
-        queryKey: queryKey.locations,
-        queryFn: async () => {
-            const locations = await ProfileService.getLocations();
-            return locations;
-        },
-    });
+    const workInputId = useId();
+    const educationInputId = useId();
+    const locationInputId = useId();
+    const dateOfBirthInputId = useId();
 
-    const path = usePathname();
+    const { user } = useAuth();
+    const { data: locations } = useLocations();
+    const router = useRouter();
+
     const {
         register,
         handleSubmit,
@@ -47,23 +47,19 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
     });
 
     const changeInfo: SubmitHandler<FormInfo> = async (data) => {
-        if (isSubmitting) return;
+        if (isSubmitting || !user?.id) return;
 
         try {
             await ProfileService.updateInfo({
+                userId: user.id,
                 ...data,
-                profileId: profile._id,
-                path,
             });
 
-            toast.success('Cập nhật thành công!');
+            router.refresh();
 
+            toast.success('Cập nhật thông tin thành công!');
             handleClose();
         } catch (error) {
-            logger({
-                message: 'Error edit info' + error,
-                type: 'error',
-            });
             toast.error('Đã có lỗi xảy ra khi cập nhật thông tin!');
         }
     };
@@ -79,12 +75,12 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
                 <form onSubmit={handleSubmit(changeInfo)}>
                     {/* Work */}
                     <div className="mb-2">
-                        <label className="text-sm" htmlFor="work">
+                        <label className="text-sm" htmlFor={workInputId}>
                             Nơi làm việc
                         </label>
 
                         <Input
-                            id="work"
+                            id={workInputId}
                             spellCheck={false}
                             autoComplete="off"
                             placeholder="Nhập nơi làm việc..."
@@ -103,12 +99,12 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
 
                     {/* Education */}
                     <div className="mb-2">
-                        <label className="text-sm" htmlFor="education">
+                        <label className="text-sm" htmlFor={educationInputId}>
                             Từng học tại
                         </label>
 
                         <Input
-                            id="education"
+                            id={educationInputId}
                             spellCheck={false}
                             autoComplete="off"
                             placeholder="Nhập nơi từng học..."
@@ -127,13 +123,13 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
 
                     {/* Location */}
                     <div className="mb-2">
-                        <label className="text-sm" htmlFor="location">
+                        <label className="text-sm" htmlFor={locationInputId}>
                             Nơi bạn ở
                         </label>
 
                         <select
                             className="mt-2 w-full resize-none rounded-xl bg-primary-1 p-2 focus:border-none focus:outline-none dark:bg-dark-secondary-1"
-                            id="location"
+                            id={locationInputId}
                             {...register('location')}
                         >
                             {locations &&
@@ -156,12 +152,12 @@ const ModalEditInfo: React.FC<Props> = ({ profile, show, handleClose }) => {
 
                     {/* Birthday */}
                     <div className="mb-2">
-                        <label className="text-sm" htmlFor="dateOfBirth">
+                        <label className="text-sm" htmlFor={dateOfBirthInputId}>
                             Ngày sinh
                         </label>
 
                         <input
-                            id="dateOfBirth"
+                            id={dateOfBirthInputId}
                             className="mt-2 w-full resize-none rounded-xl bg-primary-1 p-2 focus:border-none focus:outline-none dark:bg-dark-secondary-1"
                             autoComplete="off"
                             placeholder="Bạn đến từ..."

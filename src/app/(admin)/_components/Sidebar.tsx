@@ -1,13 +1,13 @@
 'use client';
-import { Button } from '@/components/ui/Button';
-import { navAdmin } from '@/constants/navLink';
+import { Button } from '@/shared/components/ui/Button';
+import { useAuth } from '@/core/context';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { navAdmin } from '@/shared/constants';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 
 const Sidebar: React.FC = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const path = usePathname();
     const router = useRouter();
 
@@ -17,7 +17,7 @@ const Sidebar: React.FC = () => {
         <>
             <aside className="fixed left-0 top-[56px] flex h-screen w-[300px] flex-col border-r bg-secondary-1 p-2 dark:bg-dark-secondary-1 xl:w-[80px]">
                 <div className="flex w-full items-center justify-center border-b p-4 xl:hidden">
-                    <h1>Xin chào, {session?.user.name || 'Admin'}</h1>
+                    <h1>Xin chào, {user?.name || 'Admin'}</h1>
                 </div>
 
                 <div className="mt-2 flex flex-col">

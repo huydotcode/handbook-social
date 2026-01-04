@@ -1,20 +1,17 @@
 'use client';
-import { navGroup } from '@/constants/navLink';
-import Image from 'next/image';
-import React from 'react';
-import { TabItem } from '@/components/shared';
-import Action from './Action';
-import { usePathname } from 'next/navigation';
-import CoverPhoto from '@/app/(routes)/groups/_components/CoverPhoto';
 import Avatar from '@/app/(routes)/groups/_components/Avatar';
+import CoverPhoto from '@/app/(routes)/groups/_components/CoverPhoto';
+import { TabItem } from '@/shared/components/shared';
+import { navGroup } from '@/shared/constants';
+import { IGroup } from '@/types/entites';
+import React from 'react';
+import Action from './Action';
 
 interface Props {
     group: IGroup;
 }
 
 const Header: React.FC<Props> = ({ group }) => {
-    const path = usePathname();
-
     return (
         <header className="w-full rounded-b-xl bg-white pb-2 dark:bg-dark-secondary-1">
             <CoverPhoto group={group} />
@@ -28,9 +25,7 @@ const Header: React.FC<Props> = ({ group }) => {
                             {group?.name}
                         </h5>
                         <span className="text-sm">
-                            Nhóm{' '}
-                            {group.type == 'public' ? 'công khai' : 'riêng tư'}{' '}
-                            - {group?.members.length} thành viên
+                            {group.type == 'public' ? 'Công khai' : 'Riêng tư'}
                         </span>
                     </div>
                 </div>

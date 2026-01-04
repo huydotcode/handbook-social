@@ -1,12 +1,13 @@
 'use client';
-import { ConfirmModal, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { PopoverContent } from '@/components/ui/Popover';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ConversationService from '@/lib/services/conversation.service';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
 import MessageService from '@/lib/services/message.service';
-import { useSession } from 'next-auth/react';
+import { ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { PopoverContent } from '@/shared/components/ui/Popover';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IMessage } from '@/types/entites';
 import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -17,7 +18,7 @@ interface Props {
 }
 
 const MessageAction = ({ msg, index, messages }: Props) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socket, socketEmitor } = useSocket();
     const [openModalCofirm, setOpenModalConfirm] = useState<boolean>(false);
     const {
@@ -26,7 +27,7 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         queryClientRemovePinnedMessage,
     } = useQueryInvalidation();
 
-    const isOwnMsg = msg.sender._id === session?.user.id;
+    const isOwnMsg = msg.sender._id === user?.id;
     const pinnedMessages = useMemo(() => {
         return messages.filter((msg) => msg.isPin);
     }, [messages]);
@@ -43,9 +44,8 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         try {
             if (!socket || msg.isPin) return;
 
-            await ConversationService.addPinMessage({
+            await ConversationService.pinMessage(msg.conversation._id, {
                 messageId: msg._id,
-                conversationId: msg.conversation._id,
             });
 
             toast.success('Đã ghim tin nhắn!', { id: 'pin-message' });
@@ -56,7 +56,7 @@ const MessageAction = ({ msg, index, messages }: Props) => {
                 message: msg,
             });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Đã có lỗi xảy ra!', { id: 'pin-message' });
         }
     };
@@ -66,10 +66,10 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         try {
             if (!socket || !msg.isPin) return;
 
-            await ConversationService.removePinMessage({
-                messageId: msg._id,
-                conversationId: msg.conversation._id,
-            });
+            await ConversationService.unpinMessage(
+                msg.conversation._id,
+                msg._id
+            );
 
             toast.success('Đã hủy ghim tin nhắn!', { id: 'unpin-message' });
 
@@ -90,14 +90,6 @@ const MessageAction = ({ msg, index, messages }: Props) => {
         try {
             if (!socket) return;
 
-            console.log({
-                index,
-                messsage: messages[index + 1],
-                prevMessageId: messages[index + 1]
-                    ? messages[index + 1]._id
-                    : null,
-            });
-
             await MessageService.delete({
                 messageId: msg._id,
                 conversationId: msg.conversation._id,
@@ -107,10 +99,10 @@ const MessageAction = ({ msg, index, messages }: Props) => {
             });
 
             if (msg.isPin) {
-                await ConversationService.removePinMessage({
-                    messageId: msg._id,
-                    conversationId: msg.conversation._id,
-                });
+                await ConversationService.unpinMessage(
+                    msg.conversation._id,
+                    msg._id
+                );
             }
 
             toast.success('Đã xóa tin nhắn!', { id: 'delete-message' });

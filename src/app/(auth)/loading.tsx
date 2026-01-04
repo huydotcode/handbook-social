@@ -1,4 +1,4 @@
-import AuthContainer from './auth/_components/AuthContainer';
+import { AuthContainer } from '@/features/auth';
 
 const Loading = () => {
     return (

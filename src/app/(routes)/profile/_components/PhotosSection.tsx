@@ -1,8 +1,9 @@
 'use client';
-import { SlideShow } from '@/components/ui';
-import Image from '@/components/ui/image';
-import { removeImage } from '@/lib/actions/image.action';
+import { SlideShow } from '@/shared/components/ui';
+import Image from '@/shared/components/ui/image';
+import ImageService from '@/lib/services/image.service';
 import { cn } from '@/lib/utils';
+import { IMedia } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 
@@ -45,9 +46,9 @@ const PhotosSection: React.FC<Props> = ({ photos }) => {
                             >
                                 <Image
                                     onError={async (e) => {
-                                        await removeImage({
-                                            imageUrl: picture.url,
-                                        });
+                                        await ImageService.removeImage(
+                                            picture.url
+                                        );
                                     }}
                                     className="rounded-md object-contain"
                                     src={picture.url}

@@ -1,13 +1,14 @@
 'use client';
-import { Avatar } from '@/components/ui';
+import { Avatar } from '@/shared/components/ui';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
-} from '@/components/ui/tooltip';
+} from '@/shared/components/ui/tooltip';
+import { useAuth } from '@/core/context/AuthContext';
 import { cn } from '@/lib/utils';
+import { IMessage } from '@/types/entites';
 import { TooltipTrigger } from '@radix-ui/react-tooltip';
-import { useSession } from 'next-auth/react';
 interface Props {
     msg: IMessage;
     index: number;
@@ -21,13 +22,13 @@ const ReadMessage = ({
     isOwnMsg,
     isSearchMessage = false,
 }: Props) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     return (
         <>
             {index == 0 && !isSearchMessage && (
                 <>
-                    {msg.sender._id === session?.user.id &&
+                    {msg.sender._id === user?.id &&
                         msg.conversation.type === 'private' &&
                         msg.readBy.length > 0 && (
                             <span className="text-xs text-secondary-1">

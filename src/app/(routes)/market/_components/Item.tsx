@@ -1,10 +1,11 @@
 'use client';
-import { Button } from '@/components/ui/Button';
-import Image, { ErrorImage } from '@/components/ui/image';
+import { Button } from '@/shared/components/ui/Button';
+import Image, { ErrorImage } from '@/shared/components/ui/image';
 import { cn } from '@/lib/utils';
-import { formatMoney } from '@/utils/formatMoney';
+import { formatMoney } from '@/shared';
 import React from 'react';
 import EditItem from './EditItem';
+import { IItem } from '@/types/entites';
 
 interface Props {
     className?: string;

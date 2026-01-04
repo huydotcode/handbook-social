@@ -1,17 +1,33 @@
-import { Navbar } from '@/components/layout';
-import { getAuthSession } from '@/lib/auth';
-import { notFound, redirect } from 'next/navigation';
-import React from 'react';
+'use client';
+import { Navbar } from '@/shared/components/layout';
+import { Loading } from '@/shared/components/ui';
+import { useAuth } from '@/core/context/AuthContext';
+import { USER_ROLES } from '@/types/entites';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 import { Sidebar } from '../_components';
-import { UserRole } from '@/enums/UserRole';
 
 interface Props {
     children: React.ReactNode;
 }
 
-const AdminLayout: React.FC<Props> = async ({ children }) => {
-    const session = await getAuthSession();
-    if (session?.user.role != UserRole.ADMIN) notFound();
+const AdminLayout: React.FC<Props> = ({ children }) => {
+    const { user, isLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && (!user || user.role !== USER_ROLES.ADMIN)) {
+            router.push('/');
+        }
+    }, [user, isLoading, router]);
+
+    if (isLoading) {
+        return <Loading />;
+    }
+
+    if (!user || user.role !== USER_ROLES.ADMIN) {
+        return null;
+    }
 
     return (
         <div>

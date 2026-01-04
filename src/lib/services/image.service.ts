@@ -1,32 +1,30 @@
-import { getUrlByImageId, removeImage } from '../actions/image.action';
+import { imageService } from '../api/services/image.service';
 
-interface IImageService {
-    getUrlByImageId: (imageId: string) => Promise<string | null>;
-    removeImage: (imageUrl: string) => Promise<boolean>;
-}
-
-class ImageServiceClass implements IImageService {
+class ImageServiceClass {
+    /**
+     * Get image URL by image ID
+     */
     async getUrlByImageId(imageId: string): Promise<string | null> {
-        console.log('[LIB-SERVICES] getUrlByImageId');
-        const url = await getUrlByImageId({ imageId });
-        if (!url) {
-            throw new Error('Image not found');
+        try {
+            const response = await imageService.getById(imageId);
+            return response.url || null;
+        } catch (error) {
+            console.error('Error getting image URL by ID:', error);
+            return null;
         }
-
-        return url;
     }
 
+    /**
+     * Remove an image
+     */
     async removeImage(imageUrl: string): Promise<boolean> {
-        console.log('[LIB-SERVICES] removeImage');
-        const result = await removeImage({
-            imageUrl,
-        });
-
-        if (!result) {
-            throw new Error('Failed to remove image');
+        try {
+            const response = await imageService.deleteByUrl(imageUrl);
+            return response.success || false;
+        } catch (error) {
+            console.error('Error removing image:', error);
+            return false;
         }
-
-        return result;
     }
 }
 

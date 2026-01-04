@@ -1,14 +1,13 @@
 'use client';
 
-import { Button } from '@/components/ui/Button';
-import Icons, { IconsArray } from '@/components/ui/Icons';
-import { useCategories } from '@/context/AppContext';
+import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
+import { Button } from '@/shared/components/ui/Button';
+import Icons, { IconsArray } from '@/shared/components/ui/Icons';
+import { useCategories } from '@/core/context/AppContext';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import SearchMarket from './SearchMarket';
-import { useSidebarCollapse } from '@/context/SidebarContext';
-import SidebarCollapse from '@/components/layout/SidebarCollapse';
-import Link from 'next/link';
 
 interface Props {}
 

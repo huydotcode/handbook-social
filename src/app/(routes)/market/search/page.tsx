@@ -1,7 +1,7 @@
 'use client';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
-import queryKey from '@/lib/queryKey';
+import { ItemService } from '@/features/item';
+import queryKey from '@/lib/react-query/query-key';
+import { IItem } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
 import { useEffect } from 'react';
@@ -19,11 +19,12 @@ const MarketSearchPage = () => {
         fetchNextPage,
     } = useInfiniteQuery<IItem[]>({
         queryKey: queryKey.items.index,
-        queryFn: async ({ pageParam = 1 }) => {
-            const res = await axiosInstance.get(
-                API_ROUTES.ITEMS.SEARCH(query, pageParam as number, PAGE_SIZE)
-            );
-            return res.data;
+        queryFn: ({ pageParam = 1 }) => {
+            return ItemService.search({
+                q: query,
+                page: pageParam as number,
+                page_size: PAGE_SIZE,
+            });
         },
         getNextPageParam: (lastPage, allPages) => {
             if (lastPage.length < PAGE_SIZE) return undefined;

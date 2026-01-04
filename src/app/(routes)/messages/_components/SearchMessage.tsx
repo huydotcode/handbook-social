@@ -1,17 +1,15 @@
 'use client';
 import Message from '@/app/(routes)/messages/_components/Message';
-import { Icons, Loading } from '@/components/ui';
-import useBreakpoint from '@/hooks/useBreakpoint';
+import { Icons, Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { Input } from '@/shared/components/ui/Input';
+import { messageService } from '@/lib/api/services/message.service';
+import { useBreakpoint } from '@/shared/hooks';
+import { IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import SideHeader from './SideHeader';
-import { Button } from '@/components/ui/Button';
-import { Form, FormField } from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
 import toast from 'react-hot-toast';
-import axiosInstance from '@/lib/axios';
-import { API_ROUTES } from '@/config/api';
+import SideHeader from './SideHeader';
 
 interface Props {
     openSearch: boolean;
@@ -41,14 +39,9 @@ const SearchMessage: React.FC<Props> = ({
 
             setSearchMessages([]);
 
-            const res = await axiosInstance.get(API_ROUTES.MESSAGES.SEARCH, {
-                params: {
-                    q: searchValue,
-                    conversation_id: conversationId,
-                },
+            const data = await messageService.search(conversationId, {
+                q: searchValue,
             });
-
-            const data = res.data;
             setSearchMessages(data);
         } catch (error: any) {
             toast.error('Có lỗi xảy ra, vui lòng thử lại sau');

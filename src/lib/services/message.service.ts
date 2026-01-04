@@ -1,34 +1,12 @@
-import {
-    deleteMessage,
-    pinMessage,
-    sendMessage,
-    unPinMessage,
-} from '../actions/message.action';
+import { IMessage } from '@/types/entites';
 
-interface IMessageService {
-    send: ({
-        roomId,
-        text,
-        images,
-    }: {
-        roomId: string;
-        text: string;
-        images?: string[];
-    }) => Promise<IMessage | null>;
-    delete: ({
-        messageId,
-        prevMessageId,
-        conversationId,
-    }: {
-        messageId: string;
-        conversationId: string;
-        prevMessageId?: string | null;
-    }) => Promise<boolean>;
-    pin: (messageId: string) => Promise<boolean>;
-    unpin: (messageId: string) => Promise<boolean>;
-}
+import { conversationApi } from '@/features/conversation';
+import { messageService as apiMessageService } from '../api/services/message.service';
 
-class MessageServiceClass implements IMessageService {
+class MessageServiceClass {
+    /**
+     * Send a message via REST API
+     */
     async send({
         roomId,
         text,
@@ -38,20 +16,21 @@ class MessageServiceClass implements IMessageService {
         text: string;
         images?: string[];
     }): Promise<IMessage | null> {
-        console.log('[LIB-SERVICES] sendMessage');
-        const newMessage = await sendMessage({
-            roomId,
-            text,
-            images,
-        });
-
-        if (!newMessage) {
-            throw new Error('Error sending message');
+        try {
+            return await apiMessageService.create({
+                conversation: roomId,
+                text: text || '',
+                media: images || [],
+            });
+        } catch (error: any) {
+            console.error('Error sending message:', error);
+            throw error;
         }
-
-        return newMessage;
     }
 
+    /**
+     * Delete a message via REST API
+     */
     async delete({
         messageId,
         prevMessageId,
@@ -61,42 +40,75 @@ class MessageServiceClass implements IMessageService {
         conversationId: string;
         prevMessageId?: string | null;
     }): Promise<boolean> {
-        console.log('[LIB-SERVICES] deleteMessage');
-        const result = await deleteMessage({
-            conversationId,
-            messageId,
-            prevMessageId,
-        });
-
-        if (!result) {
-            throw new Error('Error deleting message');
+        try {
+            await apiMessageService.delete(messageId);
+            return true;
+        } catch (error: any) {
+            console.error('Error deleting message:', error);
+            throw error;
         }
-
-        return true;
     }
 
-    async pin(messageId: string): Promise<boolean> {
-        const result = await pinMessage({
-            messageId,
-        });
-
-        if (!result) {
-            throw new Error('Error pinning message');
+    /**
+     * Pin a message
+     * Note: Pin/unpin is handled via conversation endpoints
+     * @deprecated Use conversationService.addPinMessage instead for better control
+     */
+    async pin(messageId: string, conversationId?: string): Promise<boolean> {
+        if (!conversationId) {
+            console.error('conversationId is required for pinning message');
+            throw new Error(
+                'conversationId is required. Use conversationService.addPinMessage instead'
+            );
         }
 
-        return true;
+        try {
+            await conversationApi.pinMessage(conversationId, {
+                messageId: messageId,
+            });
+            return true;
+        } catch (error: any) {
+            console.error('Error pinning message:', error);
+            throw error;
+        }
     }
 
-    async unpin(messageId: string): Promise<boolean> {
-        const result = await unPinMessage({
-            messageId,
-        });
-
-        if (!result) {
-            throw new Error('Error unpinning message');
+    /**
+     * Unpin a message
+     * Note: Pin/unpin is handled via conversation endpoints
+     * @deprecated Use conversationService.removePinMessage instead for better control
+     */
+    async unpin(messageId: string, conversationId?: string): Promise<boolean> {
+        if (!conversationId) {
+            console.error('conversationId is required for unpinning message');
+            throw new Error(
+                'conversationId is required. Use conversationService.removePinMessage instead'
+            );
         }
 
-        return true;
+        try {
+            await conversationApi.unpinMessage(conversationId, messageId);
+            return true;
+        } catch (error: any) {
+            console.error('Error unpinning message:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Mark messages as read
+     * TODO: Server API needs PATCH /api/messages/:roomId/read endpoint
+     */
+    async markAsRead(roomId: string, userId: string): Promise<boolean> {
+        try {
+            await apiMessageService.markAsRead(roomId, { userId });
+            return true;
+        } catch (error: any) {
+            console.warn(
+                'markAsRead endpoint not yet implemented in server-api'
+            );
+            return false;
+        }
     }
 }
 

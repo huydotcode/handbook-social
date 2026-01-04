@@ -1,6 +1,6 @@
 'use client';
-import { Loading, Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Loading, Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -8,8 +8,8 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Table,
     TableBody,
@@ -17,9 +17,9 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { useLocations } from '@/context/AppContext';
-import { createLocation } from '@/lib/actions/admin/locaiton.action';
+} from '@/shared/components/ui/table';
+import { useLocations } from '@/core/context/AppContext';
+import { adminService } from '@/lib/api/services/admin.service';
 import React, { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
@@ -49,7 +49,7 @@ const AdminLocationsPage = () => {
 
     const onSubmit = async (data: Location) => {
         try {
-            await createLocation({
+            await adminService.createLocation({
                 name: data.name,
                 slug: data.slug,
                 type: data.type,
@@ -59,6 +59,7 @@ const AdminLocationsPage = () => {
             await refetch();
             setOpenModalCreate(false);
             form.reset();
+            toast.success('Tạo địa điểm thành công');
         } catch (error) {
             console.error('Error creating location:', error);
             toast.error('Không thể tạo địa điểm. Vui lòng thử lại sau.');

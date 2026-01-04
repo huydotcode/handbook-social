@@ -1,7 +1,7 @@
 import ProfileService from '@/lib/services/profile.service';
-import UserService from '@/lib/services/user.service';
 import React from 'react';
 import { FriendsSection, PhotosSection } from '../../_components';
+import { UserService } from '@/features/user';
 
 interface Props {
     params: Promise<{ userId: string }>;

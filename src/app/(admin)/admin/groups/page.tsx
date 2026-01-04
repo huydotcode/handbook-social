@@ -1,7 +1,7 @@
 'use client';
-import { Icons, Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import Image from '@/components/ui/image';
+import { Icons, Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import Image from '@/shared/components/ui/image';
 import {
     Table,
     TableBody,
@@ -11,15 +11,16 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/shared/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { getGroups } from '@/lib/actions/admin/group.action';
-import queryKey from '@/lib/queryKey';
+} from '@/shared/components/ui/tooltip';
+import { adminService } from '@/lib/api/services/admin.service';
+import queryKey from '@/lib/react-query/query-key';
+import { IGroup } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import React from 'react';
 
@@ -31,9 +32,11 @@ const AdminGroupPage = () => {
     } = useQuery<IGroup[]>({
         queryKey: queryKey.admin.groups.index,
         queryFn: async () => {
-            const groups = await getGroups();
-            return groups;
+            return await adminService.getGroups({
+                page_size: 100,
+            });
         },
+        initialData: [],
     });
 
     return (
@@ -75,7 +78,7 @@ const AdminGroupPage = () => {
                                 <TableCell>{group.type}</TableCell>
                                 <TableCell>{group.creator?.username}</TableCell>
                                 <TableCell>
-                                    {group.members.length} thành viên
+                                    {group.members?.length ?? 0} thành viên
                                 </TableCell>
                                 <TableCell>
                                     {new Date(

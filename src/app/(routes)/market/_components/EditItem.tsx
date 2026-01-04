@@ -1,14 +1,14 @@
 'use client';
-import FileUploader from '@/components/shared/FileUploader';
-import { ConfirmModal, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import FileUploader from '@/shared/components/shared/FileUploader';
+import { ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Dialog,
     DialogContent,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
 import {
     Form,
     FormControl,
@@ -16,24 +16,25 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useCategories, useLocations } from '@/context/AppContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ItemService from '@/lib/services/item.service';
-import { useSession } from 'next-auth/react';
+} from '@/shared/components/ui/select';
+import { Textarea } from '@/shared/components/ui/textarea';
+import { useAuth } from '@/core/context';
+import { useCategories, useLocations } from '@/core/context/AppContext';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { ICategory, IItem, ILocation } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { ItemService } from '@/features/item';
 
 interface ItemData {
     name: string;
@@ -50,7 +51,7 @@ interface Props {
 
 const EditItem: React.FC<Props> = ({ data: item }) => {
     const { invalidateItemsBySeller } = useQueryInvalidation();
-    const { data: session } = useSession();
+    const { user } = useAuth();
 
     const [openDeleteConfirm, setOpenDeleteConfirm] = useState<boolean>(false);
     const form = useForm<ItemData>({
@@ -88,13 +89,13 @@ const EditItem: React.FC<Props> = ({ data: item }) => {
                 path,
             });
 
-            await invalidateItemsBySeller(session?.user.id as string);
+            await invalidateItemsBySeller(user?.id as string);
 
             toast.success('Cập nhật mặt hàng thành công', {
                 id: 'update-item',
             });
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             toast.error('Cập nhật mặt hàng thất bại', {
                 id: 'update-item',
             });
@@ -110,7 +111,7 @@ const EditItem: React.FC<Props> = ({ data: item }) => {
                 path,
             });
 
-            await invalidateItemsBySeller(session?.user.id as string);
+            await invalidateItemsBySeller(user?.id as string);
 
             toast.success('Xóa mặt hàng thành công');
         } catch (error: any) {

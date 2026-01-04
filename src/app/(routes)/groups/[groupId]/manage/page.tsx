@@ -1,5 +1,5 @@
 import ManageGroupForm from '@/app/(routes)/groups/_components/ManageGroupForm';
-import GroupService from '@/lib/services/group.service';
+import GroupService from '@/features/group/services/group.service';
 import { redirect } from 'next/navigation';
 
 interface Props {

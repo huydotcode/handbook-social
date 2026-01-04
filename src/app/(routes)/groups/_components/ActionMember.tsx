@@ -1,11 +1,10 @@
 'use client';
 
-import { ConfirmModal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { GroupUserRole } from '@/enums/GroupRole';
-import GroupService from '@/lib/services/group.service';
-import { timeConvert4 } from '@/utils/timeConvert';
-import { usePathname } from 'next/navigation';
+import { ConfirmModal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useRemoveGroupMember } from '@/features/group/hooks/group.hook';
+import { timeConvert4 } from '@/shared';
+import { GROUP_ROLES, IGroup, IMemberGroup } from '@/types/entites';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -17,17 +16,11 @@ interface Props {
 const ActionMember = ({ member, group }: Props) => {
     const [openModalRemoveMember, setOpenModalRemoveMember] =
         useState<boolean>(false);
-    const path = usePathname();
+    const removeGroupMember = useRemoveGroupMember(group._id);
 
     const handleRemoveMember = async () => {
         try {
-            const res = await GroupService.leave({
-                userId: member.user._id,
-                groupId: group._id,
-                path: path,
-            });
-
-            toast.success('Xóa thành viên thành công');
+            await removeGroupMember.mutateAsync(member.user._id);
         } catch (error) {
             toast.error('Xóa thành viên thất bại');
         }
@@ -44,9 +37,9 @@ const ActionMember = ({ member, group }: Props) => {
             </p>
             <p className={'text-secondary-3 text-sm'}>
                 Vai trò:{' '}
-                {member.role === GroupUserRole.MEMBER
+                {member.role === GROUP_ROLES.MEMBER
                     ? 'Thành viên'
-                    : member.role === GroupUserRole.ADMIN
+                    : member.role === GROUP_ROLES.ADMIN
                       ? 'Quản trị viên'
                       : 'Chủ nhóm'}
             </p>

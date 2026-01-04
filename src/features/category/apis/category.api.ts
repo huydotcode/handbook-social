@@ -1,0 +1,74 @@
+import { ICategory } from '@/types/entites';
+import { apiClient } from '../../../core/api/api-client';
+import { API_ENDPOINTS } from '../../../core/api/endpoints';
+import {
+    CategoryQueryParams,
+    CategorySearchParams,
+    CreateCategoryDto,
+    UpdateCategoryDto,
+} from '../types/category.types';
+
+export const categoryApi = {
+    /**
+     * Get all categories (paginated)
+     */
+    getAll: (params?: CategoryQueryParams) => {
+        return apiClient.get<ICategory[]>(API_ENDPOINTS.CATEGORIES.LIST, {
+            params,
+        });
+    },
+
+    /**
+     * Get all categories (not paginated)
+     */
+    getAllCategories: () => {
+        return apiClient.get<ICategory[]>(API_ENDPOINTS.CATEGORIES.ALL);
+    },
+
+    /**
+     * Search categories
+     */
+    search: (params: CategorySearchParams) => {
+        return apiClient.get<ICategory[]>(API_ENDPOINTS.CATEGORIES.SEARCH, {
+            params,
+        });
+    },
+
+    /**
+     * Get category by slug
+     */
+    getBySlug: (slug: string) => {
+        return apiClient.get<ICategory>(API_ENDPOINTS.CATEGORIES.BY_SLUG(slug));
+    },
+
+    /**
+     * Get category by ID
+     */
+    getById: (id: string) => {
+        return apiClient.get<ICategory>(API_ENDPOINTS.CATEGORIES.BY_ID(id));
+    },
+
+    /**
+     * Create a new category (Admin only)
+     */
+    create: (data: CreateCategoryDto) => {
+        return apiClient.post<ICategory>(API_ENDPOINTS.CATEGORIES.LIST, data);
+    },
+
+    /**
+     * Update a category (Admin only)
+     */
+    update: (id: string, data: UpdateCategoryDto) => {
+        return apiClient.put<ICategory>(
+            API_ENDPOINTS.CATEGORIES.BY_ID(id),
+            data
+        );
+    },
+
+    /**
+     * Delete a category (Admin only)
+     */
+    delete: (id: string) => {
+        return apiClient.delete<void>(API_ENDPOINTS.CATEGORIES.BY_ID(id));
+    },
+};

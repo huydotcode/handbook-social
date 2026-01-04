@@ -1,5 +1,6 @@
 'use client';
-import { Icons, Loading } from '@/components/ui';
+import ConversationItemSkeleton from '@/shared/components/skeleton/ConversationItemSkeleton';
+import { Icons } from '@/shared/components/ui';
 import {
     Select,
     SelectContent,
@@ -7,16 +8,15 @@ import {
     SelectItem,
     SelectLabel,
     SelectTrigger,
-} from '@/components/ui/select';
-import { useConversations } from '@/context/SocialContext';
+} from '@/shared/components/ui/select';
+import { useAuth } from '@/core/context/AuthContext';
+import { useConversations } from '@/core/context/SocialContext';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useState } from 'react';
 import ConversationItem from './ConversationItem';
 import SearchConversation from './SearchConversation';
-import toast from 'react-hot-toast';
-import ConversationItemSkeleton from '@/components/skeleton/ConversationItemSkeleton';
+import { IConversation } from '@/types/entites';
 
 interface Props {}
 
@@ -36,10 +36,8 @@ export type IFilterConversation = {
 };
 
 const Sidebar: React.FC<Props> = ({}) => {
-    const { data: session } = useSession();
-    const { data: initConversations, isLoading } = useConversations(
-        session?.user?.id
-    );
+    const { user } = useAuth();
+    const { data: initConversations, isLoading } = useConversations(user?.id);
     const [filter, setFilter] = useState<IFilterConversation>({
         query: '',
         type: 'all',
@@ -55,40 +53,34 @@ const Sidebar: React.FC<Props> = ({}) => {
             ? true
             : conversation.title
                   .toLowerCase()
-                  .includes(filter.query.toLowerCase()) ||
-              conversation.participants.some((participant) =>
-                  participant.name
-                      .toLowerCase()
-                      .includes(filter.query.toLowerCase())
-              );
+                  .includes(filter.query.toLowerCase());
 
         const matchesType = (() => {
             switch (filter.type) {
                 case ConversationType.ALL:
                     return !conversation.isDeletedBy.some(
-                        (userId) => userId === session?.user.id
+                        (userId) => userId === user?.id
                     );
                 case ConversationType.UNREAD:
                     return (
                         conversation.lastMessage?.readBy &&
                         !conversation.lastMessage.readBy.some(
-                            (read) => read.user._id === session?.user.id
+                            (read) => read.user._id === user?.id
                         ) &&
-                        conversation.lastMessage.sender._id !== session?.user.id
+                        conversation.lastMessage.sender._id !== user?.id
                     );
                 case ConversationType.READ:
                     return (
-                        conversation.lastMessage?.sender?._id ===
-                            session?.user.id ||
+                        conversation.lastMessage?.sender?._id === user?.id ||
                         conversation.lastMessage?.readBy?.some(
-                            (read) => read.user._id === session?.user.id
+                            (read) => read.user._id === user?.id
                         )
                     );
                 case ConversationType.ARCHIVED:
                     return false;
                 case ConversationType.DELETED:
                     return conversation.isDeletedBy.some(
-                        (userId) => userId === session?.user.id
+                        (userId) => userId === user?.id
                     );
                 default:
                     return true;

@@ -1,101 +1,77 @@
 'use client';
-import { ConfirmModal } from '@/components/ui';
-import Icons from '@/components/ui/Icons';
+import { ConfirmModal } from '@/shared/components/ui';
+import Icons from '@/shared/components/ui/Icons';
 
-import { Button } from '@/components/ui/Button';
-import { useGroupsJoined } from '@/context/AppContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import GroupService from '@/lib/services/group.service';
-import logger from '@/utils/logger';
-import { useSession } from 'next-auth/react';
-import { usePathname, useRouter } from 'next/navigation';
+import { Button } from '@/shared/components/ui/Button';
+import { useGroupsJoined } from '@/core/context/AppContext';
+import { useAuth } from '@/core/context/AuthContext';
+import {
+    useDeleteGroup,
+    useJoinGroup,
+    useLeaveGroup,
+} from '@/features/group/hooks/group.hook';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IGroup } from '@/types/entites';
+import { useRouter } from 'next/navigation';
 import React, { FormEventHandler, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
-
 interface Props {
     group: IGroup;
 }
 
 const Action: React.FC<Props> = ({ group }) => {
     const groupId = group._id;
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const router = useRouter();
-    const { data: groupJoined } = useGroupsJoined(session?.user.id);
-    const [isPending, setIsPending] = useState(false);
+    const { data: groupJoined } = useGroupsJoined(user?.id);
     const { invalidateGroups, invalidateConversations } =
         useQueryInvalidation();
-    const path = usePathname();
+    const joinGroup = useJoinGroup();
+    const leaveGroup = useLeaveGroup();
+    const deleteGroup = useDeleteGroup();
+    const isPending =
+        joinGroup.isPending || leaveGroup.isPending || deleteGroup.isPending;
 
     const isJoinGroup = groupJoined?.some((item) => item._id === groupId);
 
     const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
     const isCreator = useMemo(() => {
-        return group.creator._id == session?.user?.id;
-    }, [group.creator._id, session?.user?.id]);
+        return group.creator._id == user?.id;
+    }, [group.creator._id, user?.id]);
 
     const handleJoinGroup: FormEventHandler = async (e) => {
         e.preventDefault();
 
-        setIsPending(true);
-
         try {
-            await GroupService.join({
-                groupId,
-                userId: session?.user.id as string,
-            });
-
-            await invalidateGroups(session?.user.id as string);
-
-            toast.success('Đã tham gia nhóm');
+            await joinGroup.mutateAsync(groupId);
+            await invalidateGroups(user?.id as string);
         } catch (error) {
-            logger({
-                message: 'Error handle add friend' + error,
-                type: 'error',
-            });
-            toast.error('Có lỗi xảy ra khi tham gia nhóm!');
-        } finally {
-            setIsPending(false);
+            console.error('Join group failed:', error);
         }
     };
 
     const handleOutGroup = async () => {
-        setIsPending(true);
-
         try {
-            await GroupService.leave({
-                groupId,
-                userId: session?.user.id as string,
-                path,
-            });
-
-            await invalidateGroups(session?.user.id as string);
+            await leaveGroup.mutateAsync(groupId);
+            await invalidateGroups(user?.id as string);
 
             await invalidateConversations();
 
-            toast.success('Đã rời khỏi nhóm');
-
             router.push('/groups');
         } catch (error) {
-            console.log(error);
-            toast.error('Có lỗi xảy ra khi rời khỏi nhóm!');
-        } finally {
-            setIsPending(false);
+            console.error('Leave group failed:', error);
         }
     };
 
     const handleDeleteGroup = async () => {
         try {
-            await GroupService.delete(groupId);
-
-            toast.success('Xóa nhóm thành công');
-
-            await invalidateGroups(session?.user.id as string);
+            await deleteGroup.mutateAsync(groupId);
+            await invalidateGroups(user?.id as string);
             await invalidateConversations();
 
             router.push('/groups');
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi xóa nhóm');
+            console.error('Delete group failed:', error);
         }
     };
 

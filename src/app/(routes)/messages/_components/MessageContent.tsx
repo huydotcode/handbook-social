@@ -1,29 +1,25 @@
 'use client';
-import { ConfirmModal, Icons, SlideShow } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import Image from '@/components/ui/image';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/components/ui/Popover';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
+import MessageService from '@/lib/services/message.service';
+import { cn } from '@/lib/utils';
+import { FormatDate, urlRegex } from '@/shared';
+import { Icons, SlideShow } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import Image from '@/shared/components/ui/image';
+import { Popover, PopoverTrigger } from '@/shared/components/ui/Popover';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
-import VideoPlayer from '@/components/ui/VideoPlayer';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ConversationService from '@/lib/services/conversation.service';
-import MessageService from '@/lib/services/message.service';
-import { cn } from '@/lib/utils';
-import { FormatDate } from '@/utils/formatDate';
-import { urlRegex } from '@/utils/regex';
-import { useSession } from 'next-auth/react';
+} from '@/shared/components/ui/tooltip';
+import VideoPlayer from '@/shared/components/ui/VideoPlayer';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IMessage } from '@/types/entites';
 import Link from 'next/link';
-import { FormEventHandler, useMemo, useRef, useState } from 'react';
+import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import MessageAction from './MessageAction';
 
@@ -47,7 +43,7 @@ const MessageContent = ({
     isPin = false,
     handleClick,
 }: MessageContentProps) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socket, socketEmitor } = useSocket();
     const {
         queryClientAddPinnedMessage,
@@ -70,7 +66,7 @@ const MessageContent = ({
             ? true
             : false;
     const index = messages.findIndex((m) => m._id === msg._id);
-    const isOwnMsg = msg.sender._id === session?.user.id;
+    const isOwnMsg = msg.sender._id === user?.id;
 
     const isGroupMsg = msg.conversation.group ? true : false;
     const memoizedImages = useMemo(
@@ -115,9 +111,8 @@ const MessageContent = ({
         try {
             if (!socket || msg.isPin) return;
 
-            await ConversationService.addPinMessage({
+            await ConversationService.pinMessage(msg.conversation._id, {
                 messageId: msg._id,
-                conversationId: msg.conversation._id,
             });
 
             toast.success('Đã ghim tin nhắn!', { id: 'pin-message' });
@@ -128,7 +123,7 @@ const MessageContent = ({
                 message: msg,
             });
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Đã có lỗi xảy ra!', { id: 'pin-message' });
         }
     };
@@ -138,10 +133,10 @@ const MessageContent = ({
         try {
             if (!socket || !msg.isPin) return;
 
-            await ConversationService.removePinMessage({
-                messageId: msg._id,
-                conversationId: msg.conversation._id,
-            });
+            await ConversationService.unpinMessage(
+                msg.conversation._id,
+                msg._id
+            );
 
             toast.success('Đã hủy ghim tin nhắn!', { id: 'unpin-message' });
 
@@ -164,17 +159,17 @@ const MessageContent = ({
 
             await MessageService.delete({
                 messageId: msg._id,
-                conversationId: msg.conversation._id,
                 prevMessageId: messages[index - 1]
                     ? messages[index - 1]._id
                     : null,
+                conversationId: msg.conversation._id,
             });
 
             if (msg.isPin) {
-                await ConversationService.removePinMessage({
-                    messageId: msg._id,
-                    conversationId: msg.conversation._id,
-                });
+                await ConversationService.unpinMessage(
+                    msg.conversation._id,
+                    msg._id
+                );
             }
 
             toast.success('Đã xóa tin nhắn!', { id: 'delete-message' });
@@ -227,7 +222,6 @@ const MessageContent = ({
                                     <TooltipContent
                                         className={'p-1'}
                                         side={isOwnMsg ? 'left' : 'right'}
-                                        asChild
                                     >
                                         <div
                                             className={
@@ -293,13 +287,13 @@ const MessageContent = ({
                 </div>
             )}
 
-            <Popover open={openPopover} onOpenChange={setOpenPopover}>
-                <PopoverTrigger
-                    asChild
-                    onMouseEnter={handleMouseEnter}
-                    onMouseLeave={handleMouseLeave}
-                >
-                    {msg.text.trim().length > 0 && (
+            {msg.text.trim().length > 0 && (
+                <Popover open={openPopover} onOpenChange={setOpenPopover}>
+                    <PopoverTrigger
+                        asChild
+                        onMouseEnter={handleMouseEnter}
+                        onMouseLeave={handleMouseLeave}
+                    >
                         <div
                             className={cn(
                                 'relative max-w-[70%] break-words rounded-xl px-3 py-2',
@@ -386,17 +380,17 @@ const MessageContent = ({
                                 {FormatDate.formatISODateToHHMM(msg.createdAt)}
                             </div>
                         </div>
-                    )}
-                </PopoverTrigger>
+                    </PopoverTrigger>
 
-                {isOwnMsg && !isPin && !isSearchMessage && (
-                    <MessageAction
-                        msg={msg}
-                        messages={messages}
-                        index={index}
-                    />
-                )}
-            </Popover>
+                    {isOwnMsg && !isPin && !isSearchMessage && (
+                        <MessageAction
+                            msg={msg}
+                            messages={messages}
+                            index={index}
+                        />
+                    )}
+                </Popover>
+            )}
 
             <SlideShow
                 show={showSlideShow}

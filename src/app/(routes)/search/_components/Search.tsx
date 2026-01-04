@@ -1,83 +1,204 @@
 'use client';
-import { Post } from '@/components/post';
-import { PostTypes, usePosts } from '@/components/post/InfinityPostComponent';
-import { Loading } from '@/components/ui';
-import { API_ROUTES } from '@/config/api';
-import { useFriends } from '@/context/SocialContext';
-import axiosInstance from '@/lib/axios';
-import queryKey from '@/lib/queryKey';
-import { useQuery } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
+import { useAuth } from '@/core/context';
+import { useFriends } from '@/core/context/SocialContext';
+import { searchService } from '@/lib/api';
+import {
+    useSearchGroups,
+    useSearchPosts,
+    useSearchUsers,
+} from '@/lib/hooks/api';
+import queryKey from '@/lib/react-query/query-key';
+import {
+    createSearchGetNextPageParam,
+    defaultInfiniteQueryOptions,
+} from '@/lib/react-query';
+import { Post } from '@/shared/components/post';
+import {
+    PostTypes,
+    usePosts,
+} from '@/shared/components/post/InfinityPostComponent';
+import { Loading } from '@/shared/components/ui';
+import { IGroup, IPost, IUser } from '@/types/entites';
+import { useInfiniteQuery } from '@tanstack/react-query';
 import { useSearchParams } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { useInView } from 'react-intersection-observer';
 import SearchGroupItem from './SearchGroupItem';
 import SearchUserItem from './SearchUserItem';
 
-interface SearchData {
-    users: IUser[];
-    posts: IPost[];
-    groups: IGroup[];
-}
-
-const PAGE_SIZE = 10;
-
 const Search = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const searchParams = useSearchParams();
     const q = searchParams.get('q') || '';
     const type = searchParams.get('type') || 'all';
-    const [page, setPage] = useState<number>(1);
+
     const { ref: bottomRef, inView } = useInView({
-        root: null,
-        rootMargin: '0px',
         threshold: 0.1,
     });
 
-    const { data, isLoading } = useQuery<SearchData>({
-        queryKey: queryKey.search({ q, type }),
-        queryFn: async () => {
-            if (!q || !session?.user.id)
-                return { users: [], posts: [], groups: [] };
-
-            switch (type) {
-                case 'users':
-                    return axiosInstance
-                        .get<SearchData>(API_ROUTES.SEARCH.USERS, {
-                            params: { q, page, page_size: PAGE_SIZE },
-                        })
-                        .then((res) => res.data);
-                case 'groups':
-                    return axiosInstance
-                        .get<SearchData>(API_ROUTES.SEARCH.GROUPS, {
-                            params: { q, page, page_size: PAGE_SIZE },
-                        })
-                        .then((res) => res.data);
-                default:
-                    return axiosInstance
-                        .get<SearchData>(API_ROUTES.SEARCH.INDEX, {
-                            params: { q, page, page_size: PAGE_SIZE },
-                        })
-                        .then((res) => res.data);
-            }
-        },
-        refetchOnWindowFocus: false,
-        refetchOnReconnect: false,
-        refetchOnMount: false,
-        staleTime: 1000 * 60 * 5,
-        enabled: !!session?.user.id && !!q,
+    const {
+        data: generalSearchData,
+        isLoading: isLoadingGeneral,
+        fetchNextPage: fetchNextGeneralPage,
+        hasNextPage: hasNextGeneralPage,
+        isFetchingNextPage: isFetchingNextGeneralPage,
+    } = useInfiniteQuery({
+        queryKey: queryKey.search.general(q, undefined),
+        queryFn: ({ pageParam = 1 }: { pageParam: number }) =>
+            searchService.search({
+                q,
+                page_size: 10,
+                page: pageParam,
+            }),
+        getNextPageParam: createSearchGetNextPageParam(10),
+        enabled: type === 'all' && q.trim().length > 0,
+        initialPageParam: 1,
+        ...defaultInfiniteQueryOptions,
     });
+
+    const {
+        data: usersData,
+        isLoading: isLoadingUsers,
+        fetchNextPage: fetchNextUsersPage,
+        hasNextPage: hasNextUsersPage,
+        isFetchingNextPage: isFetchingNextUsersPage,
+    } = useSearchUsers(
+        { q, page_size: 10 },
+        { enabled: type === 'users' && q.trim().length > 0 }
+    );
+
+    const {
+        data: postsData,
+        isLoading: isLoadingPosts,
+        fetchNextPage: fetchNextPostsPage,
+        hasNextPage: hasNextPostsPage,
+        isFetchingNextPage: isFetchingNextPostsPage,
+    } = useSearchPosts(
+        { q, page_size: 10 },
+        { enabled: type === 'posts' && q.trim().length > 0 }
+    );
+
+    const {
+        data: groupsData,
+        isLoading: isLoadingGroups,
+        fetchNextPage: fetchNextGroupsPage,
+        hasNextPage: hasNextGroupsPage,
+        isFetchingNextPage: isFetchingNextGroupsPage,
+    } = useSearchGroups(
+        { q, page_size: 10 },
+        { enabled: type === 'groups' && q.trim().length > 0 }
+    );
 
     const { data: posts } = usePosts({
         type: PostTypes.SEARCH_POSTS,
         enabled: type === 'posts',
         search: q,
     });
-    const { data: friends } = useFriends(session?.user.id);
+
+    const { data: friends } = useFriends(user?.id);
+
+    const allUsers = useMemo(() => {
+        if (type === 'all') {
+            if (!generalSearchData?.pages) return [];
+            return generalSearchData.pages.flatMap((page: any) => {
+                if (!page || typeof page !== 'object') return [];
+                const users = page.users;
+                if (users && typeof users === 'object' && 'data' in users) {
+                    return Array.isArray(users.data) ? users.data : [];
+                }
+                if (Array.isArray(users)) {
+                    return users;
+                }
+                return [];
+            });
+        }
+        if (type === 'users') {
+            if (!usersData?.pages) return [];
+            const flattened = usersData.pages.flatMap((page: any) => {
+                if (Array.isArray(page)) {
+                    return page;
+                }
+                if (page && typeof page === 'object' && 'data' in page) {
+                    const dataArray = page.data;
+                    return Array.isArray(dataArray) ? dataArray : [];
+                }
+                return [];
+            });
+            return flattened;
+        }
+        return [];
+    }, [type, generalSearchData, usersData]);
+
+    const allGroups = useMemo(() => {
+        if (type === 'all') {
+            if (!generalSearchData?.pages) return [];
+            return generalSearchData.pages.flatMap((page: any) => {
+                if (!page || typeof page !== 'object') return [];
+                const groups = page.groups;
+                if (groups && typeof groups === 'object' && 'data' in groups) {
+                    return Array.isArray(groups.data) ? groups.data : [];
+                }
+                if (Array.isArray(groups)) {
+                    return groups;
+                }
+                return [];
+            });
+        }
+        if (type === 'groups') {
+            if (!groupsData?.pages) return [];
+            const flattened = groupsData.pages.flatMap((page: any) => {
+                if (Array.isArray(page)) {
+                    return page;
+                }
+                if (page && typeof page === 'object' && 'data' in page) {
+                    const dataArray = page.data;
+                    return Array.isArray(dataArray) ? dataArray : [];
+                }
+                return [];
+            });
+            return flattened;
+        }
+        return [];
+    }, [type, generalSearchData, groupsData]);
+
+    const allPosts = useMemo(() => {
+        if (type === 'all') {
+            if (!generalSearchData?.pages) return [];
+            return generalSearchData.pages.flatMap((page: any) => {
+                if (!page || typeof page !== 'object') return [];
+                const posts = page.posts;
+                if (posts && typeof posts === 'object' && 'data' in posts) {
+                    return Array.isArray(posts.data) ? posts.data : [];
+                }
+                if (Array.isArray(posts)) {
+                    return posts;
+                }
+                return [];
+            });
+        }
+        if (type === 'posts') {
+            if (posts && Array.isArray(posts)) {
+                return posts;
+            }
+            if (!postsData?.pages) return [];
+            const flattened = postsData.pages.flatMap((page: any) => {
+                if (Array.isArray(page)) {
+                    return page;
+                }
+                if (page && typeof page === 'object' && 'data' in page) {
+                    const dataArray = page.data;
+                    return Array.isArray(dataArray) ? dataArray : [];
+                }
+                return [];
+            });
+            return flattened;
+        }
+        return [];
+    }, [type, generalSearchData, postsData, posts]);
 
     const userFriendStatus = useMemo(() => {
-        if (!data?.users || !friends) return {};
-        return data.users.reduce(
+        if (!allUsers.length || !friends) return {};
+        return allUsers.reduce(
             (acc, user) => {
                 acc[user._id] = friends.some(
                     (friend) => friend._id === user._id
@@ -86,19 +207,133 @@ const Search = () => {
             },
             {} as Record<string, boolean>
         );
-    }, [data?.users, friends]);
+    }, [allUsers, friends]);
+
+    const isLoading =
+        (type === 'all' && isLoadingGeneral) ||
+        (type === 'users' && isLoadingUsers) ||
+        (type === 'posts' && isLoadingPosts) ||
+        (type === 'groups' && isLoadingGroups);
+
+    const hasNextPage =
+        (type === 'all' && hasNextGeneralPage) ||
+        (type === 'users' && hasNextUsersPage) ||
+        (type === 'posts' && hasNextPostsPage) ||
+        (type === 'groups' && hasNextGroupsPage);
+
+    const isFetchingNextPage =
+        (type === 'all' && isFetchingNextGeneralPage) ||
+        (type === 'users' && isFetchingNextUsersPage) ||
+        (type === 'posts' && isFetchingNextPostsPage) ||
+        (type === 'groups' && isFetchingNextGroupsPage);
+
+    const fetchNextPage = useCallback(() => {
+        if (type === 'all') return fetchNextGeneralPage();
+        if (type === 'users') return fetchNextUsersPage();
+        if (type === 'posts') return fetchNextPostsPage();
+        if (type === 'groups') return fetchNextGroupsPage();
+    }, [
+        type,
+        fetchNextGeneralPage,
+        fetchNextUsersPage,
+        fetchNextPostsPage,
+        fetchNextGroupsPage,
+    ]);
 
     useEffect(() => {
-        if (inView) {
-            setPage((prevPage) => prevPage + 1);
+        if (inView && hasNextPage && !isFetchingNextPage) {
+            fetchNextPage();
         }
-    }, [inView]);
+    }, [inView, hasNextPage, isFetchingNextPage, fetchNextPage]);
+
+    const allResults = useMemo(() => {
+        const results: Array<{
+            type: 'user' | 'group' | 'post';
+            id: string;
+            data: IUser | IGroup | IPost;
+        }> = [];
+
+        if (type === 'all' || type === 'users') {
+            if (Array.isArray(allUsers)) {
+                allUsers.forEach((user) => {
+                    if (
+                        user &&
+                        typeof user === 'object' &&
+                        user._id &&
+                        !('data' in user && 'pagination' in user)
+                    ) {
+                        results.push({
+                            type: 'user',
+                            id: `user-${user._id}`,
+                            data: user,
+                        });
+                    }
+                });
+            }
+        }
+
+        if (type === 'all' || type === 'groups') {
+            if (Array.isArray(allGroups)) {
+                allGroups.forEach((group) => {
+                    if (
+                        group &&
+                        typeof group === 'object' &&
+                        group._id &&
+                        !('data' in group && 'pagination' in group)
+                    ) {
+                        results.push({
+                            type: 'group',
+                            id: `group-${group._id}`,
+                            data: group,
+                        });
+                    }
+                });
+            }
+        }
+
+        if (type === 'all' || type === 'posts') {
+            if (Array.isArray(allPosts)) {
+                allPosts.forEach((post) => {
+                    if (
+                        post &&
+                        typeof post === 'object' &&
+                        post._id &&
+                        !('data' in post && 'pagination' in post)
+                    ) {
+                        results.push({
+                            type: 'post',
+                            id: `post-${post._id}`,
+                            data: post,
+                        });
+                    }
+                });
+            }
+        }
+
+        return results;
+    }, [type, allUsers, allGroups, allPosts]);
+
+    const isEmpty =
+        !isLoading &&
+        allUsers.length === 0 &&
+        allGroups.length === 0 &&
+        allPosts.length === 0;
+
+    if (!q.trim()) {
+        return (
+            <div className="flex justify-center py-10">
+                <p className="dark:text-dark-gray-500 text-gray-500">
+                    Vui lòng nhập từ khóa tìm kiếm
+                </p>
+            </div>
+        );
+    }
 
     return (
         <div>
-            <h1 className="text-md">
+            <h1 className="text-md mb-4">
                 Kết quả tìm kiếm:{' '}
-                {q ? `"${q}"` : 'Vui lòng nhập từ khóa tìm kiếm'}
+                <span className="font-semibold">&quot;{q}&quot;</span>
             </h1>
 
             {isLoading && (
@@ -107,77 +342,63 @@ const Search = () => {
                 </div>
             )}
 
-            {!isLoading &&
-                type === 'all' &&
-                data?.users?.length === 0 &&
-                data?.posts?.length === 0 &&
-                data?.groups?.length === 0 && (
-                    <p className="dark:text-dark-gray-500 mt-4 text-center text-sm text-gray-500">
-                        Không tìm thấy kết quả phù hợp
-                    </p>
-                )}
-
-            {!isLoading && type === 'users' && data?.users?.length === 0 && (
+            {isEmpty && (
                 <p className="dark:text-dark-gray-500 mt-4 text-center text-sm text-gray-500">
-                    Không tìm thấy người dùng phù hợp
+                    {type === 'all' && 'Không tìm thấy kết quả phù hợp'}
+                    {type === 'users' && 'Không tìm thấy người dùng phù hợp'}
+                    {type === 'groups' && 'Không tìm thấy nhóm phù hợp'}
+                    {type === 'posts' && 'Không tìm thấy bài viết phù hợp'}
                 </p>
             )}
 
-            {!isLoading && type === 'groups' && data?.groups?.length === 0 && (
-                <p className="dark:text-dark-gray-500 mt-4 text-center text-sm text-gray-500">
-                    Không tìm thấy nhóm phù hợp
-                </p>
-            )}
-
-            {!isLoading &&
-                type === 'posts' &&
-                (!posts || posts.length === 0) && (
-                    <p className="dark:text-dark-gray-500 mt-4 text-center text-sm text-gray-500">
-                        Không tìm thấy bài viết phù hợp
-                    </p>
-                )}
-
-            {!isLoading && (
-                <>
-                    <div className="mt-4 space-y-4">
-                        {(type === 'all' || type === 'users') &&
-                            data?.users &&
-                            data?.users?.length > 0 &&
-                            data.users.map((user) => (
+            {!isLoading && !isEmpty && (
+                <div className="mt-4 space-y-2">
+                    {allResults.map((result) => {
+                        if (result.type === 'user') {
+                            return (
                                 <SearchUserItem
-                                    key={user._id}
-                                    data={user}
+                                    key={result.id}
+                                    data={result.data as IUser}
                                     isFriend={
-                                        userFriendStatus[user._id] || false
+                                        userFriendStatus[
+                                            (result.data as IUser)._id
+                                        ] || false
                                     }
                                 />
-                            ))}
-
-                        {(type === 'all' || type === 'groups') &&
-                            data?.groups &&
-                            data.groups?.length > 0 &&
-                            data.groups.map((group) => (
-                                <SearchGroupItem key={group._id} data={group} />
-                            ))}
-
-                        {(type === 'all' || type === 'posts') &&
-                            posts &&
-                            posts.length > 0 &&
-                            posts.map((post) => (
+                            );
+                        }
+                        if (result.type === 'group') {
+                            return (
+                                <SearchGroupItem
+                                    key={result.id}
+                                    data={result.data as IGroup}
+                                />
+                            );
+                        }
+                        if (result.type === 'post') {
+                            return (
                                 <Post
-                                    key={post._id}
-                                    data={post}
+                                    key={result.id}
+                                    data={result.data as IPost}
                                     isManage={false}
                                     params={{
-                                        type: PostTypes.SEARCH_POSTS,
+                                        type: 'search-posts',
                                     }}
                                 />
-                            ))}
-                    </div>
-                </>
+                            );
+                        }
+                        return null;
+                    })}
+                </div>
             )}
 
-            <div ref={bottomRef} />
+            {isFetchingNextPage && (
+                <div className="mt-4 flex justify-center">
+                    <Loading className="text-xl" />
+                </div>
+            )}
+
+            <div ref={bottomRef} className="h-4" />
         </div>
     );
 };

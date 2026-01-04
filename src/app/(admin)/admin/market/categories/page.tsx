@@ -1,6 +1,8 @@
 'use client';
-import { ConfirmModal, Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { useCategories } from '@/core/context/AppContext';
+import { CategoryService } from '@/features/category';
+import { ConfirmModal, Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -8,9 +10,9 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import Icons, { IconsArray } from '@/components/ui/Icons';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import Icons, { IconsArray } from '@/shared/components/ui/Icons';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Table,
     TableBody,
@@ -18,10 +20,8 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
-import { useCategories } from '@/context/AppContext';
-import CategoryService from '@/lib/services/category.service';
-import { useState } from 'react';
+} from '@/shared/components/ui/table';
+import { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -51,6 +51,7 @@ const AdminMarketCategoryPage = () => {
         },
     });
     const { handleSubmit, register, formState } = form;
+    const iconInputId = useId(); // Tạo ID duy nhất cho mỗi instance
 
     const onSubmit = async (data: CategoryForm) => {
         try {
@@ -196,11 +197,11 @@ const AdminMarketCategoryPage = () => {
                             )}
                         />
 
-                        <label className="text-sm" htmlFor="icon">
+                        <label className="text-sm" htmlFor={iconInputId}>
                             Icon
                         </label>
                         <select
-                            id="icon"
+                            id={iconInputId}
                             {...register('icon')}
                             className="w-full rounded border p-2"
                             defaultValue={''}

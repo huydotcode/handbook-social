@@ -1,8 +1,11 @@
-import { MessageAction } from '@/components/shared';
-import { getAuthSession } from '@/lib/auth';
-import ItemService from '@/lib/services/item.service';
-import { formatMoney } from '@/utils/formatMoney';
+'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import { ItemService } from '@/features/item';
+import { formatMoney } from '@/shared';
+import { MessageAction } from '@/shared/components/shared';
+import { IItem } from '@/types/entites';
 import Image from 'next/image';
+import { use, useEffect, useState } from 'react';
 import ListItem from '../../_components/ListItem';
 import SwiperImagesItem from '../../_components/SwiperImagesItem';
 
@@ -10,14 +13,38 @@ interface Props {
     params: Promise<{ itemId: string }>;
 }
 
-export default async function ItemPage({ params }: Props) {
-    const session = await getAuthSession();
+export default function ItemPage({ params }: Props) {
+    const { user } = useAuth();
+    const { itemId } = use(params);
+    const [item, setItem] = useState<IItem | null>(null);
+    const [itemsOther, setItemsOther] = useState<IItem[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
 
-    const { itemId } = await params;
-    const item: IItem = await ItemService.getById(itemId);
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const itemData = await ItemService.getById(itemId);
+                setItem(itemData);
 
-    const itemsOther = await ItemService.getBySeller(item.seller._id);
-    const isOwner = session?.user?.id === item.seller._id;
+                const otherItems = await ItemService.getBySeller(
+                    itemData.seller._id
+                );
+                setItemsOther(otherItems || []);
+            } catch (error) {
+                console.error('Error fetching item:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchData();
+    }, [itemId]);
+
+    if (isLoading || !item) {
+        return <div className="text-center">Đang tải...</div>;
+    }
+
+    const isOwner = user?.id === item.seller._id;
 
     return (
         <div

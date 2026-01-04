@@ -1,5 +1,5 @@
-import FileUploader from '@/components/shared/FileUploader';
-import { Button } from '@/components/ui/Button';
+import FileUploader from '@/shared/components/shared/FileUploader';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Dialog,
     DialogContent,
@@ -7,13 +7,14 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '@/components/ui/dialog';
+} from '@/shared/components/ui/dialog';
+import { useAuth } from '@/core/context';
 import ProfileService from '@/lib/services/profile.service';
-import { uploadImageWithFile } from '@/lib/uploadImage';
+import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { IUser } from '@/types/entites';
 import Image from 'next/image';
-import { usePathname } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import toast from 'react-hot-toast';
 
@@ -22,12 +23,12 @@ interface Props {
 }
 
 const Avatar: React.FC<Props> = ({ user }) => {
-    const path = usePathname();
-    const { data: session, update } = useSession();
+    const { user: currentUser, setUser } = useAuth();
     const [hover, setHover] = useState(false);
-    const canChangeAvatar = session?.user?.id === user._id;
+    const canChangeAvatar = currentUser?.id === user._id;
     const [openModal, setOpenModal] = useState(false);
     const [file, setFile] = useState<File | null>(null);
+    const router = useRouter();
 
     const handleChangeAvatar = async () => {
         setOpenModal(false);
@@ -49,25 +50,22 @@ const Avatar: React.FC<Props> = ({ user }) => {
             await ProfileService.updateAvatar({
                 avatar: image.url,
                 userId: user._id,
-                path,
             });
+
+            router.refresh();
 
             toast.success('Cập nhật ảnh đại diện thành công', {
                 id: 'uplodate-avatar',
             });
 
-            // Update session data
-            if (session?.user) {
-                update({
-                    ...session,
-                    user: {
-                        ...session.user,
-                        image: image.url,
-                    },
+            if (currentUser) {
+                setUser({
+                    ...currentUser,
+                    avatar: image.url,
                 });
             }
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi xảy ra');
         }
     };
@@ -115,7 +113,6 @@ const Avatar: React.FC<Props> = ({ user }) => {
                             single
                             onlyImage
                             handleChange={(files) => {
-                                console.log('Handle file change:', files);
                                 if (files.length > 0) {
                                     setFile(files[0]);
                                 } else {

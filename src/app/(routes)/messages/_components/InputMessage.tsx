@@ -1,15 +1,15 @@
 'use client';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useAuth } from '@/core/context/AuthContext';
 import MessageService from '@/lib/services/message.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
-import { useSession } from 'next-auth/react';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IConversation, IMessage } from '@/types/entites';
 import Image from 'next/image';
-import React, { ChangeEvent, useEffect, useMemo } from 'react';
-import { useForm, UseFormReturn } from 'react-hook-form';
+import React, { ChangeEvent, useId } from 'react';
+import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -23,11 +23,10 @@ interface IFormData {
 }
 
 const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
-    const { socketEmitor } = useSocket();
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const formRef = React.useRef<HTMLFormElement>(null);
-    const { queryClientAddMessage, invalidateConversation } =
-        useQueryInvalidation();
+    const { queryClientAddMessage } = useQueryInvalidation();
+    const fileInputId = useId();
     const form = useForm<IFormData>({
         defaultValues: {
             text: '',
@@ -66,7 +65,7 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
         setValue('files', []);
         setValue('text', '');
 
-        if (!session?.user) return;
+        if (!user) return;
 
         if (!text.trim() && files.length === 0) {
             return;
@@ -92,14 +91,12 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
                 return;
             }
 
-            queryClientAddMessage(newMsg);
-
-            socketEmitor.sendMessage({
-                roomId: currentRoom._id,
-                message: newMsg,
-            });
+            queryClientAddMessage({
+                ...newMsg,
+                conversationId: currentRoom._id,
+            } as IMessage);
         } catch (error: any) {
-            console.log(error);
+            console.error(error);
             toast.error('Không thể gửi tin nhắn!');
         } finally {
             setFocus('text');
@@ -142,10 +139,6 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
             }
         }
     };
-
-    useEffect(() => {
-        console.log('Files in InputMessage:', files);
-    }, [files]);
 
     return (
         <form
@@ -248,12 +241,12 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
                 //     setFocus('text');
                 // }}
                 type="file"
-                id="files"
+                id={fileInputId}
             />
 
             <label
                 className="flex cursor-pointer items-center gap-2 px-4 py-2 hover:bg-hover-1 dark:hover:bg-dark-secondary-1"
-                htmlFor="files"
+                htmlFor={fileInputId}
             >
                 <Icons.Upload className={'h-6 w-6'} />
             </label>

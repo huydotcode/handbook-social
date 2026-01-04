@@ -1,5 +1,5 @@
-import { Navbar } from '@/components/layout';
-import { Loading } from '@/components/ui';
+import { Navbar } from '@/shared/components/layout';
+import { Loading } from '@/shared/components/ui';
 
 const LoadingPage = () => {
     return (

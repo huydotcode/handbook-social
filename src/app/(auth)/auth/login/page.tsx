@@ -1,5 +1,16 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import {
+    AuthContainer,
+    AuthHeader,
+    LoginValidation,
+    loginValidation,
+    OrDivider,
+    RedirectLink,
+    SocialButton,
+    useLoginMutation,
+} from '@/features/auth';
+import { getErrorMessage } from '@/shared';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -7,95 +18,40 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
-import { checkAuth } from '@/lib/actions/user.action';
-import { signIn } from 'next-auth/react';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import AuthContainer from '../_components/AuthContainer';
-import AuthHeader from '../_components/AuthHeader';
-import OrDivider from '../_components/OrDivider';
-import RedirectLink from '../_components/RedirectLink';
-import SocialButton from '../_components/SocialButton';
-
-interface FormLoginData {
-    email: string;
-    password: string;
-}
 
 const LoginPage = () => {
     const router = useRouter();
-    const form = useForm<FormLoginData>({
+
+    const loginMutation = useLoginMutation();
+    const loginForm = useForm<LoginValidation>({
         defaultValues: {
-            email: '',
+            account: '',
             password: '',
         },
+        resolver: zodResolver(loginValidation),
     });
-    const {
-        handleSubmit,
-        formState: { isSubmitting, errors },
-        setError,
-        reset,
-    } = form;
 
-    const loginWithCrenditals: SubmitHandler<FormLoginData> = async (
+    const [showPassword, setShowPassword] = useState(false);
+
+    const loginWithCredentials: SubmitHandler<LoginValidation> = async (
         formData
     ) => {
-        const { email, password } = formData;
+        const { account, password } = formData;
 
         try {
-            const validUser = (await checkAuth({
-                email,
-                password,
-            })) as {
-                error: {
-                    type: string;
-                    message: string;
-                };
-            } | null;
-
-            if (validUser?.error) {
-                const type = validUser.error.type;
-
-                if (type == 'email') {
-                    setError('root', {
-                        message: 'Người dùng không tồn tại',
-                    });
-                }
-
-                if (type == 'password') {
-                    setError('root', {
-                        message: validUser.error.message,
-                    });
-                }
-
-                return;
-            }
-
-            const res = await signIn('credentials', {
-                email,
-                password,
-                redirect: false,
-                callbackUrl: '/',
-            });
-
-            if (!res?.ok) {
-                toast.error('Đã có lỗi xảy ra khi đăng nhập', {
-                    id: 'error-login',
-                });
-                return;
-            }
-
-            if (res?.ok) {
-                toast.success('Đăng nhập thành công!');
-                reset();
-                router.push('/');
-            }
+            await loginMutation.mutateAsync({ account, password });
+            loginForm.reset();
+            router.push('/');
         } catch (error: any) {
-            toast.error('Đã có lỗi xảy ra khi đăng nhập', {
-                id: 'error-login',
+            loginForm.setError('root', {
+                message: getErrorMessage(error, 'Đăng nhập thất bại'),
             });
         }
     };
@@ -104,24 +60,34 @@ const LoginPage = () => {
         <AuthContainer>
             <AuthHeader title="Đăng nhập" />
             <div className="space-y-4">
-                <Form {...form}>
+                <Form {...loginForm}>
                     <form
-                        method="POST"
-                        onSubmit={handleSubmit(loginWithCrenditals)}
+                        onSubmit={loginForm.handleSubmit(loginWithCredentials)}
                         className="space-y-4"
                     >
                         <FormField
-                            control={form.control}
-                            name="email"
+                            control={loginForm.control}
+                            name="account"
                             render={({ field }) => (
                                 <FormItem className="space-y-2">
                                     <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
-                                        Email của bạn
+                                        Tài khoản
                                     </FormLabel>
                                     <FormControl>
                                         <Input
-                                            placeholder="Nhập email của bạn"
+                                            placeholder="Nhập email hoặc tên đăng nhập"
                                             {...field}
+                                            onChange={(e) => {
+                                                field.onChange(e);
+                                                if (
+                                                    loginForm.formState.errors
+                                                        .root
+                                                ) {
+                                                    loginForm.clearErrors(
+                                                        'root'
+                                                    );
+                                                }
+                                            }}
                                         />
                                     </FormControl>
                                     <FormMessage className="text-sm text-red-500" />
@@ -130,7 +96,7 @@ const LoginPage = () => {
                         />
 
                         <FormField
-                            control={form.control}
+                            control={loginForm.control}
                             name="password"
                             render={({ field }) => (
                                 <div>
@@ -139,11 +105,45 @@ const LoginPage = () => {
                                             Mật khẩu
                                         </FormLabel>
                                         <FormControl>
-                                            <Input
-                                                type="password"
-                                                placeholder="••••••••"
-                                                {...field}
-                                            />
+                                            <div className="relative">
+                                                <Input
+                                                    type={
+                                                        showPassword
+                                                            ? 'text'
+                                                            : 'password'
+                                                    }
+                                                    placeholder="Nhập mật khẩu của bạn"
+                                                    {...field}
+                                                    onChange={(e) => {
+                                                        field.onChange(e);
+                                                        if (
+                                                            loginForm.formState
+                                                                .errors.root
+                                                        ) {
+                                                            loginForm.clearErrors(
+                                                                'root'
+                                                            );
+                                                        }
+                                                    }}
+                                                />
+                                                <Button
+                                                    type="button"
+                                                    variant="ghost"
+                                                    size="sm"
+                                                    className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                    onClick={() =>
+                                                        setShowPassword(
+                                                            (prev) => !prev
+                                                        )
+                                                    }
+                                                >
+                                                    {showPassword ? (
+                                                        <Eye className="h-4 w-4 text-slate-500" />
+                                                    ) : (
+                                                        <EyeOff className="h-4 w-4 text-slate-500" />
+                                                    )}
+                                                </Button>
+                                            </div>
                                         </FormControl>
                                         <FormMessage className="text-sm text-red-500" />
                                     </FormItem>
@@ -162,10 +162,10 @@ const LoginPage = () => {
                             )}
                         />
 
-                        {errors.root && (
+                        {loginForm.formState.errors.root && (
                             <div className="rounded-xl border border-red-200 bg-red-50 p-3 dark:border-red-800 dark:bg-red-900/20">
                                 <FormMessage className="text-sm font-medium text-red-600 dark:text-red-400">
-                                    {errors.root.message}
+                                    {loginForm.formState.errors.root.message}
                                 </FormMessage>
                             </div>
                         )}
@@ -175,9 +175,13 @@ const LoginPage = () => {
                             size={'md'}
                             variant={'primary'}
                             type="submit"
-                            disabled={isSubmitting}
+                            disabled={
+                                loginForm.formState.isSubmitting ||
+                                loginMutation.isPending
+                            }
                         >
-                            {isSubmitting ? (
+                            {loginForm.formState.isSubmitting ||
+                            loginMutation.isPending ? (
                                 <div className="flex items-center justify-center">
                                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                     Đang đăng nhập...

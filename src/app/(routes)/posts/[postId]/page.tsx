@@ -1,9 +1,9 @@
 'use client';
-import { Post } from '@/components/post';
-import { Loading } from '@/components/ui';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
-import queryKey from '@/lib/queryKey';
+import { Post } from '@/shared/components/post';
+import { Loading } from '@/shared/components/ui';
+import { postService } from '@/lib/api/services/post.service';
+import queryKey from '@/lib/react-query/query-key';
+import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import React, { use } from 'react';
 interface Props {
@@ -12,18 +12,15 @@ interface Props {
 
 const PostPage: React.FC<Props> = ({ params }) => {
     const { postId } = use(params);
-    const { data: post, isLoading } = useQuery<IPost>({
+    const { data: post, isLoading } = useQuery<IPost | null>({
         queryKey: queryKey.posts.id(postId || ''),
         queryFn: async () => {
             if (!postId) return null;
 
             try {
-                const res = await axiosInstance.get(
-                    API_ROUTES.POSTS.ID(postId)
-                );
-                return res.data;
+                return (await postService.getById(postId)) || null;
             } catch (error) {
-                console.log(error);
+                console.error(error);
                 return null;
             }
         },
@@ -43,10 +40,11 @@ const PostPage: React.FC<Props> = ({ params }) => {
     }
 
     return (
-        <div className="mx-auto mt-[64px] w-[800px] max-w-screen">
+        <div className="mx-auto mt-[64px] w-[600px] xl:w-[550px] md:w-full">
             <h1 className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">
                 Bài viết của {post?.author.name}
             </h1>
+
             <Post data={post} />
         </div>
     );

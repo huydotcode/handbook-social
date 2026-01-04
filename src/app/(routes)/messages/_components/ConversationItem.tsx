@@ -1,27 +1,28 @@
 'use client';
-import { Avatar, ConfirmModal, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Avatar, ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import { cn } from '@/lib/utils';
+import { splitName, timeConvert3 } from '@/shared';
 import {
     Popover,
     PopoverContent,
     PopoverTrigger,
-} from '@/components/ui/Popover';
+} from '@/shared/components/ui/Popover';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ConversationService from '@/lib/services/conversation.service';
-import { cn } from '@/lib/utils';
-import { splitName } from '@/utils/splitName';
-import { timeConvert3 } from '@/utils/timeConvert';
-import { useSession } from 'next-auth/react';
+} from '@/shared/components/ui/tooltip';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IConversation } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 
 interface Props {
@@ -29,30 +30,31 @@ interface Props {
 }
 
 const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const lastMessage = conversation?.lastMessage;
     const { socketEmitor } = useSocket();
     const { invalidateConversations } = useQueryInvalidation();
     const path = usePathname();
     const router = useRouter();
+    const { members } = useConversationMembers(conversation._id);
 
     const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
     const partner = useMemo(() => {
         return conversation.group
             ? null
-            : conversation.participants.find((p) => p._id !== session?.user.id);
-    }, [conversation, session]);
+            : members.find((m) => m.user._id !== user?.id)?.user;
+    }, [conversation.group, members, user]);
 
     const isSelect = useMemo(() => {
         return path.includes(conversation._id);
     }, [path, conversation._id]);
 
     const isDeleted = useMemo(() => {
-        if (!session) return false;
+        if (!user) return false;
 
-        return conversation.isDeletedBy?.includes(session?.user.id);
-    }, [conversation.isDeletedBy, session]);
+        return conversation.isDeletedBy?.includes(user.id);
+    }, [conversation.isDeletedBy, user]);
 
     const title = useMemo(() => {
         if (partner) return partner.name;
@@ -64,12 +66,10 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
         if (!lastMessage) return false;
 
         return (
-            lastMessage.sender._id === session?.user.id ||
-            lastMessage.readBy.some(
-                (read) => read.user._id === session?.user.id
-            )
+            lastMessage.sender._id === user?.id ||
+            lastMessage.readBy.some((read) => read.user._id === user?.id)
         );
-    }, [lastMessage, session]);
+    }, [lastMessage, user]);
 
     const handleShowProfile = () => {
         if (partner) {
@@ -80,7 +80,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     };
 
     const handleDeleteConversation = async () => {
-        if (!session) {
+        if (!user) {
             toast.error('Bạn cần đăng nhập để thực hiện hành động này');
             return;
         }
@@ -89,7 +89,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
             if (isDeleted) {
                 await ConversationService.undeleteConversationByUserId({
                     conversationId: conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
                 toast.success('Khôi phục cuộc trò chuyện thành công');
                 setOpenModalDelete(false);
@@ -99,7 +99,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
 
             await ConversationService.deleteByUser({
                 conversationId: conversation._id,
-                userId: session.user.id,
+                userId: user.id,
             });
 
             if (path.includes(conversation._id)) {
@@ -110,7 +110,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
 
             socketEmitor.leaveRoom({
                 roomId: conversation._id,
-                userId: session?.user.id,
+                userId: user.id,
             });
 
             toast.success('Xóa cuộc trò chuyện thành công');
@@ -191,8 +191,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                                         )}
                                                     >
                                                         {lastMessage?.sender
-                                                            ._id ==
-                                                        session?.user.id
+                                                            ._id == user?.id
                                                             ? 'Bạn: '
                                                             : lastMessage
                                                                     ?.sender
@@ -200,7 +199,14 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                                               ? lastMessage
                                                                     ?.sender
                                                                     .givenName
-                                                              : `${splitName(lastMessage?.sender.name).lastName}: `}
+                                                              : `${
+                                                                    splitName(
+                                                                        lastMessage
+                                                                            ?.sender
+                                                                            ?.name ||
+                                                                            ''
+                                                                    ).lastName
+                                                                }: `}
                                                     </span>
 
                                                     <span

@@ -1,21 +1,23 @@
 'use client';
 import SearchMessage from '@/app/(routes)/messages/_components/SearchMessage';
-import { FileUploaderWrapper } from '@/components/shared/FileUploader';
-import MessageSkeleton from '@/components/skeleton/MessageSkeleton';
-import { Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { API_ROUTES } from '@/config/api';
-import { useSocket } from '@/context';
-import useBreakpoint from '@/hooks/useBreakpoint';
-import { useMessageHandling } from '@/hooks/useMessageHandling';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import axiosInstance from '@/lib/axios';
-import queryKey from '@/lib/queryKey';
+import { FileUploaderWrapper } from '@/shared/components/shared/FileUploader';
+import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
+import { Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { messageService } from '@/lib/api/services/message.service';
+import queryKey from '@/lib/react-query/query-key';
 import MessageService from '@/lib/services/message.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
+import {
+    useBreakpoint,
+    useMessageHandling,
+    useQueryInvalidation,
+} from '@/shared/hooks';
+import { IConversation, IMessage } from '@/types/entites';
 import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import React, {
     KeyboardEventHandler,
@@ -24,7 +26,6 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { useInView } from 'react-intersection-observer';
 import ChatHeader from './ChatHeader';
@@ -51,15 +52,10 @@ export const useMessages = (conversationId: string) => {
         queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
             if (!conversationId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.MESSAGES.INDEX, {
-                params: {
-                    conversation_id: conversationId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return messageService.getByConversation(conversationId, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data || [];
         },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
@@ -71,6 +67,7 @@ export const useMessages = (conversationId: string) => {
         },
         refetchInterval: false,
         refetchOnWindowFocus: false,
+        refetchOnMount: false,
     });
 };
 
@@ -80,15 +77,10 @@ export const usePinnedMessages = (conversationId: string) => {
         queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
             if (!conversationId) return [];
 
-            const res = await axiosInstance.get(API_ROUTES.MESSAGES.PINNED, {
-                params: {
-                    conversation_id: conversationId,
-                    page: pageParam,
-                    page_size: PAGE_SIZE,
-                },
+            return messageService.getPinned(conversationId, {
+                page: pageParam,
+                page_size: PAGE_SIZE,
             });
-
-            return res.data || [];
         },
         getNextPageParam: (lastPage, pages) => {
             return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
@@ -104,7 +96,7 @@ export const usePinnedMessages = (conversationId: string) => {
 };
 
 const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socketEmitor } = useSocket();
     const queryClient = useQueryClient();
     const { invalidateAfterSendMessage, queryClientReadMessage } =
@@ -218,22 +210,6 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
             fetchNextPage();
         }
     }, [fetchNextPage, inView]);
-
-    useEffect(() => {
-        if (!session?.user?.id) return;
-
-        socketEmitor.joinRoom({
-            roomId: conversation._id,
-            userId: session?.user.id,
-        });
-
-        return () => {
-            socketEmitor.leaveRoom({
-                roomId: conversation._id,
-                userId: session?.user.id,
-            });
-        };
-    }, [conversation._id, session?.user.id, socketEmitor]);
 
     // Kiểm tra nếu đang ở bottomRef thì không hiển thị nút scroll down
     useEffect(() => {

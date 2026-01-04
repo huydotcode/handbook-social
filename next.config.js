@@ -4,12 +4,12 @@ const nextConfig = {
 
     // Disable ESLint during build - FIX FOR VERCEL
     eslint: {
-        ignoreDuringBuilds: true,
+        ignoreDuringBuilds: false,
     },
 
     // Disable TypeScript checking for Vercel build
     typescript: {
-        ignoreBuildErrors: true,
+        ignoreBuildErrors: false,
     },
 
     images: {

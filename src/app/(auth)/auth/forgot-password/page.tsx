@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -7,20 +7,23 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
-import { API_ROUTES } from '@/config/api';
-import axiosInstance from '@/lib/axios';
-import { resetPasswordValidation } from '@/lib/validation';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
+import {
+    AuthContainer,
+    AuthHeader,
+    OrDivider,
+    RedirectLink,
+    resetPasswordValidation,
+    useResetPassword,
+    useSendOTP,
+    useVerifyOTP,
+} from '@/features/auth';
 import { zodResolver } from '@hookform/resolvers/zod';
+import { Eye, EyeOff } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
-import AuthContainer from '../_components/AuthContainer';
-import AuthHeader from '../_components/AuthHeader';
-import OrDivider from '../_components/OrDivider';
-import RedirectLink from '../_components/RedirectLink';
 
 interface FormForgotPasswordData {
     email: string;
@@ -33,6 +36,10 @@ type Step = 'send-otp' | 'verify-otp' | 'reset-password';
 
 const ForgotPassword = () => {
     const router = useRouter();
+    const sendOTPMutation = useSendOTP();
+    const verifyOTPMutation = useVerifyOTP();
+    const resetPasswordMutation = useResetPassword();
+
     const form = useForm<FormForgotPasswordData>({
         defaultValues: {
             email: '',
@@ -47,65 +54,48 @@ const ForgotPassword = () => {
         formState: { isSubmitting, errors },
         setError,
         reset,
+        getValues,
     } = form;
 
     const [step, setStep] = useState<Step>('send-otp');
-    const [isSendingOtp, setIsSendingOtp] = useState<boolean>(false);
-    const [isVerified, setIsVerified] = useState<boolean>(false);
+    const [showPassword, setShowPassword] = useState(false);
+    const [showRepassword, setShowRepassword] = useState(false);
 
     const handleSendOtp = async (email: string) => {
-        setIsSendingOtp(true);
         try {
-            await axiosInstance.post(API_ROUTES.AUTH.SEND_OTP, {
-                email,
-            });
-
-            setIsSendingOtp(false);
-            setStep('verify-otp');
-            toast.success('OTP đã được gửi tới email của bạn', {
-                id: 'success-send-otp',
-            });
+            await sendOTPMutation.mutateAsync(
+                { email, type: 'forgot_password' },
+                {
+                    onSuccess: () => {
+                        setStep('verify-otp');
+                    },
+                }
+            );
         } catch (error) {
-            setIsSendingOtp(false);
-            toast.error('Đã có lỗi xảy ra khi gửi OTP', {
-                id: 'error-send-otp',
-            });
-            return;
+            // Error already handled in hook
         }
     };
 
     const handleVerifyOtp = async (otp: string) => {
+        const email = getValues('email');
         try {
-            const email = form.getValues('email');
-
-            const response = await axiosInstance.post(
-                API_ROUTES.AUTH.VERIFY_OTP,
+            await verifyOTPMutation.mutateAsync(
+                { email, otp },
                 {
-                    email,
-                    otp,
+                    onSuccess: () => {
+                        setStep('reset-password');
+                    },
                 }
             );
-
-            if (response?.data?.success) {
-                setIsVerified(true);
-                setStep('reset-password');
-                toast.success('Xác thực OTP thành công', {
-                    id: 'success-verify-otp',
-                });
-            } else {
-                setError('root', {
-                    message: 'Xác thực OTP không thành công',
-                });
-            }
         } catch (error) {
             setError('root', {
-                message: 'Đã có lỗi xảy ra khi xác thực OTP',
+                message: 'Xác thực OTP không thành công',
             });
         }
     };
 
     const handleResetPassword = async (formData: FormForgotPasswordData) => {
-        const { email, password, repassword } = formData;
+        const { email, password, repassword, otp } = formData;
 
         if (password !== repassword) {
             setError('root', {
@@ -115,21 +105,18 @@ const ForgotPassword = () => {
         }
 
         try {
-            await axiosInstance.post(API_ROUTES.AUTH.RESET_PASSWORD, {
-                email,
-                newPassword: password,
-            });
-            reset();
-            setStep('send-otp');
-            toast.success('Đặt lại mật khẩu thành công', {
-                id: 'success-reset-password',
-            });
-
-            router.push('/auth/login');
+            await resetPasswordMutation.mutateAsync(
+                { email, newPassword: password, otp },
+                {
+                    onSuccess: () => {
+                        reset();
+                        setStep('send-otp');
+                        router.push('/auth/login');
+                    },
+                }
+            );
         } catch (error) {
-            toast.error('Đã có lỗi xảy ra khi đặt lại mật khẩu', {
-                id: 'error-reset-password',
-            });
+            // Error already handled in hook
         }
     };
 
@@ -169,9 +156,12 @@ const ForgotPassword = () => {
                                                     }
                                                     size={'sm'}
                                                     variant={'primary'}
-                                                    disabled={isSendingOtp}
+                                                    disabled={
+                                                        sendOTPMutation.isPending
+                                                    }
+                                                    type="button"
                                                 >
-                                                    {isSendingOtp
+                                                    {sendOTPMutation.isPending
                                                         ? 'Đang gửi...'
                                                         : 'Gửi OTP'}
                                                 </Button>
@@ -192,7 +182,7 @@ const ForgotPassword = () => {
                                     <FormItem className="space-y-2">
                                         <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
                                             Nhập OTP đã gửi cho email{' '}
-                                            {form.getValues('email')}
+                                            {getValues('email')}
                                         </FormLabel>
                                         <FormControl>
                                             <div className="relative flex items-center">
@@ -211,15 +201,14 @@ const ForgotPassword = () => {
                                                         )
                                                     }
                                                     disabled={
-                                                        isSendingOtp ||
-                                                        isVerified
+                                                        verifyOTPMutation.isPending ||
+                                                        step !== 'verify-otp'
                                                     }
+                                                    type="button"
                                                 >
-                                                    {isSendingOtp
+                                                    {verifyOTPMutation.isPending
                                                         ? 'Đang xác thực...'
-                                                        : isVerified
-                                                          ? 'Đã xác thực'
-                                                          : 'Xác thực OTP'}
+                                                        : 'Xác thực OTP'}
                                                 </Button>
                                             </div>
                                         </FormControl>
@@ -242,10 +231,36 @@ const ForgotPassword = () => {
                                             <FormControl>
                                                 <div className="relative">
                                                     <Input
-                                                        type="password"
+                                                        type={
+                                                            showPassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         placeholder="••••••••"
                                                         {...field}
                                                     />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        aria-label={
+                                                            showPassword
+                                                                ? 'Ẩn mật khẩu'
+                                                                : 'Hiện mật khẩu'
+                                                        }
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                        onClick={() =>
+                                                            setShowPassword(
+                                                                (prev) => !prev
+                                                            )
+                                                        }
+                                                    >
+                                                        {showPassword ? (
+                                                            <Eye className="h-4 w-4 text-slate-500" />
+                                                        ) : (
+                                                            <EyeOff className="h-4 w-4 text-slate-500" />
+                                                        )}
+                                                    </Button>
                                                     <div className="from-blue-500/10 pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-r to-cyan-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
                                                 </div>
                                             </FormControl>
@@ -265,10 +280,36 @@ const ForgotPassword = () => {
                                             <FormControl>
                                                 <div className="relative">
                                                     <Input
-                                                        type="password"
+                                                        type={
+                                                            showRepassword
+                                                                ? 'text'
+                                                                : 'password'
+                                                        }
                                                         placeholder="••••••••"
                                                         {...field}
                                                     />
+                                                    <Button
+                                                        type="button"
+                                                        variant="ghost"
+                                                        size="sm"
+                                                        aria-label={
+                                                            showRepassword
+                                                                ? 'Ẩn mật khẩu'
+                                                                : 'Hiện mật khẩu'
+                                                        }
+                                                        className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
+                                                        onClick={() =>
+                                                            setShowRepassword(
+                                                                (prev) => !prev
+                                                            )
+                                                        }
+                                                    >
+                                                        {showRepassword ? (
+                                                            <Eye className="h-4 w-4 text-slate-500" />
+                                                        ) : (
+                                                            <EyeOff className="h-4 w-4 text-slate-500" />
+                                                        )}
+                                                    </Button>
                                                     <div className="from-blue-500/10 pointer-events-none absolute inset-0 rounded-xl bg-gradient-to-r to-cyan-500/10 opacity-0 transition-opacity duration-300 group-hover:opacity-100"></div>
                                                 </div>
                                             </FormControl>
@@ -292,9 +333,13 @@ const ForgotPassword = () => {
                             type="submit"
                             variant={'primary'}
                             size={'md'}
-                            disabled={isSubmitting || step !== 'reset-password'}
+                            disabled={
+                                isSubmitting ||
+                                resetPasswordMutation.isPending ||
+                                step !== 'reset-password'
+                            }
                         >
-                            {isSubmitting ? (
+                            {isSubmitting || resetPasswordMutation.isPending ? (
                                 <div className="flex items-center justify-center">
                                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                     <span>Đang xử lý...</span>

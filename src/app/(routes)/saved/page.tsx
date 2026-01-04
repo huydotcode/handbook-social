@@ -1,11 +1,8 @@
 'use client';
-import { FriendSection, Sidebar } from '@/components/layout';
-import { InfinityPostComponent } from '@/components/post';
-import { useSession } from 'next-auth/react';
+import { FriendSection, Sidebar } from '@/shared/components/layout';
+import { InfinityPostComponent } from '@/shared/components/post';
 
 const SavedPage = () => {
-    const { data: session } = useSession();
-
     return (
         <>
             <div className="relative top-[56px] mx-auto min-h-[calc(100vh-56px)] w-[1200px] max-w-screen md:w-screen">
@@ -17,7 +14,7 @@ const SavedPage = () => {
                     <InfinityPostComponent className="mt-2" type="saved" />
                 </div>
 
-                {session && <FriendSection session={session} />}
+                <FriendSection />
             </div>
         </>
     );

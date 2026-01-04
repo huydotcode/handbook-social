@@ -1,12 +1,19 @@
-import { InfinityPostComponent } from '@/components/post';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+'use client';
+import { InfinityPostComponent } from '@/shared/components/post';
+import {
+    Tabs,
+    TabsContent,
+    TabsList,
+    TabsTrigger,
+} from '@/shared/components/ui/tabs';
+import { use } from 'react';
 
 interface Props {
     params: Promise<{ groupId: string }>;
 }
 
-const ManagePostPage: React.FC<Props> = async ({ params }) => {
-    const { groupId } = await params;
+const ManagePostPage: React.FC<Props> = ({ params }) => {
+    const { groupId } = use(params);
 
     return (
         <>
@@ -23,14 +30,14 @@ const ManagePostPage: React.FC<Props> = async ({ params }) => {
                     <InfinityPostComponent
                         groupId={groupId}
                         type={'manage-group-posts'}
-                        title={'Quản lý bài viết đang chờ duyệt'}
+                        title={'Quản lý bài viết đã duyệt'}
                     />
                 </TabsContent>
                 <TabsContent value="pending">
                     <InfinityPostComponent
                         groupId={groupId}
                         type={'manage-group-posts-pending'}
-                        title={'Quản lý bài viết đã duyệt'}
+                        title={'Quản lý bài viết chờ duyệt'}
                     />
                 </TabsContent>
             </Tabs>

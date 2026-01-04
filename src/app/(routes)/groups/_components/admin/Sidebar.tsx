@@ -1,16 +1,21 @@
 'use client';
-import SidebarCollapse from '@/components/layout/SidebarCollapse';
-import { Avatar, Icons, Modal } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { socketEvent } from '@/constants/socketEvent.constant';
-import { useSocket } from '@/context';
-import { GroupUserRole } from '@/enums/GroupRole';
-import useBreakPoint from '@/hooks/useBreakpoint';
-import ConversationService from '@/lib/services/conversation.service';
-import { timeConvert } from '@/utils/timeConvert';
+import { useAuth, useSocket } from '@/core/context';
+import { ConversationService } from '@/features/conversation';
+import { useGroupMembers } from '@/features/group/hooks/group.hook';
+import { timeConvert } from '@/shared';
+import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
+import { Avatar, Icons, Modal } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { socketEvent } from '@/shared/constants';
+import { useBreakpoint } from '@/shared/hooks';
+import {
+    GROUP_ROLES,
+    IConversation,
+    IGroup,
+    IMemberGroup,
+} from '@/types/entites';
 import { useMutation } from '@tanstack/react-query';
-import { useSession } from 'next-auth/react';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
@@ -28,23 +33,31 @@ const Sidebar: React.FC<Props> = ({
     conversations: initConversations,
 }) => {
     const { socket } = useSocket();
-    const { data: session } = useSession();
-    const { breakpoint } = useBreakPoint();
+    const { user } = useAuth();
+    const { breakpoint } = useBreakpoint();
     const isMobile = breakpoint === 'sm' || breakpoint === 'md';
-
+    const nameInputId = useId();
     const [showModalCreateConversation, setShowModalCreateConversation] =
         useState<boolean>(false);
     const [conversations, setConversations] =
         useState<IConversation[]>(initConversations);
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+    const { data: membersResponse } = useGroupMembers(currentGroup._id, {
+        page: 1,
+        pageSize: 200,
+    });
+    const members = useMemo(
+        () => membersResponse?.data || [],
+        [membersResponse]
+    );
 
     const canCreateConversation = useMemo(() => {
-        return currentGroup.members.some(
-            (member) =>
-                member.user._id === session?.user?.id &&
-                member.role === GroupUserRole.ADMIN
+        return members.some(
+            (member: IMemberGroup) =>
+                member.user._id === user?.id &&
+                member.role === GROUP_ROLES.ADMIN
         );
-    }, [currentGroup, session]);
+    }, [members, user?.id]);
 
     const {
         register,
@@ -59,7 +72,7 @@ const Sidebar: React.FC<Props> = ({
             setShowModalCreateConversation(false);
             setConversations((prev) => [...prev, newConversation]);
 
-            for (const mem of currentGroup.members) {
+            for (const mem of members) {
                 socket?.emit(socketEvent.JOIN_ROOM, {
                     roomId: newConversation._id,
                     userId: mem.user._id,
@@ -74,18 +87,15 @@ const Sidebar: React.FC<Props> = ({
     });
 
     const mutateCreateConversation = (data: FormData) => {
-        if (!session) return toast.error('Chưa đăng nhập');
+        if (!user) return toast.error('Chưa đăng nhập');
         createGroupConversation({
-            creator: session.user.id,
-            participantsUserId: [session.user.id],
-            title: data.name,
-            groupId: currentGroup._id,
+            participants: [user.id],
             type: 'group',
-            status: 'active',
+            name: data.name,
         });
     };
 
-    const isCreator = currentGroup.creator._id === session?.user?.id;
+    const isCreator = currentGroup.creator._id === user?.id;
 
     useEffect(() => {
         if (isMobile) {
@@ -150,9 +160,7 @@ const Sidebar: React.FC<Props> = ({
                             {conversations
                                 .filter(
                                     (conversation) =>
-                                        conversation.participants.some(
-                                            (p) => p._id === session?.user.id
-                                        ) && conversation.type === 'group'
+                                        conversation.type === 'group'
                                 )
                                 .map((conversation) => (
                                     <Button
@@ -181,9 +189,7 @@ const Sidebar: React.FC<Props> = ({
                             {conversations
                                 .filter(
                                     (conversation) =>
-                                        conversation.participants.some(
-                                            (p) => p._id !== session?.user.id
-                                        ) && conversation.type === 'group'
+                                        conversation.type === 'group'
                                 )
                                 .map((conversation) => (
                                     <Button
@@ -226,9 +232,11 @@ const Sidebar: React.FC<Props> = ({
                         className="p-4"
                     >
                         <div>
-                            <label htmlFor="name">Tên cuộc hội thoại</label>
+                            <label htmlFor={nameInputId}>
+                                Tên cuộc hội thoại
+                            </label>
                             <input
-                                id="name"
+                                id={nameInputId}
                                 className="my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1"
                                 type="text"
                                 placeholder="Tên cuộc hội thoại"

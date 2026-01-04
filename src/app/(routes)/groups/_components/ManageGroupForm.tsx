@@ -1,5 +1,5 @@
 'use client';
-import { Button } from '@/components/ui/Button';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -7,14 +7,14 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
-import GroupService from '@/lib/services/group.service';
-import { createGroupValidation } from '@/lib/validation';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
+import { useUpdateGroup } from '@/features/group/hooks/group.hook';
+import { IGroup } from '@/types/entites';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { usePathname } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
+import { createGroupValidation } from '@/features/group';
 
 const INPUT_CLASSNAME =
     'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';
@@ -30,7 +30,6 @@ interface Props {
 }
 
 const ManageGroupForm = ({ group }: Props) => {
-    const path = usePathname();
     const form = useForm<ICreateGroup>({
         defaultValues: {
             type: group.type,
@@ -41,23 +40,22 @@ const ManageGroupForm = ({ group }: Props) => {
     });
     const {
         handleSubmit,
-        register,
-        formState: { isSubmitting, errors },
+        formState: { isSubmitting },
     } = form;
+    const updateGroup = useUpdateGroup();
 
     const onSubmit = async (data: ICreateGroup) => {
         if (isSubmitting) return;
 
         try {
-            await GroupService.update({
+            await updateGroup.mutateAsync({
                 groupId: group._id,
-                name: data.name,
-                description: data.description,
-                type: data.type,
-                path,
+                data: {
+                    name: data.name,
+                    description: data.description,
+                    type: data.type,
+                },
             });
-
-            toast.success('Cập nhật nhóm thành công!');
         } catch (error) {
             toast.error('Có lỗi khi cập nhật nhóm!');
         }
@@ -134,10 +132,12 @@ const ManageGroupForm = ({ group }: Props) => {
                         className="mt-2"
                         type="submit"
                         variant="primary"
-                        disabled={isSubmitting}
+                        disabled={isSubmitting || updateGroup.isPending}
                         size={'sm'}
                     >
-                        {isSubmitting ? 'Đang cập nhật...' : 'Cập nhật'}
+                        {isSubmitting || updateGroup.isPending
+                            ? 'Đang cập nhật...'
+                            : 'Cập nhật'}
                     </Button>
                 </form>
             </Form>

@@ -1,90 +1,50 @@
 import {
-    acceptFriend,
-    createNotificationAcceptFriend,
-    createNotificationFollowUser,
-    declineFriend,
-    deleteNotification,
-    deleteNotificationByUsers,
-    getNotificationAddFriendByUserId,
-    getNotificationByNotiId,
-    markAllAsRead,
-    sendRequestAddFriend,
-} from '../actions/notification.action';
+    IConversation,
+    INotification,
+    IUser,
+    NOTIFICATION_TYPES,
+} from '@/types/entites';
+import { notificationService as apiNotificationService } from '../api/services/notification.service';
 
-interface INotificationService {
-    getById: (notificationId: string) => Promise<INotification | null>;
-
-    getTypeAcceptFriendByUser(userId: string): Promise<INotification | null>;
-
-    sendRequestFriend: ({
-        senderId,
-        receiverId,
-    }: {
-        senderId: string;
-        receiverId: string;
-    }) => Promise<INotification | null>;
-
-    acceptFriend: ({
-        senderId,
-        notificationId,
-    }: {
-        senderId: string;
-        notificationId: string;
-    }) => Promise<boolean>;
-
-    declineFriend: ({
-        senderId,
-        notificationId,
-    }: {
-        senderId: string;
-        notificationId: string;
-    }) => Promise<boolean>;
-
-    createNotificationAcceptFriend: ({
-        senderId,
-        receiverId,
-        message,
-        type,
-    }: {
-        senderId: string;
-        receiverId: string;
-        message: string;
-        type: string;
-    }) => Promise<INotification | null>;
-
-    createNotificationFollowUser: ({
-        senderId,
-        receiverId,
-    }: {
-        senderId: string;
-        receiverId: string;
-    }) => Promise<INotification | null>;
-
-    markAllAsRead: (userId: string) => Promise<boolean>;
-
-    deleteNotification: (notificationId: string) => Promise<boolean>;
-    deleteNotificationByUsers: ({
-        senderId,
-        receiverId,
-    }: {
-        senderId: string;
-        receiverId: string;
-    }) => Promise<boolean>;
-}
-
-class NotificationServiceClass implements INotificationService {
+class NotificationServiceClass {
+    /**
+     * Get notification by ID
+     */
     async getById(notificationId: string): Promise<INotification | null> {
-        return await getNotificationByNotiId({ notificationId });
+        try {
+            const notification =
+                await apiNotificationService.getById(notificationId);
+            return notification;
+        } catch (error) {
+            console.error('Error getting notification by id:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Get accept friend notification by user
+     * TODO: Can use getByReceiver with filter
+     */
     async getTypeAcceptFriendByUser(
         userId: string
     ): Promise<INotification | null> {
-        return await getNotificationAddFriendByUserId({
-            receiverId: userId,
-        });
+        try {
+            const notifications =
+                await apiNotificationService.getByReceiver(userId);
+            return (
+                notifications.find(
+                    (n) => n.type === NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST
+                ) || null
+            );
+        } catch (error) {
+            console.error('Error getting accept friend notification:', error);
+            return null;
+        }
     }
 
+    /**
+     * Send friend request
+     */
     async sendRequestFriend({
         senderId,
         receiverId,
@@ -92,32 +52,66 @@ class NotificationServiceClass implements INotificationService {
         senderId: string;
         receiverId: string;
     }): Promise<INotification | null> {
-        return await sendRequestAddFriend({ senderId, receiverId });
+        try {
+            const notification = await apiNotificationService.sendFriendRequest(
+                {
+                    receiver: receiverId,
+                }
+            );
+            return notification;
+        } catch (error) {
+            console.error('Error sending friend request:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Accept friend request
+     */
     async acceptFriend({
-        senderId,
         notificationId,
     }: {
-        senderId: string;
         notificationId: string;
-    }): Promise<boolean> {
-        return await acceptFriend({ senderId, notificationId });
+    }): Promise<{ success: boolean; conversation?: IConversation }> {
+        try {
+            const result =
+                await apiNotificationService.acceptFriendRequest(
+                    notificationId
+                );
+            return {
+                success: result.success,
+                conversation: result.conversation,
+            };
+        } catch (error) {
+            console.error('Error accepting friend request:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Decline friend request
+     */
     async declineFriend({
-        senderId,
         notificationId,
     }: {
-        senderId: string;
         notificationId: string;
     }): Promise<boolean> {
-        return await declineFriend({
-            senderId,
-            notificationId,
-        });
+        try {
+            const result =
+                await apiNotificationService.declineFriendRequest(
+                    notificationId
+                );
+            return result.success;
+        } catch (error) {
+            console.error('Error declining friend request:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Create accept friend notification
+     * TODO: Server API needs POST /notifications endpoint
+     */
     async createNotificationAcceptFriend({
         senderId,
         receiverId,
@@ -125,12 +119,21 @@ class NotificationServiceClass implements INotificationService {
         senderId: string;
         receiverId: string;
     }): Promise<INotification | null> {
-        return await createNotificationAcceptFriend({
-            senderId,
-            receiverId,
-        });
+        try {
+            const notification = await apiNotificationService.create({
+                receiver: receiverId as unknown as IUser,
+                type: NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST,
+            });
+            return notification;
+        } catch (error) {
+            console.error('Error creating accept-friend notification:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Create follow user notification
+     */
     async createNotificationFollowUser({
         senderId,
         receiverId,
@@ -138,20 +141,47 @@ class NotificationServiceClass implements INotificationService {
         senderId: string;
         receiverId: string;
     }): Promise<INotification | null> {
-        return await createNotificationFollowUser({
-            senderId,
-            receiverId,
-        });
+        try {
+            const notification =
+                await apiNotificationService.createFollowNotification({
+                    receiver: receiverId,
+                });
+            return notification;
+        } catch (error) {
+            console.error('Error creating follow notification:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Mark all notifications as read
+     */
     async markAllAsRead(): Promise<boolean> {
-        return await markAllAsRead();
+        try {
+            const result = await apiNotificationService.markAllAsRead();
+            return result.success;
+        } catch (error) {
+            console.error('Error marking all notifications as read:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Delete a notification
+     */
     async deleteNotification(notificationId: string): Promise<boolean> {
-        return await deleteNotification({ notificationId });
+        try {
+            const result = await apiNotificationService.delete(notificationId);
+            return result.success;
+        } catch (error) {
+            console.error('Error deleting notification:', error);
+            throw error;
+        }
     }
 
+    /**
+     * Delete notification by users
+     */
     async deleteNotificationByUsers({
         senderId,
         receiverId,
@@ -161,11 +191,17 @@ class NotificationServiceClass implements INotificationService {
         receiverId: string;
         type?: string;
     }): Promise<boolean> {
-        return await deleteNotificationByUsers({
-            senderId,
-            receiverId,
-            type: type,
-        });
+        try {
+            const result =
+                await apiNotificationService.deleteNotificationByUsers({
+                    sender: senderId,
+                    receiver: receiverId,
+                });
+            return result.success;
+        } catch (error) {
+            console.error('Error deleting notification by users:', error);
+            throw error;
+        }
     }
 }
 

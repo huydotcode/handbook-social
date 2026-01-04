@@ -1,7 +1,15 @@
 'use client';
-import FileUploader from '@/components/shared/FileUploader';
-import { Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/core/context';
+import { useCategories, useLocations } from '@/core/context/AppContext';
+import {
+    createItemValidation,
+    CreateItemValidation,
+    ItemService,
+} from '@/features/item';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
+import FileUploader from '@/shared/components/shared/FileUploader';
+import { Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -9,29 +17,25 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
 import {
     Select,
     SelectContent,
     SelectItem,
     SelectTrigger,
     SelectValue,
-} from '@/components/ui/select';
-import { Textarea } from '@/components/ui/textarea';
-import { useCategories, useLocations } from '@/context/AppContext';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import ItemService from '@/lib/services/item.service';
-import { uploadImagesWithFiles } from '@/lib/uploadImage';
-import { createItemValidation, CreateItemValidation } from '@/lib/validation';
+} from '@/shared/components/ui/select';
+import { Textarea } from '@/shared/components/ui/textarea';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { ICategory, ILocation } from '@/types/entites';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 
 const CreateItemPage = () => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const router = useRouter();
     const { invalidateItems } = useQueryInvalidation();
 
@@ -62,7 +66,7 @@ const CreateItemPage = () => {
 
             await ItemService.create({
                 name: data.name,
-                seller: session?.user.id || '',
+                seller: user?.id || '',
                 description: data.description,
                 price: +data.price.replace(/\D/g, ''), // Chuyển đổi giá thành số
                 imagesIds: images.map((image) => image._id),
@@ -77,7 +81,7 @@ const CreateItemPage = () => {
 
             toast.success('Tạo sản phẩm thành công');
         } catch (error) {
-            console.log(error);
+            console.error(error);
             toast.error('Có lỗi xảy ra');
         }
     };

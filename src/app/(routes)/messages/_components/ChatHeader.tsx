@@ -1,13 +1,15 @@
 'use client';
-import { Avatar, Icons } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import useBreakpoint from '@/hooks/useBreakpoint';
+import { Avatar, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import { useAuth } from '@/core/context';
+import { useVideoCall } from '@/core/context/VideoCallContext';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { cn } from '@/lib/utils';
-import { timeConvert3 } from '@/utils/timeConvert';
-import { useSession } from 'next-auth/react';
+import { timeConvert3 } from '@/shared';
+import { useBreakpoint } from '@/shared/hooks';
+import { IConversation } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useMemo } from 'react';
-import { useVideoCall } from '@/context/VideoCallContext';
 
 interface Props {
     openInfo: boolean;
@@ -24,23 +26,21 @@ const ChatHeader: React.FC<Props> = ({
     handleOpenInfo,
     handleOpenSearch,
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const router = useRouter();
     const { breakpoint } = useBreakpoint();
     const { startCall } = useVideoCall();
 
     const roomType = currentRoom.type;
     const isGroup = roomType === 'group';
+    const { members } = useConversationMembers(currentRoom._id);
 
     const partner = useMemo(() => {
         if (isGroup) return null;
-        if (!currentRoom.participants || currentRoom.participants.length < 2) {
-            return null;
-        }
-        if (!session?.user) return null;
-
-        return currentRoom.participants.find((p) => p._id !== session.user.id);
-    }, [isGroup, currentRoom.participants, session?.user]);
+        if (!user) return null;
+        const other = members.find((m) => m.user._id !== user.id)?.user;
+        return other || null;
+    }, [isGroup, members, user]);
 
     const title = useMemo(() => {
         if (roomType == 'group') {

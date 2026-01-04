@@ -1,6 +1,6 @@
 'use client';
-import { Icons, Loading } from '@/components/ui';
-import { Button } from '@/components/ui/Button';
+import { Icons, Loading } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Table,
     TableBody,
@@ -8,15 +8,16 @@ import {
     TableHead,
     TableHeader,
     TableRow,
-} from '@/components/ui/table';
+} from '@/shared/components/ui/table';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '@/components/ui/tooltip';
-import { fetchAllPosts } from '@/lib/actions/admin/post.action';
-import queryKey from '@/lib/queryKey';
+} from '@/shared/components/ui/tooltip';
+import { adminService } from '@/lib/api/services/admin.service';
+import queryKey from '@/lib/react-query/query-key';
+import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import toast from 'react-hot-toast';
 
@@ -28,9 +29,9 @@ const AdminPostsPage = () => {
     } = useQuery<IPost[]>({
         queryKey: queryKey.admin.posts.index,
         queryFn: async () => {
-            const posts = await fetchAllPosts();
-
-            return posts;
+            return await adminService.getPosts({
+                page_size: 100,
+            });
         },
         initialData: [],
     });

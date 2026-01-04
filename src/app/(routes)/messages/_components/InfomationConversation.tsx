@@ -1,5 +1,9 @@
 'use client';
-import { Items } from '@/components/shared';
+import { useSocket } from '@/core/context';
+import { useAuth } from '@/core/context/AuthContext';
+import { ConversationService } from '@/features/conversation';
+import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import { Items } from '@/shared/components/shared';
 import {
     Avatar,
     Collapse,
@@ -7,20 +11,17 @@ import {
     Icons,
     Modal,
     SlideShow,
-} from '@/components/ui';
-import { Button } from '@/components/ui/Button';
-import { useSocket } from '@/context';
-import { useQueryInvalidation } from '@/hooks/useQueryInvalidation';
-import { leaveConversation } from '@/lib/actions/conversation.action';
-import ConversationService from '@/lib/services/conversation.service';
-import { useSession } from 'next-auth/react';
+} from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
+import Image from '@/shared/components/ui/image';
+import { useQueryInvalidation } from '@/shared/hooks';
+import { IConversation, IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import { usePinnedMessages } from './ChatBox';
 import Message from './Message';
 import SideHeader from './SideHeader';
-import Image from '@/components/ui/image';
 
 interface Props {
     conversation: IConversation;
@@ -33,10 +34,11 @@ const InfomationConversation: React.FC<Props> = ({
     setOpenInfo,
     messages,
 }) => {
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const { socketEmitor } = useSocket();
     const router = useRouter();
     const { invalidateConversations } = useQueryInvalidation();
+    const { members } = useConversationMembers(conversation._id);
 
     const [openSlideShow, setOpenSlideShow] = useState<boolean>(false);
     const [startImageIndex, setStartImageIndex] = useState<number>(0);
@@ -68,13 +70,9 @@ const InfomationConversation: React.FC<Props> = ({
         if (conversation.group) {
             return null;
         } else {
-            if (conversation.participants[0]._id === session?.user?.id) {
-                return conversation.participants[1];
-            } else {
-                return conversation.participants[0];
-            }
+            return members.find((m) => m.user._id !== user?.id)?.user || null;
         }
-    }, [conversation.group, conversation.participants, session?.user?.id]);
+    }, [conversation.group, members, user?.id]);
 
     const title = useMemo(() => {
         if (conversation.group) {
@@ -93,22 +91,22 @@ const InfomationConversation: React.FC<Props> = ({
     }, [conversation.group, partner?.avatar]);
 
     const handleOutConversation = async () => {
-        if (!conversation._id || !session?.user) return;
+        if (!conversation._id || !user) return;
 
         try {
             if (isPrivate) {
                 await ConversationService.deleteByUser({
                     conversationId: conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
 
                 toast.success('Xóa đoạn hội thoại thành công');
             }
 
             if (isGroup) {
-                await leaveConversation({
+                await ConversationService.leaveConversation({
                     conversationId: conversation._id,
-                    userId: session.user.id,
+                    userId: user.id,
                 });
 
                 toast.success('Rời đoạn hội thoại thành công');
@@ -120,7 +118,7 @@ const InfomationConversation: React.FC<Props> = ({
 
             socketEmitor.leaveRoom({
                 roomId: conversation._id,
-                userId: session?.user?.id,
+                userId: user.id,
             });
         } catch (error) {
             toast.error(
@@ -187,11 +185,11 @@ const InfomationConversation: React.FC<Props> = ({
             label: 'Thành viên',
             children: (
                 <div>
-                    {conversation.participants.slice(0, 5).map((part) => (
+                    {members.slice(0, 5).map((member) => (
                         <Items.User
                             className={'h-10 text-xs shadow-none'}
-                            data={part}
-                            key={part._id}
+                            data={member.user}
+                            key={member._id}
                         />
                     ))}
                 </div>

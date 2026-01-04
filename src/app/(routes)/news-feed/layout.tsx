@@ -1,4 +1,4 @@
-import FixedLayout from '@/components/layout/FixedLayout';
+import FixedLayout from '@/shared/components/layout/FixedLayout';
 import React from 'react';
 import Sidebar from '@/app/(routes)/news-feed/_components/Sidebar';
 

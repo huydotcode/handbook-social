@@ -1,89 +1,34 @@
-import {
-    createPost,
-    deletePost,
-    editPost,
-    getPostByPostId,
-    getSavedPosts,
-    savePost,
-    sendReaction,
-    sharePost,
-    unsavePost,
-    updateStatusPost,
-} from '../actions/post.action';
+import { IPost } from '@/types/entites';
+import { postService as apiPostService } from '../api/services/post.service';
 
-interface IPostService {
-    getById(id: string): Promise<IPost | null>;
-    getSavedByUserId?(userId: string): Promise<IPost[]>;
-    create: ({
-        content,
-        mediaIds,
-        option,
-        groupId,
-        type,
-    }: {
-        content: string;
-        mediaIds: string[];
-        option: string;
-        groupId?: string | null;
-        type?: string;
-    }) => Promise<IPost>;
-    update: ({
-        content,
-        mediaIds,
-        option,
-        postId,
-    }: {
-        content: string;
-        mediaIds: string[];
-        option: string;
-        postId: string;
-    }) => Promise<IPost>;
-    sendReaction: (postId: string) => Promise<boolean>;
-    delete: (postId: string) => Promise<boolean>;
-
-    updateStatus: ({
-        postId,
-        status,
-        path,
-    }: {
-        postId: string;
-        status: string;
-        path: string;
-    }) => Promise<boolean>;
-
-    savePost: ({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }) => Promise<boolean>;
-
-    unsavePost: ({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }) => Promise<boolean>;
-}
-
-class PostServiceClass implements IPostService {
+class PostServiceClass {
+    /**
+     * Get post by ID using REST API
+     */
     async getById(id: string): Promise<IPost | null> {
-        const post = await getPostByPostId({ postId: id });
-
-        if (!post) {
-            throw new Error(`Post with ID ${id} not found`);
+        try {
+            return await apiPostService.getById(id);
+        } catch (error) {
+            console.error('Error getting post by ID:', error);
+            return null;
         }
-
-        return post;
     }
 
+    /**
+     * Get saved posts by user ID using REST API
+     */
     async getSavedByUserId(userId: string): Promise<IPost[]> {
-        const posts = await getSavedPosts({ userId });
-        return posts;
+        try {
+            return await apiPostService.getSaved();
+        } catch (error) {
+            console.error('Error getting saved posts:', error);
+            return [];
+        }
     }
 
+    /**
+     * Create a new post using REST API
+     */
     async create({
         content,
         mediaIds,
@@ -99,18 +44,53 @@ class PostServiceClass implements IPostService {
         type?: string;
         tags?: string[];
     }): Promise<IPost> {
-        const newPost = await createPost({
-            content,
-            mediaIds,
-            option,
-            groupId,
-            type,
-            tags,
-        });
+        // Get current user ID from localStorage token
+        const token =
+            typeof window !== 'undefined'
+                ? localStorage.getItem('accessToken')
+                : null;
+        let authorId = '';
 
-        return newPost;
+        if (token) {
+            try {
+                const base64Url = token.split('.')[1];
+                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+                const jsonPayload = decodeURIComponent(
+                    atob(base64)
+                        .split('')
+                        .map(
+                            (c) =>
+                                '%' +
+                                ('00' + c.charCodeAt(0).toString(16)).slice(-2)
+                        )
+                        .join('')
+                );
+                const decoded = JSON.parse(jsonPayload);
+                authorId = decoded.id;
+            } catch (error) {
+                console.error('Error decoding token:', error);
+            }
+        }
+
+        const normalizedStatus =
+            type && ['active', 'pending', 'rejected'].includes(type)
+                ? (type as 'active' | 'pending' | 'rejected')
+                : undefined;
+
+        return await apiPostService.create({
+            author: authorId,
+            text: content,
+            media: mediaIds,
+            group: groupId || undefined,
+            tags: tags,
+            option: option,
+            status: normalizedStatus,
+        });
     }
 
+    /**
+     * Update a post using REST API
+     */
     async update({
         content,
         mediaIds,
@@ -124,94 +104,105 @@ class PostServiceClass implements IPostService {
         postId: string;
         tags?: string[];
     }): Promise<IPost> {
-        const updatedPost = await editPost({
-            content,
-            mediaIds,
-            option,
-            postId,
-            tags,
+        return await apiPostService.update(postId, {
+            text: content,
+            media: mediaIds,
+            option: option,
+            tags: tags,
         });
-
-        return updatedPost;
     }
 
-    async sendReaction(postId: string): Promise<boolean> {
-        const result = await sendReaction({
-            postId,
-        });
-        return result;
-    }
-
-    async share(postId: string): Promise<boolean> {
-        const result = await sharePost({
-            postId,
-        });
-        if (!result) {
-            throw new Error(`Failed to share post with ID ${postId}`);
+    /**
+     * Send reaction (like) to a post
+     * Toggles like state: adds like if not liked, removes like if already liked
+     */
+    async sendReaction(
+        postId: string
+    ): Promise<{ action: 'added' | 'removed' }> {
+        try {
+            const result = await apiPostService.like(postId);
+            return { action: result.action };
+        } catch (error) {
+            console.error('Error sending reaction:', error);
+            throw error;
         }
-        return result;
     }
 
+    /**
+     * Share a post
+     * Toggles share state: adds share if not shared, removes share if already shared
+     */
+    async share(postId: string): Promise<{ action: 'added' | 'removed' }> {
+        try {
+            const result = await apiPostService.share(postId);
+            return { action: result.action };
+        } catch (error) {
+            console.error('Error sharing post:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Delete a post using REST API
+     */
     async delete(postId: string): Promise<boolean> {
-        const result = await deletePost({
-            postId,
-        });
-        return result;
+        try {
+            await apiPostService.delete(postId);
+            return true;
+        } catch (error) {
+            console.error('Error deleting post:', error);
+            return false;
+        }
     }
 
+    /**
+     * Update post status
+     */
     async updateStatus({
         postId,
         status,
-        path,
     }: {
         postId: string;
         status: string;
-        path: string;
     }): Promise<boolean> {
-        const result = await updateStatusPost({
-            postId,
-            status,
-            path,
-        });
-        return result;
+        try {
+            // Use update endpoint with status field
+            await apiPostService.update(postId, {
+                status: status,
+            });
+            return true;
+        } catch (error) {
+            console.error('Error updating post status:', error);
+            return false;
+        }
     }
 
-    async savePost({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }): Promise<boolean> {
-        const result = await savePost({
-            postId,
-            path,
-        });
-
-        if (!result) {
-            throw new Error(`Failed to save post with ID ${postId}`);
+    /**
+     * Save a post
+     * Toggles save state: adds save if not saved, removes save if already saved
+     */
+    async savePost(postId: string): Promise<boolean> {
+        try {
+            const result = await apiPostService.save(postId);
+            return result.action === 'added';
+        } catch (error) {
+            console.error('Error saving post:', error);
+            throw error;
         }
-
-        return result;
     }
 
-    async unsavePost({
-        postId,
-        path,
-    }: {
-        postId: string;
-        path: string;
-    }): Promise<boolean> {
-        const result = await unsavePost({
-            postId,
-            path,
-        });
-
-        if (!result) {
-            throw new Error(`Failed to unsave post with ID ${postId}`);
+    /**
+     * Unsave a post
+     * Toggles save state: removes save if saved, adds save if not saved
+     */
+    async unsavePost(postId: string): Promise<boolean> {
+        try {
+            const result = await apiPostService.save(postId);
+            return result.action === 'removed';
+        } catch (error) {
+            console.error('Error unsaving post:', error);
+            throw error;
         }
-
-        return result;
     }
 }
 

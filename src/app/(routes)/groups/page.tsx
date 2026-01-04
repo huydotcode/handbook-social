@@ -1,14 +1,48 @@
-import { InfinityPostComponent } from '@/components/post';
-import { Button } from '@/components/ui/Button';
-import { getAuthSession } from '@/lib/auth';
-import GroupService from '@/lib/services/group.service';
+'use client';
+import { InfinityPostComponent } from '@/shared/components/post';
+import { Button } from '@/shared/components/ui/Button';
+import { useAuth } from '@/core/context/AuthContext';
+import GroupService from '@/features/group/services/group.service';
 import Image from 'next/image';
+import { useEffect, useState } from 'react';
 import { Sidebar } from './_components';
+import { IGroup } from '@/types/entites';
 
-const GroupsPage = async () => {
-    const session = await getAuthSession();
-    if (!session) return null;
-    const groups = await GroupService.getRecommendedGroups(session.user.id);
+const GroupsPage = () => {
+    const { user } = useAuth();
+    const [groups, setGroups] = useState<IGroup[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+
+    useEffect(() => {
+        const fetchGroups = async () => {
+            if (!user?.id) {
+                setIsLoading(false);
+                return;
+            }
+
+            try {
+                const data = await GroupService.getRecommendedGroups(user.id);
+                setGroups(data || []);
+            } catch (error) {
+                console.error('Error fetching recommended groups:', error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
+
+        fetchGroups();
+    }, [user?.id]);
+
+    if (isLoading) {
+        return (
+            <>
+                <Sidebar />
+                <div className="mx-auto max-w-[700px]">
+                    <div className="text-center">Đang tải...</div>
+                </div>
+            </>
+        );
+    }
 
     return (
         <>

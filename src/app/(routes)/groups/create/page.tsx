@@ -1,7 +1,10 @@
 'use client';
-import { Icons } from '@/components/ui';
+import { Icons } from '@/shared/components/ui';
 
-import { Button } from '@/components/ui/Button';
+import { useAuth } from '@/core/context';
+import { createGroupValidation } from '@/features/group';
+import { useCreateGroup } from '@/features/group/hooks/group.hook';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Form,
     FormControl,
@@ -9,18 +12,13 @@ import {
     FormItem,
     FormLabel,
     FormMessage,
-} from '@/components/ui/Form';
-import { Input } from '@/components/ui/Input';
-import GroupService from '@/lib/services/group.service';
-import UserService from '@/lib/services/user.service';
-import { uploadImageWithFile } from '@/lib/uploadImage';
-import { cn } from '@/lib/utils';
-import { createGroupValidation } from '@/lib/validation';
+} from '@/shared/components/ui/Form';
+import { Input } from '@/shared/components/ui/Input';
+import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { useSession } from 'next-auth/react';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
+import React, { useId } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 import { Sidebar } from '../_components';
@@ -51,27 +49,14 @@ const CreateGroupPage: React.FC = ({}) => {
         watch,
         formState: { isSubmitting, errors },
     } = form;
-    const [members, setMembers] = useState<string[]>([]);
-
-    const [friends, setFriends] = useState<IFriend[]>([]);
-    const [searchFriendValue, setSearchFriendValue] = useState<string>('');
-    const { data: session } = useSession();
+    const { user } = useAuth();
     const file = watch('file');
-
+    const fileInputId = useId();
     const router = useRouter();
-
-    useEffect(() => {
-        (async () => {
-            const friends = await UserService.getFriendsByUserId({
-                userId: session?.user.id as string,
-            });
-
-            setFriends(friends);
-        })();
-    }, [session?.user.id]);
+    const createGroup = useCreateGroup();
 
     const onSubmit = async (data: ICreateGroup) => {
-        if (isSubmitting) return;
+        if (isSubmitting || createGroup.isPending) return;
 
         try {
             if (!data.file) {
@@ -90,16 +75,16 @@ const CreateGroupPage: React.FC = ({}) => {
                 return;
             }
 
-            const newGroup = await GroupService.create({
+            const newGroup = await createGroup.mutateAsync({
                 ...data,
                 avatar: avatar._id,
-                members,
             });
 
-            toast.success('Tạo nhóm thành công!');
-            router.push(`/groups/${newGroup._id}`);
+            if (newGroup?._id) {
+                router.push(`/groups/${newGroup._id}`);
+            }
         } catch (error) {
-            toast.error('Có lỗi xảy ra khi tạo nhóm, vui lòng thử lại!');
+            console.error('Error creating group:', error);
         }
     };
 
@@ -158,10 +143,12 @@ const CreateGroupPage: React.FC = ({}) => {
 
                             {/* Ảnh đại diện */}
                             <div>
-                                <label htmlFor="avatar">Ảnh đại diện</label>
+                                <label htmlFor={fileInputId}>
+                                    Ảnh đại diện
+                                </label>
                                 <label
                                     className="flex items-center"
-                                    htmlFor="avatar"
+                                    htmlFor={fileInputId}
                                 >
                                     <span className="mr-2 p-2">
                                         {file ? (
@@ -180,7 +167,7 @@ const CreateGroupPage: React.FC = ({}) => {
                                 </label>
                                 <input
                                     type="file"
-                                    id="avatar"
+                                    id={fileInputId}
                                     accept="image/*"
                                     className="hidden"
                                     onChange={(e) => {
@@ -225,80 +212,16 @@ const CreateGroupPage: React.FC = ({}) => {
                                 )}
                             />
 
-                            {/* Thêm thành viên */}
-                            <div className="flex flex-col">
-                                <label>Thêm thành viên</label>
-                                <input
-                                    className={cn(
-                                        INPUT_CLASSNAME,
-                                        'rounded-b-none border-b'
-                                    )}
-                                    placeholder="Tìm kiếm bạn bè"
-                                    value={searchFriendValue}
-                                    onChange={(e) =>
-                                        setSearchFriendValue(e.target.value)
-                                    }
-                                />
-
-                                {/* Thêm bạn vào nhóm */}
-                                <div className="max-h-[200px] overflow-y-scroll bg-primary-1 p-2 dark:bg-dark-primary-1">
-                                    {friends
-                                        .filter((friend) =>
-                                            friend.name
-                                                .toLowerCase()
-                                                .includes(
-                                                    searchFriendValue.toLowerCase()
-                                                )
-                                        )
-                                        .map((friend) => (
-                                            <div
-                                                key={friend._id}
-                                                className="mb-2 flex items-center space-x-2"
-                                            >
-                                                <input
-                                                    type="checkbox"
-                                                    id={friend._id}
-                                                    value={friend._id}
-                                                    onChange={(e) => {
-                                                        if (e.target.checked) {
-                                                            setMembers([
-                                                                ...members,
-                                                                friend._id,
-                                                            ]);
-                                                        } else {
-                                                            setMembers(
-                                                                members.filter(
-                                                                    (id) =>
-                                                                        id !==
-                                                                        friend._id
-                                                                )
-                                                            );
-                                                        }
-                                                    }}
-                                                />
-                                                <Image
-                                                    src={friend.avatar}
-                                                    alt="avatar"
-                                                    width={32}
-                                                    height={32}
-                                                    className="rounded-full"
-                                                />
-                                                <label htmlFor={friend._id}>
-                                                    {friend.name}
-                                                </label>
-                                            </div>
-                                        ))}
-                                </div>
-                            </div>
-
                             <Button
                                 className="mt-2"
                                 type="submit"
                                 variant="primary"
-                                disabled={isSubmitting}
+                                disabled={isSubmitting || createGroup.isPending}
                                 size={'sm'}
                             >
-                                {isSubmitting ? 'Đang tạo nhóm...' : 'Tạo nhóm'}
+                                {isSubmitting || createGroup.isPending
+                                    ? 'Đang tạo nhóm...'
+                                    : 'Tạo nhóm'}
                             </Button>
                         </form>
                     </Form>
