@@ -1,5 +1,8 @@
+'use client';
 import { DarkmodeButton } from '@/shared/components/ui';
-import React from 'react';
+import { useAuth } from '@/core/context/AuthContext';
+import { useRouter } from 'next/navigation';
+import React, { useEffect } from 'react';
 
 import {
     FaComments,
@@ -54,7 +57,21 @@ interface Props {
     children: React.ReactNode;
 }
 
-const AuthLayout: React.FC<Props> = async ({ children }) => {
+const AuthLayout: React.FC<Props> = ({ children }) => {
+    const { isAuthenticated, isLoading } = useAuth();
+    const router = useRouter();
+
+    useEffect(() => {
+        if (!isLoading && isAuthenticated) {
+            router.replace('/');
+        }
+    }, [isAuthenticated, isLoading, router]);
+
+    // Avoid flashing auth pages when redirecting
+    if (isAuthenticated) {
+        return null;
+    }
+
     return (
         <div className="relative min-h-screen overflow-hidden bg-white dark:bg-dark-secondary-2">
             {/* Darkmode Button */}
