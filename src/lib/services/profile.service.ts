@@ -17,17 +17,26 @@ export interface IGetUserProfileResponse {
 
 class ProfileServiceClass {
     /**
-     * Get profile by user ID
+     * Get profile by user ID or username
      */
-    async getByUserId(userId: string): Promise<IGetUserProfileResponse | null> {
+    async getByIdOrUsername(
+        idOrUsername: string
+    ): Promise<IGetUserProfileResponse | null> {
         try {
-            const data = await UserService.getProfile(userId);
+            const data = await UserService.getProfile(idOrUsername);
             if (!data) return null;
             return data;
         } catch (error) {
-            console.error('Error getting profile by user ID:', error);
+            console.error('Error getting profile:', error);
             return null;
         }
+    }
+
+    /**
+     * Get profile by user ID (deprecated, use getByIdOrUsername instead)
+     */
+    async getByUserId(userId: string): Promise<IGetUserProfileResponse | null> {
+        return this.getByIdOrUsername(userId);
     }
 
     /**
