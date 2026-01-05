@@ -1,4 +1,5 @@
 'use client';
+import { env } from '@/core/config/env.config';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFriends } from '@/core/context/SocialContext';
 import { ConversationService } from '@/features/conversation';
@@ -22,7 +23,10 @@ interface Props {
     post: IPost;
 }
 
-const BASE_URL = 'https://handbookk.vercel.app';
+const BASE_URL =
+    env.NODE_ENV === 'production'
+        ? 'https://handbook-social.me'
+        : 'http://localhost:3000';
 
 const SharePost: React.FC<Props> = ({ post }) => {
     const { user } = useAuth();
