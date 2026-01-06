@@ -37,10 +37,10 @@ export {
 } from '../../../features/group/hooks/group.hook';
 
 // Notification hooks
-export {
-    useNotificationsByReceiver,
-    useRequestsBySender,
-} from './useNotification';
+// export {
+//     useNotificationsByReceiver,
+//     useRequestsBySender,
+// } from './useNotification';
 
 // Search hooks
 export {

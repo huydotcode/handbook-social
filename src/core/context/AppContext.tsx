@@ -3,9 +3,9 @@ import { CategoryService } from '@/features/category';
 import GroupService from '@/features/group/services/group.service';
 import { locationService } from '@/lib/api/services/location.service';
 import {
+    notificationApi,
     NotificationQueryParams,
-    notificationService,
-} from '@/lib/api/services/notification.service';
+} from '@/features/notification';
 import queryKey from '@/lib/react-query/query-key';
 import { soundManager } from '@/shared/utils/sound-manager';
 import { notificationType, socketEvent } from '@/shared/constants';
@@ -30,7 +30,7 @@ export const useNotifications = (userId: string | undefined) =>
                 page: pageParam,
                 page_size: PAGE_SIZE,
             };
-            return notificationService.getByReceiver(userId, params);
+            return notificationApi.getByReceiver(userId, params);
         },
         select: (data) => {
             return data.pages.flatMap((page) => page);
@@ -98,7 +98,7 @@ export const useRequests = (userId: string | undefined) =>
                 page: pageParam,
                 page_size: PAGE_SIZE,
             };
-            return notificationService.getBySender(userId, params);
+            return notificationApi.getBySender(userId, params);
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {

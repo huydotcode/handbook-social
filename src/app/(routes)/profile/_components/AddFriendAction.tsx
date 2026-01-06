@@ -1,13 +1,13 @@
 'use client';
-import { Button } from '@/shared/components/ui/Button';
-import Icons from '@/shared/components/ui/Icons';
 import { useSocket } from '@/core/context';
 import { useNotifications, useRequests } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFriends } from '@/core/context/SocialContext';
+import { NotificationService } from '@/features/notification';
 import { UserService } from '@/features/user';
-import NotificationService from '@/lib/services/notification.service';
 import { cn } from '@/lib/utils';
+import { Button } from '@/shared/components/ui/Button';
+import Icons from '@/shared/components/ui/Icons';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { NOTIFICATION_TYPES } from '@/types/entites';
 import { useMutation } from '@tanstack/react-query';

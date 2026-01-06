@@ -1,6 +1,5 @@
 export * from '../../features/group/services/group.service';
 export * from './image.service';
-export * from './notification.service';
 export * from './post.service';
 export * from './profile.service';
 

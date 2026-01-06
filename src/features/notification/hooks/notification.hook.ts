@@ -1,15 +1,10 @@
-import { notificationService } from '@/lib/api/services/notification.service';
-import { queryKey } from '@/lib/react-query/query-key';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
 } from '@/lib/react-query';
+import { queryKey } from '@/lib/react-query/query-key';
 import { useInfiniteQuery } from '@tanstack/react-query';
-
-export interface NotificationQueryParams {
-    page?: number;
-    page_size?: number;
-}
+import { notificationApi } from '../apis/notification.api';
 
 /**
  * Hook to get notifications by receiver (infinite query)
@@ -24,7 +19,7 @@ export const useNotificationsByReceiver = (
     return useInfiniteQuery({
         queryKey: queryKey.user.notifications(receiverId),
         queryFn: ({ pageParam = 1 }) =>
-            notificationService.getByReceiver(receiverId, {
+            notificationApi.getByReceiver(receiverId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -48,7 +43,7 @@ export const useRequestsBySender = (
     return useInfiniteQuery({
         queryKey: queryKey.user.requests(senderId),
         queryFn: ({ pageParam = 1 }) =>
-            notificationService.getBySender(senderId, {
+            notificationApi.getBySender(senderId, {
                 page: pageParam,
                 page_size: pageSize,
             }),

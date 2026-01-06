@@ -1,18 +1,18 @@
 'use client';
+import { useAuth, useSocket } from '@/core/context';
+import { NotificationService } from '@/features/notification';
+import { cn } from '@/lib/utils';
 import { Avatar } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useAuth, useSocket } from '@/core/context';
 import { useQueryInvalidation } from '@/shared/hooks';
-import NotificationService from '@/lib/services/notification.service';
-import { cn } from '@/lib/utils';
-import { useCallback, useState } from 'react';
-import toast from 'react-hot-toast';
-import Icons from '../ui/Icons';
 import {
     INotification,
     NOTIFICATION_MESSAGES,
     NOTIFICATION_TYPES,
 } from '@/types/entites';
+import { useCallback, useState } from 'react';
+import toast from 'react-hot-toast';
+import Icons from '../ui/Icons';
 
 const NotificationItem = ({
     data: notification,

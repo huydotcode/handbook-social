@@ -1,5 +1,7 @@
 'use client';
-import { SkeletonAvatar } from '@/shared/components/ui/Avatar';
+import { useNotifications } from '@/core/context/AppContext';
+import { useAuth } from '@/core/context/AuthContext';
+import { NotificationService } from '@/features/notification';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Popover,
@@ -7,10 +9,7 @@ import {
     PopoverTrigger,
 } from '@/shared/components/ui/Popover';
 import { Badge } from '@/shared/components/ui/badge';
-import { useNotifications } from '@/core/context/AppContext';
 import { useQueryInvalidation } from '@/shared/hooks';
-import NotificationService from '@/lib/services/notification.service';
-import { useAuth } from '@/core/context/AuthContext';
 import { useState } from 'react';
 import toast from 'react-hot-toast';
 import Icons from '../ui/Icons';

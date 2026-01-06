@@ -4,7 +4,7 @@ import {
     IUser,
     NOTIFICATION_TYPES,
 } from '@/types/entites';
-import { notificationService as apiNotificationService } from '../api/services/notification.service';
+import { notificationApi } from '../apis/notification.api';
 
 class NotificationServiceClass {
     /**
@@ -12,8 +12,7 @@ class NotificationServiceClass {
      */
     async getById(notificationId: string): Promise<INotification | null> {
         try {
-            const notification =
-                await apiNotificationService.getById(notificationId);
+            const notification = await notificationApi.getById(notificationId);
             return notification;
         } catch (error) {
             console.error('Error getting notification by id:', error);
@@ -29,8 +28,7 @@ class NotificationServiceClass {
         userId: string
     ): Promise<INotification | null> {
         try {
-            const notifications =
-                await apiNotificationService.getByReceiver(userId);
+            const notifications = await notificationApi.getByReceiver(userId);
             return (
                 notifications.find(
                     (n) => n.type === NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST
@@ -53,11 +51,9 @@ class NotificationServiceClass {
         receiverId: string;
     }): Promise<INotification | null> {
         try {
-            const notification = await apiNotificationService.sendFriendRequest(
-                {
-                    receiver: receiverId,
-                }
-            );
+            const notification = await notificationApi.sendFriendRequest({
+                receiver: receiverId,
+            });
             return notification;
         } catch (error) {
             console.error('Error sending friend request:', error);
@@ -75,9 +71,7 @@ class NotificationServiceClass {
     }): Promise<{ success: boolean; conversation?: IConversation }> {
         try {
             const result =
-                await apiNotificationService.acceptFriendRequest(
-                    notificationId
-                );
+                await notificationApi.acceptFriendRequest(notificationId);
             return {
                 success: result.success,
                 conversation: result.conversation,
@@ -98,9 +92,7 @@ class NotificationServiceClass {
     }): Promise<boolean> {
         try {
             const result =
-                await apiNotificationService.declineFriendRequest(
-                    notificationId
-                );
+                await notificationApi.declineFriendRequest(notificationId);
             return result.success;
         } catch (error) {
             console.error('Error declining friend request:', error);
@@ -120,7 +112,7 @@ class NotificationServiceClass {
         receiverId: string;
     }): Promise<INotification | null> {
         try {
-            const notification = await apiNotificationService.create({
+            const notification = await notificationApi.create({
                 receiver: receiverId as unknown as IUser,
                 type: NOTIFICATION_TYPES.ACCEPT_FRIEND_REQUEST,
             });
@@ -142,10 +134,11 @@ class NotificationServiceClass {
         receiverId: string;
     }): Promise<INotification | null> {
         try {
-            const notification =
-                await apiNotificationService.createFollowNotification({
+            const notification = await notificationApi.createFollowNotification(
+                {
                     receiver: receiverId,
-                });
+                }
+            );
             return notification;
         } catch (error) {
             console.error('Error creating follow notification:', error);
@@ -158,7 +151,7 @@ class NotificationServiceClass {
      */
     async markAllAsRead(): Promise<boolean> {
         try {
-            const result = await apiNotificationService.markAllAsRead();
+            const result = await notificationApi.markAllAsRead();
             return result.success;
         } catch (error) {
             console.error('Error marking all notifications as read:', error);
@@ -171,7 +164,7 @@ class NotificationServiceClass {
      */
     async deleteNotification(notificationId: string): Promise<boolean> {
         try {
-            const result = await apiNotificationService.delete(notificationId);
+            const result = await notificationApi.delete(notificationId);
             return result.success;
         } catch (error) {
             console.error('Error deleting notification:', error);
@@ -192,11 +185,10 @@ class NotificationServiceClass {
         type?: string;
     }): Promise<boolean> {
         try {
-            const result =
-                await apiNotificationService.deleteNotificationByUsers({
-                    sender: senderId,
-                    receiver: receiverId,
-                });
+            const result = await notificationApi.deleteNotificationByUsers({
+                sender: senderId,
+                receiver: receiverId,
+            });
             return result.success;
         } catch (error) {
             console.error('Error deleting notification by users:', error);
@@ -205,5 +197,4 @@ class NotificationServiceClass {
     }
 }
 
-const NotificationService = new NotificationServiceClass();
-export default NotificationService;
+export const NotificationService = new NotificationServiceClass();

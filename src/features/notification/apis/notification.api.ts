@@ -1,13 +1,9 @@
-import { IConversation, INotification } from '@/types/entites';
+import { IConversation, INotification, IUser } from '@/types/entites';
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
+import { NotificationQueryParams } from '../types/notification.types';
 
-export interface NotificationQueryParams {
-    page?: number;
-    page_size?: number;
-}
-
-export const notificationService = {
+export const notificationApi = {
     /**
      * Get notification by ID
      */

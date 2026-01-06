@@ -1,11 +1,11 @@
 'use client';
-import { Button } from '@/shared/components/ui/Button';
-import Icons from '@/shared/components/ui/Icons';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFollowing } from '@/core/context/SocialContext';
+import { NotificationService } from '@/features/notification';
 import { UserService } from '@/features/user';
-import NotificationService from '@/lib/services/notification.service';
 import { cn } from '@/lib/utils';
+import { Button } from '@/shared/components/ui/Button';
+import Icons from '@/shared/components/ui/Icons';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { useMutation } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
