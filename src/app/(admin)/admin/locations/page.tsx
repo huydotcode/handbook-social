@@ -1,6 +1,6 @@
 'use client';
 import { useLocations } from '@/features/location';
-import { adminService } from '@/lib/api/services/admin.service';
+import { adminApi } from '@/features/admin';
 import { Loading, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -49,7 +49,7 @@ const AdminLocationsPage = () => {
 
     const onSubmit = async (data: Location) => {
         try {
-            await adminService.createLocation({
+            await adminApi.createLocation({
                 name: data.name,
                 slug: data.slug,
                 type: data.type,

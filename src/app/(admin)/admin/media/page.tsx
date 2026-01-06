@@ -8,7 +8,7 @@ import {
     TabsTrigger,
 } from '@/shared/components/ui/tabs';
 import VideoPlayer from '@/shared/components/ui/VideoPlayer';
-import { adminService } from '@/lib/api/services/admin.service';
+import { adminApi } from '@/features/admin';
 import queryKey from '@/lib/react-query/query-key';
 import { timeConvert, timeConvert4 } from '@/shared';
 import { IMedia } from '@/types/entites';
@@ -27,7 +27,7 @@ const AdminMediaPage = () => {
     } = useQuery<IMedia[]>({
         queryKey: queryKey.admin.media.index,
         queryFn: async () => {
-            return await adminService.getMedias({
+            return await adminApi.getMedias({
                 page_size: 100, // You can adjust the limit as needed
                 page: 1, // You can adjust the page as needed
             });
@@ -36,7 +36,7 @@ const AdminMediaPage = () => {
     });
 
     const deleteMediaMutation = useMutation({
-        mutationFn: adminService.deleteMedia,
+        mutationFn: adminApi.deleteMedia,
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.admin.media.index,

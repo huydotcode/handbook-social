@@ -10,7 +10,7 @@ export interface AdminQueryParams {
     limit?: number;
 }
 
-export const adminService = {
+export const adminApi = {
     /**
      * Get all users (Admin)
      */

@@ -11,7 +11,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/shared/components/ui/table';
-import { adminService } from '@/lib/api/services/admin.service';
+import { adminApi } from '@/features/admin';
 import queryKey from '@/lib/react-query/query-key';
 import { FormatDate } from '@/shared';
 import { IUser } from '@/types/entites';
@@ -28,7 +28,7 @@ const AdminUsersPage = () => {
     } = useQuery<IUser[]>({
         queryKey: queryKey.admin.users.index,
         queryFn: async () => {
-            return await adminService.getUsers({
+            return await adminApi.getUsers({
                 page_size: 100, // You can adjust the limit as needed
             });
         },
