@@ -3,7 +3,7 @@ import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context/AuthContext';
 import queryKey from '@/lib/react-query/query-key';
-import PostService from '@/lib/services/post.service';
+import { PostService } from '@/features/post';
 import { cn } from '@/lib/utils';
 import { usePreventMultiClick } from '@/shared/hooks';
 import { IPost } from '@/types/entites';

@@ -1,7 +1,7 @@
 'use client';
 import { ConfirmModal } from '@/shared/components/ui';
 import { useQueryInvalidation } from '@/shared/hooks';
-import PostService from '@/lib/services/post.service';
+import { PostService } from '@/features/post';
 import React, { FormEventHandler } from 'react';
 import toast from 'react-hot-toast';
 

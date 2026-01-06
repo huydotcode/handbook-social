@@ -7,7 +7,7 @@ import toast from 'react-hot-toast';
 
 import { useAuth } from '@/core/context';
 import { createPostValidation, IPostFormData } from '@/features/post';
-import PostService from '@/lib/services/post.service';
+import { PostService } from '@/features/post';
 import { cn } from '@/lib/utils';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';

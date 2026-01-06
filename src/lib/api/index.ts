@@ -17,19 +17,6 @@ export { adminService } from './services/admin.service';
 // export { friendshipService } from './services/friendship.service';
 // export { locationService } from './services/location.service';
 // export { notificationService } from './services/notification.service';
-export { postService } from './services/post.service';
+// export { postService } from './services/post.service';
 export { searchService } from './services/search.service';
 // export { uploadService } from './services/upload.service';
-
-// Export types
-// export type {
-//     LoginDto,
-//     SendOTPDto,
-//     VerifyOTPDto,
-//     ResetPasswordDto,
-// } from '../../features/auth/apis/auth.api';
-export type {
-    CreatePostDto,
-    PostQueryParams,
-    UpdatePostDto,
-} from './services/post.service';

@@ -1,7 +1,7 @@
 'use client';
 import { Post } from '@/shared/components/post';
 import { Loading } from '@/shared/components/ui';
-import { postService } from '@/lib/api/services/post.service';
+import { PostService } from '@/features/post';
 import queryKey from '@/lib/react-query/query-key';
 import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
@@ -18,7 +18,7 @@ const PostPage: React.FC<Props> = ({ params }) => {
             if (!postId) return null;
 
             try {
-                return (await postService.getById(postId)) || null;
+                return (await PostService.getById(postId)) || null;
             } catch (error) {
                 console.error(error);
                 return null;

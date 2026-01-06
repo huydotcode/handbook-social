@@ -1,9 +1,3 @@
-import type {
-    CreatePostDto,
-    PostQueryParams,
-    UpdatePostDto,
-} from '@/lib/api/services/post.service';
-import { postService } from '@/lib/api/services/post.service';
 import { queryKey } from '@/lib/react-query/query-key';
 import {
     createGetNextPageParam,
@@ -17,6 +11,13 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
+import {
+    postApi,
+    CreatePostDto,
+    PostQueryParams,
+    UpdatePostDto,
+} from '../apis/post.api';
+import { PostService } from '../services/post.service';
 
 /**
  * Hook to get a single post by ID
@@ -24,7 +25,7 @@ import {
 export const usePost = (postId: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: queryKey.posts.id(postId),
-        queryFn: () => postService.getById(postId),
+        queryFn: () => postApi.getById(postId),
         enabled: options?.enabled !== false && !!postId,
         ...defaultQueryOptions,
     });
@@ -36,7 +37,7 @@ export const usePost = (postId: string, options?: { enabled?: boolean }) => {
 export const usePosts = (params?: PostQueryParams) => {
     return useQuery({
         queryKey: queryKey.posts.all(),
-        queryFn: () => postService.getAll(params),
+        queryFn: () => postApi.getAll(params),
         ...defaultQueryOptions,
     });
 };
@@ -55,7 +56,7 @@ export const useNewFeedPosts = (params?: { pageSize?: number }) => {
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getNewFeed({
+            postApi.getNewFeed({
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -79,7 +80,7 @@ export const useNewFeedGroupPosts = (params?: { pageSize?: number }) => {
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getNewFeedGroup({
+            postApi.getNewFeedGroup({
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -103,7 +104,7 @@ export const useNewFeedFriendPosts = (params?: { pageSize?: number }) => {
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getNewFeedFriend({
+            postApi.getNewFeedFriend({
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -125,7 +126,7 @@ export const useSavedPosts = (
     return useInfiniteQuery({
         queryKey: queryKey.posts.saved(userId),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getSaved({
+            postApi.getSaved({
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -158,7 +159,7 @@ export const useProfilePosts = (
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getProfilePosts(userId, {
+            postApi.getProfilePosts(userId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -191,7 +192,7 @@ export const useGroupPosts = (
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getGroupPosts(groupId, {
+            postApi.getGroupPosts(groupId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -224,7 +225,7 @@ export const useManageGroupPosts = (
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getManageGroupPosts(groupId, {
+            postApi.getManageGroupPosts(groupId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -257,7 +258,7 @@ export const useManageGroupPostsPending = (
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getManageGroupPostsPending(groupId, {
+            postApi.getManageGroupPostsPending(groupId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -291,7 +292,7 @@ export const usePostByMember = (
             username: undefined,
         }),
         queryFn: ({ pageParam = 1 }) =>
-            postService.getPostByMember(groupId, userId, {
+            postApi.getPostByMember(groupId, userId, {
                 page: pageParam,
                 page_size: pageSize,
             }),
@@ -314,7 +315,7 @@ export const useCreatePost = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: CreatePostDto) => postService.create(data),
+        mutationFn: (data: CreatePostDto) => postApi.create(data),
         onSuccess: (data) => {
             // Invalidate relevant queries
             queryClient.invalidateQueries({ queryKey: queryKey.posts.all() });
@@ -339,7 +340,7 @@ export const useUpdatePost = () => {
 
     return useMutation({
         mutationFn: ({ id, data }: { id: string; data: UpdatePostDto }) =>
-            postService.update(id, data),
+            postApi.update(id, data),
         onSuccess: (data, variables) => {
             // Update cache
             queryClient.setQueryData(queryKey.posts.id(variables.id), data);
@@ -363,7 +364,7 @@ export const useDeletePost = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (postId: string) => postService.delete(postId),
+        mutationFn: (postId: string) => postApi.delete(postId),
         onSuccess: (_, postId) => {
             // Remove from cache
             queryClient.removeQueries({ queryKey: queryKey.posts.id(postId) });

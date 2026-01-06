@@ -1,5 +1,5 @@
 import { IPost } from '@/types/entites';
-import { postService as apiPostService } from '../api/services/post.service';
+import { postApi } from '../apis/post.api';
 
 class PostServiceClass {
     /**
@@ -7,7 +7,7 @@ class PostServiceClass {
      */
     async getById(id: string): Promise<IPost | null> {
         try {
-            return await apiPostService.getById(id);
+            return await postApi.getById(id);
         } catch (error) {
             console.error('Error getting post by ID:', error);
             return null;
@@ -19,7 +19,7 @@ class PostServiceClass {
      */
     async getSavedByUserId(userId: string): Promise<IPost[]> {
         try {
-            return await apiPostService.getSaved();
+            return await postApi.getSaved();
         } catch (error) {
             console.error('Error getting saved posts:', error);
             return [];
@@ -77,7 +77,7 @@ class PostServiceClass {
                 ? (type as 'active' | 'pending' | 'rejected')
                 : undefined;
 
-        return await apiPostService.create({
+        return await postApi.create({
             author: authorId,
             text: content,
             media: mediaIds,
@@ -104,7 +104,7 @@ class PostServiceClass {
         postId: string;
         tags?: string[];
     }): Promise<IPost> {
-        return await apiPostService.update(postId, {
+        return await postApi.update(postId, {
             text: content,
             media: mediaIds,
             option: option,
@@ -120,7 +120,7 @@ class PostServiceClass {
         postId: string
     ): Promise<{ action: 'added' | 'removed' }> {
         try {
-            const result = await apiPostService.like(postId);
+            const result = await postApi.like(postId);
             return { action: result.action };
         } catch (error) {
             console.error('Error sending reaction:', error);
@@ -134,7 +134,7 @@ class PostServiceClass {
      */
     async share(postId: string): Promise<{ action: 'added' | 'removed' }> {
         try {
-            const result = await apiPostService.share(postId);
+            const result = await postApi.share(postId);
             return { action: result.action };
         } catch (error) {
             console.error('Error sharing post:', error);
@@ -147,7 +147,7 @@ class PostServiceClass {
      */
     async delete(postId: string): Promise<boolean> {
         try {
-            await apiPostService.delete(postId);
+            await postApi.delete(postId);
             return true;
         } catch (error) {
             console.error('Error deleting post:', error);
@@ -167,7 +167,7 @@ class PostServiceClass {
     }): Promise<boolean> {
         try {
             // Use update endpoint with status field
-            await apiPostService.update(postId, {
+            await postApi.update(postId, {
                 status: status,
             });
             return true;
@@ -183,7 +183,7 @@ class PostServiceClass {
      */
     async savePost(postId: string): Promise<boolean> {
         try {
-            const result = await apiPostService.save(postId);
+            const result = await postApi.save(postId);
             return result.action === 'added';
         } catch (error) {
             console.error('Error saving post:', error);
@@ -197,7 +197,7 @@ class PostServiceClass {
      */
     async unsavePost(postId: string): Promise<boolean> {
         try {
-            const result = await apiPostService.save(postId);
+            const result = await postApi.save(postId);
             return result.action === 'removed';
         } catch (error) {
             console.error('Error unsaving post:', error);
@@ -206,5 +206,4 @@ class PostServiceClass {
     }
 }
 
-const PostService = new PostServiceClass();
-export default PostService;
+export const PostService = new PostServiceClass();

@@ -2,7 +2,7 @@ import { CategoryService } from '@/features/category';
 import { UserService } from '@/features/user';
 import { IGroup, IMedia } from '@/types/entites';
 import { LocationService } from '@/features/location';
-import { postService } from './post.service';
+import { postApi } from '@/features/post';
 
 export interface AdminQueryParams {
     page?: number;
@@ -22,7 +22,7 @@ export const adminService = {
      * Get all posts (Admin)
      */
     getPosts: (params?: AdminQueryParams) => {
-        return postService.getAll(params);
+        return postApi.getAll(params);
     },
 
     /**

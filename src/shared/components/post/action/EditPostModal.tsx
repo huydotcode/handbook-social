@@ -8,7 +8,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { EditorField } from '@/shared/components/ui/EditorV2';
 import Icons from '@/shared/components/ui/Icons';
 import { editPostValidation, IPostFormData } from '@/features/post';
-import PostService from '@/lib/services/post.service';
+import { PostService } from '@/features/post';
 import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';

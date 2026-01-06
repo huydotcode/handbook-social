@@ -25,7 +25,7 @@ export interface PostQueryParams {
     page_size?: number;
 }
 
-export const postService = {
+export const postApi = {
     /**
      * Get all posts
      */

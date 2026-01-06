@@ -1,5 +1,5 @@
 import { Button } from '@/shared/components/ui/Button';
-import PostService from '@/lib/services/post.service';
+import { PostService } from '@/features/post';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IPost } from '@/types/entites';
 import toast from 'react-hot-toast';
