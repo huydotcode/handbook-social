@@ -2,7 +2,7 @@ import { IFollows } from '@/types/entites';
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
 
-export const followService = {
+export const followApi = {
     /**
      * Get followings of a user
      */

@@ -3,9 +3,9 @@ import {
     ConversationQueryParams,
     ConversationService,
 } from '@/features/conversation';
+import { FollowService } from '@/features/follow';
 import MessageService from '@/features/message/services/message.service';
 import { UserQueryParams } from '@/features/user';
-import { followService } from '@/lib/api/services/follow.service';
 import { friendshipService } from '@/lib/api/services/friendship.service';
 import queryKey from '@/lib/react-query/query-key';
 import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
@@ -104,7 +104,7 @@ export const useFollowing = (userId: string | undefined) =>
         queryFn: async () => {
             if (!userId) return [];
 
-            return followService.getFollowings(userId);
+            return FollowService.getFollowings(userId);
         },
         enabled: !!userId,
         refetchInterval: false,

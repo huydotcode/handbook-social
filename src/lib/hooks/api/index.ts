@@ -54,7 +54,6 @@ export {
 export { useLocations } from './useLocation';
 
 // Follow hooks
-export { useFollowings } from './useFollow';
 
 // Upload hooks
 export { useUploadImage, useUploadVideo } from './useUpload';

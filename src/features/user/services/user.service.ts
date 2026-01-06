@@ -1,6 +1,6 @@
-import { searchService } from '@/lib/api/services/search.service';
-import { followService } from '@/lib/api/services/follow.service';
+import { FollowService } from '@/features/follow';
 import { friendshipService } from '@/lib/api/services/friendship.service';
+import { searchService } from '@/lib/api/services/search.service';
 import type { IFriend, IUser } from '@/types/entites';
 import { userApi } from '../apis/user.api';
 import type {
@@ -111,7 +111,7 @@ class UserServiceClass {
     /** Follow a user */
     async follow(userId: string): Promise<boolean> {
         try {
-            await followService.follow(userId);
+            await FollowService.follow(userId);
             return true;
         } catch (error) {
             console.error('Error following user:', error);
@@ -122,8 +122,8 @@ class UserServiceClass {
     /** Unfollow a user */
     async unfollow(userId: string): Promise<boolean> {
         try {
-            const result = await followService.unfollow(userId);
-            return result.success;
+            const result = await FollowService.unfollow(userId);
+            return result;
         } catch (error) {
             console.error('Error unfollowing user:', error);
             throw error;

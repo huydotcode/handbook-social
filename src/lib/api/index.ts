@@ -14,7 +14,6 @@
 // export { authApi } from '../../features/auth/apis/auth.api';
 // export { userService } from './services/user.service';
 export { adminService } from './services/admin.service';
-export { followService } from './services/follow.service';
 export { friendshipService } from './services/friendship.service';
 export { locationService } from './services/location.service';
 export { notificationService } from './services/notification.service';
