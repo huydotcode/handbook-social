@@ -1,7 +1,7 @@
 'use client';
 import { useAuth } from '@/core/context/AuthContext';
 import { useGroupConversations } from '@/features/conversation';
-import { useCheckGroupAccess, useGroup } from '@/lib/hooks/api';
+import { useCheckGroupAccess, useGroup } from '@/features/group';
 import { notFound, useRouter } from 'next/navigation';
 import React, { use, useEffect } from 'react';
 import Header from '../_components/Header';

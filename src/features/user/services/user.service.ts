@@ -1,6 +1,6 @@
 import { FollowService } from '@/features/follow';
 import { FriendService } from '@/features/friend';
-import { searchService } from '@/lib/api/services/search.service';
+import { searchApi } from '@/features/search';
 import type { IFriend, IUser } from '@/types/entites';
 import { userApi } from '../apis/user.api';
 import type {
@@ -32,7 +32,7 @@ class UserServiceClass {
         sortBy?: 'asc' | 'desc';
     }): Promise<{ users: IUser[]; isNext: boolean }> {
         try {
-            const users = await searchService.searchUsers({
+            const users = await searchApi.searchUsers({
                 q: searchString,
                 page: pageNumber,
                 page_size: pageSize,

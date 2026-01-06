@@ -1,12 +1,11 @@
-import type { SearchQueryParams } from '@/lib/api/services/search.service';
-import { searchService } from '@/lib/api/services/search.service';
-import { queryKey } from '@/lib/react-query/query-key';
 import {
     createGetNextPageParam,
     createSearchGetNextPageParam,
     defaultInfiniteQueryOptions,
 } from '@/lib/react-query';
+import { queryKey } from '@/lib/react-query/query-key';
 import { useInfiniteQuery } from '@tanstack/react-query';
+import { searchApi, SearchQueryParams } from '../apis/search.api';
 
 /**
  * Hook for general search (users, posts, groups)
@@ -20,7 +19,7 @@ export const useSearch = (
     return useInfiniteQuery({
         queryKey: queryKey.search.general(searchParams.q, undefined),
         queryFn: ({ pageParam = 1 }) =>
-            searchService.search({
+            searchApi.search({
                 ...searchParams,
                 page: pageParam,
             }),
@@ -43,7 +42,7 @@ export const useSearchUsers = (
     return useInfiniteQuery({
         queryKey: queryKey.search.users(searchParams.q),
         queryFn: ({ pageParam = 1 }) =>
-            searchService.searchUsers({
+            searchApi.searchUsers({
                 ...searchParams,
                 page: pageParam,
             }),
@@ -66,7 +65,7 @@ export const useSearchPosts = (
     return useInfiniteQuery({
         queryKey: queryKey.search.posts(searchParams.q),
         queryFn: ({ pageParam = 1 }) =>
-            searchService.searchPosts({
+            searchApi.searchPosts({
                 ...searchParams,
                 page: pageParam,
             }),
@@ -89,7 +88,7 @@ export const useSearchGroups = (
     return useInfiniteQuery({
         queryKey: queryKey.search.groups(searchParams.q),
         queryFn: ({ pageParam = 1 }) =>
-            searchService.searchGroups({
+            searchApi.searchGroups({
                 ...searchParams,
                 page: pageParam,
             }),

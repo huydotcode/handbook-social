@@ -1,8 +1,8 @@
 'use client';
+import { useGroup, useGroupMembers } from '@/features/group';
+import { FormatDate, splitName } from '@/shared';
 import { Avatar } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useGroup, useGroupMembers } from '@/lib/hooks/api';
-import { FormatDate, splitName } from '@/shared';
 import { GROUP_ROLES } from '@/types/entites';
 import { notFound } from 'next/navigation';
 import { use } from 'react';

@@ -1,12 +1,12 @@
 'use client';
 import { useAuth } from '@/core/context';
 import { useFriends } from '@/core/context/SocialContext';
-import { searchService } from '@/lib/api';
 import {
     useSearchGroups,
     useSearchPosts,
     useSearchUsers,
-} from '@/lib/hooks/api';
+    searchApi,
+} from '@/features/search';
 import queryKey from '@/lib/react-query/query-key';
 import {
     createSearchGetNextPageParam,
@@ -45,7 +45,7 @@ const Search = () => {
     } = useInfiniteQuery({
         queryKey: queryKey.search.general(q, undefined),
         queryFn: ({ pageParam = 1 }: { pageParam: number }) =>
-            searchService.search({
+            searchApi.search({
                 q,
                 page_size: 10,
                 page: pageParam,

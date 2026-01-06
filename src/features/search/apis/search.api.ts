@@ -1,6 +1,6 @@
 import { IGroup, IPost, IUser } from '@/types/entites';
-import { apiClient } from '../../../core/api/api-client';
-import { API_ENDPOINTS } from '../../../core/api/endpoints';
+import { apiClient } from '@/core/api/api-client';
+import { API_ENDPOINTS } from '@/core/api/endpoints';
 
 export interface SearchQueryParams {
     q: string;
@@ -14,7 +14,7 @@ export interface SearchResult {
     groups?: IGroup[];
 }
 
-export const searchService = {
+export const searchApi = {
     /**
      * General search (users, posts, groups)
      */
