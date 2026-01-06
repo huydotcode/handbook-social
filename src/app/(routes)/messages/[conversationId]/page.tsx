@@ -2,6 +2,7 @@
 import { useAuth, useSocket } from '@/core/context';
 import { useConversation } from '@/core/context/SocialContext';
 import { ConversationService } from '@/features/conversation';
+import { ChatBox } from '@/features/message';
 import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
@@ -9,14 +10,6 @@ import { useQueryInvalidation } from '@/shared/hooks';
 import { useParams, useSearchParams } from 'next/navigation';
 import React, { useMemo } from 'react';
 import toast from 'react-hot-toast';
-import { ChatBox } from '../_components';
-
-interface Props {}
-
-interface Error {
-    message: string;
-    type: string;
-}
 
 const NOT_FOUND = 'not-found';
 const IS_DELETED = 'is-deleted';
@@ -38,7 +31,7 @@ const ErrorDisplay = ({
     </div>
 );
 
-const ConversationPage: React.FC<Props> = ({}) => {
+const ConversationPage: React.FC = () => {
     const params = useParams();
     const searchParams = useSearchParams();
     const { conversationId } = params;

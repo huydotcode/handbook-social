@@ -1,12 +1,11 @@
 'use client';
-import { followService } from '@/lib/api/services/follow.service';
-import { messageService } from '@/lib/api/services/message.service';
-
 import {
     ConversationQueryParams,
     ConversationService,
 } from '@/features/conversation';
+import MessageService from '@/features/message/services/message.service';
 import { UserQueryParams } from '@/features/user';
+import { followService } from '@/lib/api/services/follow.service';
 import { friendshipService } from '@/lib/api/services/friendship.service';
 import queryKey from '@/lib/react-query/query-key';
 import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
@@ -80,7 +79,7 @@ export const useMessages = (conversationId: string | undefined) =>
         queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
             if (!conversationId) return [];
 
-            return messageService.getByConversation(conversationId, {
+            return MessageService.getByConversation(conversationId, {
                 page: pageParam,
                 page_size: PAGE_SIZE,
             });

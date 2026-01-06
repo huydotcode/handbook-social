@@ -1,27 +1,14 @@
 import { IMessage } from '@/types/entites';
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
+import {
+    CreateMessageDto,
+    MarkAsReadDto,
+    MessageQueryParams,
+    SearchMessageParams,
+} from '../types/message.types';
 
-export interface MessageQueryParams {
-    page?: number;
-    page_size?: number;
-}
-
-export interface SearchMessageParams {
-    q: string;
-}
-
-export interface CreateMessageDto {
-    conversation: string;
-    text: string;
-    media?: string[];
-}
-
-export interface MarkAsReadDto {
-    userId: string;
-}
-
-export const messageService = {
+export const messageApi = {
     /**
      * Get messages by conversation
      */

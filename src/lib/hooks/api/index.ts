@@ -8,38 +8,31 @@
 
 // Post hooks
 export {
-    usePost,
-    usePosts,
-    useNewFeedPosts,
-    useNewFeedGroupPosts,
-    useNewFeedFriendPosts,
-    useSavedPosts,
-    useProfilePosts,
+    useCreatePost,
+    useDeletePost,
     useGroupPosts,
     useManageGroupPosts,
     useManageGroupPostsPending,
+    useNewFeedFriendPosts,
+    useNewFeedGroupPosts,
+    useNewFeedPosts,
+    usePost,
     usePostByMember,
-    useCreatePost,
+    usePosts,
+    useProfilePosts,
+    useSavedPosts,
     useUpdatePost,
-    useDeletePost,
 } from './usePost';
-
-// Message hooks
-export {
-    useMessages,
-    usePinnedMessages,
-    useSearchMessages,
-} from './useMessage';
 
 // Group hooks
 export {
-    useJoinedGroups,
-    useGroup,
+    useAddGroupMember,
     useCheckGroupAccess,
     useCheckGroupAdmin,
-    useGroupMembers,
+    useGroup,
     useGroupMember,
-    useAddGroupMember,
+    useGroupMembers,
+    useJoinedGroups,
     useRemoveGroupMember,
 } from '../../../features/group/hooks/group.hook';
 
@@ -52,9 +45,9 @@ export {
 // Search hooks
 export {
     useSearch,
-    useSearchUsers,
-    useSearchPosts,
     useSearchGroups,
+    useSearchPosts,
+    useSearchUsers,
 } from './useSearch';
 
 // Location hooks

@@ -1,11 +1,11 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import MessageService from '@/features/message/services/message.service';
+import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useAuth } from '@/core/context/AuthContext';
-import MessageService from '@/lib/services/message.service';
-import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
-import { cn } from '@/lib/utils';
 import { useQueryInvalidation } from '@/shared/hooks';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IConversation, IMessage } from '@/types/entites';
 import Image from 'next/image';
 import React, { ChangeEvent, useId } from 'react';

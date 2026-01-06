@@ -3,7 +3,7 @@ import { env } from '@/core/config/env.config';
 import { useAuth } from '@/core/context/AuthContext';
 import { useFriends } from '@/core/context/SocialContext';
 import { ConversationService } from '@/features/conversation';
-import MessageService from '@/lib/services/message.service';
+import MessageService from '@/features/message/services/message.service';
 import PostService from '@/lib/services/post.service';
 import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';

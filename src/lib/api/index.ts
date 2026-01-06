@@ -17,7 +17,6 @@ export { adminService } from './services/admin.service';
 export { followService } from './services/follow.service';
 export { friendshipService } from './services/friendship.service';
 export { locationService } from './services/location.service';
-export { messageService } from './services/message.service';
 export { notificationService } from './services/notification.service';
 export { postService } from './services/post.service';
 export { searchService } from './services/search.service';

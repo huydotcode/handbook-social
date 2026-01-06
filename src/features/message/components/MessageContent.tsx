@@ -2,7 +2,6 @@
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { ConversationService } from '@/features/conversation';
-import MessageService from '@/lib/services/message.service';
 import { cn } from '@/lib/utils';
 import { FormatDate, urlRegex } from '@/shared';
 import { Icons, SlideShow } from '@/shared/components/ui';
@@ -22,6 +21,7 @@ import Link from 'next/link';
 import { FormEventHandler, useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
 import MessageAction from './MessageAction';
+import MessageService from '@/features/message/services/message.service';
 
 interface MessageContentProps {
     msg: IMessage;

@@ -1,3 +1,4 @@
+'use client';
 import { Icons } from '@/shared/components/ui';
 import React, { useEffect, useState } from 'react';
 import { Input } from '@/shared/components/ui/Input';

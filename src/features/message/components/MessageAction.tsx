@@ -2,7 +2,7 @@
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
 import { ConversationService } from '@/features/conversation';
-import MessageService from '@/lib/services/message.service';
+import MessageService from '@/features/message/services/message.service';
 import { ConfirmModal, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { PopoverContent } from '@/shared/components/ui/Popover';

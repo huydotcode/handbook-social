@@ -1,23 +1,16 @@
 'use client';
-import SearchMessage from '@/app/(routes)/messages/_components/SearchMessage';
+import { cn } from '@/lib/utils';
 import { FileUploaderWrapper } from '@/shared/components/shared/FileUploader';
 import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useSocket } from '@/core/context';
-import { useAuth } from '@/core/context/AuthContext';
-import { messageService } from '@/lib/api/services/message.service';
-import queryKey from '@/lib/react-query/query-key';
-import MessageService from '@/lib/services/message.service';
-import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
-import { cn } from '@/lib/utils';
 import {
     useBreakpoint,
     useMessageHandling,
     useQueryInvalidation,
 } from '@/shared/hooks';
+import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IConversation, IMessage } from '@/types/entites';
-import { useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React, {
     KeyboardEventHandler,
@@ -32,6 +25,8 @@ import ChatHeader from './ChatHeader';
 import InfomationConversation from './InfomationConversation';
 import InputMessage from './InputMessage';
 import Message from './Message';
+import SearchMessage from './SearchMessage';
+import MessageService from '../services/message.service';
 
 interface Props {
     className?: string;
@@ -39,68 +34,8 @@ interface Props {
     findMessage?: string;
 }
 
-interface IFormData {
-    text: string;
-    files: File[];
-}
-
-const PAGE_SIZE = 30;
-
-export const useMessages = (conversationId: string) => {
-    return useInfiniteQuery({
-        queryKey: queryKey.messages.conversationId(conversationId),
-        queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
-            if (!conversationId) return [];
-
-            return messageService.getByConversation(conversationId, {
-                page: pageParam,
-                page_size: PAGE_SIZE,
-            });
-        },
-        getNextPageParam: (lastPage, pages) => {
-            return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
-        },
-        initialPageParam: 1,
-        enabled: !!conversationId,
-        select: (data) => {
-            return data.pages.flatMap((page) => page) as IMessage[];
-        },
-        refetchInterval: false,
-        refetchOnWindowFocus: false,
-        refetchOnMount: false,
-    });
-};
-
-export const usePinnedMessages = (conversationId: string) => {
-    return useInfiniteQuery({
-        queryKey: queryKey.messages.pinnedMessages(conversationId),
-        queryFn: async ({ pageParam = 1 }: { pageParam: number }) => {
-            if (!conversationId) return [];
-
-            return messageService.getPinned(conversationId, {
-                page: pageParam,
-                page_size: PAGE_SIZE,
-            });
-        },
-        getNextPageParam: (lastPage, pages) => {
-            return lastPage.length === PAGE_SIZE ? pages.length + 1 : undefined;
-        },
-        select: (data) => {
-            return data.pages.flatMap((page) => page) as IMessage[];
-        },
-        initialPageParam: 1,
-        enabled: !!conversationId,
-        refetchInterval: false,
-        refetchOnWindowFocus: false,
-    });
-};
-
 const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
-    const { user } = useAuth();
-    const { socketEmitor } = useSocket();
-    const queryClient = useQueryClient();
-    const { invalidateAfterSendMessage, queryClientReadMessage } =
-        useQueryInvalidation();
+    const { invalidateAfterSendMessage } = useQueryInvalidation();
     const router = useRouter();
     const { breakpoint } = useBreakpoint();
     const [isSendMessage, setIsSendMessage] = useState<boolean>(false);

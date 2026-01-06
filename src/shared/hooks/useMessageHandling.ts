@@ -1,6 +1,6 @@
+import { useMessages } from '@/features/message';
 import { useCallback, useState } from 'react';
 import { toast } from 'react-hot-toast';
-import { useMessages } from '@/app/(routes)/messages/_components/ChatBox';
 
 const useMessageHandling = (conversationId: string) => {
     const [isFind, setIsFind] = useState(false);

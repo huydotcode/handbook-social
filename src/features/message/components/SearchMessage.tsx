@@ -1,14 +1,14 @@
 'use client';
-import Message from '@/app/(routes)/messages/_components/Message';
+import MessageService from '@/features/message/services/message.service';
 import { Icons, Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
-import { messageService } from '@/lib/api/services/message.service';
 import { useBreakpoint } from '@/shared/hooks';
 import { IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
 import toast from 'react-hot-toast';
+import Message from './Message';
 import SideHeader from './SideHeader';
 
 interface Props {
@@ -39,7 +39,7 @@ const SearchMessage: React.FC<Props> = ({
 
             setSearchMessages([]);
 
-            const data = await messageService.search(conversationId, {
+            const data = await MessageService.search(conversationId, {
                 q: searchValue,
             });
             setSearchMessages(data);

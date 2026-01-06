@@ -1,9 +1,57 @@
-import { IMessage } from '@/types/entites';
-
 import { conversationApi } from '@/features/conversation';
-import { messageService as apiMessageService } from '../api/services/message.service';
+import { IMessage } from '@/types/entites';
+import { messageApi } from '../apis/message.api';
+import {
+    MessageQueryParams,
+    SearchMessageParams,
+} from '../types/message.types';
 
 class MessageServiceClass {
+    /**
+     * Get messages by conversation
+     */
+    async getByConversation(
+        conversationId: string,
+        params?: MessageQueryParams
+    ): Promise<IMessage[]> {
+        try {
+            return await messageApi.getByConversation(conversationId, params);
+        } catch (error: any) {
+            console.error('Error getting messages:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Get pinned messages by conversation
+     */
+    async getPinned(
+        conversationId: string,
+        params?: MessageQueryParams
+    ): Promise<IMessage[]> {
+        try {
+            return await messageApi.getPinned(conversationId, params);
+        } catch (error: any) {
+            console.error('Error getting pinned messages:', error);
+            throw error;
+        }
+    }
+
+    /**
+     * Search messages in conversation
+     */
+    async search(
+        conversationId: string,
+        params: SearchMessageParams
+    ): Promise<IMessage[]> {
+        try {
+            return await messageApi.search(conversationId, params);
+        } catch (error: any) {
+            console.error('Error searching messages:', error);
+            throw error;
+        }
+    }
+
     /**
      * Send a message via REST API
      */
@@ -17,7 +65,7 @@ class MessageServiceClass {
         images?: string[];
     }): Promise<IMessage | null> {
         try {
-            return await apiMessageService.create({
+            return await messageApi.create({
                 conversation: roomId,
                 text: text || '',
                 media: images || [],
@@ -41,7 +89,7 @@ class MessageServiceClass {
         prevMessageId?: string | null;
     }): Promise<boolean> {
         try {
-            await apiMessageService.delete(messageId);
+            await messageApi.delete(messageId);
             return true;
         } catch (error: any) {
             console.error('Error deleting message:', error);
@@ -101,7 +149,7 @@ class MessageServiceClass {
      */
     async markAsRead(roomId: string, userId: string): Promise<boolean> {
         try {
-            await apiMessageService.markAsRead(roomId, { userId });
+            await messageApi.markAsRead(roomId, { userId });
             return true;
         } catch (error: any) {
             console.warn(

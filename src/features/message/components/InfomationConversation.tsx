@@ -19,7 +19,7 @@ import { IConversation, IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useMemo, useState } from 'react';
 import toast from 'react-hot-toast';
-import { usePinnedMessages } from './ChatBox';
+import { usePinnedMessages } from '../hooks/message.hook';
 import Message from './Message';
 import SideHeader from './SideHeader';
 

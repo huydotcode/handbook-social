@@ -1,7 +1,5 @@
-import FixedLayout from '@/shared/components/layout/FixedLayout';
+import { Sidebar } from '@/features/message';
 import React from 'react';
-import { Sidebar } from './_components';
-import { Navbar } from '@/shared/components/layout';
 interface Props {
     children: React.ReactNode;
 }
@@ -12,7 +10,7 @@ export async function generateMetadata() {
     };
 }
 
-const MessageLayout: React.FC<Props> = async ({ children }) => {
+const MessageLayout: React.FC<Props> = ({ children }) => {
     return (
         <div className="relative h-screen w-full overflow-hidden">
             <div className="relative top-[60px]">
