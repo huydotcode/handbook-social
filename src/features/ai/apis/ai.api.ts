@@ -1,16 +1,8 @@
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
+import { AIChatRequest, AIChatResponse } from '../types/ai.types';
 
-export interface AIChatRequest {
-    message: string;
-}
-
-export interface AIChatResponse {
-    response: string;
-    result: any;
-}
-
-export const aiService = {
+export const aiApi = {
     sendMessage: (data: AIChatRequest) => {
         return apiClient.post<AIChatResponse>(
             API_ENDPOINTS.AI.HANDBOOK_AI_CHAT,

@@ -1,14 +1,13 @@
 'use client';
+import { useSendMessageMutation } from '@/features/ai/hooks/ai.hook';
+import { cn } from '@/lib/utils';
+import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
 import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { aiService } from '@/lib/api/services/ai.service';
-import { cn } from '@/lib/utils';
-import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
-import MessageSkeleton from '../skeleton/MessageSkeleton';
 
 interface IFormData {
     text: string;
@@ -30,11 +29,12 @@ const ChatWithAI = () => {
         register,
         reset,
         resetField,
-        formState: { isSubmitting, isLoading, errors },
+        formState: { isLoading },
     } = form;
-    const { mutate, isPending } = useMutation({ mutationFn: sendMessage });
+    const { mutateAsync: sendMessageMutation, isPending } =
+        useSendMessageMutation();
 
-    async function sendMessage(data: IFormData) {
+    async function onSubmit(data: IFormData) {
         try {
             const { text } = data;
 
@@ -56,8 +56,7 @@ const ChatWithAI = () => {
 
             resetField('text');
 
-            const response = await aiService.sendMessage({ message: text });
-
+            const response = await sendMessageMutation({ message: text });
             const textAI =
                 response.response || 'Không có phản hồi từ Handbook AI';
 
@@ -75,12 +74,6 @@ const ChatWithAI = () => {
             console.error(error);
             toast.error('Có lỗi khi gửi tin nhắn, vui lòng thử lại sau');
         }
-    }
-
-    async function onSubmit(data: IFormData) {
-        if (isSubmitting || isLoading) return;
-
-        mutate(data);
     }
 
     useEffect(() => {
