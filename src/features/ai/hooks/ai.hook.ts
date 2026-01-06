@@ -9,8 +9,5 @@ import { AIChatRequest } from '../types/ai.types';
 export const useSendMessageMutation = () => {
     return useMutation({
         mutationFn: (data: AIChatRequest) => AIService.sendMessage(data),
-        onError: (error) => {
-            handleApiError(error, 'Failed to send message');
-        },
     });
 };
