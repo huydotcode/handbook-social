@@ -27,3 +27,10 @@ export interface AddParticipantDto {
 export interface PinMessageDto {
     messageId: string;
 }
+
+export type ConversationMemberRole = 'admin' | 'member';
+
+export interface ConversationMemberDto {
+    userId: string;
+    role?: ConversationMemberRole;
+}

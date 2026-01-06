@@ -1,8 +1,10 @@
 'use client';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import { ConversationService } from '@/features/conversation';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import {
+    ConversationService,
+    useConversationMembers,
+} from '@/features/conversation';
 import { Items } from '@/shared/components/shared';
 import {
     Avatar,

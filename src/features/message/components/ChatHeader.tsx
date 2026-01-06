@@ -1,11 +1,11 @@
 'use client';
-import { Avatar, Icons } from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
 import { useVideoCall } from '@/core/context/VideoCallContext';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import { useConversationMembers } from '@/features/conversation';
 import { cn } from '@/lib/utils';
 import { timeConvert3 } from '@/shared';
+import { Avatar, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { useBreakpoint } from '@/shared/hooks';
 import { IConversation } from '@/types/entites';
 import { useRouter } from 'next/navigation';

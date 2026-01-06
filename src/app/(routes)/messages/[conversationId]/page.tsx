@@ -1,9 +1,11 @@
 'use client';
 import { useAuth, useSocket } from '@/core/context';
 import { useConversation } from '@/core/context/SocialContext';
-import { ConversationService } from '@/features/conversation';
+import {
+    ConversationService,
+    useConversationMembers,
+} from '@/features/conversation';
 import { ChatBox } from '@/features/message';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
 import { Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useQueryInvalidation } from '@/shared/hooks';

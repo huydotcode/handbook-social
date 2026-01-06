@@ -1,13 +1,14 @@
 'use client';
-import { Avatar, ConfirmModal, Icons } from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/Button';
-
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import { ConversationService } from '@/features/conversation';
-import { useConversationMembers } from '@/lib/hooks/useConversationMembers';
+import {
+    ConversationService,
+    useConversationMembers,
+} from '@/features/conversation';
 import { cn } from '@/lib/utils';
 import { splitName, timeConvert3 } from '@/shared';
+import { Avatar, ConfirmModal, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import {
     Popover,
     PopoverContent,
