@@ -1,4 +1,4 @@
-import { imageService } from '../api/services/image.service';
+import { imageApi } from '../apis/image.api';
 
 class ImageServiceClass {
     /**
@@ -6,7 +6,7 @@ class ImageServiceClass {
      */
     async getUrlByImageId(imageId: string): Promise<string | null> {
         try {
-            const response = await imageService.getById(imageId);
+            const response = await imageApi.getById(imageId);
             return response.url || null;
         } catch (error) {
             console.error('Error getting image URL by ID:', error);
@@ -19,7 +19,7 @@ class ImageServiceClass {
      */
     async removeImage(imageUrl: string): Promise<boolean> {
         try {
-            const response = await imageService.deleteByUrl(imageUrl);
+            const response = await imageApi.deleteByUrl(imageUrl);
             return response.success || false;
         } catch (error) {
             console.error('Error removing image:', error);
@@ -28,5 +28,4 @@ class ImageServiceClass {
     }
 }
 
-const ImageService = new ImageServiceClass();
-export default ImageService;
+export const ImageService = new ImageServiceClass();

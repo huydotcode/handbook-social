@@ -1,7 +1,7 @@
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
 
-export const imageService = {
+export const imageApi = {
     /**
      * Get image URL by ID
      */

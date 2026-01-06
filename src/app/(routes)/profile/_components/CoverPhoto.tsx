@@ -10,7 +10,7 @@ import {
     DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { useAuth } from '@/core/context';
-import ImageService from '@/lib/services/image.service';
+import { ImageService } from '@/features/image';
 import ProfileService from '@/lib/services/profile.service';
 import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IProfile } from '@/types/entites';

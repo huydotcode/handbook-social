@@ -1,7 +1,7 @@
 'use client';
 import { SlideShow } from '@/shared/components/ui';
 import Image from '@/shared/components/ui/image';
-import ImageService from '@/lib/services/image.service';
+import { ImageService } from '@/features/image';
 import { cn } from '@/lib/utils';
 import { IMedia } from '@/types/entites';
 import { usePathname } from 'next/navigation';
