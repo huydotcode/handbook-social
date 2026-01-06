@@ -2,7 +2,7 @@ import { Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { useAuth } from '@/core/context';
-import { useLocations } from '@/lib/hooks/api';
+import { useLocations } from '@/features/location';
 import ProfileService from '@/lib/services/profile.service';
 import { IProfile } from '@/types/entites';
 import { useRouter } from 'next/navigation';

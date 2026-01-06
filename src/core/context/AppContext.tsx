@@ -1,7 +1,7 @@
 'use client';
 import { CategoryService } from '@/features/category';
 import GroupService from '@/features/group/services/group.service';
-import { locationService } from '@/lib/api/services/location.service';
+// import { LocationService } from '@/features/location';
 import {
     notificationApi,
     NotificationQueryParams,
@@ -117,15 +117,15 @@ export const useRequests = (userId: string | undefined) =>
         refetchOnWindowFocus: false,
     });
 
-export const useLocations = () =>
-    useQuery<ILocation[]>({
-        queryKey: queryKey.locations.list(),
-        queryFn: async () => {
-            return locationService.getAll();
-        },
-        refetchInterval: false,
-        refetchOnWindowFocus: false,
-    });
+// export const useLocations = () =>
+//     useQuery<ILocation[]>({
+//         queryKey: queryKey.locations.list(),
+//         queryFn: async () => {
+//             return LocationService.getAll();
+//         },
+//         refetchInterval: false,
+//         refetchOnWindowFocus: false,
+//     });
 
 function AppProvider({ children }: { children: React.ReactNode }) {
     const { user } = useAuth();

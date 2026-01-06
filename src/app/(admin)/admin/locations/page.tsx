@@ -1,4 +1,6 @@
 'use client';
+import { useLocations } from '@/features/location';
+import { adminService } from '@/lib/api/services/admin.service';
 import { Loading, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -18,9 +20,7 @@ import {
     TableHeader,
     TableRow,
 } from '@/shared/components/ui/table';
-import { useLocations } from '@/core/context/AppContext';
-import { adminService } from '@/lib/api/services/admin.service';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import toast from 'react-hot-toast';
 

@@ -1,6 +1,7 @@
 'use client';
 import { useAuth } from '@/core/context';
-import { useCategories, useLocations } from '@/core/context/AppContext';
+import { useCategories } from '@/core/context/AppContext';
+import { useLocations } from '@/features/location';
 import {
     createItemValidation,
     CreateItemValidation,

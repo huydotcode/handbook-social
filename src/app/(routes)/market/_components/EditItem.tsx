@@ -27,7 +27,8 @@ import {
 } from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAuth } from '@/core/context';
-import { useCategories, useLocations } from '@/core/context/AppContext';
+import { useCategories } from '@/core/context/AppContext';
+import { useLocations } from '@/features/location';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { ICategory, IItem, ILocation } from '@/types/entites';
 import { usePathname } from 'next/navigation';

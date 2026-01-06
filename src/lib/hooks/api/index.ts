@@ -51,7 +51,7 @@ export {
 } from './useSearch';
 
 // Location hooks
-export { useLocations } from './useLocation';
+// export { useLocations } from './useLocation';
 
 // Follow hooks
 

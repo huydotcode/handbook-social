@@ -1,17 +1,15 @@
-import { locationService } from '@/lib/api/services/location.service';
-import { queryKey } from '@/lib/react-query/query-key';
 import { defaultQueryOptions } from '@/lib/react-query';
+import { queryKey } from '@/lib/react-query/query-key';
 import { useQuery } from '@tanstack/react-query';
+import { LocationService } from '../services/location.service';
 
 /**
- * Hook to get all locations (infinite query)
+ * Hook to get all locations
  */
 export const useLocations = (params?: { pageSize?: number }) => {
-    const pageSize = params?.pageSize || 10;
-
     return useQuery({
         queryKey: queryKey.locations.list(),
-        queryFn: () => locationService.getAll(),
+        queryFn: () => LocationService.getAll(),
         ...defaultQueryOptions,
     });
 };

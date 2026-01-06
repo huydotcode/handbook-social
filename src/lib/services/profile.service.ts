@@ -1,6 +1,6 @@
 import { UserService } from '@/features/user';
 import { ILocation, IMedia, IUser } from '@/types/entites';
-import { locationService as apiLocationService } from '../api/services/location.service';
+import { LocationService as apiLocationService } from '@/features/location';
 
 export interface IGetUserProfileResponse {
     _id: string;

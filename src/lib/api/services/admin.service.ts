@@ -1,7 +1,7 @@
 import { CategoryService } from '@/features/category';
 import { UserService } from '@/features/user';
 import { IGroup, IMedia } from '@/types/entites';
-import { locationService } from './location.service';
+import { LocationService } from '@/features/location';
 import { postService } from './post.service';
 
 export interface AdminQueryParams {
@@ -40,7 +40,7 @@ export const adminService = {
      * Get all locations (Admin)
      */
     getLocations: (params?: AdminQueryParams) => {
-        return locationService.getAll();
+        return LocationService.getAll();
     },
 
     /**
