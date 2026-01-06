@@ -4,9 +4,9 @@ import {
     ConversationService,
 } from '@/features/conversation';
 import { FollowService } from '@/features/follow';
+import { FriendService } from '@/features/friend';
 import MessageService from '@/features/message/services/message.service';
 import { UserQueryParams } from '@/features/user';
-import { friendshipService } from '@/lib/api/services/friendship.service';
 import queryKey from '@/lib/react-query/query-key';
 import { IConversation, IFollows, IFriend, IMessage } from '@/types/entites';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
@@ -23,7 +23,7 @@ export const useFriends = (userId: string | undefined) =>
             if (!userId) return [];
 
             const params: UserQueryParams = { page: 1, page_size: 100 };
-            const friends = await friendshipService.getFriends(userId);
+            const friends = await FriendService.getFriends(userId);
             // Simple client-side limit for now
             return friends.slice(0, params.page_size ?? 100);
         },

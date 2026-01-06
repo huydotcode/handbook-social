@@ -67,6 +67,12 @@ export const queryKey = {
         // Alias for backward compatibility
         id: (id: string) => ['comment', id],
     },
+    // Friendships
+    friendships: {
+        list: (userId: string) => ['friendships', 'list', userId],
+        count: (userId: string) => ['friendships', 'count', userId],
+        check: (userId: string) => ['friendships', 'check', userId],
+    },
 
     // Messages
     messages: {

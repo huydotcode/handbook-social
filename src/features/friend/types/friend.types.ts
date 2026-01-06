@@ -1,5 +1,3 @@
-import { apiClient } from '@/core/api';
-
 export interface FriendWithConversation {
     _id: string;
     name: string;
@@ -47,14 +45,3 @@ export interface FriendsWithConversationsResponse {
     friendConversations: FriendConversation[];
     groupConversations: GroupConversation[];
 }
-
-export const friendService = {
-    /**
-     * Get friends with their conversations
-     */
-    getFriendsWithConversations: (userId: string) => {
-        return apiClient.get<FriendsWithConversationsResponse>(
-            `/users/${userId}/friends-with-conversations`
-        );
-    },
-};

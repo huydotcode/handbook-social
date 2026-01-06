@@ -9,7 +9,7 @@ import type {
     UpdateProfileDto,
     UserQueryParams,
 } from '../types/user.types';
-import { friendshipService } from '@/lib/api';
+import { FriendService } from '@/features/friend';
 
 export const userApi = {
     /** Get all users */
@@ -61,13 +61,13 @@ export const userApi = {
         );
     },
 
-    /** Deprecated: use friendshipService.getFriends */
+    /** Deprecated: use FriendService.getFriends */
     getFriends: async (userId: string) => {
-        return friendshipService.getFriends(userId);
+        return FriendService.getFriends(userId);
     },
 
-    /** Deprecated: use friendshipService.removeFriend */
+    /** Deprecated: use FriendService.removeFriend */
     unfriend: async (friendId: string) => {
-        return friendshipService.removeFriend(friendId);
+        return FriendService.removeFriend(friendId);
     },
 };

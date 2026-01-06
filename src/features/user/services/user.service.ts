@@ -1,5 +1,5 @@
 import { FollowService } from '@/features/follow';
-import { friendshipService } from '@/lib/api/services/friendship.service';
+import { FriendService } from '@/features/friend';
 import { searchService } from '@/lib/api/services/search.service';
 import type { IFriend, IUser } from '@/types/entites';
 import { userApi } from '../apis/user.api';
@@ -53,7 +53,7 @@ class UserServiceClass {
         userId: string;
     }): Promise<IFriend[]> {
         try {
-            const data = await friendshipService.getFriends(userId);
+            const data = await FriendService.getFriends(userId);
             return data;
         } catch (error) {
             console.error('Error getting friends:', error);
@@ -100,8 +100,8 @@ class UserServiceClass {
     /** Unfriend a user */
     async unfriend(friendId: string): Promise<boolean> {
         try {
-            const result = await friendshipService.removeFriend(friendId);
-            return !!result?.success;
+            const result = await FriendService.removeFriend(friendId);
+            return result;
         } catch (error) {
             console.error('Error unfriending user:', error);
             throw error;

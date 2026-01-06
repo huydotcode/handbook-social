@@ -1,10 +1,10 @@
-import { friendshipService } from '@/lib/api/services/friendship.service';
-import { queryKey } from '@/lib/react-query/query-key';
+import { FriendService } from '@/features/friend';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
     defaultQueryOptions,
 } from '@/lib/react-query';
+import { queryKey } from '@/lib/react-query/query-key';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { userApi } from '../apis/user.api';
 import UserService from '../services/user.service';
@@ -40,7 +40,7 @@ export const useUserFriends = (
     return useInfiniteQuery({
         queryKey: queryKey.user.friends(userId),
         queryFn: async ({ pageParam = 1 }) => {
-            const all = await friendshipService.getFriends(userId);
+            const all = await FriendService.getFriends(userId);
             const start = (pageParam - 1) * pageSize;
             const end = start + pageSize;
             return all.slice(start, end);

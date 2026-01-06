@@ -15,12 +15,12 @@ import {
     TooltipTrigger,
 } from '@/shared/components/ui/tooltip';
 import { useAuth } from '@/core/context/AuthContext';
-import { useFriendsWithConversations } from '@/lib/hooks/useFriendsWithConversations';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import ConversationItemSkeleton from '../skeleton/ConversationItemSkeleton';
+import { useFriendsWithConversations } from '@/features/friend';
 
 interface Props {}
 
