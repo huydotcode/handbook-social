@@ -1,6 +1,6 @@
-import { useMutation } from '@tanstack/react-query';
-import { uploadService } from '@/lib/api/services/upload.service';
 import { handleApiError, showSuccessToast } from '@/shared';
+import { useMutation } from '@tanstack/react-query';
+import { UploadService } from '../services/upload.service';
 
 /**
  * Hook to upload an image
@@ -13,7 +13,7 @@ export const useUploadImage = () => {
         }: {
             file: File;
             onProgress?: (progress: number) => void;
-        }) => uploadService.uploadImage(file, onProgress),
+        }) => UploadService.uploadImage(file, onProgress),
         onSuccess: () => {
             showSuccessToast('Upload ảnh thành công');
         },
@@ -34,7 +34,7 @@ export const useUploadVideo = () => {
         }: {
             file: File;
             onProgress?: (progress: number) => void;
-        }) => uploadService.uploadVideo(file, onProgress),
+        }) => UploadService.uploadVideo(file, onProgress),
         onSuccess: () => {
             showSuccessToast('Upload video thành công');
         },

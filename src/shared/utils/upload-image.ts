@@ -1,5 +1,5 @@
 import toast from 'react-hot-toast';
-import { uploadService } from '../../lib/api/services/upload.service';
+import { UploadService } from '@/features/upload';
 import { IMedia } from '@/types/entites';
 
 /**
@@ -38,9 +38,9 @@ export const uploadImageWithFile = async ({
     try {
         switch (type) {
             case 'image':
-                return await uploadService.uploadImage(file);
+                return await UploadService.uploadImage(file);
             case 'video':
-                return await uploadService.uploadVideo(file);
+                return await UploadService.uploadVideo(file);
             default:
                 throw new Error('Không hỗ trợ định dạng file này');
         }
@@ -84,9 +84,9 @@ export const uploadImagesWithFiles = async ({
         try {
             switch (type) {
                 case 'image':
-                    return await uploadService.uploadImage(file);
+                    return await UploadService.uploadImage(file);
                 case 'video':
-                    return await uploadService.uploadVideo(file);
+                    return await UploadService.uploadVideo(file);
                 default:
                     throw new Error('Không hỗ trợ định dạng file này');
             }

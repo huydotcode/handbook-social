@@ -2,7 +2,7 @@ import { IMedia } from '@/types/entites';
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
 
-export const uploadService = {
+export const uploadApi = {
     /**
      * Upload image
      * Returns IMedia object with _id, url, publicId, etc.
