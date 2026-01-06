@@ -9,7 +9,7 @@ import {
     DialogTrigger,
 } from '@/shared/components/ui/dialog';
 import { useAuth } from '@/core/context';
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { cn } from '@/lib/utils';
 import { IUser } from '@/types/entites';

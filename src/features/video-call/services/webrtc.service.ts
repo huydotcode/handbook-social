@@ -1,25 +1,10 @@
 import { env } from '@/core/config/env.config';
-
-export interface WebRTCEventHandlers {
-    onLocalStream?: (stream: MediaStream) => void;
-    onRemoteStream?: (stream: MediaStream) => void;
-    onConnectionStateChange?: (state: RTCPeerConnectionState) => void;
-    onIceCandidate?: (candidate: RTCIceCandidate) => void;
-    onRenegotiationNeeded?: (offer: RTCSessionDescriptionInit) => void;
-    onError?: (error: Error) => void;
-    onIceConnectionStateChange?: (state: RTCIceConnectionState) => void;
-}
-
-interface ICEServerConfig {
-    urls: string | string[];
-    username?: string;
-    credential?: string;
-}
+import { ICEServerConfig, WebRTCEventHandlers } from '../types/webrtc.types';
 
 const TURN_USERNAME = env.NEXT_PUBLIC_TURN_USERNAME;
 const TURN_CREDENTIAL = env.NEXT_PUBLIC_TURN_CREDENTIAL;
 
-class WebRTCService {
+class WebRTCServiceClass {
     private peerConnection: RTCPeerConnection | null = null;
     private localStream: MediaStream | null = null;
     private remoteStream: MediaStream | null = null;
@@ -753,18 +738,17 @@ class WebRTCService {
         );
     }
 
-    // THÊM HOẶC SỬA LẠI PHƯƠNG THỨC NÀY
     public cleanup() {
-        // 1. Dừng các track của local stream để tắt camera/mic
+        // 1. Stop local stream tracks to turn off camera/mic
         if (this.localStream) {
             this.localStream.getTracks().forEach((track) => {
                 track.stop();
             });
         }
 
-        // 2. Đóng kết nối peer-to-peer
+        // 2. Close peer-to-peer connection
         if (this.peerConnection) {
-            // Gỡ bỏ các event listener để tránh memory leak
+            // Remove event listeners to avoid memory leaks
             this.peerConnection.onicecandidate = null;
             this.peerConnection.ontrack = null;
             this.peerConnection.onconnectionstatechange = null;
@@ -772,12 +756,12 @@ class WebRTCService {
             this.peerConnection.close();
         }
 
-        // 3. Reset lại các biến nội bộ
+        // 3. Reset internal variables
         this.peerConnection = null;
         this.localStream = null;
         this.remoteStream = null;
     }
 }
 
-export const webRTCService = new WebRTCService();
-export default WebRTCService;
+export const webRTCService = new WebRTCServiceClass();
+export default WebRTCServiceClass;

@@ -1,4 +1,4 @@
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import { cn } from '@/lib/utils';
 import { IProfile } from '@/types/entites';
 import React from 'react';

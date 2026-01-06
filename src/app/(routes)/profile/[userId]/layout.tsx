@@ -1,4 +1,4 @@
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import { notFound } from 'next/navigation';
 import { Header } from '../_components';
 

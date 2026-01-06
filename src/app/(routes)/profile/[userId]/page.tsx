@@ -1,5 +1,5 @@
 import { InfinityPostComponent } from '@/shared/components/post';
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import { isValidObjectId } from '@/lib/utils';
 import { FC } from 'react';
 import { InfomationSection } from '../_components';

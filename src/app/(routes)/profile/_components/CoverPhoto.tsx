@@ -11,7 +11,7 @@ import {
 } from '@/shared/components/ui/dialog';
 import { useAuth } from '@/core/context';
 import { ImageService } from '@/features/image';
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IProfile } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';

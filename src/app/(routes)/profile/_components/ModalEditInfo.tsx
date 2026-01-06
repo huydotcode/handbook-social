@@ -3,7 +3,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
 import { useAuth } from '@/core/context';
 import { useLocations } from '@/features/location';
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import { IProfile } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';

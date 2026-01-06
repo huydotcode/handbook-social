@@ -4,7 +4,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { cn } from '@/lib/utils';
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { useVideoCall } from '@/core/context/VideoCallContext';
-import { webRTCService } from '@/lib/services/webrtc.service';
+import { webRTCService } from '@/features/video-call';
 
 interface Props {
     isOpen: boolean;

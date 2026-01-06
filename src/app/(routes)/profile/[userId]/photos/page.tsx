@@ -1,4 +1,4 @@
-import ProfileService from '@/lib/services/profile.service';
+import ProfileService from '@/features/user/services/profile.service';
 import React from 'react';
 import { FriendsSection, PhotosSection } from '../../_components';
 import { UserService } from '@/features/user';

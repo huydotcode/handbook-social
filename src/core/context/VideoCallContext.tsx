@@ -1,23 +1,19 @@
 'use client';
 import { useSocket } from '@/core/context/SocketContext';
-import { videoCallSocketService } from '@/lib/services/videoCallSocket.service';
-import { webRTCService } from '@/lib/services/webrtc.service';
+import {
+    videoCallSocketService,
+    VideoCallUser,
+    webRTCService,
+} from '@/features/video-call';
 import React, {
     createContext,
     ReactNode,
     useCallback,
     useContext,
     useEffect,
-    useRef,
     useState,
 } from 'react';
 import toast from 'react-hot-toast';
-
-interface VideoCallUser {
-    _id: string;
-    name: string;
-    avatar?: string;
-}
 
 interface VideoCallContextType {
     isCallActive: boolean;
