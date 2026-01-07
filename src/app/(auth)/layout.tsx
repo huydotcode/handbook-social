@@ -77,15 +77,15 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
     }
 
     return (
-        <div className="relative min-h-screen overflow-hidden bg-white dark:bg-dark-secondary-2">
+        <div className="relative min-h-screen bg-white dark:bg-dark-secondary-2">
             {/* Darkmode Button */}
             <div className="flex w-full justify-end p-4">
                 <DarkmodeButton className="block" />
             </div>
 
-            <div className="relative z-10 mx-auto flex h-[calc(100vh-52px)] w-full max-w-7xl items-center justify-center p-4 lg:h-auto">
+            <div className="relative z-10 mx-auto flex min-h-[calc(100vh-52px)] w-full max-w-7xl items-center justify-center p-4">
                 {/* Desktop Layout: Features left, Login right */}
-                <div className="grid h-full w-screen grid-cols-2 gap-2 lg:h-auto lg:grid-cols-1">
+                <div className="grid h-full w-screen grid-cols-2 gap-2 lg:grid-cols-1">
                     {/* Features Section - Left side on desktop */}
                     <div className="flex flex-1 flex-col justify-center rounded-xl p-4 lg:w-full md:w-full md:max-w-screen">
                         <div className="relative mb-4">
