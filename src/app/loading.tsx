@@ -5,7 +5,7 @@ const LoadingPage = () => {
     return (
         <>
             <Navbar />
-            <Loading fullScreen />
+            <Loading fullScreen overlay={false} showLogo showLoader={false} />
         </>
     );
 };

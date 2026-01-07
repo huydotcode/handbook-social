@@ -1,5 +1,6 @@
 'use client';
 import { cn } from '@/lib/utils';
+import Image from 'next/image';
 import React, { FC, useEffect } from 'react';
 
 interface Props {
@@ -8,6 +9,8 @@ interface Props {
     title?: string;
     overlay?: boolean;
     text?: string;
+    showLogo?: boolean;
+    showLoader?: boolean;
 }
 
 const Loading: FC<Props> = ({
@@ -16,6 +19,8 @@ const Loading: FC<Props> = ({
     title,
     overlay = true,
     text: initText,
+    showLogo = true,
+    showLoader = false,
 }) => {
     const [text, setText] = React.useState<string>(initText || '');
 
@@ -50,20 +55,33 @@ const Loading: FC<Props> = ({
     return (
         <div
             className={cn(
-                'loader-container flex items-center justify-center overflow-hidden',
+                'loader-container flex flex-col items-center justify-center gap-10 overflow-hidden',
                 fullScreen && 'fixed left-0 top-0 z-50 h-screen w-screen',
                 title && 'flex-col',
                 overlay && 'bg-black bg-opacity-10',
                 className
             )}
         >
-            <div className="loader">
-                <li className="ball"></li>
-                <li className="ball"></li>
-                <li className="ball"></li>
-            </div>
+            {showLogo && (
+                <div className="relative h-20 w-20">
+                    <Image
+                        src={'/assets/img/logo.png'}
+                        alt="logo"
+                        fill
+                        quality={100}
+                    />
+                </div>
+            )}
 
-            {title && <p className="mt-2 text-lg text-white">{title}</p>}
+            {showLoader && (
+                <div className="loader">
+                    <li className="ball"></li>
+                    <li className="ball"></li>
+                    <li className="ball"></li>
+                </div>
+            )}
+
+            {title && <p className="mt-2 text-lg">{title}</p>}
         </div>
     );
 };
