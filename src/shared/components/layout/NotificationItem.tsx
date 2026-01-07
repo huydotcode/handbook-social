@@ -157,6 +157,10 @@ const NotificationItem = ({
                         {notification.type === NOTIFICATION_TYPES.LIKE_POST && (
                             <span>{NOTIFICATION_MESSAGES.LIKE_POST}</span>
                         )}
+                        {notification.type ===
+                            NOTIFICATION_TYPES.CREATE_POST && (
+                            <span>{NOTIFICATION_MESSAGES.CREATE_POST}</span>
+                        )}
                     </p>
                     {notification.type ===
                         NOTIFICATION_TYPES.REQUEST_ADD_FRIEND && (
@@ -164,7 +168,7 @@ const NotificationItem = ({
                             <Button
                                 className="mr-2"
                                 variant={'primary'}
-                                size={'sm'}
+                                size={'xs'}
                                 onClick={handleAcceptFriend}
                                 disabled={isAccepting || isDeclining}
                             >
@@ -177,7 +181,7 @@ const NotificationItem = ({
                                 )}
                             </Button>
                             <Button
-                                size={'sm'}
+                                size={'xs'}
                                 onClick={handleDeclineFriend}
                                 disabled={isAccepting || isDeclining}
                             >
@@ -191,6 +195,19 @@ const NotificationItem = ({
                             </Button>
                         </div>
                     )}
+                    {notification.type === NOTIFICATION_TYPES.CREATE_POST &&
+                        notification?.extra?.postId && (
+                            <div className="mt-2 flex items-center">
+                                <Button
+                                    className="mr-2"
+                                    variant={'primary'}
+                                    size={'xs'}
+                                    href={`/posts/${notification.extra?.postId}`}
+                                >
+                                    Xem bài viết
+                                </Button>
+                            </div>
+                        )}
                 </div>
 
                 <Button

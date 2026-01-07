@@ -8,6 +8,7 @@ export const NOTIFICATION_TYPES = {
     MESSAGE: 'message',
     FOLLOW_USER: 'follow-user',
     LIKE_POST: 'like-post',
+    CREATE_POST: 'create-post',
 } as const;
 
 export type NotificationType =
@@ -15,11 +16,19 @@ export type NotificationType =
 
 // Notification Messages Constants
 export const NOTIFICATION_MESSAGES = {
+    // Friend request
     REQUEST_ADD_FRIEND: 'đã gửi cho bạn một lời mời kết bạn',
     ACCEPT_FRIEND_REQUEST: 'đã chấp nhận lời mời kết bạn của bạn',
     REJECT_FRIEND_REQUEST: 'đã từ chối lời mời kết bạn của bạn',
+
+    // Message
     MESSAGE: 'đã gửi cho bạn một tin nhắn',
+
+    // Follow
     FOLLOW_USER: 'đã theo dõi bạn',
+
+    // Post
+    CREATE_POST: 'đã đăng một bài viết mới', // Thông báo tới follower
     LIKE_POST: 'đã thích bài viết của bạn',
 } as const;
 
