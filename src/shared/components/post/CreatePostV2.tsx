@@ -48,9 +48,11 @@ const CreatePostV2: FC<Props> = ({
 }) => {
     const { user } = useAuth();
     const { invalidatePosts } = useQueryInvalidation();
+
     const [showMenu, setShowMenu] = useState<boolean>(hasMenu);
-    const fileInputId = useId();
     const [showTagInput, setShowTagInput] = useState<boolean>(true);
+    const fileInputId = useId();
+
     const form = useForm<IPostFormData>({
         defaultValues: {
             content: '',
@@ -61,7 +63,6 @@ const CreatePostV2: FC<Props> = ({
         resolver: zodResolver(createPostValidation),
     });
     const files = form.watch('files');
-
     const { control, register, handleSubmit, formState, reset } = form;
 
     const sendPost = useCallback(
