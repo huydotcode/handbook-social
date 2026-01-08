@@ -68,7 +68,7 @@ const TagInput: FC<TagInputProps> = ({
 
             <Input
                 placeholder={placeholder}
-                className="bg-transparent text-sm"
+                className="w-full bg-transparent text-sm dark:bg-transparent"
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
                 onKeyDown={handleKeyDown}
