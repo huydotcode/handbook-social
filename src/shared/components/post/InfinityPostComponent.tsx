@@ -290,7 +290,9 @@ const InfinityPostComponent: React.FC<Props> = ({
                     title="Đăng bài viết"
                 >
                     <CreatePostV2
+                        className="w-[700px] max-w-full"
                         onSubmitSuccess={handleClose}
+                        hasMenu={false}
                         {...(isGroupPost && { groupId, type: 'group' })}
                     />
                 </Modal>

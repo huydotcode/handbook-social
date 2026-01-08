@@ -48,9 +48,9 @@ const CreatePostV2: FC<Props> = ({
 }) => {
     const { user } = useAuth();
     const { invalidatePosts } = useQueryInvalidation();
+    const [showMenu, setShowMenu] = useState<boolean>(hasMenu);
+    const fileInputId = useId();
     const [showTagInput, setShowTagInput] = useState<boolean>(true);
-    const fileInputId = useId(); // Tạo ID duy nhất cho mỗi instance
-
     const form = useForm<IPostFormData>({
         defaultValues: {
             content: '',
@@ -246,7 +246,7 @@ const CreatePostV2: FC<Props> = ({
                                             className="no-scrollbar max-h-[30vh] overflow-scroll"
                                             onChange={onChange}
                                             value={value}
-                                            hasMenu={hasMenu}
+                                            hasMenu={showMenu}
                                         />
                                     </>
                                 )}
@@ -349,7 +349,7 @@ const CreatePostV2: FC<Props> = ({
 
                             <div
                                 className={cn(
-                                    'relative mt-2 flex items-center justify-between rounded-xl bg-secondary-1 px-4 py-1 dark:bg-dark-secondary-1',
+                                    'relative mt-2 flex items-center justify-between rounded-xl bg-primary-1 px-4 py-1 dark:bg-dark-secondary-1',
                                     variant === 'modal' &&
                                         'border border-secondary-2 dark:border-dark-secondary-2'
                                 )}
@@ -359,6 +359,38 @@ const CreatePostV2: FC<Props> = ({
                                 </h5>
 
                                 <div className="flex items-center">
+                                    {/* Toggle Menu */}
+                                    <TooltipProvider>
+                                        <Tooltip>
+                                            <TooltipTrigger asChild>
+                                                <Button
+                                                    type="button"
+                                                    variant={'ghost'}
+                                                    size={'xs'}
+                                                    className={cn(
+                                                        'mr-2 h-10 w-10 rounded-xl hover:bg-secondary-2 dark:hover:bg-dark-secondary-2',
+                                                        showMenu
+                                                            ? 'bg-secondary-2 dark:bg-dark-secondary-2'
+                                                            : 'bg-transparent'
+                                                    )}
+                                                    onClick={() =>
+                                                        setShowMenu(!showMenu)
+                                                    }
+                                                >
+                                                    <Icons.Menu className="h-4 w-4 text-primary-2" />
+                                                </Button>
+                                            </TooltipTrigger>
+
+                                            <TooltipContent>
+                                                <span className="text-xs">
+                                                    {showMenu
+                                                        ? 'Ẩn công cụ'
+                                                        : 'Hiện công cụ'}
+                                                </span>
+                                            </TooltipContent>
+                                        </Tooltip>
+                                    </TooltipProvider>
+
                                     {/* Tags */}
                                     <TooltipProvider>
                                         <Tooltip>
