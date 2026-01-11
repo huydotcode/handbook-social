@@ -9,7 +9,6 @@ import { EditorField } from '@/shared/components/ui/EditorV2';
 import Icons from '@/shared/components/ui/Icons';
 import { editPostValidation, IPostFormData } from '@/features/post';
 import { PostService } from '@/features/post';
-import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IPost } from '@/types/entites';
@@ -80,37 +79,34 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
                 return;
             }
 
-            // Upload các file mới đã thêm
-            const newImages = await uploadImagesWithFiles({
-                files,
-            });
+            const formData = new FormData();
+            formData.append('content', content);
+            formData.append('option', option);
 
-            // Kết hợp media mới với media cũ không bị xóa
-            const updateImages = [
-                ...newImages,
-                ...post.media.filter((img) => !removeImages.includes(img._id)),
-            ];
+            // Tags
+            if (tags && tags.length > 0) {
+                tags.forEach((tag) => formData.append('tags[]', tag));
+            }
 
-            // Reset form
-            form.reset({
-                content: '',
-                option: 'public',
-                files: [],
-                tags: [],
-            });
+            // Files (new uploads)
+            if (files && files.length > 0) {
+                files.forEach((file) => {
+                    formData.append('files', file);
+                });
+            }
 
-            // Reset media
-            setMedia([]);
-            setRemoveImages([]);
+            const existingMediaIds = media
+                .filter((item) => item._id && !item.file) // Ensure it's existing media
+                .map((item) => item._id as string);
+
+            if (existingMediaIds.length > 0) {
+                existingMediaIds.forEach((id) =>
+                    formData.append('mediaIds', id)
+                );
+            }
 
             // Gọi API cập nhật bài viết
-            await PostService.update({
-                content: content,
-                option: option,
-                postId: post._id,
-                mediaIds: updateImages.map((img) => img._id),
-                tags,
-            });
+            await PostService.update(post._id, formData);
 
             // Làm mới cache
             await invalidatePost(post._id);
@@ -124,7 +120,7 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
 
     async function onSubmit(data: IPostFormData) {
         if (formState.isSubmitting) return;
-        setShow(false);
+        // setShow(false); // Don't close immediately, wait for success
 
         try {
             await toast.promise(

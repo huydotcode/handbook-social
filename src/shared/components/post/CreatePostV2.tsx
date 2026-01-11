@@ -11,7 +11,6 @@ import { PostService } from '@/features/post';
 import { cn } from '@/lib/utils';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';
-import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import { FileUploaderWrapper } from '../shared/FileUploader';
@@ -77,19 +76,23 @@ const CreatePostV2: FC<Props> = ({
                     return;
                 }
 
-                const results = await uploadImagesWithFiles({
-                    files: files,
-                });
-                const resultsId = results.map((result) => result._id);
+                const formData = new FormData();
+                if (content) formData.append('content', content);
+                if (option) formData.append('option', option);
+                if (groupId) formData.append('group', groupId);
+                if (type) formData.append('type', type);
 
-                await PostService.create({
-                    content,
-                    option,
-                    mediaIds: resultsId,
-                    groupId,
-                    type,
-                    tags,
-                });
+                if (tags && tags.length > 0) {
+                    tags.forEach((tag) => formData.append('tags[]', tag));
+                }
+
+                if (files && files.length > 0) {
+                    files.forEach((file) => {
+                        formData.append('files', file);
+                    });
+                }
+
+                await PostService.create(formData);
 
                 await invalidatePosts();
                 reset();
@@ -346,6 +349,12 @@ const CreatePostV2: FC<Props> = ({
                                             </div>
                                         ))}
                                 </div>
+                            )}
+
+                            {formState?.errors?.files?.message && (
+                                <p className="text-xs text-red-500">
+                                    {formState.errors.files?.message}
+                                </p>
                             )}
 
                             <div

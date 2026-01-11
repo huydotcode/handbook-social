@@ -1,9 +1,9 @@
-import { queryKey } from '@/lib/react-query/query-key';
 import {
     createGetNextPageParam,
     defaultInfiniteQueryOptions,
     defaultQueryOptions,
 } from '@/lib/react-query';
+import { queryKey } from '@/lib/react-query/query-key';
 import { handleApiError, showSuccessToast } from '@/shared';
 import {
     useInfiniteQuery,
@@ -11,13 +11,7 @@ import {
     useQuery,
     useQueryClient,
 } from '@tanstack/react-query';
-import {
-    postApi,
-    CreatePostDto,
-    PostQueryParams,
-    UpdatePostDto,
-} from '../apis/post.api';
-import { PostService } from '../services/post.service';
+import { postApi, PostQueryParams } from '../apis/post.api';
 
 /**
  * Hook to get a single post by ID
@@ -315,7 +309,7 @@ export const useCreatePost = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (data: CreatePostDto) => postApi.create(data),
+        mutationFn: (data: FormData) => postApi.create(data),
         onSuccess: (data) => {
             // Invalidate relevant queries
             queryClient.invalidateQueries({ queryKey: queryKey.posts.all() });
@@ -339,7 +333,7 @@ export const useUpdatePost = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({ id, data }: { id: string; data: UpdatePostDto }) =>
+        mutationFn: ({ id, data }: { id: string; data: FormData }) =>
             postApi.update(id, data),
         onSuccess: (data, variables) => {
             // Update cache

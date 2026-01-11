@@ -29,87 +29,15 @@ class PostServiceClass {
     /**
      * Create a new post using REST API
      */
-    async create({
-        content,
-        mediaIds,
-        option,
-        groupId = null,
-        tags = [],
-        type = 'default',
-    }: {
-        content: string;
-        mediaIds: string[];
-        option: string;
-        groupId?: string | null;
-        type?: string;
-        tags?: string[];
-    }): Promise<IPost> {
-        // Get current user ID from localStorage token
-        const token =
-            typeof window !== 'undefined'
-                ? localStorage.getItem('accessToken')
-                : null;
-        let authorId = '';
-
-        if (token) {
-            try {
-                const base64Url = token.split('.')[1];
-                const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-                const jsonPayload = decodeURIComponent(
-                    atob(base64)
-                        .split('')
-                        .map(
-                            (c) =>
-                                '%' +
-                                ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-                        )
-                        .join('')
-                );
-                const decoded = JSON.parse(jsonPayload);
-                authorId = decoded.id;
-            } catch (error) {
-                console.error('Error decoding token:', error);
-            }
-        }
-
-        const normalizedStatus =
-            type && ['active', 'pending', 'rejected'].includes(type)
-                ? (type as 'active' | 'pending' | 'rejected')
-                : undefined;
-
-        return await postApi.create({
-            author: authorId,
-            text: content,
-            media: mediaIds,
-            group: groupId || undefined,
-            tags: tags,
-            option: option,
-            status: normalizedStatus,
-        });
+    async create(data: FormData): Promise<IPost> {
+        return await postApi.create(data);
     }
 
     /**
      * Update a post using REST API
      */
-    async update({
-        content,
-        mediaIds,
-        option,
-        postId,
-        tags = [],
-    }: {
-        content: string;
-        mediaIds: string[];
-        option: string;
-        postId: string;
-        tags?: string[];
-    }): Promise<IPost> {
-        return await postApi.update(postId, {
-            text: content,
-            media: mediaIds,
-            option: option,
-            tags: tags,
-        });
+    async update(postId: string, data: FormData): Promise<IPost> {
+        return await postApi.update(postId, data);
     }
 
     /**
@@ -166,10 +94,11 @@ class PostServiceClass {
         status: string;
     }): Promise<boolean> {
         try {
+            const formData = new FormData();
+            formData.append('status', status);
+
             // Use update endpoint with status field
-            await postApi.update(postId, {
-                status: status,
-            });
+            await postApi.update(postId, formData);
             return true;
         } catch (error) {
             console.error('Error updating post status:', error);

@@ -2,24 +2,6 @@ import { IPost } from '@/types/entites';
 import { apiClient } from '../../../core/api/api-client';
 import { API_ENDPOINTS } from '../../../core/api/endpoints';
 
-export interface CreatePostDto {
-    author: string;
-    text: string;
-    media?: string[];
-    group?: string;
-    tags?: string[];
-    option?: string;
-    status?: string;
-}
-
-export interface UpdatePostDto {
-    text?: string;
-    media?: string[];
-    tags?: string[];
-    option?: string;
-    status?: string;
-}
-
 export interface PostQueryParams {
     page?: number;
     page_size?: number;
@@ -129,14 +111,14 @@ export const postApi = {
     /**
      * Create a new post
      */
-    create: (data: CreatePostDto) => {
+    create: (data: FormData) => {
         return apiClient.post<IPost>(API_ENDPOINTS.POSTS.CREATE, data);
     },
 
     /**
      * Update a post
      */
-    update: (id: string, data: UpdatePostDto) => {
+    update: (id: string, data: FormData) => {
         return apiClient.put<IPost>(API_ENDPOINTS.POSTS.BY_ID(id), data);
     },
 
