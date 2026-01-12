@@ -1,6 +1,7 @@
 'use client';
-import { useLocations } from '@/features/location';
 import { adminApi } from '@/features/admin';
+import { useLocations } from '@/features/location';
+import { showErrorToast, showSuccessToast } from '@/shared';
 import { Loading, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -22,7 +23,6 @@ import {
 } from '@/shared/components/ui/table';
 import { useState } from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 interface Location {
     name: string;
@@ -59,10 +59,10 @@ const AdminLocationsPage = () => {
             await refetch();
             setOpenModalCreate(false);
             form.reset();
-            toast.success('Tạo địa điểm thành công');
+            showSuccessToast('Tạo địa điểm thành công');
         } catch (error) {
             console.error('Error creating location:', error);
-            toast.error('Không thể tạo địa điểm. Vui lòng thử lại sau.');
+            showErrorToast('Không thể tạo địa điểm. Vui lòng thử lại sau.');
         }
     };
 

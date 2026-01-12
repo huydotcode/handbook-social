@@ -11,7 +11,7 @@ import {
     NOTIFICATION_TYPES,
 } from '@/types/entites';
 import { useCallback, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import Icons from '../ui/Icons';
 
 const NotificationItem = ({

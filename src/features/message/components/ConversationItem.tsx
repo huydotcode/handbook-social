@@ -24,7 +24,7 @@ import { useQueryInvalidation } from '@/shared/hooks';
 import { IConversation } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
 import { useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     data: IConversation;

@@ -1,4 +1,12 @@
 'use client';
+import { adminApi } from '@/features/admin';
+import queryKey from '@/lib/react-query/query-key';
+import {
+    showErrorToast,
+    showLoadingToast,
+    showSuccessToast,
+    timeConvert4,
+} from '@/shared';
 import { ConfirmModal, Icons, Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -8,14 +16,10 @@ import {
     TabsTrigger,
 } from '@/shared/components/ui/tabs';
 import VideoPlayer from '@/shared/components/ui/VideoPlayer';
-import { adminApi } from '@/features/admin';
-import queryKey from '@/lib/react-query/query-key';
-import { timeConvert, timeConvert4 } from '@/shared';
 import { IMedia } from '@/types/entites';
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import Image from 'next/image';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 const AdminMediaPage = () => {
     const queryClient = useQueryClient();
@@ -41,10 +45,10 @@ const AdminMediaPage = () => {
             queryClient.invalidateQueries({
                 queryKey: queryKey.admin.media.index,
             });
-            toast.success('Phương tiện đã được xóa thành công.');
+            showSuccessToast('Phương tiện đã được xóa thành công.');
         },
         onError: () => {
-            toast.error(
+            showErrorToast(
                 'Xóa phương tiện không thành công. Vui lòng thử lại sau.'
             );
         },
@@ -55,7 +59,7 @@ const AdminMediaPage = () => {
 
     const handleDeleteMedia = async (mediaId: string) => {
         try {
-            toast.loading('Đang xóa phương tiện...', { id: 'delete-media' });
+            showLoadingToast('Đang xóa phương tiện...');
             await deleteMediaMutation.mutateAsync(mediaId);
             setMediaIdToDelete(null);
             setOpenModalConfirmDelete(false);

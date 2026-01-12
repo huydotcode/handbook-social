@@ -6,7 +6,7 @@ import ProfileService from '@/features/user/services/profile.service';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     show: boolean;

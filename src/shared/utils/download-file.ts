@@ -1,6 +1,6 @@
 import { IMedia } from '@/types/entites';
 import { saveAs } from 'file-saver';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 export const downloadImage = (image: IMedia) => {
     if (!image) {

@@ -1,4 +1,4 @@
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { UploadService } from '@/features/upload';
 import { IMedia } from '@/types/entites';
 

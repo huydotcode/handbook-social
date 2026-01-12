@@ -4,7 +4,7 @@ import { ConversationService } from '@/features/conversation';
 import { cn } from '@/lib/utils';
 import { Button } from '@/shared/components/ui/Button';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     className?: string;

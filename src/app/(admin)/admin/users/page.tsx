@@ -13,12 +13,11 @@ import {
 } from '@/shared/components/ui/table';
 import { adminApi } from '@/features/admin';
 import queryKey from '@/lib/react-query/query-key';
-import { FormatDate } from '@/shared';
+import { FormatDate, showErrorToast } from '@/shared';
 import { IUser } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import React from 'react';
-import toast from 'react-hot-toast';
 
 const AdminUsersPage = () => {
     const {
@@ -68,8 +67,8 @@ const AdminUsersPage = () => {
                             <TableRow
                                 key={user._id}
                                 onClick={() => {
-                                    toast.error(
-                                        'Chức năng này chưa được triển khai'
+                                    showErrorToast(
+                                        'Tính năng này chưa được triển khai'
                                     );
                                 }}
                             >

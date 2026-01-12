@@ -10,7 +10,7 @@ import { IConversation, IMessage } from '@/types/entites';
 import Image from 'next/image';
 import React, { ChangeEvent, useId } from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     currentRoom: IConversation;

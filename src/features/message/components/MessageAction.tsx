@@ -9,7 +9,7 @@ import { PopoverContent } from '@/shared/components/ui/Popover';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IMessage } from '@/types/entites';
 import { FormEventHandler, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     msg: IMessage;

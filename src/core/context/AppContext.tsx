@@ -20,7 +20,7 @@ import {
 } from '@/types/entites';
 import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useSocket } from '.';
 import { useAuth } from './AuthContext';
 import { SidebarCollapseContext } from './SidebarContext';
@@ -178,35 +178,37 @@ function AppProvider({ children }: { children: React.ReactNode }) {
 
                 if (message) {
                     toast.custom(
-                        <div
-                            className="flex cursor-pointer items-center gap-2 rounded-lg bg-white p-4 shadow-lg dark:bg-dark-secondary-2"
-                            onClick={() => {
-                                if (
-                                    notification.type ==
-                                        NOTIFICATION_TYPES.CREATE_POST &&
-                                    notification?.extra?.postId
-                                ) {
-                                    router.push(
-                                        `/posts/${notification.extra.postId}`
-                                    );
-                                }
-                            }}
-                        >
-                            <Avatar
-                                width={40}
-                                height={40}
-                                imgSrc={notification.sender.avatar}
-                                userUrl={notification.sender._id}
-                            />
-                            <div className="flex flex-col">
-                                <span className="font-semibold text-gray-900 dark:text-white">
-                                    {notification.sender.name}
-                                </span>
-                                <span className="text-sm text-gray-500 dark:text-gray-400">
-                                    {message}
-                                </span>
+                        () => (
+                            <div
+                                className="flex cursor-pointer items-center gap-2 rounded-lg bg-white p-4 shadow-lg dark:bg-dark-secondary-2"
+                                onClick={() => {
+                                    if (
+                                        notification.type ==
+                                            NOTIFICATION_TYPES.CREATE_POST &&
+                                        notification?.extra?.postId
+                                    ) {
+                                        router.push(
+                                            `/posts/${notification.extra.postId}`
+                                        );
+                                    }
+                                }}
+                            >
+                                <Avatar
+                                    width={40}
+                                    height={40}
+                                    imgSrc={notification.sender.avatar}
+                                    userUrl={notification.sender._id}
+                                />
+                                <div className="flex flex-col">
+                                    <span className="font-semibold text-gray-900 dark:text-white">
+                                        {notification.sender.name}
+                                    </span>
+                                    <span className="text-sm text-gray-500 dark:text-gray-400">
+                                        {message}
+                                    </span>
+                                </div>
                             </div>
-                        </div>,
+                        ),
                         {
                             id: notification._id,
                             position: 'bottom-left',

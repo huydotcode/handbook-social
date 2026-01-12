@@ -1,12 +1,11 @@
 'use client';
 
+import { useRemoveGroupMember } from '@/features/group/hooks/group.hook';
+import { showErrorToast, timeConvert4 } from '@/shared';
 import { ConfirmModal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useRemoveGroupMember } from '@/features/group/hooks/group.hook';
-import { timeConvert4 } from '@/shared';
 import { GROUP_ROLES, IGroup, IMemberGroup } from '@/types/entites';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
 
 interface Props {
     member: IMemberGroup;
@@ -22,7 +21,7 @@ const ActionMember = ({ member, group }: Props) => {
         try {
             await removeGroupMember.mutateAsync(member.user._id);
         } catch (error) {
-            toast.error('Xóa thành viên thất bại');
+            showErrorToast('Xóa thành viên thất bại');
         }
     };
 

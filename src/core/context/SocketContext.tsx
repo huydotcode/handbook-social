@@ -16,7 +16,7 @@ import {
     useMemo,
     useState,
 } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { Socket } from 'socket.io';
 import { io as ClientIO } from 'socket.io-client';
 import { useAuth } from './AuthContext';

@@ -1,6 +1,7 @@
 'use client';
 import { useCategories } from '@/core/context/AppContext';
 import { CategoryService } from '@/features/category';
+import { showErrorToast, showPromiseToast, showSuccessToast } from '@/shared';
 import { ConfirmModal, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -23,7 +24,6 @@ import {
 } from '@/shared/components/ui/table';
 import { useId, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 interface CategoryForm {
     name: string;
@@ -61,16 +61,16 @@ const AdminMarketCategoryPage = () => {
             setOpenModalCreate(false);
             form.reset();
 
-            toast.success('Thêm danh mục thành công');
+            showSuccessToast('Thêm danh mục thành công');
         } catch (error) {
             console.error(error);
-            toast.error('Thêm danh mục thất bại');
+            showErrorToast('Thêm danh mục thất bại');
         }
     };
 
     const handleDelete = async (categoryId: string) => {
         try {
-            toast.promise(CategoryService.delete(categoryId), {
+            showPromiseToast(CategoryService.delete(categoryId), {
                 loading: 'Đang xoá danh mục...',
                 success: 'Xoá danh mục thành công',
                 error: 'Xoá danh mục thất bại',
@@ -81,7 +81,7 @@ const AdminMarketCategoryPage = () => {
             setCategoryIdToDelete(undefined);
         } catch (error) {
             console.error(error);
-            toast.error('Xoá danh mục thất bại');
+            showErrorToast('Xoá danh mục thất bại');
         }
     };
 

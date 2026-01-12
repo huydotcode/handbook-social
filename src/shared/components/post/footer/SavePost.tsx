@@ -9,7 +9,7 @@ import { usePreventMultiClick } from '@/shared/hooks';
 import { IPost } from '@/types/entites';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import React from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { InfinityPostData } from '../InfinityPostComponent';
 import { usePostContext } from '../Post';
 

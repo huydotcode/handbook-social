@@ -3,11 +3,14 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { ChangeEvent, FC, useCallback, useId, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 import { useAuth } from '@/core/context';
-import { createPostValidation, IPostFormData } from '@/features/post';
-import { PostService } from '@/features/post';
+import {
+    createPostValidation,
+    IPostFormData,
+    PostService,
+} from '@/features/post';
 import { cn } from '@/lib/utils';
 import { postAudience } from '@/shared/constants';
 import { useQueryInvalidation } from '@/shared/hooks';
@@ -114,20 +117,14 @@ const CreatePostV2: FC<Props> = ({
             if (formState.isSubmitting) return;
 
             try {
-                await toast.promise(
-                    mutation.mutateAsync(data),
-                    {
-                        loading: 'Bài viết đang được đăng...!',
-                        success:
-                            type === 'default'
-                                ? 'Đăng bài thành công!'
-                                : 'Bài viết của bạn sẽ được duyệt trước khi hiển thị',
-                        error: 'Đã có lỗi xảy ra khi đăng bài!',
-                    },
-                    {
-                        position: TOAST_POSITION,
-                    }
-                );
+                await toast.promise(mutation.mutateAsync(data), {
+                    loading: 'Bài viết đang được đăng...!',
+                    success:
+                        type === 'default'
+                            ? 'Đăng bài thành công!'
+                            : 'Bài viết của bạn sẽ được duyệt trước khi hiển thị',
+                    error: 'Đã có lỗi xảy ra khi đăng bài!',
+                });
 
                 reset();
             } catch (error: any) {

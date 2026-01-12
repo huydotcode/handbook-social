@@ -3,7 +3,7 @@ import { ConfirmModal } from '@/shared/components/ui';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { PostService } from '@/features/post';
 import React, { FormEventHandler } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     show: boolean;
@@ -24,17 +24,11 @@ const DeletePostModal: React.FC<Props> = ({
         e.preventDefault();
 
         try {
-            await toast.promise(
-                PostService.delete(postId),
-                {
-                    success: 'Xóa bài viết thành công',
-                    error: 'Xóa bài viết không thành công',
-                    loading: 'Đang xóa bài viết...',
-                },
-                {
-                    id: 'delete-post',
-                }
-            );
+            await toast.promise(PostService.delete(postId), {
+                success: 'Xóa bài viết thành công',
+                error: 'Xóa bài viết không thành công',
+                loading: 'Đang xóa bài viết...',
+            });
 
             await invalidatePosts();
             await invalidateNewFeedPosts({});

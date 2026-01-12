@@ -11,7 +11,7 @@ import {
 import { Badge } from '@/shared/components/ui/badge';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import Icons from '../ui/Icons';
 import NotificationItem from './NotificationItem';
 

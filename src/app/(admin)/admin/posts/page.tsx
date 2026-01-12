@@ -1,4 +1,6 @@
 'use client';
+import { adminApi } from '@/features/admin';
+import queryKey from '@/lib/react-query/query-key';
 import { Icons, Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -15,11 +17,8 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/shared/components/ui/tooltip';
-import { adminApi } from '@/features/admin';
-import queryKey from '@/lib/react-query/query-key';
 import { IPost } from '@/types/entites';
 import { useQuery } from '@tanstack/react-query';
-import toast from 'react-hot-toast';
 
 const AdminPostsPage = () => {
     const {

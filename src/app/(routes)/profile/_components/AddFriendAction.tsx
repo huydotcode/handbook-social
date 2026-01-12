@@ -12,7 +12,7 @@ import { useQueryInvalidation } from '@/shared/hooks';
 import { NOTIFICATION_TYPES } from '@/types/entites';
 import { useMutation } from '@tanstack/react-query';
 import React, { useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     className?: string;

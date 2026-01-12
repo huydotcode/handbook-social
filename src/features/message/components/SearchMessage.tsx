@@ -7,7 +7,7 @@ import { useBreakpoint } from '@/shared/hooks';
 import { IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import Message from './Message';
 import SideHeader from './SideHeader';
 

@@ -2,7 +2,7 @@
 import { useAuth, useSocket } from '@/core/context';
 import { ConversationService } from '@/features/conversation';
 import { useGroupMembers } from '@/features/group/hooks/group.hook';
-import { timeConvert } from '@/shared';
+import { showErrorToast, showSuccessToast, timeConvert } from '@/shared';
 import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
 import { Avatar, Icons, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
@@ -17,7 +17,6 @@ import {
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
 
 interface Props {
     group: IGroup;
@@ -68,7 +67,7 @@ const Sidebar: React.FC<Props> = ({
     const { mutate: createGroupConversation, isPending } = useMutation({
         mutationFn: ConversationService.create,
         onSuccess: (newConversation) => {
-            toast.success('Tạo cuộc hội thoại thành công!');
+            showSuccessToast('Tạo cuộc hội thoại thành công!');
             setShowModalCreateConversation(false);
             setConversations((prev) => [...prev, newConversation]);
 
@@ -80,14 +79,17 @@ const Sidebar: React.FC<Props> = ({
             }
         },
         onError: () => {
-            toast.error(
+            showErrorToast(
                 'Có lỗi xảy ra khi tạo hội thoại, vui lòng thử lại sau!'
             );
         },
     });
 
     const mutateCreateConversation = (data: FormData) => {
-        if (!user) return toast.error('Chưa đăng nhập');
+        if (!user) {
+            showErrorToast('Chưa đăng nhập');
+            return;
+        }
         createGroupConversation({
             participants: [user.id],
             type: 'group',

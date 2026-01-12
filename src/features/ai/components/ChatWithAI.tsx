@@ -7,7 +7,7 @@ import { Button } from '@/shared/components/ui/Button';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface IFormData {
     text: string;

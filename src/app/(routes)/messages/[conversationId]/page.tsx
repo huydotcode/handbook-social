@@ -11,7 +11,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { useParams, useSearchParams } from 'next/navigation';
 import React, { useMemo } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 const NOT_FOUND = 'not-found';
 const IS_DELETED = 'is-deleted';

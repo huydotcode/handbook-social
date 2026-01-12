@@ -14,7 +14,7 @@ import {
 } from '@tanstack/react-query';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { Form, FormControl } from '../../ui/Form';
 import { Textarea } from '../../ui/textarea';
 

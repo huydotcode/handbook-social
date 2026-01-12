@@ -1,5 +1,5 @@
-import toast from 'react-hot-toast';
 import { isAxiosError } from 'axios';
+import { toast } from 'sonner';
 
 export interface ApiError {
     message?: string;
@@ -43,4 +43,31 @@ export const handleApiError = (
 
 export const showSuccessToast = (message: string): void => {
     toast.success(message);
+};
+
+export const showErrorToast = (message: string): void => {
+    toast.error(message);
+};
+
+export const showPromiseToast = (
+    promise: Promise<unknown>,
+    {
+        loading,
+        success,
+        error,
+    }: {
+        loading: string;
+        success: string;
+        error: string;
+    }
+): void => {
+    toast.promise(promise, {
+        loading: loading,
+        success: success,
+        error: error,
+    });
+};
+
+export const showLoadingToast = (message: string): void => {
+    toast.loading(message);
 };

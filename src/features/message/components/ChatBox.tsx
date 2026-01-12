@@ -19,7 +19,7 @@ import React, {
     useRef,
     useState,
 } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useInView } from 'react-intersection-observer';
 import ChatHeader from './ChatHeader';
 import InfomationConversation from './InfomationConversation';

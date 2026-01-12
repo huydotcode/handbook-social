@@ -8,7 +8,7 @@ import { IProfile } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useId } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     profile: IProfile;

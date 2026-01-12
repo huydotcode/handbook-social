@@ -9,7 +9,7 @@ import Icons from '@/shared/components/ui/Icons';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { useMutation } from '@tanstack/react-query';
 import React, { useMemo } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     className?: string;

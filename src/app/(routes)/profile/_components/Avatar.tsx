@@ -16,7 +16,7 @@ import { IUser } from '@/types/entites';
 import Image from 'next/image';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     user: IUser;

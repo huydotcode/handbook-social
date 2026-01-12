@@ -4,7 +4,7 @@ import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { useGoogleLogin } from '@react-oauth/google';
 import { useRouter } from 'next/navigation';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 /**
  * SocialButton component - Google OAuth login

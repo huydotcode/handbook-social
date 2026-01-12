@@ -8,13 +8,13 @@ import {
     VideoCallProvider,
 } from '@/core/context';
 import { AxiosInterceptor } from '@/features/auth';
+import { Toaster as SonnerToaster } from '@/shared/components/ui/sonner';
 import { VideoCallWrapper } from '@/shared/components/video-call';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ThemeProvider } from 'next-themes';
 import { FunctionComponent, ReactNode, useState } from 'react';
-import { Toaster } from 'react-hot-toast';
 
 interface ProvidersProps {
     children: ReactNode;
@@ -77,10 +77,7 @@ const Providers: FunctionComponent<ProvidersProps> = ({ children }) => {
                                         defaultTheme="system"
                                         enableSystem
                                     >
-                                        <Toaster
-                                            position="bottom-left"
-                                            reverseOrder={false}
-                                        />
+                                        <SonnerToaster position="bottom-left" />
                                         {children}
                                         <VideoCallWrapper />
                                     </ThemeProvider>

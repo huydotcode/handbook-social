@@ -7,7 +7,7 @@ import 'swiper/css/navigation';
 import 'swiper/css/pagination';
 
 import React, { useEffect, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { Keyboard, Mousewheel, Navigation, Pagination } from 'swiper/modules';
 
 import Icons from './Icons';

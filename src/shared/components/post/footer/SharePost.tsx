@@ -9,7 +9,7 @@ import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { IPost } from '@/types/entites';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import {
     Dialog,
     DialogClose,

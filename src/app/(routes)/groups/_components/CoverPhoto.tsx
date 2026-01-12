@@ -1,3 +1,6 @@
+import { useAuth } from '@/core/context';
+import GroupService from '@/features/group/services/group.service';
+import { ImageService } from '@/features/image';
 import FileUploader from '@/shared/components/shared/FileUploader';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -8,14 +11,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/shared/components/ui/dialog';
-import { useAuth } from '@/core/context';
-import GroupService from '@/features/group/services/group.service';
-import { ImageService } from '@/features/image';
 import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { IGroup } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     group: IGroup;

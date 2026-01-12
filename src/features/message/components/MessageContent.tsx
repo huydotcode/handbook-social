@@ -19,7 +19,7 @@ import { useQueryInvalidation } from '@/shared/hooks';
 import { IMessage } from '@/types/entites';
 import Link from 'next/link';
 import { FormEventHandler, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import MessageAction from './MessageAction';
 import MessageService from '@/features/message/services/message.service';
 

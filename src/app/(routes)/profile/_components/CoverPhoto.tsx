@@ -16,7 +16,7 @@ import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IProfile } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 
 interface Props {
     profile: IProfile;

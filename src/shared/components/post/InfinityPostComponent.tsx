@@ -8,7 +8,7 @@ import { IPost } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { useInView } from 'react-intersection-observer';
 import { Post, SkeletonPost } from '.';
 import { Icons, Modal } from '../ui';

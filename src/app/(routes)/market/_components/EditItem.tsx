@@ -34,7 +34,7 @@ import { ICategory, IItem, ILocation } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { ItemService } from '@/features/item';
 
 interface ItemData {

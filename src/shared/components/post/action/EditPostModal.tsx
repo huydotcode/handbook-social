@@ -16,7 +16,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
 import Image from 'next/image';
 import Link from 'next/link';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import AddToPost from '../AddToPost';
 import TagInput from '../TagInput';
 
@@ -120,20 +120,13 @@ const EditPostModal: FC<Props> = ({ post, setShow, show, handleClose }) => {
 
     async function onSubmit(data: IPostFormData) {
         if (formState.isSubmitting) return;
-        // setShow(false); // Don't close immediately, wait for success
 
         try {
-            await toast.promise(
-                updatePost(data),
-                {
-                    loading: 'Bài viết đang được cập nhật...',
-                    success: 'Cập nhật thành công!',
-                    error: 'Đã có lỗi xảy ra khi cập nhật!',
-                },
-                {
-                    position: 'bottom-left',
-                }
-            );
+            await toast.promise(updatePost(data), {
+                loading: 'Bài viết đang được cập nhật...',
+                success: 'Cập nhật thành công!',
+                error: 'Đã có lỗi xảy ra khi cập nhật!',
+            });
         } catch (error: any) {
             console.error(error);
         }

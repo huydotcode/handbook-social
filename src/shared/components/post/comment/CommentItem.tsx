@@ -15,7 +15,7 @@ import {
 import Link from 'next/link';
 import React, { useRef, useState } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import ReplyComments from './ReplyComments';
 import SkeletonComment from './SkeletonComment';
 import { IComment, IUser } from '@/types/entites';

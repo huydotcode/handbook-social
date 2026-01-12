@@ -1,3 +1,7 @@
+import { useAuth } from '@/core/context';
+import GroupService from '@/features/group/services/group.service';
+import { cn } from '@/lib/utils';
+import { showErrorToast, showLoadingToast, showSuccessToast } from '@/shared';
 import FileUploader from '@/shared/components/shared/FileUploader';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -8,15 +12,11 @@ import {
     DialogTitle,
     DialogTrigger,
 } from '@/shared/components/ui/dialog';
-import { useAuth } from '@/core/context';
-import GroupService from '@/features/group/services/group.service';
 import { uploadImageWithFile } from '@/shared/utils/upload-image';
-import { cn } from '@/lib/utils';
 import { IGroup } from '@/types/entites';
 import Image from 'next/image';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
-import toast from 'react-hot-toast';
 
 interface Props {
     group: IGroup;
@@ -34,14 +34,11 @@ const Avatar: React.FC<Props> = ({ group, onGroupUpdate }) => {
 
     const handleChangeAvatar = async () => {
         setOpenModal(false);
-        toast.loading('Đang tải ảnh lên...', {
-            id: 'uplodate-avatar',
-            duration: 3000,
-        });
+        showLoadingToast('Đang tải ảnh lên...');
 
         try {
             if (!file) {
-                toast.error('Vui lòng chọn ảnh để tải lên');
+                showErrorToast('Vui lòng chọn ảnh để tải lên');
                 return;
             }
 
@@ -50,7 +47,7 @@ const Avatar: React.FC<Props> = ({ group, onGroupUpdate }) => {
             });
 
             if (!avatar?._id) {
-                toast.error(
+                showErrorToast(
                     'Có lỗi xảy ra khi tải ảnh lên, vui lòng thử lại sau'
                 );
                 return;
@@ -69,10 +66,10 @@ const Avatar: React.FC<Props> = ({ group, onGroupUpdate }) => {
                 onGroupUpdate(updatedGroup);
             }
 
-            toast.success('Thay đổi ảnh đại diện thành công');
+            showSuccessToast('Thay đổi ảnh đại diện thành công');
         } catch (error) {
             console.error(error);
-            toast.error('Có lỗi xảy ra');
+            showErrorToast('Có lỗi xảy ra');
         }
     };
 

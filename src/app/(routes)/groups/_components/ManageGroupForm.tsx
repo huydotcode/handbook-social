@@ -13,7 +13,7 @@ import { useUpdateGroup } from '@/features/group/hooks/group.hook';
 import { IGroup } from '@/types/entites';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useForm } from 'react-hook-form';
-import toast from 'react-hot-toast';
+import { toast } from 'sonner';
 import { createGroupValidation } from '@/features/group';
 
 const INPUT_CLASSNAME =
