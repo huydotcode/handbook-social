@@ -1,19 +1,18 @@
 'use client';
-import { Button } from '@/shared/components/ui/Button';
-import { useAuth } from '@/core/context/AuthContext';
 import { apiClient } from '@/core/api/api-client';
+import { useAuth } from '@/core/context/AuthContext';
 import queryKey from '@/lib/react-query/query-key';
 import { cn } from '@/lib/utils';
+import { Button } from '@/shared/components/ui/Button';
 import { IPost } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
-import { toast } from 'sonner';
 import { useInView } from 'react-intersection-observer';
-import { Post, SkeletonPost } from '.';
+import { toast } from 'sonner';
+import { CreatePost, Post, SkeletonPost } from '.';
 import { Icons, Modal } from '../ui';
 import Image from '../ui/image';
-import CreatePostV2 from './CreatePostV2';
 
 export type PostType =
     | 'new-feed'
@@ -289,7 +288,7 @@ const InfinityPostComponent: React.FC<Props> = ({
                     show={showModalCreatePost}
                     title="Đăng bài viết"
                 >
-                    <CreatePostV2
+                    <CreatePost
                         className="w-[700px] max-w-full"
                         onSubmitSuccess={handleClose}
                         hasMenu={false}
