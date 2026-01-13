@@ -77,7 +77,10 @@ const Providers: FunctionComponent<ProvidersProps> = ({ children }) => {
                                         defaultTheme="system"
                                         enableSystem
                                     >
-                                        <SonnerToaster position="bottom-left" />
+                                        <SonnerToaster
+                                            position="bottom-left"
+                                            richColors
+                                        />
                                         {children}
                                         <VideoCallWrapper />
                                     </ThemeProvider>
