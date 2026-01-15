@@ -2,8 +2,8 @@
 import { Modal } from '@mui/material';
 import React, { FormEventHandler } from 'react';
 
-import Icons from './Icons';
 import { Button } from '@/shared/components/ui/Button';
+import Icons from './Icons';
 
 interface Props {
     open: boolean;
