@@ -1,5 +1,5 @@
 'use client';
-import { Post } from '@/shared/components/post';
+import { Post } from '@/features/post';
 import { Loading } from '@/shared/components/ui';
 import { PostService } from '@/features/post';
 import queryKey from '@/lib/react-query/query-key';

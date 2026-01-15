@@ -1,12 +1,14 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import CommentService from '@/features/comment/services/comment.service';
+import queryKey from '@/lib/react-query/query-key';
+import { cn } from '@/lib/utils';
+import { timeConvert3 } from '@/shared';
 import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { Form, FormControl } from '@/shared/components/ui/Form';
 import { Textarea } from '@/shared/components/ui/textarea';
-import { useAuth } from '@/core/context/AuthContext';
-import queryKey from '@/lib/react-query/query-key';
-import { cn } from '@/lib/utils';
-import { timeConvert3 } from '@/shared';
+import { IComment, IUser } from '@/types/entites';
 import {
     useInfiniteQuery,
     useMutation,
@@ -18,8 +20,6 @@ import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import ReplyComments from './ReplyComments';
 import SkeletonComment from './SkeletonComment';
-import { IComment, IUser } from '@/types/entites';
-import CommentService from '@/features/comment/services/comment.service';
 
 interface Props {
     data: IComment;
@@ -472,4 +472,5 @@ const CommentItem: React.FC<Props> = ({ data: comment, setCommentCount }) => {
         </div>
     );
 };
+
 export default CommentItem;

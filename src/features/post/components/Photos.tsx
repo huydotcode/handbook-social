@@ -1,7 +1,7 @@
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
 import React from 'react';
-import { Icons } from '../ui';
+import { Icons } from '../../../shared/components/ui';
 
 interface MediaItem {
     url: string;

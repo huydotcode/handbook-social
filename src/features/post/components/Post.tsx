@@ -1,14 +1,14 @@
 'use client';
-import ReviewPost from '@/shared/components/post/ReviewPost';
-import SkeletonPost from '@/shared/components/post/SkeletonPost';
 import { useAuth } from '@/core/context/AuthContext';
+import ReviewPost from '@/features/post/components/ReviewPost';
+import SkeletonPost from '@/features/post/components/SkeletonPost';
 import { IPost } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { createContext, useContext, useMemo } from 'react';
-import { FooterPost } from '.';
 import { PostParams } from './InfinityPostComponent';
 import PostContent from './PostContent';
 import PostHeader from './PostHeader';
+import FooterPost from './footer/FooterPost';
 
 interface Props {
     data: IPost;

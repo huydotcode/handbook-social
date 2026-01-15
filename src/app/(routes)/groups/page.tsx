@@ -1,5 +1,5 @@
 'use client';
-import { InfinityPostComponent } from '@/shared/components/post';
+import { InfinityPostComponent } from '@/features/post/components';
 import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context/AuthContext';
 import GroupService from '@/features/group/services/group.service';

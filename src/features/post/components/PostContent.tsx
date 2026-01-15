@@ -1,10 +1,10 @@
 'use client';
-import PhotoGrid from '@/shared/components/post/PhotoGrid';
+import PhotoGrid from '@/features/post/components/PhotoGrid';
 import { Button } from '@/shared/components/ui/Button';
 import { IPost } from '@/types/entites';
 import DOMPurify from 'isomorphic-dompurify';
 import React, { useMemo, useState } from 'react';
-import VideoPlayer from '../ui/VideoPlayer';
+import VideoPlayer from '../../../shared/components/ui/VideoPlayer';
 
 const PostContent = React.memo(({ post }: { post: IPost }) => {
     const [contentLength, setContentLength] = useState(() =>

@@ -1,22 +1,22 @@
 'use client';
 import { useAuth } from '@/core/context';
 import { useFriends } from '@/core/context/SocialContext';
+import { Post } from '@/features/post/components';
 import {
+    PostTypes,
+    useInfiniteQueryPost,
+} from '@/features/post/components/InfinityPostComponent';
+import {
+    searchApi,
     useSearchGroups,
     useSearchPosts,
     useSearchUsers,
-    searchApi,
 } from '@/features/search';
-import queryKey from '@/lib/react-query/query-key';
 import {
     createSearchGetNextPageParam,
     defaultInfiniteQueryOptions,
 } from '@/lib/react-query';
-import { Post } from '@/shared/components/post';
-import {
-    PostTypes,
-    usePosts,
-} from '@/shared/components/post/InfinityPostComponent';
+import queryKey from '@/lib/react-query/query-key';
 import { Loading } from '@/shared/components/ui';
 import { IGroup, IPost, IUser } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
@@ -89,7 +89,7 @@ const Search = () => {
         { enabled: type === 'groups' && q.trim().length > 0 }
     );
 
-    const { data: posts } = usePosts({
+    const { data: posts } = useInfiniteQueryPost({
         type: PostTypes.SEARCH_POSTS,
         enabled: type === 'posts',
         search: q,

@@ -1,4 +1,4 @@
-import { InfinityPostComponent } from '@/shared/components/post';
+import { InfinityPostComponent } from '@/features/post/components';
 import ProfileService from '@/features/user/services/profile.service';
 import { isValidObjectId } from '@/lib/utils';
 import { FC } from 'react';

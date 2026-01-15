@@ -15,17 +15,17 @@ import { cn } from '@/lib/utils';
 import { postAudience } from '@/shared/constants';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { FileUploaderWrapper } from '../shared/FileUploader';
-import { Avatar, Icons } from '../ui';
-import { Button } from '../ui/Button';
-import { EditorField } from '../ui/EditorV2';
+import { FileUploaderWrapper } from '../../../shared/components/shared/FileUploader';
+import { Avatar, Icons } from '../../../shared/components/ui';
+import { Button } from '../../../shared/components/ui/Button';
+import { EditorField } from '../../../shared/components/ui/EditorV2';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../ui/tooltip';
-import Video from '../ui/video';
+} from '../../../shared/components/ui/tooltip';
+import Video from '../../../shared/components/ui/video';
 import TagInput from './TagInput';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -40,7 +40,7 @@ interface Props {
     onSubmitSuccess?: () => void;
 }
 
-const CreatePostV2: FC<Props> = ({
+const CreatePost: FC<Props> = ({
     className,
     groupId,
     type = 'default',
@@ -522,4 +522,4 @@ const CreatePostV2: FC<Props> = ({
     );
 };
 
-export default CreatePostV2;
+export default CreatePost;

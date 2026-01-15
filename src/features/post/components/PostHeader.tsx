@@ -5,13 +5,13 @@ import { postAudience } from '@/shared/constants';
 import { IPost } from '@/types/entites';
 import Link from 'next/link';
 import { useMemo } from 'react';
-import { Avatar } from '../ui';
+import { Avatar } from '../../../shared/components/ui';
 import {
     Tooltip,
     TooltipContent,
     TooltipProvider,
     TooltipTrigger,
-} from '../ui/tooltip';
+} from '../../../shared/components/ui/tooltip';
 import ActionPost from './action/ActionPost';
 
 interface Props {

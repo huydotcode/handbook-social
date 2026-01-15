@@ -1,6 +1,6 @@
 'use client';
 import { FriendSection, Sidebar } from '@/shared/components/layout';
-import { InfinityPostComponent } from '@/shared/components/post';
+import { InfinityPostComponent } from '@/features/post/components';
 
 const HomePage = () => {
     return (

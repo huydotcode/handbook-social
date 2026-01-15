@@ -10,9 +10,11 @@ import Link from 'next/link';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useInView } from 'react-intersection-observer';
 import { toast } from 'sonner';
-import { CreatePost, Post, SkeletonPost } from '.';
-import { Icons, Modal } from '../ui';
-import Image from '../ui/image';
+import { Icons, Modal } from '../../../shared/components/ui';
+import Image from '../../../shared/components/ui/image';
+import CreatePost from './CreatePost';
+import Post from './Post';
+import SkeletonPost from './SkeletonPost';
 
 export type PostType =
     | 'new-feed'
@@ -79,7 +81,7 @@ const ENDPOINTS: Record<PostType, string> = {
     'search-posts': '/search/posts',
 };
 
-export const usePosts = ({
+export const useInfiniteQueryPost = ({
     userId,
     groupId,
     username,
@@ -179,7 +181,7 @@ const InfinityPostComponent: React.FC<Props> = ({
         hasNextPage,
         fetchNextPage,
         refetch,
-    } = usePosts({ userId, groupId, username, type });
+    } = useInfiniteQueryPost({ userId, groupId, username, type });
     const params = {
         userId,
         groupId,

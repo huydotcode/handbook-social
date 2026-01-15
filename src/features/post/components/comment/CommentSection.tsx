@@ -1,11 +1,11 @@
 'use client';
-import Comment from '@/shared/components/post/comment/CommentItem';
-import SkeletonComment from '@/shared/components/post/comment/SkeletonComment';
-import { Avatar, Icons } from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/Button';
 import { useAuth } from '@/core/context';
 import CommentService from '@/features/comment/services/comment.service';
+import Comment from '@/features/post/components/comment/CommentItem';
+import SkeletonComment from '@/features/post/components/comment/SkeletonComment';
 import queryKey from '@/lib/react-query/query-key';
+import { Avatar, Icons } from '@/shared/components/ui';
+import { Button } from '@/shared/components/ui/Button';
 import { IComment, IPost } from '@/types/entites';
 import {
     useInfiniteQuery,
@@ -15,8 +15,8 @@ import {
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Form, FormControl } from '../../ui/Form';
-import { Textarea } from '../../ui/textarea';
+import { Form, FormControl } from '../../../../shared/components/ui/Form';
+import { Textarea } from '../../../../shared/components/ui/textarea';
 
 interface Props {
     post: IPost;

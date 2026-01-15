@@ -1,9 +1,10 @@
+'use client';
 import { X } from 'lucide-react';
 import { FC, KeyboardEvent, useState } from 'react';
 
 import { Badge } from '@/shared/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Input } from '../ui/Input';
+import { Input } from '../../../shared/components/ui/Input';
 
 interface TagInputProps {
     value: string[];

@@ -1,4 +1,4 @@
-import { InfinityPostComponent } from '@/shared/components/post';
+import { InfinityPostComponent } from '@/features/post/components';
 import GroupService from '@/features/group/services/group.service';
 import React from 'react';
 import Infomation from '../_components/Infomation';

@@ -1,8 +1,7 @@
 'use client';
 import { Button } from '@/shared/components/ui/Button';
 import { IComment } from '@/types/entites';
-import { Comment } from '..';
-import { useReplyComments } from './CommentItem';
+import CommentItem, { useReplyComments } from './CommentItem';
 import SkeletonComment from './SkeletonComment';
 
 interface Props {
@@ -62,7 +61,7 @@ const ReplyComments: React.FC<Props> = ({
                                     )
                                     .map((cmt) => {
                                         return (
-                                            <Comment
+                                            <CommentItem
                                                 key={cmt._id}
                                                 data={cmt}
                                                 setCommentCount={

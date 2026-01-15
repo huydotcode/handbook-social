@@ -17,7 +17,7 @@ import {
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-} from '../../ui/dialog';
+} from '../../../../shared/components/ui/dialog';
 
 interface Props {
     post: IPost;

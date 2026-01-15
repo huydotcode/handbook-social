@@ -1,7 +1,7 @@
 'use client';
+import { PostService } from '@/features/post';
 import { ConfirmModal } from '@/shared/components/ui';
 import { useQueryInvalidation } from '@/shared/hooks';
-import { PostService } from '@/features/post';
 import React, { FormEventHandler } from 'react';
 import { toast } from 'sonner';
 
@@ -54,4 +54,5 @@ const DeletePostModal: React.FC<Props> = ({
         </>
     );
 };
+
 export default DeletePostModal;

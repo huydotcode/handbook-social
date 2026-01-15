@@ -1,5 +1,6 @@
 'use client';
-import { InfinityPostComponent } from '@/shared/components/post';
+
+import { InfinityPostComponent } from '@/features/post';
 import {
     Tabs,
     TabsContent,

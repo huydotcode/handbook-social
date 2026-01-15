@@ -1,4 +1,5 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
@@ -6,13 +7,13 @@ import {
     PopoverContent,
     PopoverTrigger,
 } from '@/shared/components/ui/Popover';
-import { useAuth } from '@/core/context/AuthContext';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import SavePost from '../footer/SavePost';
+
+import { IPost } from '@/types/entites';
 import DeletePostModal from './DeletePostModal';
 import EditPostModal from './EditPostModal';
-import { IPost } from '@/types/entites';
 
 interface Props {
     post: IPost;

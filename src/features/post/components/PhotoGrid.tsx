@@ -1,7 +1,7 @@
 'use client';
 import { FC, useState } from 'react';
-import SlideShow from '../ui/SlideShow';
-import Image from '../ui/image';
+import SlideShow from '../../../shared/components/ui/SlideShow';
+import Image from '../../../shared/components/ui/image';
 import { IMedia } from '@/types/entites';
 
 interface Props {

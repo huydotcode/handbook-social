@@ -1,6 +1,6 @@
 'use client';
 import React from 'react';
-import { InfinityPostComponent } from '@/shared/components/post';
+import { InfinityPostComponent } from '@/features/post';
 import { useSearchParams } from 'next/navigation';
 
 const FeedsPage = () => {

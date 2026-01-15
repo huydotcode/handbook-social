@@ -1,6 +1,6 @@
 'use client';
 import { FriendSection, Sidebar } from '@/shared/components/layout';
-import { CreatePost } from '@/shared/components/post';
+import { CreatePost } from '@/features/post';
 
 const CreatePostPage = () => {
     return (

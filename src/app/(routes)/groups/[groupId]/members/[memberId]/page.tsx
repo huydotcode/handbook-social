@@ -3,7 +3,7 @@ import ActionMember from '@/app/(routes)/groups/_components/ActionMember';
 import { useAuth } from '@/core/context/AuthContext';
 import { useGroup, useGroupMember } from '@/features/group';
 import { useUser } from '@/features/user';
-import { InfinityPostComponent } from '@/shared/components/post';
+import { InfinityPostComponent } from '@/features/post';
 import { GROUP_ROLES } from '@/types/entites';
 import { notFound, useRouter } from 'next/navigation';
 import { use, useEffect, useMemo } from 'react';
