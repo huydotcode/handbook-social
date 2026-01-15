@@ -1,3 +1,4 @@
+'use client';
 import { useEffect, useState } from 'react';
 
 const LOCAL_STORAGE_KEY = 'videoVolume';

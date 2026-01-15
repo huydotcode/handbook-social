@@ -1,3 +1,4 @@
+"use client"
 import { useMessages } from '@/features/message';
 import { useCallback, useState } from 'react';
 import { toast } from 'sonner';
