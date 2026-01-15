@@ -6,6 +6,7 @@ import { notFound, useRouter } from 'next/navigation';
 import React, { use, useEffect } from 'react';
 import Header from '../_components/Header';
 import Sidebar from '../_components/admin/Sidebar';
+import { Loading } from '@/shared/components/ui';
 
 interface Props {
     params: Promise<{ groupId: string }>;
@@ -55,22 +56,18 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
     const isLoading =
         isCheckingAccess || isLoadingGroup || isLoadingConversations;
 
-    if (isLoading || !group) {
-        return (
-            <div className="mx-auto w-full max-w-[1000px]">
-                <div className="text-center">Đang tải...</div>
-            </div>
-        );
+    if (isLoading) {
+        return <Loading fullScreen />;
     }
 
     return (
         <div>
-            {hasAccess && (
+            {hasAccess && group && (
                 <Sidebar group={group} conversations={conversations} />
             )}
 
             <div className="mx-auto w-full max-w-[1000px]">
-                <Header group={group} />
+                {group && <Header group={group} />}
 
                 {hasAccess && (
                     <main className="mt-4 min-h-[150vh]">{children}</main>

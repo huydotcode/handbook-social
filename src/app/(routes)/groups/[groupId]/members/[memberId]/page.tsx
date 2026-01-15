@@ -7,6 +7,7 @@ import { InfinityPostComponent } from '@/features/post';
 import { GROUP_ROLES } from '@/types/entites';
 import { notFound, useRouter } from 'next/navigation';
 import { use, useEffect, useMemo } from 'react';
+import { Loading } from '@/shared/components/ui';
 
 interface Props {
     params: Promise<{ memberId: string; groupId: string }>;
@@ -60,7 +61,7 @@ const MemberPage = ({ params }: Props) => {
     }
 
     if (isLoading || !member || !group || !userData) {
-        return <div className="text-center">Đang tải...</div>;
+        return <Loading text="Đang tải" />;
     }
 
     return (

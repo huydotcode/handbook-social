@@ -3,6 +3,7 @@ import { useAuth } from '@/core/context/AuthContext';
 import { ItemService } from '@/features/item';
 import { formatMoney } from '@/shared';
 import { MessageAction } from '@/shared/components/shared';
+import { Loading } from '@/shared/components/ui';
 import { IItem } from '@/types/entites';
 import Image from 'next/image';
 import { use, useEffect, useState } from 'react';
@@ -41,7 +42,7 @@ export default function ItemPage({ params }: Props) {
     }, [itemId]);
 
     if (isLoading || !item) {
-        return <div className="text-center">Đang tải...</div>;
+        return <Loading text="Đang tải" />;
     }
 
     const isOwner = user?.id === item.seller._id;
