@@ -9,7 +9,7 @@ import {
 } from '@/core/context';
 import { AxiosInterceptor } from '@/features/auth';
 import { Toaster as SonnerToaster } from '@/shared/components/ui/sonner';
-import { VideoCallWrapper } from '@/shared/components/video-call';
+import { VideoCallWrapper } from '@/features/video-call/components';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
