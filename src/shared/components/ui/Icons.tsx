@@ -36,6 +36,7 @@ import {
     FaCode,
     FaDownload,
     FaEye,
+    FaFileImage,
     FaFilter,
     FaLink,
     FaLocationDot,
@@ -116,7 +117,7 @@ const Icons = {
     Group: (props: IconProps) => <MdGroups {...props} />,
     Users: (props: IconProps) => <FaUsers {...props} />,
     Posts: (props: IconProps) => <BsFileEarmarkPost {...props} />,
-    Images: (props: IconProps) => <FaImage {...props} />,
+    Images: (props: IconProps) => <FaFileImage {...props} />,
     Notification: (props: IconProps) => <MdNotifications {...props} />,
     NotificationActive: (props: IconProps) => (
         <MdNotificationsActive {...props} />

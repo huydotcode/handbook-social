@@ -27,7 +27,7 @@ import {
 } from '../ui/tooltip';
 import Video from '../ui/video';
 import TagInput from './TagInput';
-import { useRouter } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
 
 export const MAX_VIDEO_SIZE = 50 * 1024 * 1024;
 
@@ -476,14 +476,7 @@ const CreatePostV2: FC<Props> = ({
                                                         className="flex h-10 w-10 cursor-pointer items-center  justify-center rounded-xl hover:cursor-pointer hover:bg-secondary-2 dark:hover:bg-dark-secondary-2"
                                                         htmlFor={fileInputId}
                                                     >
-                                                        <Image
-                                                            src={
-                                                                '/assets/img/images.png'
-                                                            }
-                                                            alt=""
-                                                            width={24}
-                                                            height={24}
-                                                        />
+                                                        <Icons.Images className="h-4 w-4 text-primary-2" />
                                                     </label>
                                                 </TooltipTrigger>
                                                 <TooltipContent>

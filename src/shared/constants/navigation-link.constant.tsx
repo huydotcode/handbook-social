@@ -60,7 +60,7 @@ export const navLink: NavLink[] = [
     },
     {
         name: 'Tạo bài viết',
-        path: '/create-post',
+        path: '/posts/create',
         icon: <Icons.CreatePost className="h-7 w-7" />,
         visible: [SIDEBAR],
     },
