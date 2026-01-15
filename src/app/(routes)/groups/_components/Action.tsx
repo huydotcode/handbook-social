@@ -1,8 +1,17 @@
 'use client';
-import { ConfirmModal } from '@/shared/components/ui';
+import {
+    AlertDialog,
+    AlertDialogAction,
+    AlertDialogCancel,
+    AlertDialogContent,
+    AlertDialogDescription,
+    AlertDialogFooter,
+    AlertDialogHeader,
+    AlertDialogTitle,
+    AlertDialogTrigger,
+} from '@/shared/components/ui';
 import Icons from '@/shared/components/ui/Icons';
 
-import { Button } from '@/shared/components/ui/Button';
 import { useGroupsJoined } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
 import {
@@ -10,30 +19,33 @@ import {
     useJoinGroup,
     useLeaveGroup,
 } from '@/features/group/hooks/group.hook';
+import { Button } from '@/shared/components/ui/Button';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IGroup } from '@/types/entites';
 import { useRouter } from 'next/navigation';
-import React, { FormEventHandler, useMemo, useState } from 'react';
+import React, { FormEventHandler, useMemo } from 'react';
 interface Props {
     group: IGroup;
 }
 
 const Action: React.FC<Props> = ({ group }) => {
     const groupId = group._id;
+
     const { user } = useAuth();
     const router = useRouter();
+
     const { data: groupJoined } = useGroupsJoined(user?.id);
     const { invalidateGroups, invalidateConversations } =
         useQueryInvalidation();
+
     const joinGroup = useJoinGroup();
     const leaveGroup = useLeaveGroup();
     const deleteGroup = useDeleteGroup();
+
     const isPending =
         joinGroup.isPending || leaveGroup.isPending || deleteGroup.isPending;
 
     const isJoinGroup = groupJoined?.some((item) => item._id === groupId);
-
-    const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
     const isCreator = useMemo(() => {
         return group.creator._id == user?.id;
@@ -101,27 +113,34 @@ const Action: React.FC<Props> = ({ group }) => {
             )}
 
             {isCreator && (
-                <Button
-                    className={'ml-2 h-10 min-w-[48px]'}
-                    variant={'warning'}
-                    size={'md'}
-                    onClick={() => setOpenModalDelete(true)}
-                >
-                    <Icons.Delete />
-                </Button>
-            )}
-
-            {openModalDelete && (
-                <ConfirmModal
-                    cancelText="Hủy"
-                    confirmText="Xóa"
-                    message="Bạn có chắc chắn muốn xóa nhóm này không?"
-                    onClose={() => setOpenModalDelete(false)}
-                    onConfirm={handleDeleteGroup}
-                    open={openModalDelete}
-                    setShow={setOpenModalDelete}
-                    title="Xóa nhóm"
-                />
+                <AlertDialog>
+                    <AlertDialogTrigger asChild>
+                        <Button
+                            className={'ml-2 h-10 min-w-[48px]'}
+                            variant={'warning'}
+                            size={'md'}
+                        >
+                            <Icons.Delete />
+                        </Button>
+                    </AlertDialogTrigger>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Bạn có chắc chắn muốn xóa nhóm này không?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                Hành động này không thể hoàn tác. Điều này sẽ
+                                xóa vĩnh viễn nhóm này.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Hủy</AlertDialogCancel>
+                            <AlertDialogAction onClick={handleDeleteGroup}>
+                                Xóa
+                            </AlertDialogAction>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             )}
         </div>
     );
