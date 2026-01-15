@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
-import { queryKey } from '@/lib/react-query/query-key';
 import { defaultQueryOptions } from '@/lib/react-query';
+import { queryKey } from '@/lib/react-query/query-key';
 import { handleApiError, showSuccessToast } from '@/shared';
 import { IGroup } from '@/types/entites';
 import GroupService from '../services/group.service';
@@ -18,6 +18,21 @@ export const useJoinedGroups = (
         queryKey: queryKey.user.groups(params?.user_id),
         queryFn: () => GroupService.getJoined(params),
         enabled: options?.enabled !== false,
+        ...defaultQueryOptions,
+    });
+};
+
+/**
+ * Hook to get recommended groups
+ */
+export const useRecommendedGroups = (userId: string | undefined) => {
+    return useQuery({
+        queryKey: queryKey.groups.recommended(userId),
+        queryFn: () => {
+            if (!userId) return [];
+            return GroupService.getRecommendedGroups(userId);
+        },
+        enabled: !!userId,
         ...defaultQueryOptions,
     });
 };

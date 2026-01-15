@@ -1,48 +1,14 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import { useRecommendedGroups } from '@/features/group';
 import { InfinityPostComponent } from '@/features/post/components';
 import { Button } from '@/shared/components/ui/Button';
-import { useAuth } from '@/core/context/AuthContext';
-import GroupService from '@/features/group/services/group.service';
 import Image from 'next/image';
-import { useEffect, useState } from 'react';
 import { Sidebar } from './_components';
-import { IGroup } from '@/types/entites';
 
 const GroupsPage = () => {
     const { user } = useAuth();
-    const [groups, setGroups] = useState<IGroup[]>([]);
-    const [isLoading, setIsLoading] = useState(true);
-
-    useEffect(() => {
-        const fetchGroups = async () => {
-            if (!user?.id) {
-                setIsLoading(false);
-                return;
-            }
-
-            try {
-                const data = await GroupService.getRecommendedGroups(user.id);
-                setGroups(data || []);
-            } catch (error) {
-                console.error('Error fetching recommended groups:', error);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-
-        fetchGroups();
-    }, [user?.id]);
-
-    if (isLoading) {
-        return (
-            <>
-                <Sidebar />
-                <div className="mx-auto max-w-[700px]">
-                    <div className="text-center">Đang tải...</div>
-                </div>
-            </>
-        );
-    }
+    const { data: groups } = useRecommendedGroups(user?.id);
 
     return (
         <>

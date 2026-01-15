@@ -118,6 +118,7 @@ export const queryKey = {
             groupId: string,
             params?: { page?: number; pageSize?: number }
         ) => ['groups', 'members', groupId, params],
+        recommended: (userId?: string) => ['groups', 'recommended', userId],
     },
 
     // Items
