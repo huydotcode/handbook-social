@@ -1,7 +1,7 @@
 'use client';
 import { cn } from '@/lib/utils';
 import Image from 'next/image';
-import React, { FC, useEffect } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 interface Props {
     className?: string;
@@ -22,13 +22,14 @@ const Loading: FC<Props> = ({
     showLogo = true,
     showLoader = false,
 }) => {
-    const [text, setText] = React.useState<string>(initText || '');
+    const [text, setText] = useState<string>(initText || '');
 
     useEffect(() => {
         if (initText) {
+            setText(initText);
             const interval = setInterval(() => {
                 setText((prev) => {
-                    if (prev.length === initText.length + 3) return '';
+                    if (prev.length === initText.length + 3) return initText;
                     return prev + '.';
                 });
             }, 500);
@@ -39,11 +40,12 @@ const Loading: FC<Props> = ({
         }
     }, [initText]);
 
+    // Text Loading
     if (initText && initText.length > 0) {
         return (
             <div
                 className={cn(
-                    'flex justify-center text-xs text-secondary-1',
+                    'flex justify-center text-sm text-secondary-1',
                     className
                 )}
             >
@@ -52,6 +54,7 @@ const Loading: FC<Props> = ({
         );
     }
 
+    // Full screen loading
     return (
         <div
             className={cn(
