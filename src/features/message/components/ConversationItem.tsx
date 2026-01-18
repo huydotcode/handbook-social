@@ -1,10 +1,7 @@
 'use client';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
-import {
-    ConversationService,
-    useConversationMembers,
-} from '@/features/conversation';
+import { ConversationService } from '@/features/conversation';
 import { cn } from '@/lib/utils';
 import { splitName, timeConvert3 } from '@/shared';
 import { Avatar, ConfirmModal, Icons } from '@/shared/components/ui';
@@ -37,7 +34,10 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     const { invalidateConversations } = useQueryInvalidation();
     const path = usePathname();
     const router = useRouter();
-    const { members } = useConversationMembers(conversation._id);
+    const members = useMemo(
+        () => conversation.members || [],
+        [conversation.members]
+    );
 
     const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 

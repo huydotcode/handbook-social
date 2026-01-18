@@ -16,6 +16,7 @@ export interface IConversation {
     isDeletedBy: string[];
     createdAt: Date;
     updatedAt: Date;
+    members?: IConversationMember[];
 }
 
 export interface IConversationMember {
