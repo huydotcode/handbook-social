@@ -8,7 +8,9 @@ export const userAdminApi = {
      * Get all users (Admin)
      */
     getUsers: (params?: AdminQueryParams) => {
-        return apiClient.get<IUser[]>(API_ENDPOINTS.ADMIN.USERS, { params });
+        return apiClient.getPaginated<IUser>(API_ENDPOINTS.ADMIN.USERS, {
+            params,
+        });
     },
 
     blockUser: (userId: string) => {

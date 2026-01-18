@@ -2,16 +2,8 @@
 
 import { useAdminUsers } from '@/features/admin';
 import { FormatDate } from '@/shared';
-import { Loading } from '@/shared/components/ui';
+import { Loading, PaginationWithLinks } from '@/shared/components/ui';
 import Avatar from '@/shared/components/ui/Avatar';
-import {
-    Pagination,
-    PaginationContent,
-    PaginationItem,
-    PaginationLink,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/shared/components/ui/pagination';
 import {
     Table,
     TableBody,
@@ -31,14 +23,13 @@ const AdminUsersPage = () => {
     const [page, setPage] = useState(1);
     const pageSize = 10;
 
-    // Filters state
     const [search, setSearch] = useState('');
     const [role, setRole] = useState('all');
     const [status, setStatus] = useState('all');
 
     const debouncedSearch = useDebounce(search, 500);
 
-    const { data: users, isLoading } = useAdminUsers({
+    const { data, isLoading } = useAdminUsers({
         page,
         page_size: pageSize,
         q: debouncedSearch,
@@ -52,7 +43,8 @@ const AdminUsersPage = () => {
                   : undefined,
     });
 
-    const isNextPage = users && users.length === pageSize;
+    const users = data?.data || [];
+    const meta = data?.pagination;
 
     const handleReset = () => {
         setSearch('');
@@ -208,35 +200,13 @@ const AdminUsersPage = () => {
             </div>
 
             <div className="mt-4 flex justify-end">
-                <Pagination>
-                    <PaginationContent>
-                        <PaginationItem>
-                            <PaginationPrevious
-                                onClick={() =>
-                                    setPage((p) => Math.max(1, p - 1))
-                                }
-                                className={
-                                    page === 1
-                                        ? 'pointer-events-none opacity-50'
-                                        : 'cursor-pointer'
-                                }
-                            />
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationLink isActive>{page}</PaginationLink>
-                        </PaginationItem>
-                        <PaginationItem>
-                            <PaginationNext
-                                onClick={() => setPage((p) => p + 1)}
-                                className={
-                                    !isNextPage
-                                        ? 'pointer-events-none opacity-50'
-                                        : 'cursor-pointer'
-                                }
-                            />
-                        </PaginationItem>
-                    </PaginationContent>
-                </Pagination>
+                {meta && (
+                    <PaginationWithLinks
+                        page={page}
+                        totalPages={meta.totalPages}
+                        onPageChange={setPage}
+                    />
+                )}
             </div>
         </div>
     );
