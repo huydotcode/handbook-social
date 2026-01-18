@@ -18,6 +18,10 @@ interface UserTableToolbarProps {
     onSearchChange: (value: string) => void;
     onRoleChange: (value: string) => void;
     onStatusChange: (value: string) => void;
+    sortBy: string;
+    onSortChange: (value: string) => void;
+    order: 'asc' | 'desc';
+    onOrderChange: (value: 'asc' | 'desc') => void;
     onReset: () => void;
 }
 
@@ -28,6 +32,10 @@ export const UserTableToolbar = ({
     onSearchChange,
     onRoleChange,
     onStatusChange,
+    sortBy,
+    onSortChange,
+    order,
+    onOrderChange,
     onReset,
 }: UserTableToolbarProps) => {
     return (
@@ -65,7 +73,41 @@ export const UserTableToolbar = ({
                     </SelectContent>
                 </Select>
 
-                {(search || role !== 'all' || status !== 'all') && (
+                <Select
+                    value={`${sortBy}-${order}`}
+                    onValueChange={(value) => {
+                        const [newSortBy, newOrder] = value.split('-');
+                        onSortChange(newSortBy);
+                        onOrderChange(newOrder as 'asc' | 'desc');
+                    }}
+                >
+                    <SelectTrigger className="h-9 w-[250px] md:w-full">
+                        <SelectValue placeholder="Sắp xếp" />
+                    </SelectTrigger>
+                    <SelectContent>
+                        <SelectItem value="createdAt-desc">Mới nhất</SelectItem>
+                        <SelectItem value="createdAt-asc">Cũ nhất</SelectItem>
+                        <SelectItem value="name-asc">Tên (A-Z)</SelectItem>
+                        <SelectItem value="name-desc">Tên (Z-A)</SelectItem>
+                        <SelectItem value="followersCount-desc">
+                            Followers (Cao nhất)
+                        </SelectItem>
+                        <SelectItem value="followersCount-asc">
+                            Followers (Thấp nhất)
+                        </SelectItem>
+                        <SelectItem value="lastAccessed-desc">
+                            Truy cập gần đây
+                        </SelectItem>
+                        <SelectItem value="lastAccessed-asc">
+                            Truy cập lâu nhất
+                        </SelectItem>
+                    </SelectContent>
+                </Select>
+
+                {(search ||
+                    role !== 'all' ||
+                    status !== 'all' ||
+                    sortBy !== 'createdAt') && (
                     <Button onClick={onReset}>
                         <Icons.Close />
                     </Button>

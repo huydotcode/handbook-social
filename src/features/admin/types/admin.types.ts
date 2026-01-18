@@ -6,4 +6,6 @@ export interface AdminQueryParams {
     role?: string;
     isBlocked?: boolean;
     isVerified?: boolean;
+    sortBy?: string;
+    order?: 'asc' | 'desc';
 }

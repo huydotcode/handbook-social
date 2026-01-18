@@ -26,6 +26,8 @@ const AdminUsersPage = () => {
     const [search, setSearch] = useState('');
     const [role, setRole] = useState('all');
     const [status, setStatus] = useState('all');
+    const [sortBy, setSortBy] = useState('createdAt');
+    const [order, setOrder] = useState<'asc' | 'desc'>('desc');
 
     const debouncedSearch = useDebounce(search, 500);
 
@@ -41,6 +43,8 @@ const AdminUsersPage = () => {
                 : status === 'unverified'
                   ? false
                   : undefined,
+        sortBy,
+        order,
     });
 
     const users = data?.data || [];
@@ -51,6 +55,8 @@ const AdminUsersPage = () => {
         setRole('all');
         setStatus('all');
         setPage(1);
+        setSortBy('createdAt');
+        setOrder('desc');
     };
 
     return (
@@ -73,6 +79,10 @@ const AdminUsersPage = () => {
                     setStatus(v);
                     setPage(1);
                 }}
+                sortBy={sortBy}
+                onSortChange={setSortBy}
+                order={order}
+                onOrderChange={setOrder}
                 onReset={handleReset}
             />
 
