@@ -20,6 +20,14 @@ class AdminUserServiceClass {
     async updateRole(userId: string, role: string) {
         return userAdminApi.updateRole(userId, role);
     }
+
+    async verifyUser(userId: string) {
+        return userAdminApi.verifyUser(userId);
+    }
+
+    async unverifyUser(userId: string) {
+        return userAdminApi.unverifyUser(userId);
+    }
 }
 
 export const AdminUserService = new AdminUserServiceClass();

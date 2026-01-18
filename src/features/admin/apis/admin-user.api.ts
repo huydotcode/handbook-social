@@ -26,4 +26,14 @@ export const userAdminApi = {
             role,
         });
     },
+
+    verifyUser: (userId: string) => {
+        return apiClient.patch(`${API_ENDPOINTS.ADMIN.USERS}/${userId}/verify`);
+    },
+
+    unverifyUser: (userId: string) => {
+        return apiClient.patch(
+            `${API_ENDPOINTS.ADMIN.USERS}/${userId}/unverify`
+        );
+    },
 };

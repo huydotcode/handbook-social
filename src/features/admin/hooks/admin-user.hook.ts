@@ -48,3 +48,27 @@ export const useAdminUpdateRole = () => {
         },
     });
 };
+
+export const useAdminVerifyUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => AdminUserService.verifyUser(userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: queryKey.admin.users.root,
+            });
+        },
+    });
+};
+
+export const useAdminUnverifyUser = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: (userId: string) => AdminUserService.unverifyUser(userId),
+        onSuccess: () => {
+            queryClient.invalidateQueries({
+                queryKey: queryKey.admin.users.root,
+            });
+        },
+    });
+};
