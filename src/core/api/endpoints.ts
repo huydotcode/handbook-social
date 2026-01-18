@@ -192,12 +192,12 @@ export const API_ENDPOINTS = {
 
     // Admin endpoints
     ADMIN: {
-        USERS: '/users',
-        POSTS: '/posts',
-        GROUPS: '/groups',
-        LOCATIONS: '/locations',
-        MEDIAS: '/medias',
-        CATEGORIES: '/categories',
+        USERS: '/admin/users',
+        POSTS: '/admin/posts',
+        GROUPS: '/admin/groups',
+        LOCATIONS: '/admin/locations',
+        MEDIAS: '/admin/medias',
+        CATEGORIES: '/admin/categories',
     },
 
     // AI endpoints
