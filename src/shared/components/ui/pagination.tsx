@@ -114,4 +114,131 @@ export {
     PaginationLink,
     PaginationNext,
     PaginationPrevious,
+    PaginationWithLinks,
+};
+
+interface PaginationWithLinksProps {
+    page: number;
+    totalPages: number;
+    onPageChange: (page: number) => void;
+}
+
+const PaginationWithLinks = ({
+    page,
+    totalPages,
+    onPageChange,
+}: PaginationWithLinksProps) => {
+    const renderPageNumbers = () => {
+        const items = [];
+        const maxVisiblePages = 5;
+
+        if (totalPages <= maxVisiblePages) {
+            for (let i = 1; i <= totalPages; i++) {
+                items.push(
+                    <PaginationItem key={i}>
+                        <PaginationLink
+                            isActive={page === i}
+                            onClick={() => onPageChange(i)}
+                            className="cursor-pointer"
+                        >
+                            {i}
+                        </PaginationLink>
+                    </PaginationItem>
+                );
+            }
+        } else {
+            items.push(
+                <PaginationItem key={1}>
+                    <PaginationLink
+                        isActive={page === 1}
+                        onClick={() => onPageChange(1)}
+                        className="cursor-pointer"
+                    >
+                        1
+                    </PaginationLink>
+                </PaginationItem>
+            );
+
+            if (page > 3) {
+                items.push(
+                    <PaginationItem key="start-ellipsis">
+                        <PaginationEllipsis />
+                    </PaginationItem>
+                );
+            }
+
+            const start = Math.max(2, page - 1);
+            const end = Math.min(totalPages - 1, page + 1);
+
+            for (let i = start; i <= end; i++) {
+                items.push(
+                    <PaginationItem key={i}>
+                        <PaginationLink
+                            isActive={page === i}
+                            onClick={() => onPageChange(i)}
+                            className="cursor-pointer"
+                        >
+                            {i}
+                        </PaginationLink>
+                    </PaginationItem>
+                );
+            }
+
+            if (page < totalPages - 2) {
+                items.push(
+                    <PaginationItem key="end-ellipsis">
+                        <PaginationEllipsis />
+                    </PaginationItem>
+                );
+            }
+
+            if (totalPages > 1) {
+                items.push(
+                    <PaginationItem key={totalPages}>
+                        <PaginationLink
+                            isActive={page === totalPages}
+                            onClick={() => onPageChange(totalPages)}
+                            className="cursor-pointer"
+                        >
+                            {totalPages}
+                        </PaginationLink>
+                    </PaginationItem>
+                );
+            }
+        }
+
+        return items;
+    };
+
+    return (
+        <Pagination>
+            <PaginationContent>
+                <PaginationItem>
+                    <PaginationPrevious
+                        onClick={() => onPageChange(Math.max(1, page - 1))}
+                        className={
+                            page === 1
+                                ? 'pointer-events-none opacity-50'
+                                : 'cursor-pointer'
+                        }
+                    />
+                </PaginationItem>
+
+                {renderPageNumbers()}
+
+                <PaginationItem>
+                    <PaginationNext
+                        onClick={() =>
+                            onPageChange(Math.min(totalPages, page + 1))
+                        }
+                        className={
+                            page === totalPages
+                                ? 'pointer-events-none opacity-50'
+                                : 'cursor-pointer'
+                        }
+                    />
+                </PaginationItem>
+            </PaginationContent>
+        </Pagination>
+    );
 };
