@@ -89,10 +89,10 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
                     {/* Features Section - Left side on desktop */}
                     <div className="flex flex-1 flex-col justify-center rounded-xl p-4 lg:w-full md:w-full md:max-w-screen">
                         <div className="relative mb-4">
-                            <h1 className="animate-fade-in text-center text-3xl font-bold text-primary-2 dark:text-white">
+                            <h1 className="text-center text-3xl font-bold text-primary-2 dark:text-white">
                                 Chào mừng đến với Handbook
                             </h1>
-                            <p className="animate-fade-in-delay-2 mt-2 text-center text-base font-medium text-secondary-1 dark:text-slate-300">
+                            <p className="mt-2 text-center text-base font-medium text-secondary-1 dark:text-slate-300">
                                 Nền tảng mạng xã hội Việt Nam.
                             </p>
                         </div>
@@ -102,9 +102,7 @@ const AuthLayout: React.FC<Props> = ({ children }) => {
 
                     {/* Login Section - Right side on desktop */}
                     <div className="flex flex-1 flex-col items-center justify-center md:w-full">
-                        <div className="animate-fade-in-delay-3 w-full">
-                            {children}
-                        </div>
+                        <div className="w-full">{children}</div>
                     </div>
                 </div>
             </div>
