@@ -22,7 +22,9 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
     }, [user, isLoading, router]);
 
     if (isLoading) {
-        return <Loading />;
+        return (
+            <Loading fullScreen overlay={false} showLogo showLoader={false} />
+        );
     }
 
     if (!user || user.role !== USER_ROLES.ADMIN) {
@@ -35,7 +37,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
 
             <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] w-[calc(100vw-340px)] xl:ml-[80px] xl:w-[calc(100vw-80px)]">
                 <Sidebar />
-                <div className="mx-4 mt-4 w-full">{children}</div>
+                <div className="mx-4 mt-4 w-full pb-[100px]">{children}</div>
             </main>
         </div>
     );
