@@ -61,7 +61,7 @@ const Loading: FC<Props> = ({
                 'loader-container flex flex-col items-center justify-center gap-10 overflow-hidden',
                 fullScreen && 'fixed left-0 top-0 z-50 h-screen w-screen',
                 title && 'flex-col',
-                overlay && 'bg-black/20',
+                overlay && 'bg-white dark:bg-black/20',
                 className
             )}
         >
