@@ -10,4 +10,20 @@ export const userAdminApi = {
     getUsers: (params?: AdminQueryParams) => {
         return apiClient.get<IUser[]>(API_ENDPOINTS.ADMIN.USERS, { params });
     },
+
+    blockUser: (userId: string) => {
+        return apiClient.patch(`${API_ENDPOINTS.ADMIN.USERS}/${userId}/block`);
+    },
+
+    unblockUser: (userId: string) => {
+        return apiClient.patch(
+            `${API_ENDPOINTS.ADMIN.USERS}/${userId}/unblock`
+        );
+    },
+
+    updateRole: (userId: string, role: string) => {
+        return apiClient.patch(`${API_ENDPOINTS.ADMIN.USERS}/${userId}/role`, {
+            role,
+        });
+    },
 };

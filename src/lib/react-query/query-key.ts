@@ -174,7 +174,8 @@ export const queryKey = {
     // Admin
     admin: {
         users: {
-            index: ['admin', 'users'],
+            root: ['admin', 'users'],
+            index: (params?: any) => ['admin', 'users', params],
             id: (userId: string | undefined) => ['admin', 'user', userId],
         },
         posts: {

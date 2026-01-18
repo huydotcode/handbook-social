@@ -1,98 +1,243 @@
 'use client';
-import { Items } from '@/shared/components/shared';
+
+import { useAdminUsers } from '@/features/admin';
+import { FormatDate } from '@/shared';
 import { Loading } from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/Button';
+import Avatar from '@/shared/components/ui/Avatar';
+import {
+    Pagination,
+    PaginationContent,
+    PaginationItem,
+    PaginationLink,
+    PaginationNext,
+    PaginationPrevious,
+} from '@/shared/components/ui/pagination';
 import {
     Table,
     TableBody,
-    TableCaption,
     TableCell,
     TableHead,
     TableHeader,
     TableRow,
 } from '@/shared/components/ui/table';
-import { adminApi } from '@/features/admin';
-import queryKey from '@/lib/react-query/query-key';
-import { FormatDate, showErrorToast } from '@/shared';
-import { IUser } from '@/types/entites';
-import { useQuery } from '@tanstack/react-query';
-import { useRouter } from 'next/navigation';
-import React from 'react';
+import { useState } from 'react';
+import { UserActionMenu } from './_components/user-action-menu';
+import { UserTableToolbar } from './_components/user-table-toolbar';
+
+import { Badge } from '@/shared/components/ui/badge';
+import { useDebounce } from '@/shared/hooks';
 
 const AdminUsersPage = () => {
-    const {
-        data: users,
-        isLoading,
-        isFetching,
-    } = useQuery<IUser[]>({
-        queryKey: queryKey.admin.users.index,
-        queryFn: async () => {
-            return await adminApi.getUsers({
-                page_size: 100, // You can adjust the limit as needed
-            });
-        },
-        initialData: [],
+    const [page, setPage] = useState(1);
+    const pageSize = 10;
+
+    // Filters state
+    const [search, setSearch] = useState('');
+    const [role, setRole] = useState('all');
+    const [status, setStatus] = useState('all');
+
+    const debouncedSearch = useDebounce(search, 500);
+
+    const { data: users, isLoading } = useAdminUsers({
+        page,
+        page_size: pageSize,
+        q: debouncedSearch,
+        role: role !== 'all' ? role : undefined,
+        isBlocked: status === 'blocked' ? true : undefined,
+        isVerified:
+            status === 'verified'
+                ? true
+                : status === 'unverified'
+                  ? false
+                  : undefined,
     });
 
-    const router = useRouter();
+    const isNextPage = users && users.length === pageSize;
+
+    const handleReset = () => {
+        setSearch('');
+        setRole('all');
+        setStatus('all');
+        setPage(1);
+    };
 
     return (
         <div className="mt-4">
             <h1 className="mb-4 text-2xl font-bold">Quản lý người dùng</h1>
 
-            {isLoading ||
-                (isFetching && (
-                    <div className="flex h-64 items-center justify-center">
-                        <Loading fullScreen />
-                    </div>
-                ))}
+            <UserTableToolbar
+                search={search}
+                role={role}
+                status={status}
+                onSearchChange={(v) => {
+                    setSearch(v);
+                    setPage(1);
+                }}
+                onRoleChange={(v) => {
+                    setRole(v);
+                    setPage(1);
+                }}
+                onStatusChange={(v) => {
+                    setStatus(v);
+                    setPage(1);
+                }}
+                onReset={handleReset}
+            />
 
-            {!isLoading && !isFetching && users && (
+            <div className="min-h-[500px]">
                 <Table>
                     <TableHeader>
                         <TableRow>
-                            <TableHead>ID</TableHead>
-                            <TableHead>Tên</TableHead>
-                            <TableHead>Email</TableHead>
-                            <TableHead>Ngày tạo</TableHead>
-                            <TableHead>Lần truy cập gần nhất</TableHead>
-                            <TableHead>Quyền</TableHead>
+                            <TableHead>User</TableHead>
+                            <TableHead>Trạng thái</TableHead>
+                            <TableHead>Thống kê</TableHead>
+                            <TableHead>Thông tin</TableHead>
                             <TableHead className="text-right">
                                 Hành động
                             </TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {users.map((user) => (
-                            <TableRow
-                                key={user._id}
-                                onClick={() => {
-                                    showErrorToast(
-                                        'Tính năng này chưa được triển khai'
-                                    );
-                                }}
-                            >
-                                <TableCell>{user._id}</TableCell>
-                                <TableCell>{user.name}</TableCell>
-                                <TableCell>{user.email}</TableCell>
-                                <TableCell>
-                                    {FormatDate.formatISODateToDate(
-                                        user.createdAt
-                                    )}
+                        {isLoading ? (
+                            <TableRow>
+                                <TableCell colSpan={5} className="text-center">
+                                    <Loading text="Đang tải" />
                                 </TableCell>
-                                <TableCell>
-                                    {user.lastAccessed
-                                        ? FormatDate.formatISODateToDateTime(
-                                              user.lastAccessed
-                                          )
-                                        : 'Chưa truy cập'}
-                                </TableCell>
-                                <TableCell>{user.role}</TableCell>
                             </TableRow>
-                        ))}
+                        ) : (
+                            users &&
+                            users.map((user) => (
+                                <TableRow key={user._id}>
+                                    <TableCell>
+                                        <div className="flex items-center gap-2">
+                                            <Avatar
+                                                width={36}
+                                                height={36}
+                                                imgSrc={user.avatar}
+                                                alt={user.name}
+                                            />
+                                            <div className="flex flex-col">
+                                                <span className="text-sm font-medium">
+                                                    {user.name}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {user.username}
+                                                </span>
+                                                <span className="text-xs text-muted-foreground">
+                                                    {user.email}
+                                                </span>
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col gap-1">
+                                            <Badge
+                                                variant={'secondary'}
+                                                className="w-fit"
+                                            >
+                                                {user.role}
+                                            </Badge>
+                                            <div className="flex gap-1">
+                                                {user.isOnline ? (
+                                                    <Badge
+                                                        variant="success"
+                                                        className="h-4 w-fit px-1 py-0 text-[10px]"
+                                                    >
+                                                        Online
+                                                    </Badge>
+                                                ) : (
+                                                    <Badge
+                                                        variant="outline"
+                                                        className="h-4 w-fit px-1 py-0 text-[10px] text-muted-foreground"
+                                                    >
+                                                        Offline
+                                                    </Badge>
+                                                )}
+                                                {user.isBlocked && (
+                                                    <Badge
+                                                        variant="destructive"
+                                                        className="h-4 w-fit px-1 py-0 text-[10px]"
+                                                    >
+                                                        Blocked
+                                                    </Badge>
+                                                )}
+                                                {user.isVerified && (
+                                                    <Badge
+                                                        variant="default"
+                                                        className="bg-blue-500 hover:bg-blue-600 h-4 w-fit px-1 py-0 text-[10px]"
+                                                    >
+                                                        Verified
+                                                    </Badge>
+                                                )}
+                                            </div>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col text-xs text-muted-foreground">
+                                            <span>
+                                                {user.followersCount} Followers
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell>
+                                        <div className="flex flex-col text-xs text-muted-foreground">
+                                            <span>
+                                                JoinedAt:{' '}
+                                                {FormatDate.formatISODateToDate(
+                                                    user.createdAt
+                                                )}
+                                            </span>
+                                            <span>
+                                                LastAccessed:{' '}
+                                                {user.lastAccessed
+                                                    ? FormatDate.formatISODateToDateTime(
+                                                          user.lastAccessed
+                                                      )
+                                                    : 'N/A'}
+                                            </span>
+                                        </div>
+                                    </TableCell>
+                                    <TableCell className="text-right">
+                                        <UserActionMenu user={user} />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        )}
                     </TableBody>
                 </Table>
-            )}
+            </div>
+
+            <div className="mt-4 flex justify-end">
+                <Pagination>
+                    <PaginationContent>
+                        <PaginationItem>
+                            <PaginationPrevious
+                                onClick={() =>
+                                    setPage((p) => Math.max(1, p - 1))
+                                }
+                                className={
+                                    page === 1
+                                        ? 'pointer-events-none opacity-50'
+                                        : 'cursor-pointer'
+                                }
+                            />
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationLink isActive>{page}</PaginationLink>
+                        </PaginationItem>
+                        <PaginationItem>
+                            <PaginationNext
+                                onClick={() => setPage((p) => p + 1)}
+                                className={
+                                    !isNextPage
+                                        ? 'pointer-events-none opacity-50'
+                                        : 'cursor-pointer'
+                                }
+                            />
+                        </PaginationItem>
+                    </PaginationContent>
+                </Pagination>
+            </div>
         </div>
     );
 };
