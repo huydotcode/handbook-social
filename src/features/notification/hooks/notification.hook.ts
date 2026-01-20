@@ -53,3 +53,59 @@ export const useRequestsBySender = (
         ...defaultInfiniteQueryOptions,
     });
 };
+
+export const useNotifications = (userId: string | undefined) =>
+    useInfiniteQuery({
+        queryKey: queryKey.user.notifications(userId),
+        queryFn: async ({ pageParam = 1 }) => {
+            if (!userId) return [];
+
+            const params = {
+                page: pageParam,
+                page_size: 10,
+            };
+            return notificationApi.getByReceiver(userId, params);
+        },
+        select: (data) => {
+            return data.pages.flatMap((page) => page);
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPages) => {
+            return lastPage.length === 10 ? allPages.length + 1 : undefined;
+        },
+        getPreviousPageParam: (firstPage) => {
+            return firstPage.length === 10 ? 1 : undefined;
+        },
+        enabled: !!userId,
+        refetchInterval: false,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+    });
+
+export const useRequests = (userId: string | undefined) =>
+    useInfiniteQuery({
+        queryKey: queryKey.user.requests(userId),
+        queryFn: async ({ pageParam = 1 }) => {
+            if (!userId) return [];
+
+            const params = {
+                page: pageParam,
+                page_size: 10,
+            };
+            return notificationApi.getBySender(userId, params);
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPages) => {
+            return lastPage.length === 10 ? allPages.length + 1 : undefined;
+        },
+        getPreviousPageParam: (firstPage) => {
+            return firstPage.length === 10 ? 1 : undefined;
+        },
+        select: (data) => {
+            return data.pages.flatMap((page) => page);
+        },
+        enabled: !!userId,
+        refetchInterval: false,
+        refetchOnWindowFocus: false,
+        refetchOnMount: false,
+    });

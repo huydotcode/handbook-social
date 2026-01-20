@@ -1,6 +1,5 @@
 'use client';
-import { useCategories } from '@/core/context/AppContext';
-import { CategoryService } from '@/features/category';
+import { CategoryService, useCategories } from '@/features/category';
 import { showErrorToast, showPromiseToast, showSuccessToast } from '@/shared';
 import { ConfirmModal, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';

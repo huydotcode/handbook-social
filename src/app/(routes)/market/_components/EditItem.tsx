@@ -27,7 +27,6 @@ import {
 } from '@/shared/components/ui/select';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { useAuth } from '@/core/context';
-import { useCategories } from '@/core/context/AppContext';
 import { useLocations } from '@/features/location';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { ICategory, IItem, ILocation } from '@/types/entites';
@@ -36,6 +35,7 @@ import React, { useState } from 'react';
 import { SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { ItemService } from '@/features/item';
+import { useCategories } from '@/features/category';
 
 interface ItemData {
     name: string;

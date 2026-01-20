@@ -1,7 +1,6 @@
 'use client';
-import { useNotifications } from '@/core/context/AppContext';
 import { useAuth } from '@/core/context/AuthContext';
-import { NotificationService } from '@/features/notification';
+import { NotificationService, useNotifications } from '@/features/notification';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Popover,

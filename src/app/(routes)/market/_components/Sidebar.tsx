@@ -3,11 +3,11 @@
 import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
 import { Button } from '@/shared/components/ui/Button';
 import Icons, { IconsArray } from '@/shared/components/ui/Icons';
-import { useCategories } from '@/core/context/AppContext';
 import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import SearchMarket from './SearchMarket';
+import { useCategories } from '@/features/category';
 
 interface Props {}
 

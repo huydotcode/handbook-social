@@ -1,6 +1,5 @@
 'use client';
 import { useAuth } from '@/core/context';
-import { useCategories } from '@/core/context/AppContext';
 import { useLocations } from '@/features/location';
 import {
     createItemValidation,
@@ -34,6 +33,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import { useRouter } from 'next/navigation';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
+import { useCategories } from '@/features/category';
 
 const CreateItemPage = () => {
     const { user } = useAuth();

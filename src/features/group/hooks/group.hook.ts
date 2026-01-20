@@ -1,4 +1,9 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+    useInfiniteQuery,
+    useMutation,
+    useQuery,
+    useQueryClient,
+} from '@tanstack/react-query';
 
 import { defaultQueryOptions } from '@/lib/react-query';
 import { queryKey } from '@/lib/react-query/query-key';
@@ -373,5 +378,33 @@ export const useUpdateGroupMemberRole = (groupId: string) => {
         onError: (error) => {
             handleApiError(error, 'Không thể cập nhật quyền thành viên');
         },
+    });
+};
+
+export const useGroupsJoined = (userId: string | undefined) => {
+    return useInfiniteQuery({
+        queryKey: queryKey.user.groups(userId),
+        queryFn: async ({ pageParam = 1 }) => {
+            if (!userId) return [];
+
+            return GroupService.getJoined({
+                user_id: userId,
+                page: pageParam,
+                page_size: 10,
+            });
+        },
+        initialPageParam: 1,
+        getNextPageParam: (lastPage, allPages) => {
+            return lastPage.length === 10 ? allPages.length + 1 : undefined;
+        },
+        getPreviousPageParam: (firstPage, allPages) => {
+            return firstPage.length === 10 ? 1 : undefined;
+        },
+        select: (data) => {
+            return data.pages.flatMap((page) => page);
+        },
+        enabled: !!userId,
+        refetchInterval: false,
+        refetchOnWindowFocus: false,
     });
 };

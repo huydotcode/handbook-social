@@ -176,3 +176,11 @@ export const useDeleteCategory = () => {
         },
     });
 };
+
+export const useCategoriesList = () =>
+    useQuery({
+        queryKey: queryKey.categories.list(),
+        queryFn: async () => {
+            return CategoryService.getAll();
+        },
+    });
