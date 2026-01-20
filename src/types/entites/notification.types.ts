@@ -1,15 +1,16 @@
 import type { IUser } from './user.types';
 
 // Notification Types Constants
-export const NOTIFICATION_TYPES = {
-    REQUEST_ADD_FRIEND: 'request-add-friend',
-    ACCEPT_FRIEND_REQUEST: 'accept-friend-request',
-    REJECT_FRIEND_REQUEST: 'reject-friend-request',
-    MESSAGE: 'message',
-    FOLLOW_USER: 'follow-user',
-    LIKE_POST: 'like-post',
-    CREATE_POST: 'create-post',
-} as const;
+export enum NOTIFICATION_TYPES {
+    REQUEST_ADD_FRIEND = 'request-add-friend',
+    ACCEPT_FRIEND_REQUEST = 'accept-friend-request',
+    REJECT_FRIEND_REQUEST = 'reject-friend-request',
+    MESSAGE = 'message',
+    FOLLOW_USER = 'follow-user',
+    LIKE_POST = 'like-post',
+    CREATE_POST = 'create-post',
+    COMMENT_POST = 'comment-post',
+}
 
 export type NotificationType =
     (typeof NOTIFICATION_TYPES)[keyof typeof NOTIFICATION_TYPES];
@@ -30,6 +31,7 @@ export const NOTIFICATION_MESSAGES = {
     // Post
     CREATE_POST: 'đã đăng một bài viết mới', // Thông báo tới follower
     LIKE_POST: 'đã thích bài viết của bạn',
+    COMMENT_POST: 'đã bình luận bài viết của bạn',
 } as const;
 
 export type NotificationMessage =

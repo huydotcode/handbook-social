@@ -172,6 +172,9 @@ function AppProvider({ children }: { children: React.ReactNode }) {
                     case NOTIFICATION_TYPES.MESSAGE:
                         message = NOTIFICATION_MESSAGES.MESSAGE;
                         break;
+                    case NOTIFICATION_TYPES.COMMENT_POST:
+                        message = NOTIFICATION_MESSAGES.COMMENT_POST;
+                        break;
                 }
 
                 if (message) {
@@ -181,11 +184,13 @@ function AppProvider({ children }: { children: React.ReactNode }) {
                             onClick={() => {
                                 if (
                                     notification.type ==
-                                        NOTIFICATION_TYPES.CREATE_POST &&
-                                    notification?.extra?.postId
+                                        NOTIFICATION_TYPES.CREATE_POST ||
+                                    (notification.type ==
+                                        NOTIFICATION_TYPES.COMMENT_POST &&
+                                        notification?.extra?.postId)
                                 ) {
                                     router.push(
-                                        `/posts/${notification.extra.postId}`
+                                        `/posts/${notification.extra?.postId}`
                                     );
                                 }
                             }}

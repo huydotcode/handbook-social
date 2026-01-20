@@ -161,6 +161,10 @@ const NotificationItem = ({
                             NOTIFICATION_TYPES.CREATE_POST && (
                             <span>{NOTIFICATION_MESSAGES.CREATE_POST}</span>
                         )}
+                        {notification.type ===
+                            NOTIFICATION_TYPES.COMMENT_POST && (
+                            <span>{NOTIFICATION_MESSAGES.COMMENT_POST}</span>
+                        )}
                     </p>
                     {notification.type ===
                         NOTIFICATION_TYPES.REQUEST_ADD_FRIEND && (
@@ -195,7 +199,9 @@ const NotificationItem = ({
                             </Button>
                         </div>
                     )}
-                    {notification.type === NOTIFICATION_TYPES.CREATE_POST &&
+                    {(notification.type === NOTIFICATION_TYPES.CREATE_POST ||
+                        notification.type ===
+                            NOTIFICATION_TYPES.COMMENT_POST) &&
                         notification?.extra?.postId && (
                             <div className="mt-2 flex items-center">
                                 <Button
