@@ -70,30 +70,6 @@ export const useCommentCount = (
 };
 
 /**
- * Hook to get reply comments (infinite query)
- */
-export const useReplyComments = (
-    commentId: string,
-    params?: { pageSize?: number },
-    options?: { enabled?: boolean }
-) => {
-    const pageSize = params?.pageSize || 10;
-
-    return useInfiniteQuery({
-        queryKey: queryKey.posts.replyComments(commentId),
-        queryFn: ({ pageParam = 1 }) =>
-            CommentService.getReplies(commentId, {
-                page: pageParam,
-                page_size: pageSize,
-            }),
-        getNextPageParam: createGetNextPageParam(pageSize),
-        enabled: options?.enabled !== false && !!commentId,
-        initialPageParam: 1,
-        ...defaultInfiniteQueryOptions,
-    });
-};
-
-/**
  * Hook to create a comment
  */
 export const useCreateComment = () => {

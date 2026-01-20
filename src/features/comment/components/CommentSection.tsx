@@ -1,11 +1,12 @@
 'use client';
+
 import { useAuth } from '@/core/context';
 import CommentService from '@/features/comment/services/comment.service';
-import Comment from '@/features/post/components/comment/CommentItem';
-import SkeletonComment from '@/features/post/components/comment/SkeletonComment';
 import queryKey from '@/lib/react-query/query-key';
 import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
+import { Form, FormControl } from '@/shared/components/ui/Form';
+import { Textarea } from '@/shared/components/ui/textarea';
 import { IComment, IPost } from '@/types/entites';
 import {
     useInfiniteQuery,
@@ -15,8 +16,8 @@ import {
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
-import { Form, FormControl } from '../../../../shared/components/ui/Form';
-import { Textarea } from '../../../../shared/components/ui/textarea';
+import CommentItem from './CommentItem';
+import SkeletonComment from './SkeletonComment';
 
 interface Props {
     post: IPost;
@@ -241,7 +242,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
 
             {comments &&
                 comments.map((cmt) => (
-                    <Comment
+                    <CommentItem
                         data={cmt}
                         key={cmt._id}
                         setCommentCount={setCommentCount}

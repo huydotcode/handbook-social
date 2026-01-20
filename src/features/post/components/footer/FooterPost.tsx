@@ -1,10 +1,10 @@
 'use client';
+import CommentSection from '@/features/comment/components/CommentSection';
+import { cn } from '@/lib/utils';
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { cn } from '@/lib/utils';
 import { IPost } from '@/types/entites';
 import React, { useEffect, useState } from 'react';
-import CommentSection from '../comment/CommentSection';
 import ReactionPost from './ReactionPost';
 import SharePost from './SharePost';
 

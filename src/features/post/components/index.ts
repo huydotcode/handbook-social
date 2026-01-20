@@ -1,9 +1,6 @@
 // Action
 export * from './action';
 
-// Comment
-export * from './comment';
-
 // Footer
 export * from './footer';
 
