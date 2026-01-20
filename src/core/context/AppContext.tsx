@@ -175,6 +175,12 @@ function AppProvider({ children }: { children: React.ReactNode }) {
                     case NOTIFICATION_TYPES.COMMENT_POST:
                         message = NOTIFICATION_MESSAGES.COMMENT_POST;
                         break;
+                    case NOTIFICATION_TYPES.LIKE_COMMENT:
+                        message = NOTIFICATION_MESSAGES.LIKE_COMMENT;
+                        break;
+                    case NOTIFICATION_TYPES.REPLY_COMMENT:
+                        message = NOTIFICATION_MESSAGES.REPLY_COMMENT;
+                        break;
                 }
 
                 if (message) {
@@ -187,6 +193,12 @@ function AppProvider({ children }: { children: React.ReactNode }) {
                                         NOTIFICATION_TYPES.CREATE_POST ||
                                     (notification.type ==
                                         NOTIFICATION_TYPES.COMMENT_POST &&
+                                        notification?.extra?.postId) ||
+                                    (notification.type ==
+                                        NOTIFICATION_TYPES.LIKE_COMMENT &&
+                                        notification?.extra?.postId) ||
+                                    (notification.type ==
+                                        NOTIFICATION_TYPES.REPLY_COMMENT &&
                                         notification?.extra?.postId)
                                 ) {
                                     router.push(

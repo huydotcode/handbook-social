@@ -10,6 +10,8 @@ export enum NOTIFICATION_TYPES {
     LIKE_POST = 'like-post',
     CREATE_POST = 'create-post',
     COMMENT_POST = 'comment-post',
+    LIKE_COMMENT = 'like-comment',
+    REPLY_COMMENT = 'reply-comment',
 }
 
 export type NotificationType =
@@ -32,6 +34,8 @@ export const NOTIFICATION_MESSAGES = {
     CREATE_POST: 'đã đăng một bài viết mới', // Thông báo tới follower
     LIKE_POST: 'đã thích bài viết của bạn',
     COMMENT_POST: 'đã bình luận bài viết của bạn',
+    LIKE_COMMENT: 'đã thích bình luận của bạn',
+    REPLY_COMMENT: 'đã trả lời bình luận của bạn',
 } as const;
 
 export type NotificationMessage =
