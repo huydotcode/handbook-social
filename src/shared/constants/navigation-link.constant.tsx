@@ -1,12 +1,12 @@
 import Icons from '@/shared/components/ui/Icons';
-import { USER_ROLES } from '@/types/entites';
+import { USER_ROLES, UserRole } from '@/types/entites';
 import React from 'react';
 
 interface NavLink {
     name: string;
     path: string;
     icon: React.ReactNode;
-    role?: string;
+    role?: UserRole;
     visible?: string[];
     children?: NavLink[];
 }
