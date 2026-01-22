@@ -3,13 +3,14 @@ import { env } from '@/core/config/env.config';
 import {
     AppProvider,
     AuthProvider,
+    SidebarProvider,
     SocialProvider,
     SocketProvider,
     VideoCallProvider,
 } from '@/core/context';
 import { AxiosInterceptor } from '@/features/auth';
-import { Toaster as SonnerToaster } from '@/shared/components/ui/sonner';
 import { VideoCallWrapper } from '@/features/video-call/components';
+import { Toaster as SonnerToaster } from '@/shared/components/ui/sonner';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
@@ -71,20 +72,22 @@ const Providers: FunctionComponent<ProvidersProps> = ({ children }) => {
                     <SocketProvider>
                         <SocialProvider>
                             <AppProvider>
-                                <VideoCallProvider>
-                                    <ThemeProvider
-                                        attribute="class"
-                                        defaultTheme="system"
-                                        enableSystem
-                                    >
-                                        <SonnerToaster
-                                            position="bottom-left"
-                                            richColors
-                                        />
-                                        {children}
-                                        <VideoCallWrapper />
-                                    </ThemeProvider>
-                                </VideoCallProvider>
+                                <SidebarProvider>
+                                    <VideoCallProvider>
+                                        <ThemeProvider
+                                            attribute="class"
+                                            defaultTheme="system"
+                                            enableSystem
+                                        >
+                                            <SonnerToaster
+                                                position="bottom-left"
+                                                richColors
+                                            />
+                                            {children}
+                                            <VideoCallWrapper />
+                                        </ThemeProvider>
+                                    </VideoCallProvider>
+                                </SidebarProvider>
                             </AppProvider>
                         </SocialProvider>
                     </SocketProvider>
