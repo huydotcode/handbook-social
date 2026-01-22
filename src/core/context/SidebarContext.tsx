@@ -1,8 +1,9 @@
-import { createContext, useContext } from 'react';
+'use client';
+import { createContext, useContext, useState } from 'react';
 
 interface SidebarCollapseContextProps {
     isSidebarOpen: boolean;
-    setIsSidebarOpen: (value: boolean) => void;
+    setIsSidebarOpen: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 export const SidebarCollapseContext = createContext<
@@ -16,3 +17,18 @@ export const useSidebarCollapse = () => {
     }
     return context;
 };
+
+export default function SidebarProvider({
+    children,
+}: {
+    children: React.ReactNode;
+}) {
+    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    return (
+        <SidebarCollapseContext.Provider
+            value={{ isSidebarOpen, setIsSidebarOpen }}
+        >
+            {children}
+        </SidebarCollapseContext.Provider>
+    );
+}
