@@ -5,9 +5,13 @@ import SidebarItem from './SidebarItem';
 import SidebarList from './SidebarList';
 import SidebarUser from './SidebarUser';
 
-const MainSidebar = () => {
+interface MainSidebarProps {
+    showOnlyMobile?: boolean;
+}
+
+const MainSidebar = ({ showOnlyMobile = false }: MainSidebarProps) => {
     return (
-        <SidebarCollapse>
+        <SidebarCollapse showOnlyMobile={showOnlyMobile}>
             <SidebarUser />
             <SidebarList>
                 {navLink.map((link) => (
