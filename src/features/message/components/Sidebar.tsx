@@ -1,4 +1,7 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import { useConversations } from '@/core/context/SocialContext';
+import { cn } from '@/lib/utils';
 import ConversationItemSkeleton from '@/shared/components/skeleton/ConversationItemSkeleton';
 import { Icons } from '@/shared/components/ui';
 import {
@@ -9,14 +12,11 @@ import {
     SelectLabel,
     SelectTrigger,
 } from '@/shared/components/ui/select';
-import { useAuth } from '@/core/context/AuthContext';
-import { useConversations } from '@/core/context/SocialContext';
-import { cn } from '@/lib/utils';
+import { IConversation } from '@/types/entites';
 import { usePathname } from 'next/navigation';
 import React, { useState } from 'react';
 import ConversationItem from './ConversationItem';
 import SearchConversation from './SearchConversation';
-import { IConversation } from '@/types/entites';
 
 interface Props {}
 
