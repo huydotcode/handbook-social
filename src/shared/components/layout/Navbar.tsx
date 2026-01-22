@@ -1,4 +1,7 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
+import { cn } from '@/lib/utils';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Tooltip,
@@ -6,13 +9,10 @@ import {
     TooltipProvider,
     TooltipTrigger,
 } from '@/shared/components/ui/tooltip';
-import { useAuth } from '@/core/context/AuthContext';
-import { cn } from '@/lib/utils';
-import { navbarLink, navLink } from '@/shared/constants';
+import { navbarLink } from '@/shared/constants';
 import { USER_ROLES } from '@/types/entites';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import React, { useEffect, useState } from 'react';
 import Icons from '../ui/Icons';
 import NavbarNotification from './NavbarNotification';
 import NavbarSearch from './NavbarSearch';
@@ -20,30 +20,8 @@ import NavbarUser from './NavbarUser';
 
 const Navbar = () => {
     const { user } = useAuth();
-    const [showPages, setShowPages] = useState<boolean>(false);
     const path = usePathname();
-    const listNavRef = React.useRef<HTMLUListElement>(null);
-    const menuButtonRef = React.useRef<HTMLButtonElement>(null);
-
-    // Xử lý click ra ngoài để đóng menu
-    useEffect(() => {
-        const handleClickOutside = (event: MouseEvent) => {
-            if (
-                listNavRef.current &&
-                !listNavRef.current.contains(event.target as Node) &&
-                menuButtonRef.current &&
-                !menuButtonRef.current.contains(event.target as Node)
-            ) {
-                setShowPages(false);
-            }
-        };
-
-        document.addEventListener('mousedown', handleClickOutside);
-
-        return () => {
-            document.removeEventListener('mousedown', handleClickOutside);
-        };
-    }, [listNavRef]);
+    const { setIsSidebarOpen } = useSidebarCollapse();
 
     return (
         <nav className="fixed left-0 right-0 top-0 z-50 h-14 w-screen shadow-md md:px-2">
@@ -57,12 +35,12 @@ const Navbar = () => {
 
                     <NavbarSearch />
 
-                    <div className="ml-2 hidden md:block">
+                    <div className="ml-2 hidden lg:block">
                         <Button
-                            onClick={() => setShowPages((prev) => !prev)}
+                            id="sidebar-toggle-btn"
+                            onClick={() => setIsSidebarOpen((prev) => !prev)}
                             size={'md'}
                             variant={'ghost'}
-                            ref={menuButtonRef}
                         >
                             <Icons.Menu />
                         </Button>
@@ -73,7 +51,6 @@ const Navbar = () => {
                         className={
                             'top-14 flex h-full w-full items-center justify-between overflow-hidden bg-white dark:bg-dark-secondary-1'
                         }
-                        ref={listNavRef}
                     >
                         {navbarLink.map((link) => {
                             if (
@@ -133,73 +110,6 @@ const Navbar = () => {
                     </ul>
                 </div>
 
-                {showPages && (
-                    <ul
-                        className={
-                            'fixed left-0 top-14 hidden w-[200px] flex-col items-center justify-between overflow-hidden rounded-b-xl bg-white p-2 shadow-xl dark:bg-dark-secondary-1 md:flex'
-                        }
-                        ref={listNavRef}
-                    >
-                        {navLink.map((link, index) => {
-                            if (
-                                link.role === USER_ROLES.ADMIN &&
-                                user?.role !== USER_ROLES.ADMIN
-                            )
-                                return null;
-
-                            const isActived =
-                                path === link.path ||
-                                (path.includes(link.path) &&
-                                    link.path !== '/' &&
-                                    !path.includes('/admin'));
-                            const Icon = () => {
-                                return link.icon;
-                            };
-
-                            return (
-                                <TooltipProvider key={link.name}>
-                                    <Tooltip>
-                                        <TooltipTrigger asChild>
-                                            <li
-                                                key={index}
-                                                className={cn(
-                                                    `flex w-full cursor-pointer items-center p-2 hover:bg-hover-2 dark:hover:bg-dark-hover-1`,
-                                                    {
-                                                        'border-b-4 border-b-blue':
-                                                            isActived,
-                                                    }
-                                                )}
-                                            >
-                                                <Link
-                                                    className={cn(
-                                                        'flex w-full items-center justify-center dark:text-dark-primary-1 md:justify-start',
-                                                        {
-                                                            'text-blue dark:text-blue':
-                                                                isActived,
-                                                        }
-                                                    )}
-                                                    href={link.path || '/'}
-                                                    onClick={() =>
-                                                        setShowPages(false)
-                                                    }
-                                                >
-                                                    <Icon />
-
-                                                    <span className="ml-2 hidden text-xs md:block">
-                                                        {link.name}
-                                                    </span>
-                                                </Link>
-                                            </li>
-                                        </TooltipTrigger>
-                                        <TooltipContent>
-                                            {link.name}
-                                        </TooltipContent>
-                                    </Tooltip>
-                                </TooltipProvider>
-                            );
-                        })}
-                    </ul>
-                )}
                 <div className="flex h-full w-1/4 items-center justify-end md:w-1/2">
                     <div className="mr-2 flex h-full items-center justify-center">
                         <NavbarNotification />
