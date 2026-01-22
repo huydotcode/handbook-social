@@ -1,12 +1,16 @@
 'use client';
 import { useEffect } from 'react';
 
-function useOutsideAlerter(ref: any, cb: () => void, enabled = true) {
+function useOutsideAlerter(
+    ref: any,
+    cb: (event: Event) => void,
+    enabled = true
+) {
     useEffect(() => {
         if (!enabled) return;
         function handleClickOutside(event: Event) {
             if (ref.current && !ref.current.contains(event.target)) {
-                cb();
+                cb(event);
             }
         }
         document.addEventListener('mousedown', handleClickOutside);
