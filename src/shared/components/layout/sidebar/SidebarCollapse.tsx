@@ -49,20 +49,12 @@ const SidebarCollapse: React.FC<Props> = ({
     return (
         <div
             className={cn(
-                'no-scrollbar fixed left-0 top-[56px] z-20 h-[calc(100vh-56px)] w-[300px] max-w-screen border-r-2 bg-secondary-1 p-2 transition-transform duration-300 ease-in-out dark:border-none dark:bg-dark-secondary-1 xl:w-[220px] md:w-[300px] md:max-w-[80vw]',
+                'no-scrollbar fixed left-0 top-[56px] z-20 h-[calc(100vh-56px)] w-[300px] max-w-screen border-r-2 bg-secondary-1 p-2 transition-transform duration-300 ease-in-out dark:border-none dark:bg-dark-secondary-1',
                 {
-                    // Mobile: Toggle based on open state
                     'translate-x-0': isMobile && isSidebarOpen,
                     '-translate-x-full': isMobile && !isSidebarOpen,
-
-                    // Desktop:
-                    // If showOnlyMobile is false (default) -> Always visible
                     'md:translate-x-0': !isMobile && !showOnlyMobile,
-                    // If showOnlyMobile is true -> Hidden on desktop
                     'hidden md:hidden': !isMobile && showOnlyMobile,
-
-                    // Legacy/Safety fallback (merging the conditions above simplifies to):
-                    // 'translate-x-0': (isMobile && isSidebarOpen) || (!isMobile && !showOnlyMobile),
                 }
             )}
             ref={sidebarRef}
