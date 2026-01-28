@@ -8,6 +8,7 @@ import React from 'react';
 import SidebarCollapse from '@/shared/components/layout/sidebar/SidebarCollapse';
 import SidebarTitle from '@/shared/components/layout/sidebar/SidebarTitle';
 import SidebarList from '@/shared/components/layout/sidebar/SidebarList';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
 
 const Sidebar: React.FC = () => {
     const { user } = useAuth();
@@ -15,6 +16,7 @@ const Sidebar: React.FC = () => {
     const router = useRouter();
 
     const [openChildren, setOpenChildren] = React.useState<string[]>([]);
+    const { closeSidebar } = useSidebarCollapse();
 
     return (
         <>
@@ -47,6 +49,7 @@ const Sidebar: React.FC = () => {
                                     onClick={() => {
                                         if (item.path) {
                                             router.push(item.path);
+                                            closeSidebar();
                                         }
 
                                         if (item.children) {
@@ -71,9 +74,7 @@ const Sidebar: React.FC = () => {
                                     }}
                                 >
                                     <Icon />
-                                    <span className="text-sm xl:hidden">
-                                        {item.name}
-                                    </span>
+                                    <span className="text-sm">{item.name}</span>
                                 </Button>
 
                                 {item.children && (
@@ -100,11 +101,12 @@ const Sidebar: React.FC = () => {
                                                         isChildActived &&
                                                             'dark:text-dark-primary-2 bg-primary-1 text-primary-2 hover:bg-secondary-2 hover:text-primary-2 dark:bg-dark-primary-1'
                                                     )}
-                                                    onClick={() =>
-                                                        router.push(child.path)
-                                                    }
+                                                    onClick={() => {
+                                                        router.push(child.path);
+                                                        closeSidebar();
+                                                    }}
                                                 >
-                                                    <span className="text-md xl:hidden">
+                                                    <span className="text-md">
                                                         {child.name}
                                                     </span>
                                                 </Button>
