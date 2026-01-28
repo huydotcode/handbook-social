@@ -1,7 +1,7 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
 import { Navbar } from '@/shared/components/layout';
 import { Loading } from '@/shared/components/ui';
-import { useAuth } from '@/core/context/AuthContext';
 import { USER_ROLES } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { useEffect } from 'react';
@@ -35,8 +35,9 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
         <div>
             <Navbar />
 
-            <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] w-[calc(100vw-340px)] xl:ml-[80px] xl:w-[calc(100vw-80px)]">
+            <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] w-full max-w-[calc(100vw-340px)] overflow-x-scroll xl:ml-0 xl:max-w-full">
                 <Sidebar />
+
                 <div className="mx-4 mt-4 w-full pb-[100px]">{children}</div>
             </main>
         </div>

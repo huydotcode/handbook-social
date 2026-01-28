@@ -1,13 +1,15 @@
 'use client';
 
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
+import { useCategories } from '@/features/category';
 import SidebarCollapse from '@/shared/components/layout/sidebar/SidebarCollapse';
+import SidebarSubtitle from '@/shared/components/layout/sidebar/SidebarSubtitle';
+import SidebarTitle from '@/shared/components/layout/sidebar/SidebarTitle';
 import { Button } from '@/shared/components/ui/Button';
 import Icons, { IconsArray } from '@/shared/components/ui/Icons';
-import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { useRouter } from 'next/navigation';
 import React from 'react';
 import SearchMarket from './SearchMarket';
-import { useCategories } from '@/features/category';
 
 interface Props {}
 
@@ -19,13 +21,7 @@ const Sidebar: React.FC<Props> = () => {
     return (
         <>
             <SidebarCollapse>
-                <Button
-                    className="justify-start p-0"
-                    variant={'custom'}
-                    href={'/market'}
-                >
-                    <h1 className="text-2xl font-bold">Market</h1>
-                </Button>
+                <SidebarTitle title="Market" href="/market" />
 
                 <SearchMarket />
 
@@ -54,7 +50,7 @@ const Sidebar: React.FC<Props> = () => {
                     <Icons.Edit className="h-5 w-5" /> Quản lý mặt hàng
                 </Button>
 
-                <h1>Danh mục</h1>
+                <SidebarSubtitle title="Danh mục" />
 
                 {categories &&
                     categories.map((category) => {

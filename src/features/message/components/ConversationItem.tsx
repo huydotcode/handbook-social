@@ -1,6 +1,7 @@
 'use client';
 import { useSocket } from '@/core/context';
 import { useAuth } from '@/core/context/AuthContext';
+import { useSidebarCollapse } from '@/core/context/SidebarContext';
 import { ConversationService } from '@/features/conversation';
 import { cn } from '@/lib/utils';
 import { splitName, timeConvert3 } from '@/shared';
@@ -32,6 +33,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     const lastMessage = conversation?.lastMessage;
     const { socketEmitor } = useSocket();
     const { invalidateConversations } = useQueryInvalidation();
+    const { setIsSidebarOpen } = useSidebarCollapse();
     const path = usePathname();
     const router = useRouter();
     const members = useMemo(
@@ -121,17 +123,19 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     };
 
     return (
-        <div className="group relative w-full">
+        <div className="group relative mt-2 w-full">
             <TooltipProvider>
                 <Tooltip>
                     <TooltipTrigger asChild>
                         <Button
                             className={cn(
-                                'relative mx-4 flex justify-between px-4 shadow-none lg:justify-center',
+                                'relative m-0 flex w-full justify-between px-2 shadow-none lg:justify-center',
                                 isSelect && 'bg-primary-1'
                             )}
-                            href={`/messages/${conversation._id}`}
-                            key={conversation._id}
+                            onClick={() => {
+                                setIsSidebarOpen(false);
+                                router.push(`/messages/${conversation._id}`);
+                            }}
                             size={'2xl'}
                         >
                             <div className="relative h-8 w-8">

@@ -21,7 +21,6 @@ import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
 import ConversationItemSkeleton from '../skeleton/ConversationItemSkeleton';
 import { useFriendsWithConversations } from '@/features/friend';
-import SidebarCollapse from './sidebar/SidebarCollapse';
 
 interface Props {}
 
@@ -37,12 +36,7 @@ const FriendSection: React.FC<Props> = () => {
     const groupConversations = data?.groupConversations || [];
 
     return (
-        <SidebarCollapse
-            width={'responsive'}
-            direction="right"
-            type="fixed"
-            hidden="2xl"
-        >
+        <FixedSidebar className="xl:hidden" direction={'right'} hideOnMobile>
             <div className="relative h-full w-full">
                 <div
                     className={cn(
@@ -343,7 +337,7 @@ const FriendSection: React.FC<Props> = () => {
                     </div>
                 </div>
             </div>
-        </SidebarCollapse>
+        </FixedSidebar>
     );
 };
 export default FriendSection;

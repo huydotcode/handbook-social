@@ -16,8 +16,9 @@ const NewsFeedLayout: React.FC<Props> = async ({ children }) => {
     return (
         <div className="relative top-[56px] min-h-[calc(100vh-56px)] max-w-screen pb-[100px] md:w-screen">
             <Sidebar />
-
-            <div className="content-spacing">{children}</div>
+            <div className="ml-[300px] mt-2 w-[calc(100vw-300px)] lg:ml-0 lg:w-full">
+                {children}
+            </div>
         </div>
     );
 };

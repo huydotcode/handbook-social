@@ -13,7 +13,6 @@ const HomeLayout: React.FC<Props> = ({ children }) => {
         <ProtectedRoute>
             <div className="w-screen">
                 <Navbar />
-
                 <main className={'bg-primary-1 dark:bg-dark-primary-1'}>
                     {children}
                 </main>

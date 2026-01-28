@@ -23,7 +23,8 @@ export default function SidebarProvider({
 }: {
     children: React.ReactNode;
 }) {
-    const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+    const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
+
     return (
         <SidebarCollapseContext.Provider
             value={{ isSidebarOpen, setIsSidebarOpen }}

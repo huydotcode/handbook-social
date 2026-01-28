@@ -1,5 +1,5 @@
 import { Sidebar } from '@/features/message';
-import MainSidebar from '@/shared/components/layout/sidebar/MainSidebar';
+import BaseSidebar from '@/shared/components/layout/BaseSidebar';
 import React from 'react';
 interface Props {
     children: React.ReactNode;
@@ -15,11 +15,9 @@ const MessageLayout: React.FC<Props> = ({ children }) => {
     return (
         <div className="relative h-screen w-full overflow-hidden">
             <div className="relative top-[60px]">
-                <MainSidebar showOnlyMobile />
-
                 <Sidebar />
 
-                <div className="relative my-1 ml-[310px] h-[calc(100vh-72px)] overflow-hidden rounded-xl lg:ml-[90px] sm:ml-0">
+                <div className="relative my-1 ml-[310px] h-[calc(100vh-72px)] overflow-hidden rounded-xl lg:ml-0">
                     {children}
                 </div>
             </div>

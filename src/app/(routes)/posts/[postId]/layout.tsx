@@ -1,5 +1,6 @@
 'use client';
-import { FriendSection, Sidebar } from '@/shared/components/layout';
+import { FriendSection } from '@/shared/components/layout';
+import MainSidebar from '@/shared/components/layout/sidebar/MainSidebar';
 import React from 'react';
 
 interface Props {
@@ -9,8 +10,10 @@ interface Props {
 const PostLayout: React.FC<Props> = ({ children }) => {
     return (
         <div>
-            <Sidebar />
+            <MainSidebar />
+
             {children}
+
             <FriendSection />
         </div>
     );

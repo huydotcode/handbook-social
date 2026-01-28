@@ -2,7 +2,6 @@
 import React from 'react';
 import { InfinityPostComponent } from '@/features/post';
 import { useSearchParams } from 'next/navigation';
-import PageTitle from '@/shared/components/layout/PageTitle';
 
 const FeedsPage = () => {
     const searchParams = useSearchParams();
@@ -14,18 +13,8 @@ const FeedsPage = () => {
               ? 'new-feed-group'
               : 'new-feed';
 
-    function getTitle() {
-        if (filter === 'friend') {
-            return 'Bạn bè';
-        } else if (filter === 'group') {
-            return 'Nhóm';
-        }
-        return 'Khám phá';
-    }
-
     return (
-        <div className="content-width mx-auto">
-            <PageTitle title={getTitle()} />
+        <div className={'mx-auto w-[600px] max-w-screen md:w-full'}>
             <InfinityPostComponent showCreatePost={false} type={type} />
         </div>
     );

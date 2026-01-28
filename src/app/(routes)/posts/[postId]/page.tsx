@@ -33,14 +33,14 @@ const PostPage: React.FC<Props> = ({ params }) => {
 
     if (!post) {
         return (
-            <div className="mx-auto mt-[64px] w-[800px] max-w-screen">
+            <div className="mx-auto mt-[64px] w-[800px] xl:max-w-screen">
                 <h1>Bài viết không tồn tại</h1>
             </div>
         );
     }
 
     return (
-        <div className="mx-auto mt-[64px] w-[600px] xl:w-[550px] md:w-full">
+        <div className="mx-auto mt-[64px] w-[600px] xl:w-full">
             <h1 className="mb-4 text-2xl font-bold text-gray-800 dark:text-gray-200">
                 Bài viết của {post?.author.name}
             </h1>

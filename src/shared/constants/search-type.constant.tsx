@@ -4,16 +4,16 @@ export const searchType = [
     {
         name: 'users',
         label: 'Người dùng',
-        icon: Icons.Users,
+        icon: <Icons.Users className="h-8 w-8" />,
     },
     {
         name: 'groups',
         label: 'Nhóm',
-        icon: Icons.Group,
+        icon: <Icons.Group className="h-8 w-8" />,
     },
     {
         name: 'posts',
         label: 'Bài viết',
-        icon: Icons.Posts,
+        icon: <Icons.Posts className="h-8 w-8" />,
     },
 ];

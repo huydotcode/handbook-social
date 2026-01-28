@@ -1,6 +1,7 @@
 import ProfileService from '@/features/user/services/profile.service';
 import { notFound } from 'next/navigation';
 import { Header } from '../_components';
+import MainSidebar from '@/shared/components/layout/sidebar/MainSidebar';
 
 interface Props {
     params: Promise<{ userId: string }>;
@@ -29,6 +30,8 @@ const ProfileLayout = async ({ params, children }: Props) => {
     return (
         <div className={'mx-auto w-container max-w-screen'}>
             <div className="w-full pb-96">
+                <MainSidebar showOnlyMobile />
+
                 <div className="h-full w-full">
                     <Header profile={profile} />
                     <div className="mt-4">{children}</div>

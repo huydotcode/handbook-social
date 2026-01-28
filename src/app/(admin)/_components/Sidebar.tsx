@@ -5,6 +5,9 @@ import { cn } from '@/lib/utils';
 import { navAdmin } from '@/shared/constants';
 import { usePathname, useRouter } from 'next/navigation';
 import React from 'react';
+import SidebarCollapse from '@/shared/components/layout/sidebar/SidebarCollapse';
+import SidebarTitle from '@/shared/components/layout/sidebar/SidebarTitle';
+import SidebarList from '@/shared/components/layout/sidebar/SidebarList';
 
 const Sidebar: React.FC = () => {
     const { user } = useAuth();
@@ -15,12 +18,10 @@ const Sidebar: React.FC = () => {
 
     return (
         <>
-            <aside className="fixed left-0 top-[56px] flex h-screen w-[300px] flex-col border-r bg-secondary-1 p-2 dark:bg-dark-secondary-1 xl:w-[80px]">
-                <div className="flex w-full items-center justify-center border-b p-4 xl:hidden">
-                    <h1>Xin chào, {user?.name || 'Admin'}</h1>
-                </div>
+            <SidebarCollapse>
+                <SidebarTitle title={`Xin chào, ${user?.name || 'Admin'}`} />
 
-                <div className="mt-2 flex flex-col">
+                <SidebarList>
                     {navAdmin.map((item, index) => {
                         const isActived =
                             path === item.path ||
@@ -114,9 +115,8 @@ const Sidebar: React.FC = () => {
                             </div>
                         );
                     })}
-                </div>
-            </aside>
-            {/* <aside className="fixed left-0 top-[56px] h-screen bg-secondary-1"></aside> */}
+                </SidebarList>
+            </SidebarCollapse>
         </>
     );
 };

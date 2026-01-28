@@ -1,11 +1,13 @@
 'use client';
+import { useAuth } from '@/core/context';
+import GroupService from '@/features/group/services/group.service';
+import queryKey from '@/lib/react-query/query-key';
 import SidebarCollapse from '@/shared/components/layout/sidebar/SidebarCollapse';
+import SidebarSubtitle from '@/shared/components/layout/sidebar/SidebarSubtitle';
+import SidebarTitle from '@/shared/components/layout/sidebar/SidebarTitle';
 import { Items } from '@/shared/components/shared';
 import { Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import { useAuth } from '@/core/context';
-import queryKey from '@/lib/react-query/query-key';
-import GroupService from '@/features/group/services/group.service';
 import { IGroup } from '@/types/entites';
 import { useInfiniteQuery } from '@tanstack/react-query';
 import React from 'react';
@@ -42,7 +44,7 @@ const Sidebar: React.FC<Props> = () => {
     return (
         <>
             <SidebarCollapse>
-                <h1 className="text-2xl font-bold">Nhóm</h1>
+                <SidebarTitle title="Nhóm" href="/groups" />
 
                 <Button
                     className="my-2 w-full"
@@ -53,17 +55,15 @@ const Sidebar: React.FC<Props> = () => {
                     Tạo nhóm mới
                 </Button>
 
-                <div>
-                    <h5 className="font-semibold">Nhóm của bạn</h5>
+                <SidebarSubtitle title="Nhóm của bạn" />
 
-                    {isLoading && <Loading text={'Đang tải nhóm của bạn'} />}
+                {isLoading && <Loading text={'Đang tải nhóm của bạn'} />}
 
-                    {groups &&
-                        groups.length > 0 &&
-                        groups.map((group) => (
-                            <Items.Group data={group} key={group._id} />
-                        ))}
-                </div>
+                {groups &&
+                    groups.length > 0 &&
+                    groups.map((group) => (
+                        <Items.Group data={group} key={group._id} />
+                    ))}
             </SidebarCollapse>
         </>
     );
