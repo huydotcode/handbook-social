@@ -1,5 +1,4 @@
 import { Sidebar } from '@/features/message';
-import BaseSidebar from '@/shared/components/layout/BaseSidebar';
 import React from 'react';
 interface Props {
     children: React.ReactNode;
