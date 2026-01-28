@@ -129,7 +129,7 @@ const ChatWithAI = () => {
 
                                     <div className="flex flex-col">
                                         <h3 className="ml-2 text-sm">
-                                            Trò chuyện cùng Handbook AI
+                                            Trò chuyện cùng Handbook AI (Beta)
                                         </h3>
                                     </div>
                                 </div>
