@@ -1,5 +1,5 @@
 'use client';
-import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
+import SidebarCollapse from '@/shared/components/layout/sidebar/SidebarCollapse';
 import { Items } from '@/shared/components/shared';
 import { Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';

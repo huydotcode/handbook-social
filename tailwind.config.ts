@@ -112,6 +112,9 @@ module.exports = {
             maxWidth: {
                 screen: '100vw',
             },
+            height: {
+                navbar: 'var(--navbar-height)',
+            },
         },
         screens: {
             '2xl': {

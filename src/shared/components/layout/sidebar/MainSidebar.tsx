@@ -11,14 +11,13 @@ interface MainSidebarProps {
 
 const MainSidebar = ({ showOnlyMobile = false }: MainSidebarProps) => {
     return (
-        <SidebarCollapse showOnlyMobile={showOnlyMobile}>
-            <SidebarUser />
-            <SidebarList>
-                {navLink.map((link) => (
-                    <SidebarItem key={link.name} link={link} />
-                ))}
-            </SidebarList>
-        </SidebarCollapse>
+        <SidebarCollapse
+            width={'responsive'}
+            showOnlyMobile={showOnlyMobile}
+            desktop={'visible'}
+            mobile={'closed'}
+            type="main"
+        />
     );
 };
 

@@ -1,10 +1,10 @@
 'use client';
-import React from 'react';
+import SidebarCollapse from '@/shared/components/layout/sidebar/SidebarCollapse';
+import SidebarItem from '@/shared/components/layout/sidebar/SidebarItem';
+import SidebarList from '@/shared/components/layout/sidebar/SidebarList';
+import SidebarTitle from '@/shared/components/layout/sidebar/SidebarTitle';
 import { Icons } from '@/shared/components/ui';
-import { Button } from '@/shared/components/ui/Button';
 import { usePathname, useSearchParams } from 'next/navigation';
-import { cn } from '@/lib/utils';
-import SidebarCollapse from '@/shared/components/layout/SidebarCollapse';
 
 const sidebarItems = [
     {
@@ -25,52 +25,22 @@ const sidebarItems = [
 ];
 
 const Sidebar = () => {
-    const path = usePathname();
-    const searchParams = useSearchParams();
-    const filter = searchParams.get('filter');
-
     return (
-        <SidebarCollapse>
-            <div className="px-x w-full py-1">
-                <h1 className="text-2xl font-bold">News Feed</h1>
+        <SidebarCollapse width={'responsive'}>
+            <SidebarTitle title="News Feed" href="/news-feed" />
 
-                <div className="flex w-full flex-col gap-1">
-                    {sidebarItems.map((item) => {
-                        const Icon = () => {
-                            return item.icon;
-                        };
-
-                        const isActive = filter
-                            ? path === item.link.split('?')[0] &&
-                              filter === item.link.split('=')[1]
-                            : path === item.link;
-
-                        return (
-                            <Button
-                                key={item.name}
-                                variant="ghost"
-                                className={cn(
-                                    'w-full justify-start rounded-xl py-6 text-base font-normal',
-                                    {
-                                        'bg-primary-1 text-primary-2 dark:bg-dark-primary-1':
-                                            isActive,
-                                    }
-                                )}
-                                href={item.link}
-                            >
-                                <div className="flex items-center gap-2">
-                                    <span className="text-xl">
-                                        <Icon />
-                                    </span>
-                                    <span className="ml-2 text-sm">
-                                        {item.name}
-                                    </span>
-                                </div>
-                            </Button>
-                        );
-                    })}
-                </div>
-            </div>
+            <SidebarList>
+                {sidebarItems.map((item) => (
+                    <SidebarItem
+                        key={item.name}
+                        link={{
+                            icon: item.icon,
+                            name: item.name,
+                            path: item.link,
+                        }}
+                    />
+                ))}
+            </SidebarList>
         </SidebarCollapse>
     );
 };
