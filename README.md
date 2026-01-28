@@ -4,7 +4,7 @@ Handbook là một nền tảng mạng xã hội hiện đại được xây d�
 
 ## 🚀 Demo
 
-👉 [Link Demo](https://handbookk.vercel.app/)
+👉 [Link Truy cập](https://handbook-social.me/)
 
 ---
 
