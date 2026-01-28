@@ -45,30 +45,7 @@
 
     // Width
     --container-width: 1150px;
-
-    --sidebar-width: 300px;
-    --sidebar-width-sm: 300px;
-    --sidebar-width-md: 300px;
-    --sidebar-width-lg: 200px;
-    --sidebar-width-xl: 220px;
-    --sidebar-width-2xl: 260px;
-    --sidebar-width-full: 100%;
-    --sidebar-width-responsive: 300px;
-
-    --content-container-width: calc(100vw - var(--sidebar-width));
-    --content-container-xl-width: calc(100vw - var(--sidebar-width-xl));
-    --content-container-lg-width: calc(100vw - var(--sidebar-width-lg));
-    --content-container-md-width: calc(100vw - var(--sidebar-width-md));
-
-    --content-width: 600px;
-    --content-xl-width: 550px;
-    --content-lg-width: 500px;
-    --content-md-width: 100%;
-
-    // Height
-    --navbar-height: 56px;
-
-    // Color
+    //
     --background: 0 0% 100%;
     --foreground: 0 0% 3.9%;
     --card: 0 0% 100%;
