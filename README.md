@@ -1,10 +1,14 @@
-# 🌐 Handbook - Mạng Xã Hội Thế Hệ Mới
+# Handbook - Mạng Xã Hội Việt Nam
 
 Handbook là một nền tảng mạng xã hội hiện đại được xây dựng bằng **Next.js**, cung cấp trải nghiệm người dùng mượt mà và đầy đủ tính năng như đăng bài, kết bạn, trò chuyện, nhóm, và marketplace buôn bán.
 
 ## 🚀 Demo
 
-👉 [Link Demo](https://handbookk.vercel.app/)
+👉 [Link Truy cập](https://handbook-social.me/)
+
+## Tài khoản dùng thử
+- Tên đăng nhập: testuser1
+- Mật khẩu: 123456
 
 ---
 
