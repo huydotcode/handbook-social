@@ -6,6 +6,10 @@ Handbook là một nền tảng mạng xã hội hiện đại được xây d�
 
 👉 [Link Truy cập](https://handbook-social.me/)
 
+## Tài khoản dùng thử
+- Tên đăng nhập: testuser1
+- Mật khẩu: 123456
+
 ---
 
 ## 🎯 Tính năng chính
