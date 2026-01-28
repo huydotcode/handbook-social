@@ -233,7 +233,7 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
                         href={`/messages/${conversationId}`}
                     >
                         <Icons.Message className="text-3xl" />
-                        <p className="ml-2 text-sm text-primary-1">
+                        <p className="ml-2 text-sm">
                             Tin nhắn mới từ{' '}
                             <span className="font-semibold">
                                 {message.conversation?.group
