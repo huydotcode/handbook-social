@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
 import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
+import { AxiosError } from 'axios';
 import DOMPurify from 'isomorphic-dompurify';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
@@ -75,14 +76,14 @@ const ChatWithAI = () => {
         } catch (error: any) {
             setMessages((prev) => [
                 {
-                    text: 'Có lỗi khi gửi tin nhắn, vui lòng thử lại sau',
+                    text:
+                        error?.response?.data?.message ||
+                        'Có lỗi khi gửi tin nhắn, vui lòng thử lại sau',
                     isAI: true,
                     createAt: new Date(),
                 },
                 ...prev,
             ]);
-            console.error(error);
-            toast.error('Có lỗi khi gửi tin nhắn, vui lòng thử lại sau');
         }
     }
 
