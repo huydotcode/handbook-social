@@ -129,7 +129,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                     <TooltipTrigger asChild>
                         <Button
                             className={cn(
-                                'relative m-0 flex w-full justify-between px-2 shadow-none lg:justify-center',
+                                'relative m-0 flex w-full justify-between px-2 shadow-none',
                                 isSelect && 'bg-primary-1'
                             )}
                             onClick={() => {
@@ -157,7 +157,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                     )}
                                 </div>
                                 {partner && (
-                                    <span className="absolute -right-1 bottom-0 ml-2 text-xs lg:right-4">
+                                    <span className="absolute -right-1 bottom-0 ml-2 text-xs">
                                         <Icons.Circle
                                             className={`${partner?.isOnline ? 'text-primary-2' : 'text-secondary-1'}`}
                                         />
@@ -165,7 +165,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                 )}
                             </div>
 
-                            <div className="flex flex-1 flex-col lg:hidden sm:flex">
+                            <div className="flex flex-1 flex-col">
                                 <div className="flex items-center justify-between">
                                     <h3 className="ml-2 whitespace-nowrap text-sm font-bold text-primary-1 dark:text-dark-primary-1">
                                         {title}
@@ -259,7 +259,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                 </Tooltip>
             </TooltipProvider>
 
-            <div className="absolute right-6 top-1/2 z-50 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100 lg:hidden">
+            <div className="absolute right-6 top-1/2 z-50 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100">
                 <Popover>
                     <PopoverTrigger asChild>
                         <Button
