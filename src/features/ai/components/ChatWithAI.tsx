@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
 import { Avatar, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
+import DOMPurify from 'isomorphic-dompurify';
 import Image from 'next/image';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -58,7 +59,8 @@ const ChatWithAI = () => {
 
             const response = await sendMessageMutation({ message: text });
             const textAI =
-                response.response || 'Không có phản hồi từ Handbook AI';
+                response.response?.replace(/\*/g, '') ||
+                'Không có phản hồi từ Handbook AI';
 
             setMessages((prev) => [
                 {
@@ -71,6 +73,14 @@ const ChatWithAI = () => {
 
             reset();
         } catch (error: any) {
+            setMessages((prev) => [
+                {
+                    text: 'Có lỗi khi gửi tin nhắn, vui lòng thử lại sau',
+                    isAI: true,
+                    createAt: new Date(),
+                },
+                ...prev,
+            ]);
             console.error(error);
             toast.error('Có lỗi khi gửi tin nhắn, vui lòng thử lại sau');
         }
@@ -83,7 +93,7 @@ const ChatWithAI = () => {
     }, [messages]);
 
     return (
-        <div className="fixed bottom-3 right-3 z-10 w-fit md:hidden">
+        <div className="fixed bottom-3 right-3 z-20 w-fit md:hidden">
             {!openChat && (
                 <Button
                     onClick={() => setOpenChat((prev) => !prev)}
@@ -164,7 +174,7 @@ const ChatWithAI = () => {
                                     >
                                         <div
                                             className={cn(
-                                                'flex max-w-[70%] items-center rounded-lg px-2 py-1',
+                                                'flex max-w-[70%] items-center whitespace-pre-wrap rounded-lg px-2 py-1 text-sm',
                                                 {
                                                     'bg-primary-1 dark:bg-dark-secondary-2':
                                                         msg.isAI,
@@ -172,11 +182,12 @@ const ChatWithAI = () => {
                                                         !msg.isAI,
                                                 }
                                             )}
-                                        >
-                                            <p className={'text-sm'}>
-                                                {msg.text}
-                                            </p>
-                                        </div>
+                                            dangerouslySetInnerHTML={{
+                                                __html: DOMPurify.sanitize(
+                                                    msg.text
+                                                ),
+                                            }}
+                                        />
                                     </div>
                                 ))}
 
