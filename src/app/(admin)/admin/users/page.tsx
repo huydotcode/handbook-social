@@ -86,130 +86,131 @@ const AdminUsersPage = () => {
                 onReset={handleReset}
             />
 
-            <div className="min-h-[500px]">
-                <Table>
-                    <TableHeader>
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="min-w-[50px]">Avatar</TableHead>
+                        <TableHead className="min-w-[120px]">Tên</TableHead>
+                        <TableHead className="min-w-[100px]">
+                            Username
+                        </TableHead>
+                        <TableHead className="min-w-[180px]">Email</TableHead>
+                        <TableHead className="min-w-[80px]">Vai trò</TableHead>
+                        <TableHead className="min-w-[150px]">
+                            Trạng thái
+                        </TableHead>
+                        <TableHead className="min-w-[120px]">
+                            Ngày tham gia
+                        </TableHead>
+                        <TableHead className="min-w-[150px]">
+                            Truy cập cuối
+                        </TableHead>
+                        <TableHead className="min-w-[80px] text-right">
+                            Hành động
+                        </TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {isLoading ? (
                         <TableRow>
-                            <TableHead>User</TableHead>
-                            <TableHead>Trạng thái</TableHead>
-                            <TableHead>Thống kê</TableHead>
-                            <TableHead>Thông tin</TableHead>
-                            <TableHead className="text-right">
-                                Hành động
-                            </TableHead>
+                            <TableCell colSpan={9} className="text-center">
+                                <Loading text="Đang tải" />
+                            </TableCell>
                         </TableRow>
-                    </TableHeader>
-                    <TableBody>
-                        {isLoading ? (
-                            <TableRow>
-                                <TableCell colSpan={5} className="text-center">
-                                    <Loading text="Đang tải" />
+                    ) : (
+                        users &&
+                        users.map((user) => (
+                            <TableRow key={user._id}>
+                                <TableCell>
+                                    <Avatar
+                                        width={36}
+                                        height={36}
+                                        imgSrc={user.avatar}
+                                        alt={user.name}
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <span className="text-sm font-medium">
+                                        {user.name}
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <span className="text-sm text-muted-foreground">
+                                        {user.username}
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <span className="text-sm text-muted-foreground">
+                                        {user.email}
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <Badge className="w-fit capitalize">
+                                        {user.role}
+                                    </Badge>
+                                </TableCell>
+                                <TableCell>
+                                    <div className="flex flex-wrap gap-1">
+                                        {user.isOnline ? (
+                                            <Badge
+                                                variant="success"
+                                                className="text-xs"
+                                            >
+                                                Online
+                                            </Badge>
+                                        ) : (
+                                            <Badge
+                                                variant="outline"
+                                                className="text-xs text-muted-foreground"
+                                            >
+                                                Offline
+                                            </Badge>
+                                        )}
+                                        {user.isBlocked && (
+                                            <Badge
+                                                variant="destructive"
+                                                className="text-xs"
+                                            >
+                                                Blocked
+                                            </Badge>
+                                        )}
+                                        {user.isVerified && (
+                                            <Badge
+                                                variant="success"
+                                                className="text-xs"
+                                            >
+                                                Verified
+                                            </Badge>
+                                        )}
+                                    </div>
+                                </TableCell>
+
+                                <TableCell>
+                                    <span className="text-sm text-muted-foreground">
+                                        {FormatDate.formatISODateToDate(
+                                            user.createdAt
+                                        )}
+                                    </span>
+                                </TableCell>
+                                <TableCell>
+                                    <span className="text-sm text-muted-foreground">
+                                        {user.lastAccessed
+                                            ? FormatDate.formatISODateToDateTime(
+                                                  user.lastAccessed
+                                              )
+                                            : 'N/A'}
+                                    </span>
+                                </TableCell>
+                                <TableCell className="text-right">
+                                    <UserActionMenu user={user} />
                                 </TableCell>
                             </TableRow>
-                        ) : (
-                            users &&
-                            users.map((user) => (
-                                <TableRow key={user._id}>
-                                    <TableCell>
-                                        <div className="flex items-center gap-2">
-                                            <Avatar
-                                                width={36}
-                                                height={36}
-                                                imgSrc={user.avatar}
-                                                alt={user.name}
-                                            />
-                                            <div className="flex flex-col">
-                                                <span className="text-sm font-medium">
-                                                    {user.name}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {user.username}
-                                                </span>
-                                                <span className="text-xs text-muted-foreground">
-                                                    {user.email}
-                                                </span>
-                                            </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col gap-1">
-                                            <Badge
-                                                variant={'secondary'}
-                                                className="w-fit"
-                                            >
-                                                {user.role}
-                                            </Badge>
-                                            <div className="flex gap-1">
-                                                {user.isOnline ? (
-                                                    <Badge
-                                                        variant="success"
-                                                        className="h-4 w-fit px-1 py-0 text-[10px]"
-                                                    >
-                                                        Online
-                                                    </Badge>
-                                                ) : (
-                                                    <Badge
-                                                        variant="outline"
-                                                        className="h-4 w-fit px-1 py-0 text-[10px] text-muted-foreground"
-                                                    >
-                                                        Offline
-                                                    </Badge>
-                                                )}
-                                                {user.isBlocked && (
-                                                    <Badge
-                                                        variant="destructive"
-                                                        className="h-4 w-fit px-1 py-0 text-[10px]"
-                                                    >
-                                                        Blocked
-                                                    </Badge>
-                                                )}
-                                                {user.isVerified && (
-                                                    <Badge
-                                                        variant="default"
-                                                        className="bg-blue-500 hover:bg-blue-600 h-4 w-fit px-1 py-0 text-[10px]"
-                                                    >
-                                                        Verified
-                                                    </Badge>
-                                                )}
-                                            </div>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col text-xs text-muted-foreground">
-                                            <span>
-                                                {user.followersCount} Followers
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell>
-                                        <div className="flex flex-col text-xs text-muted-foreground">
-                                            <span>
-                                                JoinedAt:{' '}
-                                                {FormatDate.formatISODateToDate(
-                                                    user.createdAt
-                                                )}
-                                            </span>
-                                            <span>
-                                                LastAccessed:{' '}
-                                                {user.lastAccessed
-                                                    ? FormatDate.formatISODateToDateTime(
-                                                          user.lastAccessed
-                                                      )
-                                                    : 'N/A'}
-                                            </span>
-                                        </div>
-                                    </TableCell>
-                                    <TableCell className="text-right">
-                                        <UserActionMenu user={user} />
-                                    </TableCell>
-                                </TableRow>
-                            ))
-                        )}
-                    </TableBody>
-                </Table>
-            </div>
+                        ))
+                    )}
+                </TableBody>
+            </Table>
 
-            <div className="mt-4 flex justify-end">
+            <div className="mt-2 flex">
                 {meta && (
                     <PaginationWithLinks
                         page={page}

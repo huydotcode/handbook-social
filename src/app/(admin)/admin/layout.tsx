@@ -35,10 +35,10 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
         <div>
             <Navbar />
 
-            <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] w-full max-w-[calc(100vw-340px)] overflow-x-scroll lg:ml-0 lg:max-w-full">
-                <Sidebar />
+            <Sidebar />
 
-                <div className="mx-4 mt-4 w-full pb-[100px]">{children}</div>
+            <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] px-4 lg:ml-0 md:px-2">
+                {children}
             </main>
         </div>
     );

@@ -3,13 +3,13 @@
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { Input } from '@/shared/components/ui/Input';
+import { Label } from '@/shared/components/ui/label';
 import {
-    Select,
-    SelectContent,
-    SelectItem,
-    SelectTrigger,
-    SelectValue,
-} from '@/shared/components/ui/select';
+    Popover,
+    PopoverContent,
+    PopoverTrigger,
+} from '@/shared/components/ui/Popover';
+import { RadioGroup, RadioGroupItem } from '@/shared/components/ui/radio-group';
 
 interface UserTableToolbarProps {
     search: string;
@@ -38,78 +38,285 @@ export const UserTableToolbar = ({
     onOrderChange,
     onReset,
 }: UserTableToolbarProps) => {
+    // Đếm số filter đang active
+    const activeFilterCount = [role !== 'all', status !== 'all'].filter(
+        Boolean
+    ).length;
+
+    const hasActiveFilters =
+        search || role !== 'all' || status !== 'all' || sortBy !== 'createdAt';
+
     return (
         <div className="mb-4 flex items-center justify-between gap-2">
             <div className="flex flex-1 flex-wrap items-center gap-2">
+                {/* Search Input */}
                 <Input
                     placeholder="Tìm kiếm người dùng..."
                     value={search}
                     onChange={(e) => onSearchChange(e.target.value)}
-                    className="h-9 w-[500px] bg-secondary-1 md:w-full"
+                    className="h-9 w-[300px] bg-secondary-1 md:w-full"
                 />
 
-                <Select value={role} onValueChange={onRoleChange}>
-                    <SelectTrigger className="h-9 w-[150px] md:w-full">
-                        <SelectValue placeholder="Vai trò" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Tất cả vai trò</SelectItem>
-                        <SelectItem value="admin">Admin</SelectItem>
-                        <SelectItem value="user">User</SelectItem>
-                    </SelectContent>
-                </Select>
+                <div className="flex items-center gap-2">
+                    {/* Filter Button with Popover */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="h-9 gap-2 rounded-md"
+                            >
+                                <Icons.Filter className="h-4 w-4" />
+                                <span className="text-sm md:hidden">
+                                    Bộ lọc
+                                </span>
+                                {activeFilterCount > 0 && (
+                                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-primary-2 text-xs text-white">
+                                        {activeFilterCount}
+                                    </span>
+                                )}
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[280px] p-4" align="start">
+                            <div className="space-y-4">
+                                {/* Role Filter */}
+                                <div>
+                                    <h4 className="mb-3 text-sm font-medium">
+                                        Vai trò
+                                    </h4>
 
-                <Select value={status} onValueChange={onStatusChange}>
-                    <SelectTrigger className="h-9 w-[200px] md:w-full">
-                        <SelectValue placeholder="Trạng thái" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="all">Tất cả trạng thái</SelectItem>
-                        <SelectItem value="verified">Đã xác thực</SelectItem>
-                        <SelectItem value="unverified">
-                            Chưa xác thực
-                        </SelectItem>
-                        <SelectItem value="blocked">Đang bị khóa</SelectItem>
-                    </SelectContent>
-                </Select>
+                                    <RadioGroup
+                                        value={role}
+                                        onValueChange={onRoleChange}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="all"
+                                                id="role-all"
+                                            />
+                                            <Label
+                                                htmlFor="role-all"
+                                                className="cursor-pointer"
+                                            >
+                                                Tất cả
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="admin"
+                                                id="role-admin"
+                                            />
+                                            <Label
+                                                htmlFor="role-admin"
+                                                className="cursor-pointer"
+                                            >
+                                                Admin
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="user"
+                                                id="role-user"
+                                            />
+                                            <Label
+                                                htmlFor="role-user"
+                                                className="cursor-pointer"
+                                            >
+                                                User
+                                            </Label>
+                                        </div>
+                                    </RadioGroup>
+                                </div>
 
-                <Select
-                    value={`${sortBy}-${order}`}
-                    onValueChange={(value) => {
-                        const [newSortBy, newOrder] = value.split('-');
-                        onSortChange(newSortBy);
-                        onOrderChange(newOrder as 'asc' | 'desc');
-                    }}
-                >
-                    <SelectTrigger className="h-9 w-[250px] md:w-full">
-                        <SelectValue placeholder="Sắp xếp" />
-                    </SelectTrigger>
-                    <SelectContent>
-                        <SelectItem value="createdAt-desc">Mới nhất</SelectItem>
-                        <SelectItem value="createdAt-asc">Cũ nhất</SelectItem>
-                        <SelectItem value="name-asc">Tên (A-Z)</SelectItem>
-                        <SelectItem value="name-desc">Tên (Z-A)</SelectItem>
-                        <SelectItem value="followersCount-desc">
-                            Followers (Cao nhất)
-                        </SelectItem>
-                        <SelectItem value="followersCount-asc">
-                            Followers (Thấp nhất)
-                        </SelectItem>
-                        <SelectItem value="lastAccessed-desc">
-                            Truy cập gần đây
-                        </SelectItem>
-                        <SelectItem value="lastAccessed-asc">
-                            Truy cập lâu nhất
-                        </SelectItem>
-                    </SelectContent>
-                </Select>
+                                {/* Status Filter */}
+                                <div>
+                                    <h4 className="mb-3 text-sm font-medium">
+                                        Trạng thái
+                                    </h4>
+                                    <RadioGroup
+                                        value={status}
+                                        onValueChange={onStatusChange}
+                                    >
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="all"
+                                                id="status-all"
+                                            />
+                                            <Label
+                                                htmlFor="status-all"
+                                                className="cursor-pointer"
+                                            >
+                                                Tất cả
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="verified"
+                                                id="status-verified"
+                                            />
+                                            <Label
+                                                htmlFor="status-verified"
+                                                className="cursor-pointer"
+                                            >
+                                                Đã xác thực
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="unverified"
+                                                id="status-unverified"
+                                            />
+                                            <Label
+                                                htmlFor="status-unverified"
+                                                className="cursor-pointer"
+                                            >
+                                                Chưa xác thực
+                                            </Label>
+                                        </div>
+                                        <div className="flex items-center space-x-2">
+                                            <RadioGroupItem
+                                                value="blocked"
+                                                id="status-blocked"
+                                            />
+                                            <Label
+                                                htmlFor="status-blocked"
+                                                className="cursor-pointer"
+                                            >
+                                                Đang bị khóa
+                                            </Label>
+                                        </div>
+                                    </RadioGroup>
+                                </div>
 
-                {(search ||
-                    role !== 'all' ||
-                    status !== 'all' ||
-                    sortBy !== 'createdAt') && (
-                    <Button onClick={onReset}>
-                        <Icons.Close />
+                                {/* Reset Filters */}
+                                {(role !== 'all' || status !== 'all') && (
+                                    <Button
+                                        variant="outline"
+                                        size="sm"
+                                        className="w-full"
+                                        onClick={() => {
+                                            onRoleChange('all');
+                                            onStatusChange('all');
+                                        }}
+                                    >
+                                        Xóa bộ lọc
+                                    </Button>
+                                )}
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+
+                    {/* Sort Button with Popover */}
+                    <Popover>
+                        <PopoverTrigger asChild>
+                            <Button
+                                variant="outline"
+                                className="h-9 gap-2 rounded-md"
+                            >
+                                <Icons.ArrowUpDown className="h-4 w-4" />
+                                <span className="text-sm md:hidden">
+                                    Sắp xếp
+                                </span>
+                            </Button>
+                        </PopoverTrigger>
+                        <PopoverContent className="w-[220px] p-4" align="start">
+                            <div className="space-y-3">
+                                <h4 className="text-sm font-medium">
+                                    Sắp xếp theo
+                                </h4>
+                                <RadioGroup
+                                    value={`${sortBy}-${order}`}
+                                    onValueChange={(value) => {
+                                        const [newSortBy, newOrder] =
+                                            value.split('-');
+                                        onSortChange(newSortBy);
+                                        onOrderChange(
+                                            newOrder as 'asc' | 'desc'
+                                        );
+                                    }}
+                                >
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="createdAt-desc"
+                                            id="sort-newest"
+                                        />
+                                        <Label
+                                            htmlFor="sort-newest"
+                                            className="cursor-pointer"
+                                        >
+                                            Mới nhất
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="createdAt-asc"
+                                            id="sort-oldest"
+                                        />
+                                        <Label
+                                            htmlFor="sort-oldest"
+                                            className="cursor-pointer"
+                                        >
+                                            Cũ nhất
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="name-asc"
+                                            id="sort-name-asc"
+                                        />
+                                        <Label
+                                            htmlFor="sort-name-asc"
+                                            className="cursor-pointer"
+                                        >
+                                            Tên (A-Z)
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="name-desc"
+                                            id="sort-name-desc"
+                                        />
+                                        <Label
+                                            htmlFor="sort-name-desc"
+                                            className="cursor-pointer"
+                                        >
+                                            Tên (Z-A)
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="lastAccessed-desc"
+                                            id="sort-access-recent"
+                                        />
+                                        <Label
+                                            htmlFor="sort-access-recent"
+                                            className="cursor-pointer"
+                                        >
+                                            Truy cập gần đây
+                                        </Label>
+                                    </div>
+                                    <div className="flex items-center space-x-2">
+                                        <RadioGroupItem
+                                            value="lastAccessed-asc"
+                                            id="sort-access-old"
+                                        />
+                                        <Label
+                                            htmlFor="sort-access-old"
+                                            className="cursor-pointer"
+                                        >
+                                            Truy cập lâu nhất
+                                        </Label>
+                                    </div>
+                                </RadioGroup>
+                            </div>
+                        </PopoverContent>
+                    </Popover>
+                </div>
+
+                {/* Reset All Button */}
+                {hasActiveFilters && (
+                    <Button variant="outline" size="sm" onClick={onReset}>
+                        <Icons.Close className="h-4 w-4" />
+                        <span className="ml-1 md:hidden">Đặt lại</span>
                     </Button>
                 )}
             </div>
