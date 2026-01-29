@@ -94,7 +94,7 @@ const ChatWithAI = () => {
     }, [messages]);
 
     return (
-        <div className="fixed bottom-3 right-3 z-20 w-fit md:hidden">
+        <div className="fixed bottom-3 right-3 z-20 w-fit">
             {!openChat && (
                 <Button
                     onClick={() => setOpenChat((prev) => !prev)}
