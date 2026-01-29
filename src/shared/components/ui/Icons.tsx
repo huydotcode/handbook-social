@@ -91,6 +91,13 @@ import {
 import { TbBlockquote, TbClearFormatting } from 'react-icons/tb';
 import { TiTick } from 'react-icons/ti';
 import { VscClearAll, VscColorMode } from 'react-icons/vsc';
+import {
+    ArrowUpDown,
+    Ban,
+    LockOpen,
+    ShieldAlert,
+    ShieldCheck,
+} from 'lucide-react';
 
 export interface IconProps extends React.SVGAttributes<SVGElement> {
     children?: React.ReactNode;
@@ -301,6 +308,11 @@ const Icons = {
     Setting: (props: IconProps) => {
         return <CiSettings {...props} />;
     },
+    ArrowUpDown: (props: IconProps) => <ArrowUpDown {...props} />,
+    Ban: (props: IconProps) => <Ban {...props} />,
+    LockOpen: (props: IconProps) => <LockOpen {...props} />,
+    ShieldAlert: (props: IconProps) => <ShieldAlert {...props} />,
+    ShieldCheck: (props: IconProps) => <ShieldCheck {...props} />,
 };
 
 export const MenuBarEditorIcons = {
