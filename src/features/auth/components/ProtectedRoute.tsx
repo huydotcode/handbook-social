@@ -3,11 +3,14 @@ import { useAuth } from '@/core/context/AuthContext';
 import { useRouter } from 'next/navigation';
 import { useEffect, ReactNode } from 'react';
 import { Loading } from '@/shared/components/ui';
+import { BlockedPage } from './BlockedPage';
+import { ForbiddenPage } from './ForbiddenPage';
 
 interface ProtectedRouteProps {
     children: ReactNode;
     redirectTo?: string;
     requireAuth?: boolean;
+    requireRoles?: string[];
 }
 
 /**
@@ -18,8 +21,9 @@ export default function ProtectedRoute({
     children,
     redirectTo = '/auth/login',
     requireAuth = true,
+    requireRoles,
 }: ProtectedRouteProps) {
-    const { isAuthenticated, isLoading } = useAuth();
+    const { isAuthenticated, isLoading, user } = useAuth();
     const router = useRouter();
 
     useEffect(() => {
@@ -43,8 +47,19 @@ export default function ProtectedRoute({
         return null;
     }
 
+    // Don't render children if user is authenticated but not on auth page
     if (!requireAuth && isAuthenticated) {
         return null;
+    }
+
+    // Check user block status
+    if (requireAuth && isAuthenticated && user?.isBlocked) {
+        return <BlockedPage />;
+    }
+
+    // Check user role
+    if (requireRoles && !requireRoles.includes(user?.role || '')) {
+        return <ForbiddenPage />;
     }
 
     return <>{children}</>;
