@@ -85,6 +85,12 @@ const Loading: FC<Props> = ({
             )}
 
             {title && <p className="mt-2 text-lg">{title}</p>}
+
+            {fullScreen && (
+                <p className="text-md absolute bottom-8 font-medium text-muted-foreground/80">
+                    Được phát triển bởi Ngô Nhựt Huy
+                </p>
+            )}
         </div>
     );
 };
