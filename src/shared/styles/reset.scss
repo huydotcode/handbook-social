@@ -1,0 +1,67 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+
+    transition: background 0.5s ease;
+
+    &::-webkit-scrollbar {
+        width: 8px;
+        background-color: transparent;
+    }
+
+    /* Màu nền cho phần cuộn */
+    &::-webkit-scrollbar-track {
+        background-color: transparent;
+    }
+
+    /* Màu cho phần cuộn khi di chuột qua */
+    &::-webkit-scrollbar-thumb {
+        background-color: #bbb;
+        border-radius: 4px;
+    }
+
+    /* Màu cho phần cuộn khi được nhấn giữ */
+    &::-webkit-scrollbar-thumb:active {
+        background-color: #999;
+    }
+
+    /* Màu nền khi hover trên phần cuộn */
+    &::-webkit-scrollbar-thumb:hover {
+        background-color: #999;
+    }
+}
+
+body {
+    font-weight: normal;
+    line-height: 1.5;
+    overflow-x: hidden;
+    transition: background 0.5s ease;
+}
+
+a {
+    text-decoration: none;
+    color: black;
+}
+
+ul,
+ol,
+dl {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+p {
+    margin: 0;
+}
+
+input,
+button {
+    outline: none;
+}
