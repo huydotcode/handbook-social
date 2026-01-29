@@ -37,7 +37,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
 
             <Sidebar />
 
-            <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] px-4 lg:ml-0 md:px-2">
+            <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] px-4 pb-10 lg:ml-0 md:px-2">
                 {children}
             </main>
         </div>
