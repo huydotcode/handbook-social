@@ -51,6 +51,7 @@ export interface LoginResponse {
         avatar: string;
         role: string;
         username: string;
+        isBlocked?: boolean;
     };
 }
 

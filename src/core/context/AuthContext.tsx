@@ -18,7 +18,7 @@ interface User {
     username?: string;
     avatar?: string;
     role?: string;
-    isBlocked: boolean;
+    isBlocked?: boolean;
 }
 
 interface AuthContextType {
