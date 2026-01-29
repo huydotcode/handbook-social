@@ -1,10 +1,8 @@
 'use client';
-import { useAuth } from '@/core/context/AuthContext';
+import { ProtectedRoute } from '@/features/auth';
 import { Navbar } from '@/shared/components/layout';
-import { Loading } from '@/shared/components/ui';
 import { USER_ROLES } from '@/types/entites';
-import { useRouter } from 'next/navigation';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { Sidebar } from '../_components';
 
 interface Props {
@@ -12,27 +10,8 @@ interface Props {
 }
 
 const AdminLayout: React.FC<Props> = ({ children }) => {
-    const { user, isLoading } = useAuth();
-    const router = useRouter();
-
-    useEffect(() => {
-        if (!isLoading && (!user || user.role !== USER_ROLES.ADMIN)) {
-            router.push('/');
-        }
-    }, [user, isLoading, router]);
-
-    if (isLoading) {
-        return (
-            <Loading fullScreen overlay={false} showLogo showLoader={false} />
-        );
-    }
-
-    if (!user || user.role !== USER_ROLES.ADMIN) {
-        return null;
-    }
-
     return (
-        <div>
+        <ProtectedRoute requireRoles={[USER_ROLES.ADMIN]}>
             <Navbar />
 
             <Sidebar />
@@ -40,7 +19,7 @@ const AdminLayout: React.FC<Props> = ({ children }) => {
             <main className="relative top-[56px] ml-[300px] min-h-[calc(100vh-56px)] px-4 pb-10 lg:ml-0 md:px-2">
                 {children}
             </main>
-        </div>
+        </ProtectedRoute>
     );
 };
 

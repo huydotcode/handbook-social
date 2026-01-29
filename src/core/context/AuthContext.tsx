@@ -18,6 +18,7 @@ interface User {
     username?: string;
     avatar?: string;
     role?: string;
+    isBlocked: boolean;
 }
 
 interface AuthContextType {
@@ -67,6 +68,7 @@ function decodeToken(token: string): User | null {
             username: decoded.username || '',
             avatar: decoded.picture || '',
             role: decoded.role || 'user',
+            isBlocked: decoded.isBlocked || false,
         };
     } catch (error) {
         console.error('Error decoding token:', error);
