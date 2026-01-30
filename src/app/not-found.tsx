@@ -16,11 +16,7 @@ const NotFoundPage = () => {
                             Xin lỗi, trang bạn đang tìm kiếm không tồn tại.
                         </p>
 
-                        <Button
-                            className="rounded px-8 py-3 font-semibold dark:bg-violet-600 dark:text-gray-50"
-                            href="/"
-                            variant={'primary'}
-                        >
+                        <Button className="mt-2" href="/" variant={'primary'}>
                             Quay lại trang chủ
                         </Button>
                     </div>
