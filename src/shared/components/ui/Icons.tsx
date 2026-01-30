@@ -1,5 +1,12 @@
 'use client';
 import { cn } from '@/lib/utils';
+import {
+    ArrowUpDown,
+    Ban,
+    LockOpen,
+    ShieldAlert,
+    ShieldCheck,
+} from 'lucide-react';
 import Image from 'next/image';
 import { AiOutlineLoading, AiOutlineMenu } from 'react-icons/ai';
 import { BiDetail, BiEdit, BiLogOut } from 'react-icons/bi';
@@ -63,7 +70,6 @@ import {
     IoTime,
 } from 'react-icons/io5';
 import {
-    MdCall,
     MdCallEnd,
     MdEmojiEmotions,
     MdGroups,
@@ -82,6 +88,7 @@ import {
     MdVolumeUp,
     MdWork,
 } from 'react-icons/md';
+import { PiPhoneCall } from 'react-icons/pi';
 import {
     RiAdminFill,
     RiDeleteBin5Fill,
@@ -91,13 +98,6 @@ import {
 import { TbBlockquote, TbClearFormatting } from 'react-icons/tb';
 import { TiTick } from 'react-icons/ti';
 import { VscClearAll, VscColorMode } from 'react-icons/vsc';
-import {
-    ArrowUpDown,
-    Ban,
-    LockOpen,
-    ShieldAlert,
-    ShieldCheck,
-} from 'lucide-react';
 
 export interface IconProps extends React.SVGAttributes<SVGElement> {
     children?: React.ReactNode;
@@ -296,7 +296,7 @@ const Icons = {
     VideoCallOff: (props: IconProps) => <MdVideocamOff {...props} />,
     Mic: (props: IconProps) => <MdMic {...props} />,
     MicOff: (props: IconProps) => <MdMicOff {...props} />,
-    Phone: (props: IconProps) => <MdCall {...props} />,
+    Phone: (props: IconProps) => <PiPhoneCall {...props} />,
     PhoneEnd: (props: IconProps) => <MdCallEnd {...props} />,
     Camera: (props: IconProps) => <IoCamera {...props} />,
     CameraOff: (props: IconProps) => <MdVideocamOff {...props} />,
@@ -568,6 +568,10 @@ export const IconsArray = [
     {
         name: 'Link',
         icon: Icons.Link,
+    },
+    {
+        name: 'Phone',
+        icon: Icons.Phone,
     },
 ].sort((a, b) => a.name.localeCompare(b.name));
 
