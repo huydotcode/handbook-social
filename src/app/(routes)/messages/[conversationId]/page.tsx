@@ -109,10 +109,6 @@ const ConversationPage: React.FC = () => {
         return { message: '', type: '' };
     }, [conversation, isLoadingConversation, user?.id, members]);
 
-    if (isLoadingConversation || isFetching || isPending) {
-        return <Loading fullScreen />;
-    }
-
     if (!conversation || error?.type === NOT_FOUND) {
         return <ErrorDisplay title={error?.message || ''} />;
     }
