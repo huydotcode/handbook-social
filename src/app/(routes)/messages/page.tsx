@@ -1,5 +1,4 @@
 'use client';
-'use client';
 import { useAuth } from '@/core/context/AuthContext';
 import { useConversations } from '@/core/context/SocialContext';
 import ConversationItem from '@/features/message/components/ConversationItem';
