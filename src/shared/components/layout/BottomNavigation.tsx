@@ -21,7 +21,7 @@ const BottomNavigation = () => {
     if (path.includes('/messages')) return null;
 
     return (
-        <div className="fixed bottom-0 left-0 z-50 hidden h-16 w-full items-center justify-around border-t bg-white px-2 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] dark:bg-dark-secondary-1 md:flex">
+        <div className="fixed bottom-0 left-0 z-50 hidden h-[--navbar-height] w-full items-center justify-around border-t bg-white px-2 shadow-[0_-1px_3px_rgba(0,0,0,0.1)] dark:bg-dark-secondary-1 md:flex">
             {navbarLink.map((link) => {
                 if (
                     link.role === USER_ROLES.ADMIN &&
