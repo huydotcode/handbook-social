@@ -7,6 +7,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { AxiosError } from 'axios';
 import DOMPurify from 'isomorphic-dompurify';
 import Image from 'next/image';
+import { usePathname } from 'next/navigation';
 import { useEffect, useRef, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -24,6 +25,8 @@ interface AIChatMessage {
 const ChatWithAI = () => {
     const [openChat, setOpenChat] = useState<boolean>(false);
     const [messages, setMessages] = useState<AIChatMessage[]>([]);
+
+    const path = usePathname();
     const bottomRef = useRef<HTMLDivElement>(null);
     const form = useForm<IFormData>();
     const {
@@ -92,6 +95,9 @@ const ChatWithAI = () => {
             bottomRef.current.scrollIntoView({ behavior: 'smooth' });
         }
     }, [messages]);
+
+    // Check if in message page hidden
+    if (path.includes('/messages')) return null;
 
     return (
         <div className="fixed bottom-3 right-3 z-20 w-fit">
