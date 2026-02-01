@@ -15,11 +15,7 @@ const HomeLayout: React.FC<Props> = ({ children }) => {
             <div className="w-screen">
                 <Navbar />
 
-                <main
-                    className={
-                        'bg-primary-1 pb-16 dark:bg-dark-primary-1 md:pb-0'
-                    }
-                >
+                <main className={'bg-primary-1 dark:bg-dark-primary-1 md:pb-0'}>
                     {children}
                 </main>
 
