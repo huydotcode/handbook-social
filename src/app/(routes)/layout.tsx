@@ -1,7 +1,7 @@
 'use client';
 import { ChatWithAI } from '@/features/ai';
 import { ProtectedRoute } from '@/features/auth';
-import { Navbar } from '@/shared/components/layout';
+import { Navbar, BottomNavigation } from '@/shared/components/layout';
 import { USER_ROLES } from '@/types/entites';
 import React from 'react';
 
@@ -14,9 +14,16 @@ const HomeLayout: React.FC<Props> = ({ children }) => {
         <ProtectedRoute requireRoles={[USER_ROLES.USER, USER_ROLES.ADMIN]}>
             <div className="w-screen">
                 <Navbar />
-                <main className={'bg-primary-1 dark:bg-dark-primary-1'}>
+
+                <main
+                    className={
+                        'bg-primary-1 pb-16 dark:bg-dark-primary-1 md:pb-0'
+                    }
+                >
                     {children}
                 </main>
+
+                <BottomNavigation />
 
                 <ChatWithAI />
             </div>

@@ -6,3 +6,4 @@ export { default as Container } from './Container';
 export { default as FixedSidebar } from './FixedSidebar';
 export { default as FixedLayout } from './FixedLayout';
 export { default as PageTitle } from './PageTitle';
+export { default as BottomNavigation } from './BottomNavigation';

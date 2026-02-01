@@ -46,6 +46,7 @@ const Navbar = () => {
                         </Button>
                     </div>
                 </div>
+
                 <div className="mx-auto flex h-full w-1/2 max-w-[400px] flex-1 items-center justify-center md:hidden">
                     <ul
                         className={
