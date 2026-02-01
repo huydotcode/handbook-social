@@ -96,11 +96,8 @@ const ChatWithAI = () => {
         }
     }, [messages]);
 
-    // Check if in message page hidden
-    if (path.includes('/messages')) return null;
-
     return (
-        <div className="fixed bottom-3 right-3 z-20 w-fit">
+        <div className="fixed bottom-3 right-3 z-20 w-fit md:bottom-20">
             {!openChat && (
                 <Button
                     onClick={() => setOpenChat((prev) => !prev)}
