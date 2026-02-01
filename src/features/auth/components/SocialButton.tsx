@@ -28,23 +28,22 @@ const SocialButton = () => {
 
     return (
         <Button
+            className="w-full py-4"
             onClick={() => googleLogin()}
             disabled={isPending}
-            className="h-12 w-full transform rounded-xl border-2 border-slate-200 bg-white font-semibold text-slate-700 shadow-md transition-all duration-300 hover:scale-[1.02] hover:border-slate-300 hover:shadow-lg active:scale-[0.98] disabled:transform-none disabled:cursor-not-allowed disabled:opacity-50 dark:bg-dark-secondary-2 dark:text-slate-300 dark:hover:border-slate-500"
+            variant={'secondary'}
         >
-            <div className="flex items-center justify-center">
-                {isPending ? (
-                    <>
-                        <div className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-slate-400 border-t-transparent"></div>
-                        <span>Đang đăng nhập...</span>
-                    </>
-                ) : (
-                    <>
-                        <Icons.Google className="mr-3 h-5 w-5" />
-                        <span>Đăng nhập với Google</span>
-                    </>
-                )}
-            </div>
+            {isPending ? (
+                <>
+                    <div className="mr-3 h-5 w-5 animate-spin rounded-full border-2 border-slate-400 border-t-transparent"></div>
+                    <span>Đang đăng nhập...</span>
+                </>
+            ) : (
+                <>
+                    <Icons.Google className="mr-3 h-5 w-5" />
+                    <span>Đăng nhập với Google</span>
+                </>
+            )}
         </Button>
     );
 };
