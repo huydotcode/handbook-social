@@ -33,29 +33,27 @@ const PostHeader = ({ post }: Props) => {
                 {isGroupPost && post.group ? (
                     <div className="relative">
                         <Avatar
+                            className="h-10 w-10"
                             imgSrc={post.group.avatar.url}
                             href={`/groups/${post.group._id}`}
                             alt={post.group.name}
-                            width={40}
-                            height={40}
-                            rounded="md"
+                            rounded="xl"
                         />
                         <Avatar
-                            className="absolute -bottom-1 -right-1 rounded-full border-2 border-white"
+                            className="absolute -bottom-1 -right-1 h-6 w-6 rounded-full"
                             imgSrc={post.author.avatar}
                             userUrl={post.author._id}
                             alt={post.author.name}
-                            width={20}
-                            height={20}
+                            rounded="full"
                         />
                     </div>
                 ) : (
                     <Avatar
+                        className="h-10 w-10"
                         imgSrc={post.author.avatar}
                         userUrl={post.author._id}
                         alt={post.author.name}
-                        width={40}
-                        height={40}
+                        rounded="full"
                     />
                 )}
 
