@@ -58,19 +58,10 @@ class WebRTCServiceClass {
     }
 
     /**
-     * Fetch ICE servers from backend
+     * Get ICE servers from backend
      */
-    async fetchIceServers(): Promise<ICEServerConfig[]> {
-        try {
-            const response = await fetch('/api/ice-servers');
-            const data = await response.json();
-            return data.iceServers || this.iceServers;
-        } catch (error) {
-            console.warn(
-                'Failed to fetch ICE servers from backend, using defaults'
-            );
-            return this.iceServers;
-        }
+    async getICEServers(): Promise<ICEServerConfig[]> {
+        return this.iceServers;
     }
 
     /**
@@ -89,7 +80,7 @@ class WebRTCServiceClass {
         }
 
         // Fetch latest ICE servers
-        const iceServers = await this.fetchIceServers();
+        const iceServers = await this.getICEServers();
 
         this.peerConnection = new RTCPeerConnection({
             iceServers: iceServers,
