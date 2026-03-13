@@ -1,10 +1,7 @@
 'use client';
 import { useAuth, useSocket } from '@/core/context';
 import { useConversation } from '@/core/context/SocialContext';
-import {
-    ConversationService,
-    useConversationMembers,
-} from '@/features/conversation';
+import { ConversationService, useConversationMembers } from '@/features/conversation';
 import { ChatBox } from '@/features/message';
 import { Loading } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
@@ -18,13 +15,7 @@ const IS_DELETED = 'is-deleted';
 const NOT_ALLOWED = 'not-allowed';
 const NOT_JOINED = 'not-joined';
 
-const ErrorDisplay = ({
-    title,
-    message,
-}: {
-    title: string;
-    message?: string;
-}) => (
+const ErrorDisplay = ({ title, message }: { title: string; message?: string }) => (
     <div className="flex h-full w-full items-center justify-center">
         <div className="text-center">
             <h1 className="mb-4 text-2xl font-bold">{title}</h1>
@@ -41,24 +32,18 @@ const ConversationPage: React.FC = () => {
 
     const { user } = useAuth();
     const { socketEmitor } = useSocket();
-    const {
-        invalidateMessages,
-        invalidateConversation,
-        invalidateConversations,
-    } = useQueryInvalidation();
+    const { invalidateConversation, invalidateConversations } = useQueryInvalidation();
 
     const {
         data: conversation,
         isLoading: isLoadingConversation,
-        isFetching,
-        isPending,
         error: conversationError,
     } = useConversation(conversationId as string);
 
-    const { members } = useConversationMembers(conversationId as string);
+    const { members, isLoading: isLoadingMembers } = useConversationMembers(conversationId as string);
 
     const error = useMemo(() => {
-        if (isLoadingConversation) return null;
+        if (isLoadingConversation || isLoadingMembers) return null;
 
         if (!conversation) {
             return {
@@ -67,9 +52,7 @@ const ConversationPage: React.FC = () => {
             };
         }
 
-        const isDeleted = conversation.isDeletedBy?.some(
-            (userId) => userId === user?.id
-        );
+        const isDeleted = conversation.isDeletedBy?.some((userId) => userId === user?.id);
         if (isDeleted) {
             return {
                 message: 'Cuộc trò chuyện đã bị xóa bởi bạn',
@@ -77,19 +60,8 @@ const ConversationPage: React.FC = () => {
             };
         }
 
-        // Kiểm tra nếu người dùng là người tạo cuộc trò chuyện thì không cần kiểm tra quyền truy cập
-        const isCreator = conversation.creator?._id === user?.id;
-        if (isCreator) {
-            return {
-                message: '',
-                type: '',
-            };
-        }
-
         // Kiểm tra nếu cuộc trò chuyện là nhóm và người dùng là thành viên của nhóm nhưng không phải là người tham gia cuộc trò chuyện
-        const isGroupMember = Boolean(
-            conversation.group?.members?.some((m) => m.user._id === user?.id)
-        );
+        const isGroupMember = Boolean(conversation.group?.members?.some((m) => m.user._id === user?.id));
         const isMember = members.some((m) => m.user._id === user?.id);
         if (isGroupMember && !isMember) {
             return {
@@ -107,7 +79,61 @@ const ConversationPage: React.FC = () => {
         }
 
         return { message: '', type: '' };
-    }, [conversation, isLoadingConversation, user?.id, members]);
+    }, [conversation, isLoadingConversation, isLoadingMembers, user?.id, members]);
+
+    const handleRestoreConversation = async () => {
+        try {
+            if (!conversation?._id || !user?.id) return;
+
+            await ConversationService.undeleteConversationByUserId({
+                conversationId: conversation._id,
+                userId: user.id,
+            });
+
+            await invalidateConversation(conversation._id);
+            await invalidateConversations();
+
+            toast.success('Bạn đã khôi phục cuộc trò chuyện thành công!');
+
+            socketEmitor?.joinRoom({
+                roomId: conversation._id,
+                userId: user.id,
+            });
+        } catch (error: any) {
+            toast.error(error?.message || 'Đã có lỗi xảy ra khi khôi phục cuộc trò chuyện.');
+        }
+    };
+
+    const handleJoinConversation = async () => {
+        try {
+            if (!conversation?.group?._id || !user?.id) return;
+
+            await ConversationService.join({
+                conversationId: conversation._id,
+                userId: user.id,
+            });
+
+            await invalidateConversation(conversation._id);
+            await invalidateConversations();
+
+            toast.success('Bạn đã tham gia cuộc trò chuyện thành công!');
+
+            socketEmitor?.joinRoom({
+                roomId: conversation._id,
+                userId: user.id,
+            });
+        } catch (error: any) {
+            toast.error(error?.message || 'Đã có lỗi xảy ra khi tham gia cuộc trò chuyện.');
+        }
+    };
+
+    if (isLoadingConversation) {
+        return (
+            <div className="flex h-full w-full items-center justify-center">
+                <Loading />
+            </div>
+        );
+    }
 
     if (!conversation || error?.type === NOT_FOUND) {
         return <ErrorDisplay title={error?.message || ''} />;
@@ -115,10 +141,7 @@ const ConversationPage: React.FC = () => {
 
     if (conversationError) {
         return (
-            <ErrorDisplay
-                title={conversationError.message || 'Đã có lỗi xảy ra'}
-                message={conversationError.message}
-            />
+            <ErrorDisplay title={conversationError.message || 'Đã có lỗi xảy ra'} message={conversationError.message} />
         );
     }
 
@@ -127,49 +150,10 @@ const ConversationPage: React.FC = () => {
             <div className="flex h-full w-full flex-col items-center justify-center">
                 <div className="flex h-full w-full items-center justify-center">
                     <div className="text-center">
-                        <h1 className="mb-4 text-2xl font-bold">
-                            {error?.message}
-                        </h1>
+                        <h1 className="mb-4 text-2xl font-bold">{error?.message}</h1>
 
                         <div className="mt-4 text-center">
-                            <Button
-                                variant={'primary'}
-                                onClick={async () => {
-                                    try {
-                                        if (!conversation?._id || !user?.id) {
-                                            return;
-                                        }
-
-                                        await ConversationService.undeleteConversationByUserId(
-                                            {
-                                                conversationId:
-                                                    conversation._id,
-                                                userId: user.id,
-                                            }
-                                        );
-
-                                        await invalidateConversation(
-                                            conversation._id
-                                        );
-
-                                        await invalidateConversations();
-
-                                        toast.success(
-                                            'Bạn đã khôi phục cuộc trò chuyện thành công!'
-                                        );
-
-                                        socketEmitor?.joinRoom({
-                                            roomId: conversation._id,
-                                            userId: user.id,
-                                        });
-                                    } catch (error: any) {
-                                        toast.error(
-                                            error?.message ||
-                                                'Đã có lỗi xảy ra khi khôi phục cuộc trò chuyện.'
-                                        );
-                                    }
-                                }}
-                            >
+                            <Button variant={'primary'} onClick={handleRestoreConversation}>
                                 Khôi phục cuộc trò chuyện
                             </Button>
                         </div>
@@ -188,49 +172,10 @@ const ConversationPage: React.FC = () => {
             <div className="flex h-full w-full flex-col items-center justify-center">
                 <div className="flex h-full w-full items-center justify-center">
                     <div className="text-center">
-                        <h1 className="mb-4 text-2xl font-bold">
-                            {error?.message}
-                        </h1>
+                        <h1 className="mb-4 text-2xl font-bold">{error?.message}</h1>
 
                         <div className="mt-4 text-center">
-                            <Button
-                                variant={'primary'}
-                                onClick={async () => {
-                                    try {
-                                        if (
-                                            !conversation.group?._id ||
-                                            !user?.id
-                                        ) {
-                                            return;
-                                        }
-
-                                        await ConversationService.join({
-                                            conversationId: conversation._id,
-                                            userId: user.id,
-                                        });
-
-                                        await invalidateConversation(
-                                            conversation._id
-                                        );
-
-                                        await invalidateConversations();
-
-                                        toast.success(
-                                            'Bạn đã tham gia cuộc trò chuyện thành công!'
-                                        );
-
-                                        socketEmitor?.joinRoom({
-                                            roomId: conversation._id,
-                                            userId: user.id,
-                                        });
-                                    } catch (error: any) {
-                                        toast.error(
-                                            error?.message ||
-                                                'Đã có lỗi xảy ra khi tham gia cuộc trò chuyện.'
-                                        );
-                                    }
-                                }}
-                            >
+                            <Button variant={'primary'} onClick={handleJoinConversation}>
                                 Tham gia cuộc trò chuyện
                             </Button>
                         </div>
@@ -240,16 +185,7 @@ const ConversationPage: React.FC = () => {
         );
     }
 
-    return (
-        <>
-            {conversation && (
-                <ChatBox
-                    conversation={conversation}
-                    findMessage={findMessage}
-                />
-            )}
-        </>
-    );
+    return <>{conversation && <ChatBox conversation={conversation} findMessage={findMessage} />}</>;
 };
 
 export default ConversationPage;
