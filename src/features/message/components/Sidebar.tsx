@@ -53,37 +53,27 @@ const Sidebar: React.FC<Props> = ({}) => {
     const filteredConversations = initConversations?.filter((conversation) => {
         const matchesQuery = !filter.query
             ? true
-            : conversation.title
-                  .toLowerCase()
-                  .includes(filter.query.toLowerCase());
+            : conversation.title.toLowerCase().includes(filter.query.toLowerCase());
 
         const matchesType = (() => {
             switch (filter.type) {
                 case ConversationType.ALL:
-                    return !conversation.isDeletedBy.some(
-                        (userId) => userId === user?.id
-                    );
+                    return !conversation.isDeletedBy.some((userId) => userId === user?.id);
                 case ConversationType.UNREAD:
                     return (
                         conversation.lastMessage?.readBy &&
-                        !conversation.lastMessage.readBy.some(
-                            (read) => read.user._id === user?.id
-                        ) &&
+                        !conversation.lastMessage.readBy.some((read) => read.user._id === user?.id) &&
                         conversation.lastMessage.sender._id !== user?.id
                     );
                 case ConversationType.READ:
                     return (
                         conversation.lastMessage?.sender?._id === user?.id ||
-                        conversation.lastMessage?.readBy?.some(
-                            (read) => read.user._id === user?.id
-                        )
+                        conversation.lastMessage?.readBy?.some((read) => read.user._id === user?.id)
                     );
                 case ConversationType.ARCHIVED:
                     return false;
                 case ConversationType.DELETED:
-                    return conversation.isDeletedBy.some(
-                        (userId) => userId === user?.id
-                    );
+                    return conversation.isDeletedBy.some((userId) => userId === user?.id);
                 default:
                     return true;
             }
@@ -95,12 +85,7 @@ const Sidebar: React.FC<Props> = ({}) => {
     const onChangeSelectFilter = (value: string) => {
         setFilter((prev) => ({
             ...prev,
-            type: value.split('-')[1] as
-                | 'all'
-                | 'unread'
-                | 'read'
-                | 'archived'
-                | 'deleted',
+            type: value.split('-')[1] as 'all' | 'unread' | 'read' | 'archived' | 'deleted',
             sortBy: value.split('-')[0].replace('sort-', ''),
             sortOrder: value.includes('desc') ? 'desc' : 'asc',
         }));
@@ -122,36 +107,18 @@ const Sidebar: React.FC<Props> = ({}) => {
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                                <SelectLabel className="text-xs">
-                                    Lọc theo
-                                </SelectLabel>
-                                <SelectItem value="filter-all">
-                                    Tất cả
-                                </SelectItem>
-                                <SelectItem value="filter-unread">
-                                    Chưa đọc
-                                </SelectItem>
-                                <SelectItem value="filter-read">
-                                    Đã đọc
-                                </SelectItem>
-                                <SelectItem value="filter-archived">
-                                    Đã lưu trữ
-                                </SelectItem>
-                                <SelectItem value="filter-deleted">
-                                    Đã xóa
-                                </SelectItem>
+                                <SelectLabel className="text-xs">Lọc theo</SelectLabel>
+                                <SelectItem value="filter-all">Tất cả</SelectItem>
+                                <SelectItem value="filter-unread">Chưa đọc</SelectItem>
+                                <SelectItem value="filter-read">Đã đọc</SelectItem>
+                                <SelectItem value="filter-archived">Đã lưu trữ</SelectItem>
+                                <SelectItem value="filter-deleted">Đã xóa</SelectItem>
                             </SelectGroup>
 
                             <SelectGroup>
-                                <SelectLabel className="text-xs">
-                                    Sắp xếp theo
-                                </SelectLabel>
-                                <SelectItem value="sort-mostRecent">
-                                    Tin nhắn mới nhất
-                                </SelectItem>
-                                <SelectItem value="sort-createdAt">
-                                    Ngày tạo
-                                </SelectItem>
+                                <SelectLabel className="text-xs">Sắp xếp theo</SelectLabel>
+                                <SelectItem value="sort-mostRecent">Tin nhắn mới nhất</SelectItem>
+                                <SelectItem value="sort-createdAt">Ngày tạo</SelectItem>
                                 <SelectItem value="sort-title">Tên</SelectItem>
                             </SelectGroup>
                         </SelectContent>
@@ -159,7 +126,7 @@ const Sidebar: React.FC<Props> = ({}) => {
                 </div>
 
                 {isLoading && (
-                    <div className="mx-4 flex flex-col gap-1">
+                    <div className="mt-2 flex flex-col gap-1">
                         <ConversationItemSkeleton />
                         <ConversationItemSkeleton />
                         <ConversationItemSkeleton />
@@ -173,52 +140,29 @@ const Sidebar: React.FC<Props> = ({}) => {
                             .sort((a, b) => {
                                 if (filter.sortBy === 'createdAt') {
                                     return filter.sortOrder === 'desc'
-                                        ? new Date(b.createdAt).getTime() -
-                                              new Date(a.createdAt).getTime()
-                                        : new Date(a.createdAt).getTime() -
-                                              new Date(b.createdAt).getTime();
+                                        ? new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
+                                        : new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
                                 } else if (filter.sortBy === 'title') {
                                     return filter.sortOrder === 'desc'
                                         ? b.title.localeCompare(a.title)
                                         : a.title.localeCompare(b.title);
                                 } else if (filter.sortBy === 'mostRecent') {
                                     return filter.sortOrder === 'desc'
-                                        ? new Date(
-                                              b.lastMessage?.createdAt ||
-                                                  b.createdAt
-                                          ).getTime() -
-                                              new Date(
-                                                  a.lastMessage?.createdAt ||
-                                                      a.createdAt
-                                              ).getTime()
-                                        : new Date(
-                                              a.lastMessage?.createdAt ||
-                                                  a.createdAt
-                                          ).getTime() -
-                                              new Date(
-                                                  b.lastMessage?.createdAt ||
-                                                      b.createdAt
-                                              ).getTime();
+                                        ? new Date(b.lastMessage?.createdAt || b.createdAt).getTime() -
+                                              new Date(a.lastMessage?.createdAt || a.createdAt).getTime()
+                                        : new Date(a.lastMessage?.createdAt || a.createdAt).getTime() -
+                                              new Date(b.lastMessage?.createdAt || b.createdAt).getTime();
                                 }
                                 return 0;
                             })
                             .map((conversation: IConversation) => {
-                                return (
-                                    <ConversationItem
-                                        data={conversation}
-                                        key={conversation._id}
-                                    />
-                                );
+                                return <ConversationItem data={conversation} key={conversation._id} />;
                             })}
                 </SidebarList>
 
-                {!isLoading &&
-                    filteredConversations &&
-                    filteredConversations.length === 0 && (
-                        <p className="text-center text-sm text-gray-500 dark:text-gray-400">
-                            Không có cuộc trò chuyện nào
-                        </p>
-                    )}
+                {!isLoading && filteredConversations && filteredConversations.length === 0 && (
+                    <p className="text-center text-sm text-gray-500 dark:text-gray-400">Không có cuộc trò chuyện nào</p>
+                )}
             </SidebarCollapse>
         </>
     );
