@@ -146,3 +146,12 @@ input::placeholder {
 .hashtag:hover {
     text-decoration: underline;
 }
+
+/* Override SONNER STYLES */
+[data-sonner-toast] [data-content] {
+    width: 100%;
+}
+
+[data-sonner-toast] [data-title] {
+    width: 100%;
+}

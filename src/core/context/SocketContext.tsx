@@ -1,7 +1,7 @@
 'use client';
-import { Icons } from '@/shared/components/ui';
 import { socketConfig } from '@/core/config/socket';
 import queryKey from '@/lib/react-query/query-key';
+import { Avatar, Icons } from '@/shared/components/ui';
 import { socketEvent, soundTypes } from '@/shared/constants';
 import { useQueryInvalidation, useSound } from '@/shared/hooks';
 import { IFriend, IMessage } from '@/types/entites';
@@ -16,9 +16,9 @@ import {
     useMemo,
     useState,
 } from 'react';
-import { toast } from 'sonner';
 import { Socket } from 'socket.io';
 import { io as ClientIO } from 'socket.io-client';
+import { toast } from 'sonner';
 import { useAuth } from './AuthContext';
 
 const HEARTBEAT_INTERVAL = 60000; // 1 minute
@@ -229,18 +229,42 @@ function SocketProvider({ children }: { children: React.ReactNode }) {
 
                 toast(
                     <Link
-                        className="flex items-center text-primary-2"
+                        className="flex w-full items-center justify-between"
                         href={`/messages/${conversationId}`}
                     >
+                        <div className="flex items-center">
+                            {message?.sender?.avatar &&
+                                message?.sender?._id && (
+                                    <Avatar
+                                        imgSrc={message?.sender?.avatar}
+                                        userUrl={message?.sender?._id}
+                                        onlyImage
+                                    />
+                                )}
+
+                            <div className="flex flex-col">
+                                <div className="flex items-center">
+                                    <p className="ml-2 text-sm">
+                                        Tin nhắn mới từ{' '}
+                                        <span className="font-semibold">
+                                            {message.conversation?.group
+                                                ? message.conversation?.title
+                                                : message.sender.name}
+                                        </span>
+                                    </p>
+                                </div>
+                                <p className="ml-2 text-sm text-secondary-1 dark:text-dark-primary-1">
+                                    {message?.text
+                                        ? message?.text
+                                        : message?.media &&
+                                            message?.media?.length > 0
+                                          ? `Đã gửi ${message?.media?.length} ảnh`
+                                          : 'Đã gửi một tin nhắn'}
+                                </p>
+                            </div>
+                        </div>
+
                         <Icons.Message className="text-3xl" />
-                        <p className="ml-2 text-sm">
-                            Tin nhắn mới từ{' '}
-                            <span className="font-semibold">
-                                {message.conversation?.group
-                                    ? message.conversation?.title
-                                    : message.sender.name}
-                            </span>
-                        </p>
                     </Link>,
                     {
                         id: conversationId,
