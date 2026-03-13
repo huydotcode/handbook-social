@@ -38,7 +38,9 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
     const { invalidateAfterSendMessage } = useQueryInvalidation();
     const router = useRouter();
     const { breakpoint } = useBreakpoint();
-    const [isSendMessage, setIsSendMessage] = useState<boolean>(false);
+    const [isSendMessage, setIsSendMessage] = useState<
+        boolean | { text: string; files: File[] }
+    >(false);
 
     const {
         messages,
@@ -91,6 +93,7 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
 
     // Xử lý tải ảnh lên khi kéo thả
     const handleChangeUploadFile = async (files: File[]) => {
+        setIsSendMessage({ text: '', files });
         try {
             toast.loading('Đang tải ảnh lên...', {
                 id: 'uploadImages',
@@ -108,7 +111,9 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
             });
 
             await invalidateAfterSendMessage(conversation._id);
+            setIsSendMessage(false);
         } catch (error) {
+            setIsSendMessage(false);
             toast.error('Đã có lỗi xảy ra');
         }
     };
@@ -240,10 +245,85 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                             <div ref={bottomRef} />
 
                             {isSendMessage && (
-                                <div className="flex w-full flex-col items-end justify-end">
-                                    <div className="w-[200px] max-w-full">
-                                        <MessageSkeleton />
-                                    </div>
+                                <div className="mb-2 flex w-full flex-col items-end justify-end">
+                                    {typeof isSendMessage === 'object' ? (
+                                        <div className="flex w-full flex-col items-end">
+                                            {isSendMessage.files?.length >
+                                                0 && (
+                                                <div className="mb-1 flex flex-col flex-wrap items-end">
+                                                    {isSendMessage.files.map(
+                                                        (file, idx) => {
+                                                            const isImage =
+                                                                file.type.startsWith(
+                                                                    'image/'
+                                                                );
+                                                            const isVideo =
+                                                                file.type.startsWith(
+                                                                    'video/'
+                                                                );
+                                                            const fileUrl =
+                                                                URL.createObjectURL(
+                                                                    file
+                                                                );
+                                                            return (
+                                                                <div
+                                                                    key={idx}
+                                                                    className="mb-1"
+                                                                >
+                                                                    {isImage && (
+                                                                        <img
+                                                                            src={
+                                                                                fileUrl
+                                                                            }
+                                                                            alt="uploading"
+                                                                            className="max-h-[60vh] max-w-[30vw] rounded-xl rounded-r-md object-cover md:max-w-[60vw]"
+                                                                        />
+                                                                    )}
+                                                                    {isVideo && (
+                                                                        <video
+                                                                            src={
+                                                                                fileUrl
+                                                                            }
+                                                                            className="max-w-[30vw] md:max-w-[60vw]"
+                                                                        />
+                                                                    )}
+                                                                </div>
+                                                            );
+                                                        }
+                                                    )}
+                                                </div>
+                                            )}
+                                            {isSendMessage.text &&
+                                                isSendMessage.text.trim() && (
+                                                    <div className="relative max-w-[70%] break-words rounded-xl bg-primary-2 px-3 py-2 text-white">
+                                                        <p className="max-w-full whitespace-pre-wrap break-words">
+                                                            {isSendMessage.text
+                                                                .split(' ')
+                                                                .map(
+                                                                    (
+                                                                        text,
+                                                                        idx
+                                                                    ) => (
+                                                                        <span
+                                                                            key={
+                                                                                idx
+                                                                            }
+                                                                        >
+                                                                            {
+                                                                                text
+                                                                            }{' '}
+                                                                        </span>
+                                                                    )
+                                                                )}
+                                                        </p>
+                                                    </div>
+                                                )}
+                                        </div>
+                                    ) : (
+                                        <div className="w-[200px] max-w-full opacity-70">
+                                            <MessageSkeleton />
+                                        </div>
+                                    )}
 
                                     <span className="mt-1 text-xs text-secondary-1">
                                         Đang gửi...

@@ -311,7 +311,7 @@ const MessageContent = ({
                             <div onClick={handleClick}>
                                 <div className="flex max-w-full flex-col flex-wrap">
                                     <p
-                                        className="max-w-full break-words"
+                                        className="max-w-full whitespace-pre-wrap break-words"
                                         key={msg._id + index}
                                     >
                                         {msg.text

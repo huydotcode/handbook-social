@@ -14,7 +14,9 @@ import { toast } from 'sonner';
 
 interface Props {
     currentRoom: IConversation;
-    setIsSendMessage: React.Dispatch<React.SetStateAction<boolean>>;
+    setIsSendMessage: React.Dispatch<
+        React.SetStateAction<boolean | { text: string; files: File[] }>
+    >;
 }
 
 interface IFormData {
@@ -56,9 +58,17 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
     };
 
     const onSubmit = async (data: IFormData) => {
-        setIsSendMessage(true);
+        if (!user) return;
+        if (!data.text.trim() && data.files.length === 0) return;
+
+        setIsSendMessage({ text: data.text, files: data.files });
         reset();
         setFocus('text');
+
+        const textarea = document.getElementById(
+            'message-textarea'
+        ) as HTMLTextAreaElement;
+        if (textarea) textarea.style.height = 'auto';
 
         const { text, files } = data;
 
@@ -313,13 +323,19 @@ const InputMessage: React.FC<Props> = ({ currentRoom, setIsSendMessage }) => {
                         }
                     )}
                 >
-                    <input
+                    <textarea
                         {...register('text')}
-                        className="text-md flex-1 bg-transparent px-4 py-2"
-                        type="text"
+                        id="message-textarea"
+                        className="text-md scrollbar-hide flex max-h-32 min-h-[40px] flex-1 resize-none items-center overflow-y-auto bg-transparent px-4 py-2 outline-none"
+                        rows={1}
                         placeholder="Nhắn tin"
                         spellCheck={false}
                         autoComplete="off"
+                        onInput={(e) => {
+                            const target = e.target as HTMLTextAreaElement;
+                            target.style.height = 'auto';
+                            target.style.height = `${Math.min(target.scrollHeight, 128)}px`;
+                        }}
                         onKeyDown={(e) => {
                             // Kiểm tra có text và không phải shift + enter
                             if (e.key === 'Enter' && !e.shiftKey) {
