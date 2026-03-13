@@ -4,21 +4,11 @@ import { FileUploaderWrapper } from '@/shared/components/shared/FileUploader';
 import MessageSkeleton from '@/shared/components/skeleton/MessageSkeleton';
 import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import {
-    useBreakpoint,
-    useMessageHandling,
-    useQueryInvalidation,
-} from '@/shared/hooks';
+import { useBreakpoint, useMessageHandling, useQueryInvalidation } from '@/shared/hooks';
 import { uploadImagesWithFiles } from '@/shared/utils/upload-image';
 import { IConversation, IMessage } from '@/types/entites';
 import { useRouter } from 'next/navigation';
-import React, {
-    KeyboardEventHandler,
-    useEffect,
-    useMemo,
-    useRef,
-    useState,
-} from 'react';
+import React, { KeyboardEventHandler, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { useInView } from 'react-intersection-observer';
 import ChatHeader from './ChatHeader';
@@ -38,9 +28,7 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
     const { invalidateAfterSendMessage } = useQueryInvalidation();
     const router = useRouter();
     const { breakpoint } = useBreakpoint();
-    const [isSendMessage, setIsSendMessage] = useState<
-        boolean | { text: string; files: File[] }
-    >(false);
+    const [isSendMessage, setIsSendMessage] = useState<boolean | { text: string; files: File[] }>(false);
 
     const {
         messages,
@@ -155,10 +143,9 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
     useEffect(() => {
         if (!bottomRef.current) return;
 
-        const observer = new IntersectionObserver(
-            ([entry]) => setShowScrollDown(!entry.isIntersecting),
-            { threshold: 1 }
-        );
+        const observer = new IntersectionObserver(([entry]) => setShowScrollDown(!entry.isIntersecting), {
+            threshold: 1,
+        });
 
         observer.observe(bottomRef.current);
         return () => observer.disconnect();
@@ -188,15 +175,7 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                 }
             })();
         }
-    }, [
-        findMessage,
-        fetchNextPage,
-        hasNextPage,
-        isFetchingNextPage,
-        isFind,
-        messages,
-        handleFindMessage,
-    ]);
+    }, [findMessage, fetchNextPage, hasNextPage, isFetchingNextPage, isFind, messages, handleFindMessage]);
 
     // Cuộn xuống dưới cùng khi gửi tin nhắn
     useEffect(() => {
@@ -207,10 +186,7 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
 
     return (
         <>
-            <div
-                className={cn('relative flex h-full w-full', className)}
-                onKeyDown={handleKeyDownEsc}
-            >
+            <div className={cn('relative flex h-full w-full', className)} onKeyDown={handleKeyDownEsc}>
                 <FileUploaderWrapper
                     className={cn(
                         'flex h-full w-full flex-1 flex-col rounded-xl bg-white shadow-xl dark:bg-dark-secondary-1 dark:shadow-none',
@@ -248,76 +224,41 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                                 <div className="mb-2 flex w-full flex-col items-end justify-end">
                                     {typeof isSendMessage === 'object' ? (
                                         <div className="flex w-full flex-col items-end">
-                                            {isSendMessage.files?.length >
-                                                0 && (
+                                            {isSendMessage.files?.length > 0 && (
                                                 <div className="mb-1 flex flex-col flex-wrap items-end">
-                                                    {isSendMessage.files.map(
-                                                        (file, idx) => {
-                                                            const isImage =
-                                                                file.type.startsWith(
-                                                                    'image/'
-                                                                );
-                                                            const isVideo =
-                                                                file.type.startsWith(
-                                                                    'video/'
-                                                                );
-                                                            const fileUrl =
-                                                                URL.createObjectURL(
-                                                                    file
-                                                                );
-                                                            return (
-                                                                <div
-                                                                    key={idx}
-                                                                    className="mb-1"
-                                                                >
-                                                                    {isImage && (
-                                                                        <img
-                                                                            src={
-                                                                                fileUrl
-                                                                            }
-                                                                            alt="uploading"
-                                                                            className="max-h-[60vh] max-w-[30vw] rounded-xl rounded-r-md object-cover md:max-w-[60vw]"
-                                                                        />
-                                                                    )}
-                                                                    {isVideo && (
-                                                                        <video
-                                                                            src={
-                                                                                fileUrl
-                                                                            }
-                                                                            className="max-w-[30vw] md:max-w-[60vw]"
-                                                                        />
-                                                                    )}
-                                                                </div>
-                                                            );
-                                                        }
-                                                    )}
+                                                    {isSendMessage.files.map((file, idx) => {
+                                                        const isImage = file.type.startsWith('image/');
+                                                        const isVideo = file.type.startsWith('video/');
+                                                        const fileUrl = URL.createObjectURL(file);
+                                                        return (
+                                                            <div key={idx} className="mb-1">
+                                                                {isImage && (
+                                                                    <img
+                                                                        src={fileUrl}
+                                                                        alt="uploading"
+                                                                        className="max-h-[60vh] max-w-[30vw] rounded-xl rounded-r-md object-cover md:max-w-[60vw]"
+                                                                    />
+                                                                )}
+                                                                {isVideo && (
+                                                                    <video
+                                                                        src={fileUrl}
+                                                                        className="max-w-[30vw] md:max-w-[60vw]"
+                                                                    />
+                                                                )}
+                                                            </div>
+                                                        );
+                                                    })}
                                                 </div>
                                             )}
-                                            {isSendMessage.text &&
-                                                isSendMessage.text.trim() && (
-                                                    <div className="relative max-w-[70%] break-words rounded-xl bg-primary-2 px-3 py-2 text-white">
-                                                        <p className="max-w-full whitespace-pre-wrap break-words">
-                                                            {isSendMessage.text
-                                                                .split(' ')
-                                                                .map(
-                                                                    (
-                                                                        text,
-                                                                        idx
-                                                                    ) => (
-                                                                        <span
-                                                                            key={
-                                                                                idx
-                                                                            }
-                                                                        >
-                                                                            {
-                                                                                text
-                                                                            }{' '}
-                                                                        </span>
-                                                                    )
-                                                                )}
-                                                        </p>
-                                                    </div>
-                                                )}
+                                            {isSendMessage.text && isSendMessage.text.trim() && (
+                                                <div className="relative max-w-[70%] break-words rounded-xl bg-primary-2 px-3 py-2 text-xs text-white">
+                                                    <p className="max-w-full whitespace-pre-wrap break-words">
+                                                        {isSendMessage.text.split(' ').map((text, idx) => (
+                                                            <span key={idx}>{text} </span>
+                                                        ))}
+                                                    </p>
+                                                </div>
+                                            )}
                                         </div>
                                     ) : (
                                         <div className="w-[200px] max-w-full opacity-70">
@@ -325,9 +266,7 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                                         </div>
                                     )}
 
-                                    <span className="mt-1 text-xs text-secondary-1">
-                                        Đang gửi...
-                                    </span>
+                                    <span className="mt-1 text-xs text-secondary-1">Đang gửi...</span>
                                 </div>
                             )}
 
@@ -335,37 +274,19 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                                 messages &&
                                 Object.keys(groupedMessages).map((date) => (
                                     <div key={date} className="relative">
-                                        <div className="mt-2 pb-1 text-center text-xs text-secondary-1">
-                                            {date}
-                                        </div>
-                                        <div
-                                            className={'flex flex-col-reverse'}
-                                        >
-                                            {groupedMessages[date].map(
-                                                (message) => (
-                                                    <Message
-                                                        key={message._id}
-                                                        messages={messages}
-                                                        data={message}
-                                                        searchMessage={
-                                                            findMessage
-                                                        }
-                                                        isLastMessage={
-                                                            lastMessage?._id ===
-                                                            message._id
-                                                        }
-                                                        isSearchMessage={
-                                                            findMessage ===
-                                                            message._id
-                                                        }
-                                                        handleClick={
-                                                            findMessage
-                                                                ? handleOpenSearch
-                                                                : undefined
-                                                        }
-                                                    />
-                                                )
-                                            )}
+                                        <div className="mt-2 pb-1 text-center text-xs text-secondary-1">{date}</div>
+                                        <div className={'flex flex-col-reverse'}>
+                                            {groupedMessages[date].map((message) => (
+                                                <Message
+                                                    key={message._id}
+                                                    messages={messages}
+                                                    data={message}
+                                                    searchMessage={findMessage}
+                                                    isLastMessage={lastMessage?._id === message._id}
+                                                    isSearchMessage={findMessage === message._id}
+                                                    handleClick={findMessage ? handleOpenSearch : undefined}
+                                                />
+                                            ))}
                                         </div>
                                     </div>
                                 ))}
@@ -375,14 +296,10 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
 
                         {findMessage && (
                             <Button
-                                className={cn(
-                                    'absolute left-1/2 top-4 -translate-x-1/2'
-                                )}
+                                className={cn('absolute left-1/2 top-4 -translate-x-1/2')}
                                 variant={'secondary'}
                                 onClick={() => {
-                                    router.push(
-                                        `/messages/${conversation._id}`
-                                    );
+                                    router.push(`/messages/${conversation._id}`);
                                     setOpenSearch(false);
                                 }}
                             >
@@ -403,22 +320,15 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                             </Button>
                         )}
 
-                        <InputMessage
-                            currentRoom={conversation}
-                            setIsSendMessage={setIsSendMessage}
-                        />
+                        <InputMessage currentRoom={conversation} setIsSendMessage={setIsSendMessage} />
                     </div>
                 </FileUploaderWrapper>
 
                 <div
-                    className={cn(
-                        'transition-all duration-300 lg:hidden lg:transition-none',
-                        {
-                            'w-[300px] lg:block lg:w-full':
-                                openInfo || openSearch,
-                            'w-0 lg:block': !openInfo && !openSearch,
-                        }
-                    )}
+                    className={cn('transition-all duration-300 lg:hidden lg:transition-none', {
+                        'w-[300px] lg:block lg:w-full': openInfo || openSearch,
+                        'w-0 lg:block': !openInfo && !openSearch,
+                    })}
                 >
                     {openSearch && (
                         <SearchMessage
