@@ -16,52 +16,48 @@ class WebRTCServiceClass {
     private retryAttempts: number = 0;
     private maxRetryAttempts: number = 3;
 
-    // Improved ICE servers with TURN support
-    private iceServers: ICEServerConfig[] = [
-        // Multiple STUN servers for better reliability
-        { urls: 'stun:stun.l.google.com:19302' },
-        { urls: 'stun:stun1.l.google.com:19302' },
-        { urls: 'stun:stun2.l.google.com:19302' },
-        { urls: 'stun:stun.cloudflare.com:3478' },
-
-        // Metered TURN (free tier available)
-        {
-            urls: 'stun:stun.relay.metered.ca:80',
-        },
-        {
-            urls: 'turn:global.relay.metered.ca:80',
-            username: TURN_USERNAME,
-            credential: TURN_CREDENTIAL,
-        },
-        {
-            urls: 'turn:global.relay.metered.ca:80?transport=tcp',
-            username: TURN_USERNAME,
-            credential: TURN_CREDENTIAL,
-        },
-        {
-            urls: 'turn:global.relay.metered.ca:443',
-            username: TURN_USERNAME,
-            credential: TURN_CREDENTIAL,
-        },
-        {
-            urls: 'turns:global.relay.metered.ca:443?transport=tcp',
-            username: TURN_USERNAME,
-            credential: TURN_CREDENTIAL,
-        },
-    ];
-
-    /**
-     * Set custom ICE servers (useful for dynamic configuration)
-     */
-    setIceServers(servers: ICEServerConfig[]) {
-        this.iceServers = servers;
-    }
-
     /**
      * Get ICE servers
      */
     async getICEServers(): Promise<ICEServerConfig[]> {
-        return this.iceServers;
+        // Evaluate if we should use TURN servers dynamically
+        const hasTurnCredentials = Boolean(TURN_USERNAME && TURN_CREDENTIAL);
+
+        const servers: ICEServerConfig[] = [
+            { urls: 'stun:stun.l.google.com:19302' },
+            { urls: 'stun:stun1.l.google.com:19302' },
+            { urls: 'stun:stun2.l.google.com:19302' },
+            { urls: 'stun:stun.cloudflare.com:3478' }
+        ];
+
+        // Only add TURN servers if credentials exist, otherwise WebRTC will fail
+        if (hasTurnCredentials) {
+            servers.push(
+                { urls: 'stun:stun.relay.metered.ca:80' },
+                {
+                    urls: 'turn:global.relay.metered.ca:80',
+                    username: TURN_USERNAME,
+                    credential: TURN_CREDENTIAL,
+                },
+                {
+                    urls: 'turn:global.relay.metered.ca:80?transport=tcp',
+                    username: TURN_USERNAME,
+                    credential: TURN_CREDENTIAL,
+                },
+                {
+                    urls: 'turn:global.relay.metered.ca:443',
+                    username: TURN_USERNAME,
+                    credential: TURN_CREDENTIAL,
+                },
+                {
+                    urls: 'turns:global.relay.metered.ca:443?transport=tcp',
+                    username: TURN_USERNAME,
+                    credential: TURN_CREDENTIAL,
+                }
+            );
+        }
+
+        return servers;
     }
 
     /**
@@ -142,11 +138,15 @@ class WebRTCServiceClass {
 
         // Handle renegotiation
         this.peerConnection.onnegotiationneeded = async () => {
+            // Do not renegotiate if connection is not established yet (prevents early extra SDP exchanges)
             if (!this.isConnectionEstablished && this.retryAttempts === 0) {
                 return;
             }
 
             try {
+                // Clear out queued ICE candidates before creating an offer since we are renegotiating
+                this.iceCandidatesQueue = [];
+
                 const offer = await this.peerConnection!.createOffer();
                 await this.peerConnection!.setLocalDescription(offer);
 
@@ -154,7 +154,9 @@ class WebRTCServiceClass {
                     this.handlers.onRenegotiationNeeded(offer);
                 }
             } catch (error) {
-                this.handlers.onError?.(error as Error);
+                // Prevent renegotiation failures (like ICE restart collision) from tearing down active calls
+                console.error('Renegotiation failed', error);
+                // We're deliberately NOT propagating to handlers.onError to prevent cleanup()
             }
         };
 
@@ -633,7 +635,7 @@ class WebRTCServiceClass {
             }
         } catch (error) {
             console.error('Error adding video track:', error);
-            this.handlers.onError?.(error as Error);
+            // DO NOT trigger onError here, as it will drop the call completely via cleanup()
             throw error;
         }
     }
