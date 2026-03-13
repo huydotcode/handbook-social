@@ -1,15 +1,16 @@
 'use client';
 import { axiosAuth } from '@/core/api/axios-instance';
 import { useQueryClient } from '@tanstack/react-query';
+import { createContext, ReactNode, useCallback, useContext, useEffect, useRef, useState } from 'react';
 import {
-    createContext,
-    ReactNode,
-    useCallback,
-    useContext,
-    useEffect,
-    useRef,
-    useState,
-} from 'react';
+    Dialog,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogHeader,
+    DialogTitle,
+} from '@/shared/components/ui/dialog';
+import { Button } from '@/shared/components/ui/Button';
 
 interface User {
     id: string;
@@ -19,6 +20,7 @@ interface User {
     avatar?: string;
     role?: string;
     isBlocked?: boolean;
+    lastAccessed?: Date;
 }
 
 interface AuthContextType {
@@ -48,9 +50,7 @@ function decodeToken(token: string): User | null {
         const jsonPayload = decodeURIComponent(
             atob(base64)
                 .split('')
-                .map(
-                    (c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2)
-                )
+                .map((c) => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
                 .join('')
         );
 
@@ -69,6 +69,7 @@ function decodeToken(token: string): User | null {
             avatar: decoded.picture || '',
             role: decoded.role || 'user',
             isBlocked: decoded.isBlocked || false,
+            lastAccessed: new Date(decoded.lastAccessed),
         };
     } catch (error) {
         console.error('Error decoding token:', error);
@@ -84,8 +85,30 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const [user, setUserState] = useState<User | null>(null);
     const [accessToken, setAccessTokenState] = useState<string | null>(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [showWelcomeDialog, setShowWelcomeDialog] = useState(false);
+    const [missedDays, setMissedDays] = useState(0);
     const queryClient = useQueryClient();
     const initializingRef = useRef(false);
+
+    // Kiểm tra thời gian vắng mặt (>= 7 ngày)
+    useEffect(() => {
+        if (user && user.lastAccessed) {
+            const lastAccessDate = new Date(user.lastAccessed);
+            if (!isNaN(lastAccessDate.getTime())) {
+                const timeDiff = Date.now() - lastAccessDate.getTime();
+                const daysDiff = Math.floor(timeDiff / (1000 * 3600 * 24));
+
+                if (daysDiff >= 7) {
+                    const hasShown = sessionStorage.getItem('handbook_welcome_shown');
+                    if (!hasShown) {
+                        setMissedDays(daysDiff);
+                        setShowWelcomeDialog(true);
+                        sessionStorage.setItem('handbook_welcome_shown', 'true');
+                    }
+                }
+            }
+        }
+    }, [user]);
 
     // Refresh access token from cookie on mount
     useEffect(() => {
@@ -150,6 +173,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         } finally {
             setAccessTokenState(null);
             setUserState(null);
+            setShowWelcomeDialog(false);
+            sessionStorage.removeItem('handbook_welcome_shown');
             queryClient.clear();
         }
     }, [queryClient]);
@@ -168,6 +193,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
             }}
         >
             {children}
+
+            {/* Dialog welcomeback */}
+            <Dialog open={showWelcomeDialog} onOpenChange={setShowWelcomeDialog}>
+                <DialogContent className="sm:max-w-sm">
+                    <DialogHeader>
+                        <DialogTitle className="mb-2 text-xl font-bold">Chào mừng quay trở lại!</DialogTitle>
+                        <DialogDescription className="mb-6 text-sm leading-relaxed">
+                            Bạn đã đi vắng <b>{missedDays}</b> ngày. Có rất nhiều thông tin mới đang chờ bạn cập nhật
+                            đó!
+                        </DialogDescription>
+                    </DialogHeader>
+                    <DialogFooter className="w-full sm:justify-center">
+                        <Button variant="primary" className="h-11 w-full" onClick={() => setShowWelcomeDialog(false)}>
+                            Okay
+                        </Button>
+                    </DialogFooter>
+                </DialogContent>
+            </Dialog>
         </AuthContext.Provider>
     );
 }
