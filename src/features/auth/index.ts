@@ -27,4 +27,5 @@ export {
     usernameValidation,
     passwordValidation,
     emailOtpValidation,
+    type LoginValidation,
 } from './schemas/auth.schema';

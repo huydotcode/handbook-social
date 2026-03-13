@@ -11,14 +11,7 @@ import {
 } from '@/features/auth';
 import { getErrorMessage } from '@/shared';
 import { Button } from '@/shared/components/ui/Button';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/shared/components/ui/Form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { Eye, EyeOff } from 'lucide-react';
@@ -40,9 +33,7 @@ const LoginPage = () => {
 
     const [showPassword, setShowPassword] = useState(false);
 
-    const loginWithCredentials: SubmitHandler<LoginValidation> = async (
-        formData
-    ) => {
+    const loginWithCredentials: SubmitHandler<LoginValidation> = async (formData) => {
         const { account, password } = formData;
 
         try {
@@ -61,10 +52,7 @@ const LoginPage = () => {
             <AuthHeader title="Đăng nhập" />
             <div className="space-y-4">
                 <Form {...loginForm}>
-                    <form
-                        onSubmit={loginForm.handleSubmit(loginWithCredentials)}
-                        className="space-y-4"
-                    >
+                    <form onSubmit={loginForm.handleSubmit(loginWithCredentials)} className="space-y-4">
                         <FormField
                             control={loginForm.control}
                             name="account"
@@ -79,13 +67,8 @@ const LoginPage = () => {
                                             {...field}
                                             onChange={(e) => {
                                                 field.onChange(e);
-                                                if (
-                                                    loginForm.formState.errors
-                                                        .root
-                                                ) {
-                                                    loginForm.clearErrors(
-                                                        'root'
-                                                    );
+                                                if (loginForm.formState.errors.root) {
+                                                    loginForm.clearErrors('root');
                                                 }
                                             }}
                                         />
@@ -107,22 +90,13 @@ const LoginPage = () => {
                                         <FormControl>
                                             <div className="relative">
                                                 <Input
-                                                    type={
-                                                        showPassword
-                                                            ? 'text'
-                                                            : 'password'
-                                                    }
+                                                    type={showPassword ? 'text' : 'password'}
                                                     placeholder="Nhập mật khẩu của bạn"
                                                     {...field}
                                                     onChange={(e) => {
                                                         field.onChange(e);
-                                                        if (
-                                                            loginForm.formState
-                                                                .errors.root
-                                                        ) {
-                                                            loginForm.clearErrors(
-                                                                'root'
-                                                            );
+                                                        if (loginForm.formState.errors.root) {
+                                                            loginForm.clearErrors('root');
                                                         }
                                                     }}
                                                 />
@@ -131,11 +105,7 @@ const LoginPage = () => {
                                                     variant="ghost"
                                                     size="sm"
                                                     className="absolute right-0 top-0 h-full px-3 py-2 hover:bg-transparent"
-                                                    onClick={() =>
-                                                        setShowPassword(
-                                                            (prev) => !prev
-                                                        )
-                                                    }
+                                                    onClick={() => setShowPassword((prev) => !prev)}
                                                 >
                                                     {showPassword ? (
                                                         <Eye className="h-4 w-4 text-slate-500" />
@@ -175,13 +145,9 @@ const LoginPage = () => {
                             size={'md'}
                             variant={'primary'}
                             type="submit"
-                            disabled={
-                                loginForm.formState.isSubmitting ||
-                                loginMutation.isPending
-                            }
+                            disabled={loginForm.formState.isSubmitting || loginMutation.isPending}
                         >
-                            {loginForm.formState.isSubmitting ||
-                            loginMutation.isPending ? (
+                            {loginForm.formState.isSubmitting || loginMutation.isPending ? (
                                 <div className="flex items-center justify-center">
                                     <div className="mr-2 h-5 w-5 animate-spin rounded-full border-2 border-white border-t-transparent"></div>
                                     Đang đăng nhập...
@@ -195,11 +161,7 @@ const LoginPage = () => {
             </div>
             <OrDivider />
             <SocialButton />
-            <RedirectLink
-                text="Chưa có tài khoản?"
-                linkText="Đăng ký ngay"
-                href="/auth/sign-up"
-            />
+            <RedirectLink text="Chưa có tài khoản?" linkText="Đăng ký ngay" href="/auth/sign-up" />
         </AuthContainer>
     );
 };
