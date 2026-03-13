@@ -58,7 +58,7 @@ class WebRTCServiceClass {
     }
 
     /**
-     * Get ICE servers from backend
+     * Get ICE servers
      */
     async getICEServers(): Promise<ICEServerConfig[]> {
         return this.iceServers;
