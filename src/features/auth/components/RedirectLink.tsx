@@ -7,20 +7,11 @@ interface RedirectLinkProps {
     href: string;
 }
 
-const RedirectLink: React.FC<RedirectLinkProps> = ({
-    text,
-    linkText,
-    href,
-}) => {
+const RedirectLink: React.FC<RedirectLinkProps> = ({ text, linkText, href }) => {
     return (
         <div className="mt-8 text-center">
-            <span className="text-slate-600 dark:text-slate-400">{text} </span>
-            <Button
-                href={href}
-                className="text-sm font-bold text-primary-2"
-                variant={'text'}
-                size={'md'}
-            >
+            <span className="text-sm">{text} </span>
+            <Button href={href} className="px-1 text-sm font-bold text-primary-2" variant={'text'} size={'md'}>
                 {linkText}
             </Button>
         </div>
