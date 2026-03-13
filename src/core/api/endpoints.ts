@@ -12,6 +12,7 @@ export const API_ENDPOINTS = {
         VERIFY_OTP: '/auth/verify-otp',
         RESET_PASSWORD: '/auth/reset-password',
         GOOGLE_LOGIN: '/auth/google',
+        CHECK_USERNAME: '/auth/check-username',
     },
 
     // Users endpoints
@@ -28,8 +29,7 @@ export const API_ENDPOINTS = {
     FRIENDSHIPS: {
         BY_USER: (userId: string) => `/friendships/${userId}`,
         COUNT: (userId: string) => `/friendships/${userId}/count`,
-        COMMON: (userId1: string, userId2: string) =>
-            `/friendships/${userId1}/common/${userId2}`,
+        COMMON: (userId1: string, userId2: string) => `/friendships/${userId1}/common/${userId2}`,
         CHECK: (userId: string) => `/friendships/check/${userId}`,
         CREATE: '/friendships',
         REMOVE: (userId: string) => `/friendships/${userId}`,
@@ -47,10 +47,8 @@ export const API_ENDPOINTS = {
         PROFILE: (userId: string) => `/posts/profile/${userId}`,
         GROUP: (groupId: string) => `/posts/group/${groupId}`,
         GROUP_MANAGE: (groupId: string) => `/posts/group/${groupId}/manage`,
-        GROUP_MANAGE_PENDING: (groupId: string) =>
-            `/posts/group/${groupId}/manage/pending`,
-        GROUP_MEMBER: (groupId: string, userId: string) =>
-            `/posts/group/${groupId}/member/${userId}`,
+        GROUP_MANAGE_PENDING: (groupId: string) => `/posts/group/${groupId}/manage/pending`,
+        GROUP_MEMBER: (groupId: string, userId: string) => `/posts/group/${groupId}/member/${userId}`,
         LIKE: (postId: string) => `/posts/${postId}/like`,
         SAVE: (postId: string) => `/posts/${postId}/save`,
         SHARE: (postId: string) => `/posts/${postId}/share`,
@@ -71,12 +69,9 @@ export const API_ENDPOINTS = {
     MESSAGES: {
         CREATE: '/messages',
         BY_ID: (id: string) => `/messages/${id}`,
-        BY_CONVERSATION: (conversationId: string) =>
-            `/messages/conversation/${conversationId}`,
-        PINNED: (conversationId: string) =>
-            `/messages/conversation/${conversationId}/pinned`,
-        SEARCH: (conversationId: string) =>
-            `/messages/conversation/${conversationId}/search`,
+        BY_CONVERSATION: (conversationId: string) => `/messages/conversation/${conversationId}`,
+        PINNED: (conversationId: string) => `/messages/conversation/${conversationId}/pinned`,
+        SEARCH: (conversationId: string) => `/messages/conversation/${conversationId}/search`,
         READ: (roomId: string) => `/messages/${roomId}/read`,
     },
 
@@ -88,19 +83,15 @@ export const API_ENDPOINTS = {
         // Members (new) - use participants routes for now
         MEMBERS: (id: string) => `/conversations/${id}/members`,
         ADD_MEMBER: (id: string) => `/conversations/${id}/participants`,
-        REMOVE_MEMBER: (id: string, userId: string) =>
-            `/conversations/${id}/participants/${userId}`,
-        SET_MEMBER_ROLE: (id: string, userId: string) =>
-            `/conversations/${id}/members/${userId}/role`,
+        REMOVE_MEMBER: (id: string, userId: string) => `/conversations/${id}/participants/${userId}`,
+        SET_MEMBER_ROLE: (id: string, userId: string) => `/conversations/${id}/members/${userId}/role`,
         PIN: (id: string) => `/conversations/${id}/pin`,
-        UNPIN: (id: string, messageId: string) =>
-            `/conversations/${id}/pin/${messageId}`,
+        UNPIN: (id: string, messageId: string) => `/conversations/${id}/pin/${messageId}`,
         PRIVATE: '/conversations/private',
 
         PARTICIPANTS: (id: string) => `/conversations/${id}/participants`,
         ADD_PARTICIPANT: (id: string) => `/conversations/${id}/participants`,
-        REMOVE_PARTICIPANT: (id: string, userId: string) =>
-            `/conversations/${id}/participants/${userId}`,
+        REMOVE_PARTICIPANT: (id: string, userId: string) => `/conversations/${id}/participants/${userId}`,
     },
 
     // Groups endpoints
@@ -114,10 +105,8 @@ export const API_ENDPOINTS = {
         JOIN: (id: string) => `/groups/${id}/join`,
         LEAVE: (id: string) => `/groups/${id}/leave`,
         MEMBERS: (id: string) => `/groups/${id}/members`,
-        REMOVE_MEMBER: (id: string, userId: string) =>
-            `/groups/${id}/members/${userId}`,
-        UPDATE_MEMBER_ROLE: (id: string, userId: string) =>
-            `/groups/${id}/members/${userId}/role`,
+        REMOVE_MEMBER: (id: string, userId: string) => `/groups/${id}/members/${userId}`,
+        UPDATE_MEMBER_ROLE: (id: string, userId: string) => `/groups/${id}/members/${userId}/role`,
         RECOMMENDED: '/groups/recommended',
         UPDATE_COVER_PHOTO: (id: string) => `/groups/${id}/cover-photo`,
         UPDATE_AVATAR: (id: string) => `/groups/${id}/avatar`,
@@ -134,8 +123,7 @@ export const API_ENDPOINTS = {
 
     // Notifications endpoints
     NOTIFICATIONS: {
-        BY_RECEIVER: (receiverId: string) =>
-            `/notifications/receiver/${receiverId}`,
+        BY_RECEIVER: (receiverId: string) => `/notifications/receiver/${receiverId}`,
         BY_SENDER: (senderId: string) => `/notifications/sender/${senderId}`,
         BY_ID: (notificationId: string) => `/notifications/${notificationId}`,
         SEND_REQUEST: '/notifications/request',
@@ -143,10 +131,8 @@ export const API_ENDPOINTS = {
         BY_USERS: '/notifications/by-users',
         CREATE: '/notifications',
         READ_ALL: '/notifications/read-all',
-        ACCEPT: (notificationId: string) =>
-            `/notifications/${notificationId}/accept`,
-        DECLINE: (notificationId: string) =>
-            `/notifications/${notificationId}/decline`,
+        ACCEPT: (notificationId: string) => `/notifications/${notificationId}/accept`,
+        DECLINE: (notificationId: string) => `/notifications/${notificationId}/decline`,
     },
 
     // Search endpoints

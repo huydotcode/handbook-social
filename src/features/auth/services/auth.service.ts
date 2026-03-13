@@ -4,9 +4,24 @@ import {
     LoginResponse,
     RegisterDto,
     RegisterResponse,
+    CheckUsernameDto,
+    CheckUsernameResponse,
 } from '../types/auth.types';
 
 class AuthServiceClass {
+    /**
+     * Check username available
+     */
+    public async checkUsername(data: CheckUsernameDto): Promise<CheckUsernameResponse> {
+        try {
+            const response = await authApi.checkUsername(data);
+            return response;
+        } catch (error) {
+            console.error('Error checking username:', error);
+            throw error;
+        }
+    }
+
     /**
      * Register a new user
      */
@@ -36,10 +51,7 @@ class AuthServiceClass {
     /**
      * Send OTP to user email (register or forgot_password)
      */
-    public async sendOTP(
-        email: string,
-        type: 'register' | 'forgot_password'
-    ): Promise<void> {
+    public async sendOTP(email: string, type: 'register' | 'forgot_password'): Promise<void> {
         try {
             await authApi.sendOTP({ email, type });
         } catch (error) {
@@ -51,13 +63,7 @@ class AuthServiceClass {
     /**
      * Verify OTP code
      */
-    public async verifyOTP({
-        email,
-        otp,
-    }: {
-        email: string;
-        otp: string;
-    }): Promise<void> {
+    public async verifyOTP({ email, otp }: { email: string; otp: string }): Promise<void> {
         try {
             await authApi.verifyOTP({ email, otp });
         } catch (error) {

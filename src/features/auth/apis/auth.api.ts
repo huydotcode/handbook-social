@@ -7,17 +7,23 @@ import {
     ResetPasswordDto,
     SendOTPDto,
     VerifyOTPDto,
+    CheckUsernameDto,
+    CheckUsernameResponse,
 } from '../types/auth.types';
 
 export const authApi = {
     /**
+     * Check username available
+     */
+    checkUsername: (data: CheckUsernameDto) => {
+        return apiClient.post<CheckUsernameResponse>(API_ENDPOINTS.AUTH.CHECK_USERNAME, data);
+    },
+
+    /**
      * Register user
      */
     register: (data: RegisterDto) => {
-        return apiClient.post<RegisterResponse>(
-            API_ENDPOINTS.AUTH.REGISTER,
-            data
-        );
+        return apiClient.post<RegisterResponse>(API_ENDPOINTS.AUTH.REGISTER, data);
     },
 
     /**
@@ -52,9 +58,6 @@ export const authApi = {
      * Login with Google
      */
     loginWithGoogle: (data: { code: string }) => {
-        return apiClient.post<LoginResponse>(
-            API_ENDPOINTS.AUTH.GOOGLE_LOGIN,
-            data
-        );
+        return apiClient.post<LoginResponse>(API_ENDPOINTS.AUTH.GOOGLE_LOGIN, data);
     },
 };

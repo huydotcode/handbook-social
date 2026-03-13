@@ -9,10 +9,17 @@ export interface LoginDto {
 export interface RegisterDto {
     email: string;
     username: string;
-    name: string;
     password: string;
-    avatar?: string;
-    repassword?: string;
+    otp: string;
+}
+
+export interface CheckUsernameDto {
+    username: string;
+}
+
+export interface CheckUsernameResponse {
+    available: boolean;
+    message: string;
 }
 
 export interface SendOTPDto {

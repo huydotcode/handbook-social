@@ -1,28 +1,35 @@
 import { z } from 'zod';
 
-// Sign up validation
-export const signUpValidation = z.object({
-    email: z.string().email('Email không hợp lệ'),
+// Sign up validation (Multi-step)
+export const usernameValidation = z.object({
     username: z
         .string()
         .min(6, 'Username là chuỗi từ 6-50 kí tự')
         .max(50, 'Username là chuỗi từ 6-50 kí tự')
-        .regex(
-            /^[a-zA-Z0-9_-]+$/,
-            'Username chỉ chứa kí tự, số, dấu gạch dưới và gạch ngang'
-        ),
-    name: z
-        .string()
-        .min(6, 'Tên là chuỗi từ 6-50 kí tự')
-        .max(50, 'Tên là chuỗi từ 6-50 kí tự'),
-    password: z
-        .string()
-        .min(6, 'Mật khẩu từ 6-50 kí tự')
-        .max(50, 'Mật khẩu từ 6-50 kí tự'),
-    repassword: z
-        .string()
-        .min(6, 'Mật khẩu từ 6-50 kí tự')
-        .max(50, 'Mật khẩu từ 6-50 kí tự'),
+        .regex(/^[a-zA-Z0-9_-]+$/, 'Username chỉ chứa kí tự, số, dấu gạch dưới và gạch ngang'),
+});
+
+export const passwordValidation = z.object({
+    password: z.string().min(6, 'Mật khẩu từ 6-50 kí tự').max(50, 'Mật khẩu từ 6-50 kí tự'),
+    repassword: z.string().min(6, 'Mật khẩu từ 6-50 kí tự').max(50, 'Mật khẩu từ 6-50 kí tự'),
+});
+
+export const passwordValidationWithRefine = passwordValidation.refine((data) => data.password === data.repassword, {
+    message: 'Mật khẩu và xác nhận mật khẩu không khớp',
+    path: ['repassword'],
+});
+
+export const emailOtpValidation = z.object({
+    email: z.string().email('Email không hợp lệ'),
+    otp: z.string().min(6, 'OTP phải có 6 chữ số').optional(),
+});
+
+export const signUpValidation = z.object({
+    username: usernameValidation.shape.username,
+    password: passwordValidation.shape.password,
+    repassword: passwordValidation.shape.repassword,
+    email: emailOtpValidation.shape.email,
+    otp: emailOtpValidation.shape.otp,
 });
 
 export type SignUpValidation = z.infer<typeof signUpValidation>;

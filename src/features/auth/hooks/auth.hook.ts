@@ -1,12 +1,5 @@
 import { useAuth } from '@/core/context/AuthContext';
-import type {
-    LoginDto,
-    LoginResponse,
-    RegisterDto,
-    ResetPasswordDto,
-    SendOTPDto,
-    VerifyOTPDto,
-} from '@/features/auth';
+import type { LoginDto, LoginResponse, RegisterDto, ResetPasswordDto, SendOTPDto, VerifyOTPDto } from '@/features/auth';
 import AuthService from '@/features/auth/services/auth.service';
 import { queryKey } from '@/lib/react-query/query-key';
 import { handleApiError, showSuccessToast } from '@/shared';
@@ -63,13 +56,36 @@ export const useGoogleLoginMutation = () => {
 };
 
 /**
- * Hook for user signup
+ * Hook for checking username availability
+ */
+export const useCheckUsernameMutation = () => {
+    return useMutation({
+        mutationFn: (username: string) => AuthService.checkUsername({ username }),
+    });
+};
+
+/**
+ * Hook for user signup (with OTP)
  */
 export const useSignUpMutation = () => {
+    const { setAccessToken, setUser } = useAuth();
+    const queryClient = useQueryClient();
+
     return useMutation({
-        mutationFn: (data: RegisterDto) => AuthService.register(data),
-        onSuccess: () => {
-            showSuccessToast('Đăng ký tài khoản thành công');
+        // Auth API register under the hood returns a LoginResponse now
+        mutationFn: (data: RegisterDto) => AuthService.register(data) as unknown as Promise<LoginResponse>,
+        onSuccess: (data: LoginResponse) => {
+            if (data.accessToken) {
+                setAccessToken(data.accessToken);
+
+                if (data.user) {
+                    setUser(data.user);
+                }
+            }
+
+            // Invalidate auth query
+            queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
+            showSuccessToast('Đăng ký và xác thực thành công');
         },
     });
 };
@@ -102,8 +118,7 @@ export const useLogout = () => {
  */
 export const useSendOTP = () => {
     return useMutation({
-        mutationFn: (data: SendOTPDto) =>
-            AuthService.sendOTP(data.email, data.type),
+        mutationFn: (data: SendOTPDto) => AuthService.sendOTP(data.email, data.type),
         onSuccess: () => {
             showSuccessToast('OTP đã được gửi đến email của bạn');
         },
@@ -118,8 +133,7 @@ export const useSendOTP = () => {
  */
 export const useVerifyOTP = () => {
     return useMutation({
-        mutationFn: (data: VerifyOTPDto) =>
-            AuthService.verifyOTP({ email: data.email, otp: data.otp }),
+        mutationFn: (data: VerifyOTPDto) => AuthService.verifyOTP({ email: data.email, otp: data.otp }),
         onSuccess: () => {
             showSuccessToast('Xác thực OTP thành công');
         },
