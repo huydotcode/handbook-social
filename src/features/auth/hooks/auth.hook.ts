@@ -85,7 +85,7 @@ export const useSignUpMutation = () => {
 
             // Invalidate auth query
             queryClient.invalidateQueries({ queryKey: queryKey.auth.current });
-            showSuccessToast('Đăng ký và xác thực thành công');
+            showSuccessToast('Đăng ký thành công');
         },
     });
 };

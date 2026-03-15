@@ -99,19 +99,33 @@ const SignUpPage = () => {
     };
 
     const signUp: SubmitHandler<FormSignupData> = async (data) => {
-        if (!data.otp) {
+        if (data.email && !data.otp) {
             setError('otp', { message: 'Vui lòng nhập mã OTP' });
             return;
         }
 
         try {
             await signUpMutation.mutateAsync({
-                email: data.email,
+                email: data.email || undefined,
                 username: data.username,
                 password: data.password,
-                otp: data.otp,
+                otp: data.otp || undefined,
             });
             // Auto login is handled inside useSignUpMutation
+            router.push('/');
+        } catch (error) {
+            setError('root', {
+                message: getErrorMessage(error, 'Đăng ký thất bại. Vui lòng thử lại.'),
+            });
+        }
+    };
+
+    const handleSkipEmail = async () => {
+        try {
+            await signUpMutation.mutateAsync({
+                username: getValues('username'),
+                password: getValues('password'),
+            });
             router.push('/');
         } catch (error) {
             setError('root', {
@@ -339,6 +353,21 @@ const SignUpPage = () => {
                                         </FormMessage>
                                     </div>
                                 )}
+
+                                <p className="mt-2 text-center text-sm text-secondary-1">
+                                    Bạn có thể bỏ qua bước này nếu bạn không muốn xác thực thông qua email.
+                                </p>
+
+                                <Button
+                                    className="mt-6 w-full"
+                                    size={'md'}
+                                    variant={'outline'}
+                                    type="button"
+                                    onClick={handleSkipEmail}
+                                    disabled={isSubmitting || signUpMutation.isPending}
+                                >
+                                    Bỏ qua bước này và hoàn tất
+                                </Button>
 
                                 <Button
                                     className="mt-6 w-full"

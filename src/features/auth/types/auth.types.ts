@@ -7,10 +7,10 @@ export interface LoginDto {
 }
 
 export interface RegisterDto {
-    email: string;
+    email?: string;
     username: string;
     password: string;
-    otp: string;
+    otp?: string;
 }
 
 export interface CheckUsernameDto {
