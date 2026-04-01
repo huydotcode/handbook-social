@@ -1,14 +1,14 @@
 'use client';
+import { useAuth } from '@/core/context/AuthContext';
+import { UserService } from '@/features/user';
 import { Items } from '@/shared/components/shared';
 import { Button } from '@/shared/components/ui/Button';
-import { useAuth } from '@/core/context/AuthContext';
+import { useDebounce } from '@/shared/hooks';
+import { IUser } from '@/types/entites';
 import { Collapse } from '@mui/material';
 import { useRouter } from 'next/navigation';
 import React, { useCallback, useEffect, useRef, useState } from 'react';
 import Icons from '../ui/Icons';
-import { useDebounce } from '@/shared/hooks';
-import { IUser } from '@/types/entites';
-import { UserService } from '@/features/user';
 
 const NavbarSearch = () => {
     const { user } = useAuth();
@@ -40,10 +40,15 @@ const NavbarSearch = () => {
         const fetchSearchData = async (value: string) => {
             setIsSearching(true);
 
+            if (value && value.trim().length < 2) {
+                setIsSearching(false);
+                return;
+            }
+
             if (!user?.id) return;
 
             try {
-                const { users, isNext } = await UserService.searchUsers({
+                const { users } = await UserService.searchUsers({
                     userId: user.id,
                     pageNumber: page,
                     pageSize: pageSize,
@@ -118,11 +123,7 @@ const NavbarSearch = () => {
                         'fixed left-0 top-0 z-10 w-[400px] max-w-screen rounded-b-xl bg-secondary-1 p-1 pl-5 shadow-md dark:bg-dark-secondary-1'
                     }
                 >
-                    <div
-                        className={
-                            'flex h-12 w-full items-center bg-secondary-1 dark:bg-dark-secondary-1'
-                        }
-                    >
+                    <div className={'flex h-12 w-full items-center bg-secondary-1 dark:bg-dark-secondary-1'}>
                         <Button
                             className="z-20 flex h-8 w-8 items-center justify-center rounded-full text-3xl"
                             variant={'custom'}
@@ -155,29 +156,26 @@ const NavbarSearch = () => {
                         </div>
                     </div>
 
-                    {searchResult.length > 0 &&
-                        debounceValue.trim().length > 0 && (
-                            <>
-                                <h5 className={'mt-2 text-sm'}>Kết quả</h5>
+                    {searchResult.length > 0 && debounceValue.trim().length > 0 && (
+                        <>
+                            <h5 className={'mt-2 text-sm'}>Kết quả</h5>
 
-                                <div className="dark:no-scrollbar mt-2 w-full overflow-scroll">
-                                    {searchResult.map((user: IUser) => {
-                                        return (
-                                            <Items.User
-                                                data={user}
-                                                key={user._id}
-                                                handleHideModal={() => {
-                                                    handleClose();
-                                                    router.push(
-                                                        `/profile/${user._id}`
-                                                    );
-                                                }}
-                                            />
-                                        );
-                                    })}
-                                </div>
-                            </>
-                        )}
+                            <div className="dark:no-scrollbar mt-2 w-full overflow-scroll">
+                                {searchResult.map((user: IUser) => {
+                                    return (
+                                        <Items.User
+                                            data={user}
+                                            key={user._id}
+                                            handleHideModal={() => {
+                                                handleClose();
+                                                router.push(`/profile/${user._id}`);
+                                            }}
+                                        />
+                                    );
+                                })}
+                            </div>
+                        </>
+                    )}
 
                     {isSearching && searchResult.length === 0 && (
                         <div className="mt-4 flex justify-center">
@@ -194,8 +192,7 @@ const NavbarSearch = () => {
                                 href={`/search?type=users&q=${debounceValue}`}
                                 onClick={handleClose}
                             >
-                                <Icons.Search /> Tìm kiếm người dùng:{' '}
-                                {debounceValue}
+                                <Icons.Search /> Tìm kiếm người dùng: {debounceValue}
                             </Button>
 
                             <Button
@@ -205,8 +202,7 @@ const NavbarSearch = () => {
                                 href={`/search?type=posts&q=${debounceValue}`}
                                 onClick={handleClose}
                             >
-                                <Icons.Search /> Tìm kiếm bài viết:{' '}
-                                {debounceValue}
+                                <Icons.Search /> Tìm kiếm bài viết: {debounceValue}
                             </Button>
 
                             <Button
