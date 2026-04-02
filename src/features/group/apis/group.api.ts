@@ -143,4 +143,14 @@ export const groupApi = {
             { params }
         );
     },
+
+    /**
+     * Invite friends to a group
+     */
+    inviteFriends: (groupId: string, userIds: string[]) => {
+        return apiClient.post<{ success: boolean; count: number }>(
+            API_ENDPOINTS.GROUPS.INVITE(groupId),
+            { userIds }
+        );
+    },
 };

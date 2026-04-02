@@ -299,6 +299,18 @@ class GroupServiceClass {
             throw error;
         }
     }
+
+    /**
+     * Invite friends to a group
+     */
+    public async inviteFriends(groupId: string, userIds: string[]) {
+        try {
+            return await apiGroupService.inviteFriends(groupId, userIds);
+        } catch (error) {
+            console.error('Error inviting friends:', error);
+            throw error;
+        }
+    }
 }
 
 const GroupService = new GroupServiceClass();

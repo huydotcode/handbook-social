@@ -12,6 +12,7 @@ export enum NOTIFICATION_TYPES {
     COMMENT_POST = 'comment-post',
     LIKE_COMMENT = 'like-comment',
     REPLY_COMMENT = 'reply-comment',
+    INVITE_GROUP = 'invite-group',
 }
 
 export type NotificationType =
@@ -36,6 +37,9 @@ export const NOTIFICATION_MESSAGES = {
     COMMENT_POST: 'đã bình luận bài viết của bạn',
     LIKE_COMMENT: 'đã thích bình luận của bạn',
     REPLY_COMMENT: 'đã trả lời bình luận của bạn',
+
+    // Group
+    INVITE_GROUP: 'đã mời bạn tham gia nhóm',
 } as const;
 
 export type NotificationMessage =

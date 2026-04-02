@@ -23,6 +23,7 @@ import { useQueryInvalidation } from '@/shared/hooks';
 import { IGroup } from '@/types/entites';
 import { useRouter } from 'next/navigation';
 import React, { FormEventHandler, useMemo } from 'react';
+import InviteFriendModal from './InviteFriendModal';
 interface Props {
     group: IGroup;
 }
@@ -49,6 +50,11 @@ const Action: React.FC<Props> = ({ group }) => {
     const isCreator = useMemo(() => {
         return group.creator._id == user?.id;
     }, [group.creator._id, user?.id]);
+
+    const canInvite = useMemo(() => {
+        if (group.type === 'public') return isJoinGroup;
+        return isCreator;
+    }, [group.type, isJoinGroup, isCreator]);
 
     const handleJoinGroup: FormEventHandler = async (e) => {
         e.preventDefault();
@@ -141,6 +147,8 @@ const Action: React.FC<Props> = ({ group }) => {
                     </AlertDialogContent>
                 </AlertDialog>
             )}
+
+            {canInvite && <InviteFriendModal group={group} />}
         </div>
     );
 };

@@ -377,3 +377,20 @@ export const useGroupsJoined = (userId: string | undefined) => {
         refetchOnWindowFocus: false,
     });
 };
+
+/**
+ * Hook to invite friends to a group
+ */
+export const useInviteGroup = () => {
+    return useMutation({
+        mutationFn: ({ groupId, userIds }: { groupId: string; userIds: string[] }) =>
+            GroupService.inviteFriends(groupId, userIds),
+        onSuccess: (data) => {
+            showSuccessToast(`Đã gửi lời mời thành công đến ${data.count} người bạn`);
+        },
+        onError: (error) => {
+            handleApiError(error, 'Không thể gửi lời mời');
+        },
+    });
+};
+

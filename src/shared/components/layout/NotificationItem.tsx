@@ -173,6 +173,10 @@ const NotificationItem = ({
                             NOTIFICATION_TYPES.REPLY_COMMENT && (
                             <span>{NOTIFICATION_MESSAGES.REPLY_COMMENT}</span>
                         )}
+                        {notification.type ===
+                            NOTIFICATION_TYPES.INVITE_GROUP && (
+                            <span>{NOTIFICATION_MESSAGES.INVITE_GROUP}</span>
+                        )}
                     </p>
                     {notification.type ===
                         NOTIFICATION_TYPES.REQUEST_ADD_FRIEND && (
@@ -221,6 +225,19 @@ const NotificationItem = ({
                                     href={`/posts/${notification.extra?.postId}`}
                                 >
                                     Xem bài viết
+                                </Button>
+                            </div>
+                        )}
+                    {notification.type === NOTIFICATION_TYPES.INVITE_GROUP &&
+                        notification?.extra?.groupId && (
+                            <div className="mt-2 flex items-center">
+                                <Button
+                                    className="mr-2"
+                                    variant={'primary'}
+                                    size={'xs'}
+                                    href={`/groups/${notification.extra?.groupId}`}
+                                >
+                                    Xem nhóm
                                 </Button>
                             </div>
                         )}

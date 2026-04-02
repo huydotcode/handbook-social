@@ -107,6 +107,7 @@ export const API_ENDPOINTS = {
         MEMBERS: (id: string) => `/groups/${id}/members`,
         REMOVE_MEMBER: (id: string, userId: string) => `/groups/${id}/members/${userId}`,
         UPDATE_MEMBER_ROLE: (id: string, userId: string) => `/groups/${id}/members/${userId}/role`,
+        INVITE: (id: string) => `/groups/${id}/invite`,
         RECOMMENDED: '/groups/recommended',
         UPDATE_COVER_PHOTO: (id: string) => `/groups/${id}/cover-photo`,
         UPDATE_AVATAR: (id: string) => `/groups/${id}/avatar`,
