@@ -2,6 +2,7 @@ import { useAuth } from '@/core/context';
 import GroupService from '@/features/group/services/group.service';
 import { ImageService } from '@/features/image';
 import FileUploader from '@/shared/components/shared/FileUploader';
+import { Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import {
     Dialog,
@@ -54,8 +55,7 @@ const CoverPhoto: React.FC<Props> = ({ group, onGroupUpdate }) => {
             });
 
             const coverPhotoId = images._id;
-            const coverPhotoUrl =
-                await ImageService.getUrlByImageId(coverPhotoId);
+            const coverPhotoUrl = await ImageService.getUrlByImageId(coverPhotoId);
 
             if (!coverPhotoUrl) {
                 toast.error('Có lỗi xảy ra');
@@ -97,17 +97,14 @@ const CoverPhoto: React.FC<Props> = ({ group, onGroupUpdate }) => {
                 }}
             >
                 {canChangeCoverPhoto && (
-                    <Dialog
-                        open={openModal}
-                        onOpenChange={(isOpen) => setOpenModal(isOpen)}
-                    >
+                    <Dialog open={openModal} onOpenChange={(isOpen) => setOpenModal(isOpen)}>
                         <DialogTrigger asChild={true}>
                             <Button
                                 className="absolute bottom-0 right-0 m-2 text-sm"
                                 variant={'secondary'}
                                 onClick={() => setOpenModal(true)}
                             >
-                                Thay đổi ảnh bìa
+                                <Icons.Edit size={20} />
                             </Button>
                         </DialogTrigger>
                         <DialogContent>
@@ -137,10 +134,7 @@ const CoverPhoto: React.FC<Props> = ({ group, onGroupUpdate }) => {
                                         Lưu
                                     </Button>
 
-                                    <Button
-                                        variant={'secondary'}
-                                        onClick={() => setOpenModal(false)}
-                                    >
+                                    <Button variant={'secondary'} onClick={() => setOpenModal(false)}>
                                         Hủy
                                     </Button>
                                 </div>

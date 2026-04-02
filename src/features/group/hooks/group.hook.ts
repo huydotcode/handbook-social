@@ -1,9 +1,4 @@
-import {
-    useInfiniteQuery,
-    useMutation,
-    useQuery,
-    useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 
 import { defaultQueryOptions } from '@/lib/react-query';
 import { queryKey } from '@/lib/react-query/query-key';
@@ -15,10 +10,7 @@ import { CreateGroupPayload, GroupQueryParams } from '../types/group.types';
 /**
  * Hook to get joined groups
  */
-export const useJoinedGroups = (
-    params?: GroupQueryParams,
-    options?: { enabled?: boolean }
-) => {
+export const useJoinedGroups = (params?: GroupQueryParams, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: queryKey.user.groups(params?.user_id),
         queryFn: () => GroupService.getJoined(params),
@@ -57,10 +49,7 @@ export const useGroup = (groupId: string, options?: { enabled?: boolean }) => {
 /**
  * Hook to check if user has access to a group
  */
-export const useCheckGroupAccess = (
-    groupId: string,
-    options?: { enabled?: boolean }
-) => {
+export const useCheckGroupAccess = (groupId: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: ['groups', 'access', groupId],
         queryFn: () => GroupService.checkAccess(groupId),
@@ -73,11 +62,7 @@ export const useCheckGroupAccess = (
 /**
  * Hook to check if user is admin or creator of a group
  */
-export const useCheckGroupAdmin = (
-    groupId: string,
-    userId?: string,
-    options?: { enabled?: boolean }
-) => {
+export const useCheckGroupAdmin = (groupId: string, userId?: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: ['groups', 'admin', groupId, userId],
         queryFn: async () => {
@@ -149,13 +134,7 @@ export const useUpdateGroup = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            groupId,
-            data,
-        }: {
-            groupId: string;
-            data: Partial<IGroup>;
-        }) =>
+        mutationFn: ({ groupId, data }: { groupId: string; data: Partial<IGroup> }) =>
             GroupService.update({
                 description: data.description || '',
                 groupId,
@@ -268,11 +247,7 @@ export const useGroupMembers = (
  * Hook to get a specific member from a group
  * Searches through paginated results to find the member
  */
-export const useGroupMember = (
-    groupId: string,
-    memberId: string,
-    options?: { enabled?: boolean }
-) => {
+export const useGroupMember = (groupId: string, memberId: string, options?: { enabled?: boolean }) => {
     return useQuery({
         queryKey: ['groups', 'member', groupId, memberId],
         queryFn: async () => {
@@ -334,8 +309,7 @@ export const useRemoveGroupMember = (groupId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: (userId: string) =>
-            GroupService.removeMember(groupId, userId),
+        mutationFn: (userId: string) => GroupService.removeMember(groupId, userId),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['groups', 'members', groupId],
@@ -359,13 +333,8 @@ export const useUpdateGroupMemberRole = (groupId: string) => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: ({
-            userId,
-            role,
-        }: {
-            userId: string;
-            role: 'ADMIN' | 'MEMBER';
-        }) => GroupService.updateMemberRole(groupId, userId, role),
+        mutationFn: ({ userId, role }: { userId: string; role: 'ADMIN' | 'MEMBER' }) =>
+            GroupService.updateMemberRole(groupId, userId, role),
         onSuccess: () => {
             queryClient.invalidateQueries({
                 queryKey: ['groups', 'members', groupId],

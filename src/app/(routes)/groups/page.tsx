@@ -3,7 +3,7 @@ import { useAuth } from '@/core/context/AuthContext';
 import { useRecommendedGroups } from '@/features/group';
 import { InfinityPostComponent } from '@/features/post/components';
 import { Button } from '@/shared/components/ui/Button';
-import Image from 'next/image';
+import Image from '@/shared/components/ui/image';
 import { Sidebar } from './_components';
 
 const GroupsPage = () => {
@@ -27,6 +27,7 @@ const GroupsPage = () => {
                                     href={`/groups/${group._id}`}
                                 >
                                     <Image
+                                        className="rounded-md"
                                         src={group.avatar.url}
                                         alt={group.name}
                                         width={50}
@@ -42,11 +43,7 @@ const GroupsPage = () => {
                     </>
                 )}
 
-                <InfinityPostComponent
-                    className="mt-2"
-                    title="Hoạt động gần đây"
-                    type="new-feed-group"
-                />
+                <InfinityPostComponent className="mt-2" title="Hoạt động gần đây" type="new-feed-group" />
             </div>
         </>
     );

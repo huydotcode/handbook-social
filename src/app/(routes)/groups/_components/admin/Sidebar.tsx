@@ -8,12 +8,7 @@ import { Avatar, Icons, Modal } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
 import { socketEvent } from '@/shared/constants';
 import { useBreakpoint } from '@/shared/hooks';
-import {
-    GROUP_ROLES,
-    IConversation,
-    IGroup,
-    IMemberGroup,
-} from '@/types/entites';
+import { GROUP_ROLES, IConversation, IGroup, IMemberGroup } from '@/types/entites';
 import { useMutation } from '@tanstack/react-query';
 import React, { useEffect, useId, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
@@ -27,34 +22,24 @@ interface FormData {
     name: string;
 }
 
-const Sidebar: React.FC<Props> = ({
-    group: currentGroup,
-    conversations: initConversations,
-}) => {
+const Sidebar: React.FC<Props> = ({ group: currentGroup, conversations: initConversations }) => {
     const { socket } = useSocket();
     const { user } = useAuth();
     const { breakpoint } = useBreakpoint();
     const isMobile = breakpoint === 'sm' || breakpoint === 'md';
     const nameInputId = useId();
-    const [showModalCreateConversation, setShowModalCreateConversation] =
-        useState<boolean>(false);
-    const [conversations, setConversations] =
-        useState<IConversation[]>(initConversations);
+    const [showModalCreateConversation, setShowModalCreateConversation] = useState<boolean>(false);
+    const [conversations, setConversations] = useState<IConversation[]>(initConversations);
     const [isSidebarOpen, setIsSidebarOpen] = useState<boolean>(false);
     const { data: membersResponse } = useGroupMembers(currentGroup._id, {
         page: 1,
         pageSize: 200,
     });
-    const members = useMemo(
-        () => membersResponse?.data || [],
-        [membersResponse]
-    );
+    const members = useMemo(() => membersResponse?.data || [], [membersResponse]);
 
     const canCreateConversation = useMemo(() => {
         return members.some(
-            (member: IMemberGroup) =>
-                member.user._id === user?.id &&
-                member.role === GROUP_ROLES.ADMIN
+            (member: IMemberGroup) => member.user._id === user?.id && member.role === GROUP_ROLES.ADMIN
         );
     }, [members, user?.id]);
 
@@ -79,9 +64,7 @@ const Sidebar: React.FC<Props> = ({
             }
         },
         onError: () => {
-            showErrorToast(
-                'Có lỗi xảy ra khi tạo hội thoại, vui lòng thử lại sau!'
-            );
+            showErrorToast('Có lỗi xảy ra khi tạo hội thoại, vui lòng thử lại sau!');
         },
     });
 
@@ -109,21 +92,13 @@ const Sidebar: React.FC<Props> = ({
         <>
             <SidebarCollapse>
                 <div className="flex">
-                    <Avatar
-                        imgSrc={currentGroup.avatar.url}
-                        rounded="sm"
-                        width={40}
-                        height={40}
-                    />
+                    <Avatar imgSrc={currentGroup.avatar.url} rounded="sm" width={40} height={40} />
 
                     <div className="ml-2 flex flex-1 flex-col">
-                        <p className="dark:text-dark-primary-1">
-                            {currentGroup.name}
-                        </p>
+                        <p className="dark:text-dark-primary-1">{currentGroup.name}</p>
 
                         <p className="text-xs text-secondary-1">
-                            Hoạt động gần nhất:{' '}
-                            {timeConvert(currentGroup.updatedAt.toString())}
+                            Hoạt động gần nhất: {timeConvert(currentGroup.updatedAt.toString())}
                         </p>
                     </div>
                 </div>
@@ -160,10 +135,7 @@ const Sidebar: React.FC<Props> = ({
 
                         <div className="flex flex-col pt-1">
                             {conversations
-                                .filter(
-                                    (conversation) =>
-                                        conversation.type === 'group'
-                                )
+                                .filter((conversation) => conversation.type === 'group')
                                 .map((conversation) => (
                                     <Button
                                         href={`/messages/${conversation._id}`}
@@ -173,9 +145,7 @@ const Sidebar: React.FC<Props> = ({
                                     >
                                         <Icons.Message className="h-6 w-6" />
                                         <div className="flex flex-1 flex-col">
-                                            <p className="text-sm dark:text-dark-primary-1">
-                                                {conversation.title}
-                                            </p>
+                                            <p className="text-sm dark:text-dark-primary-1">{conversation.title}</p>
                                         </div>
                                     </Button>
                                 ))}
@@ -183,16 +153,11 @@ const Sidebar: React.FC<Props> = ({
                     </div>
 
                     <div className="mt-2">
-                        <h1 className="font-semibold">
-                            Các đoạn chat của nhóm
-                        </h1>
+                        <h1 className="font-semibold">Các đoạn chat của nhóm</h1>
 
                         <div className="flex flex-col pt-1">
                             {conversations
-                                .filter(
-                                    (conversation) =>
-                                        conversation.type === 'group'
-                                )
+                                .filter((conversation) => conversation.type === 'group')
                                 .map((conversation) => (
                                     <Button
                                         href={`/messages/${conversation._id}`}
@@ -202,9 +167,7 @@ const Sidebar: React.FC<Props> = ({
                                     >
                                         <Icons.Message className="h-6 w-6" />
                                         <div className="flex flex-1 flex-col">
-                                            <p className="text-sm dark:text-dark-primary-1">
-                                                {conversation.title}
-                                            </p>
+                                            <p className="text-sm dark:text-dark-primary-1">{conversation.title}</p>
                                         </div>
                                     </Button>
                                 ))}
@@ -229,14 +192,9 @@ const Sidebar: React.FC<Props> = ({
                     show={showModalCreateConversation}
                     handleClose={() => setShowModalCreateConversation(false)}
                 >
-                    <form
-                        onSubmit={handleSubmit(mutateCreateConversation)}
-                        className="p-4"
-                    >
+                    <form onSubmit={handleSubmit(mutateCreateConversation)} className="p-4">
                         <div>
-                            <label htmlFor={nameInputId}>
-                                Tên cuộc hội thoại
-                            </label>
+                            <label htmlFor={nameInputId}>Tên cuộc hội thoại</label>
                             <input
                                 id={nameInputId}
                                 className="my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1"
@@ -248,18 +206,12 @@ const Sidebar: React.FC<Props> = ({
                                 })}
                             />
                             <span className="text-red-500">
-                                {errors.name &&
-                                    'Tên cuộc hội thoại không trống và không được quá 50 ký tự'}
+                                {errors.name && 'Tên cuộc hội thoại không trống và không được quá 50 ký tự'}
                             </span>
                         </div>
 
                         <div className="mt-2">
-                            <Button
-                                type="submit"
-                                variant="primary"
-                                className="w-full"
-                                disabled={isPending}
-                            >
+                            <Button type="submit" variant="primary" className="w-full" disabled={isPending}>
                                 Tạo
                             </Button>
                         </div>

@@ -5,14 +5,7 @@ import { useAuth } from '@/core/context';
 import { createGroupValidation } from '@/features/group';
 import { useCreateGroup } from '@/features/group/hooks/group.hook';
 import { Button } from '@/shared/components/ui/Button';
-import {
-    Form,
-    FormControl,
-    FormField,
-    FormItem,
-    FormLabel,
-    FormMessage,
-} from '@/shared/components/ui/Form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/shared/components/ui/Form';
 import { Input } from '@/shared/components/ui/Input';
 import { uploadImageWithFile } from '@/shared/utils/upload-image';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -23,8 +16,7 @@ import { useForm } from 'react-hook-form';
 import { toast } from 'sonner';
 import { Sidebar } from '../_components';
 
-const INPUT_CLASSNAME =
-    'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';
+const INPUT_CLASSNAME = 'my-1 w-full rounded-md border bg-primary-1 p-2 dark:bg-dark-primary-1';
 
 interface ICreateGroup {
     name: string;
@@ -69,9 +61,7 @@ const CreateGroupPage: React.FC = ({}) => {
             });
 
             if (!avatar) {
-                toast.error(
-                    'Có lỗi xảy ra khi tải ảnh đại diện, vui lòng thử lại!'
-                );
+                toast.error('Có lỗi xảy ra khi tải ảnh đại diện, vui lòng thử lại!');
                 return;
             }
 
@@ -80,9 +70,7 @@ const CreateGroupPage: React.FC = ({}) => {
                 avatar: avatar._id,
             });
 
-            if (newGroup?._id) {
-                router.push(`/groups/${newGroup._id}`);
-            }
+            router.push(`/groups/${newGroup._id}`);
         } catch (error) {
             console.error('Error creating group:', error);
         }
@@ -92,7 +80,7 @@ const CreateGroupPage: React.FC = ({}) => {
         <>
             <Sidebar />
 
-            <div className="ml-300 mt-4">
+            <div className="ml-300 mt-4 flex h-[calc(100vh-200px)] items-center">
                 <div className="mx-auto w-[500px] max-w-screen rounded-xl bg-secondary-1 p-6 dark:bg-dark-secondary-2">
                     <div className={'flex items-center justify-between'}>
                         <h5 className="text-xl font-bold">Tạo nhóm</h5>
@@ -101,10 +89,7 @@ const CreateGroupPage: React.FC = ({}) => {
                         </Button>
                     </div>
                     <Form {...form}>
-                        <form
-                            onSubmit={handleSubmit(onSubmit)}
-                            className="mt-4 flex flex-col space-y-4"
-                        >
+                        <form onSubmit={handleSubmit(onSubmit)} className="mt-4 flex flex-col space-y-4">
                             <FormField
                                 control={form.control}
                                 name="name"
@@ -112,11 +97,7 @@ const CreateGroupPage: React.FC = ({}) => {
                                     <FormItem>
                                         <FormLabel>Tên nhóm</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                className={INPUT_CLASSNAME}
-                                                placeholder="Tên nhóm"
-                                                {...field}
-                                            />
+                                            <Input className={INPUT_CLASSNAME} placeholder="Tên nhóm" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -130,11 +111,7 @@ const CreateGroupPage: React.FC = ({}) => {
                                     <FormItem>
                                         <FormLabel>Mô tả</FormLabel>
                                         <FormControl>
-                                            <Input
-                                                className={INPUT_CLASSNAME}
-                                                placeholder="Mô tả nhóm"
-                                                {...field}
-                                            />
+                                            <Input className={INPUT_CLASSNAME} placeholder="Mô tả nhóm" {...field} />
                                         </FormControl>
                                         <FormMessage />
                                     </FormItem>
@@ -143,13 +120,8 @@ const CreateGroupPage: React.FC = ({}) => {
 
                             {/* Ảnh đại diện */}
                             <div>
-                                <label htmlFor={fileInputId}>
-                                    Ảnh đại diện
-                                </label>
-                                <label
-                                    className="flex items-center"
-                                    htmlFor={fileInputId}
-                                >
+                                <label htmlFor={fileInputId}>Ảnh đại diện</label>
+                                <label className="flex items-center" htmlFor={fileInputId}>
                                     <span className="mr-2 p-2">
                                         {file ? (
                                             <Image
@@ -180,11 +152,7 @@ const CreateGroupPage: React.FC = ({}) => {
                                     }}
                                 />
 
-                                {errors.file && (
-                                    <p className="mt-1 text-sm text-red-500">
-                                        {errors.file.message}
-                                    </p>
-                                )}
+                                {errors.file && <p className="mt-1 text-sm text-red-500">{errors.file.message}</p>}
                             </div>
 
                             {/* Loại nhóm */}
@@ -195,16 +163,9 @@ const CreateGroupPage: React.FC = ({}) => {
                                     <FormItem>
                                         <FormLabel>Loại nhóm</FormLabel>
                                         <FormControl>
-                                            <select
-                                                {...field}
-                                                className={INPUT_CLASSNAME}
-                                            >
-                                                <option value="public">
-                                                    Công khai
-                                                </option>
-                                                <option value="private">
-                                                    Riêng tư
-                                                </option>
+                                            <select {...field} className={INPUT_CLASSNAME}>
+                                                <option value="public">Công khai</option>
+                                                <option value="private">Riêng tư</option>
                                             </select>
                                         </FormControl>
                                         <FormMessage />
@@ -219,9 +180,7 @@ const CreateGroupPage: React.FC = ({}) => {
                                 disabled={isSubmitting || createGroup.isPending}
                                 size={'sm'}
                             >
-                                {isSubmitting || createGroup.isPending
-                                    ? 'Đang tạo nhóm...'
-                                    : 'Tạo nhóm'}
+                                {isSubmitting || createGroup.isPending ? 'Đang tạo nhóm...' : 'Tạo nhóm'}
                             </Button>
                         </form>
                     </Form>
