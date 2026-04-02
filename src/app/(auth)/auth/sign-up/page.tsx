@@ -37,6 +37,8 @@ const SignUpPage = () => {
     const form = useForm<FormSignupData>({
         resolver: zodResolver(signUpValidation),
         defaultValues: {
+            familyName: '',
+            givenName: '',
             username: '',
             password: '',
             repassword: '',
@@ -58,7 +60,7 @@ const SignUpPage = () => {
     }, [countdown]);
 
     const handleNextStep1 = async () => {
-        const isValid = await trigger(['username']);
+        const isValid = await trigger(['familyName', 'givenName', 'username']);
         if (!isValid) return;
 
         const username = getValues('username');
@@ -107,6 +109,8 @@ const SignUpPage = () => {
         try {
             await signUpMutation.mutateAsync({
                 email: data.email || undefined,
+                familyName: data.familyName,
+                givenName: data.givenName,
                 username: data.username,
                 password: data.password,
                 otp: data.otp || undefined,
@@ -123,6 +127,8 @@ const SignUpPage = () => {
     const handleSkipEmail = async () => {
         try {
             await signUpMutation.mutateAsync({
+                familyName: getValues('familyName'),
+                givenName: getValues('givenName'),
                 username: getValues('username'),
                 password: getValues('password'),
             });
@@ -166,7 +172,47 @@ const SignUpPage = () => {
                     <form className={'space-y-4'} onSubmit={handleSubmit(signUp)}>
                         {/* STEP 1: USERNAME */}
                         {step === 1 && (
-                            <div className="animate-in fade-in slide-in-from-bottom-2 duration-300">
+                            <div className="space-y-4 animate-in fade-in slide-in-from-bottom-2 duration-300">
+                                <div className="flex gap-4">
+                                    <FormField
+                                        control={form.control}
+                                        name="familyName"
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                                    Họ
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Họ của bạn"
+                                                        {...field}
+                                                        onChange={(e) => handleInputChange(e, field)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage className="text-sm text-red-500" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                    <FormField
+                                        control={form.control}
+                                        name="givenName"
+                                        render={({ field }) => (
+                                            <FormItem className="flex-1">
+                                                <FormLabel className="font-medium text-slate-700 dark:text-slate-300">
+                                                    Tên
+                                                </FormLabel>
+                                                <FormControl>
+                                                    <Input
+                                                        placeholder="Tên của bạn"
+                                                        {...field}
+                                                        onChange={(e) => handleInputChange(e, field)}
+                                                    />
+                                                </FormControl>
+                                                <FormMessage className="text-sm text-red-500" />
+                                            </FormItem>
+                                        )}
+                                    />
+                                </div>
                                 <FormField
                                     control={form.control}
                                     name="username"
@@ -177,7 +223,7 @@ const SignUpPage = () => {
                                             </FormLabel>
                                             <FormControl>
                                                 <Input
-                                                    placeholder="Usernameeee..."
+                                                    placeholder="Username"
                                                     {...field}
                                                     onChange={(e) => handleInputChange(e, field)}
                                                 />

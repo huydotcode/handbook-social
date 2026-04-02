@@ -9,6 +9,8 @@ export interface LoginDto {
 export interface RegisterDto {
     email?: string;
     username: string;
+    familyName: string;
+    givenName: string;
     password: string;
     otp?: string;
 }

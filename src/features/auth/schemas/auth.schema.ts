@@ -9,6 +9,11 @@ export const usernameValidation = z.object({
         .regex(/^[a-zA-Z0-9_-]+$/, 'Username chỉ chứa kí tự, số, dấu gạch dưới và gạch ngang'),
 });
 
+export const nameValidation = z.object({
+    familyName: z.string().min(1, 'Họ là bắt buộc').max(50, 'Họ không quá 50 kí tự'),
+    givenName: z.string().min(1, 'Tên là bắt buộc').max(50, 'Tên không quá 50 kí tự'),
+});
+
 export const passwordValidation = z.object({
     password: z.string().min(6, 'Mật khẩu từ 6-50 kí tự').max(50, 'Mật khẩu từ 6-50 kí tự'),
     repassword: z.string().min(6, 'Mật khẩu từ 6-50 kí tự').max(50, 'Mật khẩu từ 6-50 kí tự'),
@@ -25,6 +30,8 @@ export const emailOtpValidation = z.object({
 });
 
 export const signUpValidation = z.object({
+    familyName: nameValidation.shape.familyName,
+    givenName: nameValidation.shape.givenName,
     username: usernameValidation.shape.username,
     password: passwordValidation.shape.password,
     repassword: passwordValidation.shape.repassword,
