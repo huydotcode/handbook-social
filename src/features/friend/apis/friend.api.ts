@@ -62,4 +62,11 @@ export const friendApi = {
             `/users/${userId}/friends-with-conversations`
         );
     },
+
+    /**
+     * Get friend suggestions
+     */
+    getFriendSuggestions: (limit: number = 5) => {
+        return apiClient.get<any[]>(`/friendships/suggestions?limit=${limit}`);
+    },
 };

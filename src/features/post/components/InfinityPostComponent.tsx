@@ -15,6 +15,7 @@ import Image from '../../../shared/components/ui/image';
 import CreatePost from './CreatePost';
 import Post from './Post';
 import SkeletonPost from './SkeletonPost';
+import { FriendSuggestionsCard } from '@/shared/components/layout';
 
 export type PostType =
     | 'new-feed'
@@ -88,28 +89,19 @@ export const useInfiniteQueryPost = ({
     type = 'new-feed',
     search = '',
     enabled = true,
-}: Pick<
-    Props,
-    'userId' | 'groupId' | 'username' | 'type' | 'enabled' | 'search'
->) => {
+}: Pick<Props, 'userId' | 'groupId' | 'username' | 'type' | 'enabled' | 'search'>) => {
     const { user } = useAuth();
 
-    const isFeedType = useMemo(
-        () => ['new-feed', 'new-feed-friend', 'new-feed-group'].includes(type),
-        [type]
-    );
+    const isFeedType = useMemo(() => ['new-feed', 'new-feed-friend', 'new-feed-group'].includes(type), [type]);
 
     const getEndpoint = useCallback(
         (type: PostType) => {
             const baseEndpoint = ENDPOINTS[type];
             if (type === 'profile') return `${baseEndpoint}/${userId}`;
             if (type === 'group') return `${baseEndpoint}/${groupId}`;
-            if (type === 'manage-group-posts')
-                return `${baseEndpoint}/${groupId}/manage`;
-            if (type === 'manage-group-posts-pending')
-                return `${baseEndpoint}/${groupId}/manage/pending`;
-            if (type === 'post-by-member')
-                return `${baseEndpoint}/${groupId}/member/${userId}`;
+            if (type === 'manage-group-posts') return `${baseEndpoint}/${groupId}/manage`;
+            if (type === 'manage-group-posts-pending') return `${baseEndpoint}/${groupId}/manage/pending`;
+            if (type === 'post-by-member') return `${baseEndpoint}/${groupId}/member/${userId}`;
             return baseEndpoint;
         },
         [userId, groupId]
@@ -149,9 +141,7 @@ export const useInfiniteQueryPost = ({
         }),
         queryFn: ({ pageParam = 1 }) => fetchPosts(pageParam),
         getNextPageParam: (lastPage, allPages) => {
-            return lastPage.length === PAGE_SIZE
-                ? allPages.length + 1
-                : undefined;
+            return lastPage.length === PAGE_SIZE ? allPages.length + 1 : undefined;
         },
         select: (data) => data.pages.flat(),
         initialPageParam: 1,
@@ -173,15 +163,8 @@ const InfinityPostComponent: React.FC<Props> = ({
     showEmptyState = true,
 }) => {
     const { user } = useAuth();
-    const {
-        data,
-        isLoading,
-        isFetching,
-        isFetchingNextPage,
-        hasNextPage,
-        fetchNextPage,
-        refetch,
-    } = useInfiniteQueryPost({ userId, groupId, username, type });
+    const { data, isLoading, isFetching, isFetchingNextPage, hasNextPage, fetchNextPage, refetch } =
+        useInfiniteQueryPost({ userId, groupId, username, type });
     const params = {
         userId,
         groupId,
@@ -258,10 +241,7 @@ const InfinityPostComponent: React.FC<Props> = ({
             <>
                 <div className="mb-4 rounded-xl bg-white px-4 py-2 shadow-md transition-all duration-300 ease-in-out dark:bg-dark-secondary-1">
                     <div className="flex items-center">
-                        <Link
-                            href={`/profile/${user?.id}`}
-                            className="h-10 w-10"
-                        >
+                        <Link href={`/profile/${user?.id}`} className="h-10 w-10">
                             {user && (
                                 <Image
                                     src={user.avatar || ''}
@@ -277,19 +257,13 @@ const InfinityPostComponent: React.FC<Props> = ({
                             onClick={handleShow}
                         >
                             <h5 className="text-secondary-1">
-                                {type === 'group'
-                                    ? 'Đăng bài lên nhóm này...'
-                                    : 'Bạn đang nghĩ gì?'}
+                                {type === 'group' ? 'Đăng bài lên nhóm này...' : 'Bạn đang nghĩ gì?'}
                             </h5>
                         </div>
                     </div>
                 </div>
 
-                <Modal
-                    handleClose={handleClose}
-                    show={showModalCreatePost}
-                    title="Đăng bài viết"
-                >
+                <Modal handleClose={handleClose} show={showModalCreatePost} title="Đăng bài viết">
                     <CreatePost
                         className="w-[700px] max-w-full"
                         onSubmitSuccess={handleClose}
@@ -299,15 +273,7 @@ const InfinityPostComponent: React.FC<Props> = ({
                 </Modal>
             </>
         );
-    }, [
-        shouldShowCreatePost,
-        showModalCreatePost,
-        user,
-        handleShow,
-        type,
-        groupId,
-        handleClose,
-    ]);
+    }, [shouldShowCreatePost, showModalCreatePost, user, handleShow, type, groupId, handleClose]);
 
     return (
         <div className={cn(className, 'relative w-full')}>
@@ -317,12 +283,7 @@ const InfinityPostComponent: React.FC<Props> = ({
             {/* Refresh button for management view */}
             {isManage && (
                 <div className={'flex justify-center'}>
-                    <Button
-                        onClick={() => refetch()}
-                        className="mb-2"
-                        variant="secondary"
-                        size={'sm'}
-                    >
+                    <Button onClick={() => refetch()} className="mb-2" variant="secondary" size={'sm'}>
                         Tải mới
                     </Button>
                 </div>
@@ -332,32 +293,24 @@ const InfinityPostComponent: React.FC<Props> = ({
             {renderCreatePost()}
 
             {/* Posts list */}
-            {data?.map((post) => {
+            {data?.map((post, index) => {
                 return (
-                    <Post
-                        data={post}
-                        key={post._id}
-                        isManage={isManage}
-                        params={params}
-                    />
+                    <React.Fragment key={post._id}>
+                        <Post data={post} isManage={isManage} params={params} />
+                        {type === 'new-feed' && index === 0 && <FriendSuggestionsCard />}
+                    </React.Fragment>
                 );
             })}
 
             {/* Empty state */}
             {showEmptyState && data && data.length === 0 && (
                 <div className="flex justify-center py-2">
-                    <p className="dark:text-dark-primary-1">
-                        Không có bài viết nào
-                    </p>
+                    <p className="dark:text-dark-primary-1">Không có bài viết nào</p>
                 </div>
             )}
 
             {/* Infinite scroll trigger */}
-            <div
-                className={'absolute bottom-0 w-full bg-transparent p-2'}
-                ref={bottomRef}
-                aria-hidden="true"
-            />
+            <div className={'absolute bottom-0 w-full bg-transparent p-2'} ref={bottomRef} aria-hidden="true" />
 
             {/* Loading states */}
             {renderLoader()}

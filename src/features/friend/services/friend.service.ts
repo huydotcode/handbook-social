@@ -3,13 +3,9 @@ import { friendApi } from '../apis/friend.api';
 import { FriendsWithConversationsResponse } from '../types/friend.types';
 
 // Helper to normalize friendship record to IFriend
-const mapFriendshipToFriend = (
-    record: any,
-    currentUserId: string
-): IFriend | null => {
+const mapFriendshipToFriend = (record: any, currentUserId: string): IFriend | null => {
     if (!record) return null;
-    const friend =
-        record.user1?._id === currentUserId ? record.user2 : record.user1;
+    const friend = record.user1?._id === currentUserId ? record.user2 : record.user1;
     if (!friend) return null;
 
     return {
@@ -29,9 +25,7 @@ class FriendServiceClass {
     async getFriends(userId: string): Promise<IFriend[]> {
         try {
             const res = await friendApi.getFriends(userId);
-            return (res || [])
-                .map((f) => mapFriendshipToFriend(f, userId))
-                .filter((f): f is IFriend => !!f);
+            return (res || []).map((f) => mapFriendshipToFriend(f, userId)).filter((f): f is IFriend => !!f);
         } catch (error) {
             console.error('Error getting friends:', error);
             throw error;
@@ -67,10 +61,7 @@ class FriendServiceClass {
     /**
      * Get common friends
      */
-    async getCommonFriends(
-        userId1: string,
-        userId2: string
-    ): Promise<string[]> {
+    async getCommonFriends(userId1: string, userId2: string): Promise<string[]> {
         try {
             const res = await friendApi.getCommonFriends(userId1, userId2);
             return res?.commonFriends ?? [];
@@ -103,10 +94,28 @@ class FriendServiceClass {
     /**
      * Get friends with conversations
      */
-    async getFriendsWithConversations(
-        userId: string
-    ): Promise<FriendsWithConversationsResponse> {
+    async getFriendsWithConversations(userId: string): Promise<FriendsWithConversationsResponse> {
         return await friendApi.getFriendsWithConversations(userId);
+    }
+
+    /**
+     * Get friend suggestions
+     */
+    async getFriendSuggestions(limit: number = 5): Promise<IFriend[]> {
+        try {
+            const res = await friendApi.getFriendSuggestions(limit);
+            return (res || []).map((user: any) => ({
+                _id: user._id,
+                name: user.name,
+                username: user.username,
+                avatar: user.avatar,
+                isOnline: !!user.isOnline,
+                lastAccessed: user.lastAccessed,
+            }));
+        } catch (error) {
+            console.error('Error getting friend suggestions:', error);
+            return [];
+        }
     }
 }
 

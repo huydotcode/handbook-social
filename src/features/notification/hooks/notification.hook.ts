@@ -3,8 +3,9 @@ import {
     defaultInfiniteQueryOptions,
 } from '@/lib/react-query';
 import { queryKey } from '@/lib/react-query/query-key';
-import { useInfiniteQuery } from '@tanstack/react-query';
+import { useMutation, useInfiniteQuery, useQueryClient } from '@tanstack/react-query';
 import { notificationApi } from '../apis/notification.api';
+import { NotificationService } from '../services/notification.service';
 
 /**
  * Hook to get notifications by receiver (infinite query)
@@ -109,3 +110,23 @@ export const useRequests = (userId: string | undefined) =>
         refetchOnWindowFocus: false,
         refetchOnMount: false,
     });
+
+/**
+ * Hook to send a friend request notification.
+ * After success, invalidates the friend-suggestions cache.
+ */
+export const useSendFriendRequest = () => {
+    const queryClient = useQueryClient();
+    return useMutation({
+        mutationFn: ({
+            senderId,
+            receiverId,
+        }: {
+            senderId: string;
+            receiverId: string;
+        }) => NotificationService.sendRequestFriend({ senderId, receiverId }),
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ['friend-suggestions'] });
+        },
+    });
+};

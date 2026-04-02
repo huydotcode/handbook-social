@@ -65,3 +65,13 @@ export const useRemoveFriend = () => {
         },
     });
 };
+
+/**
+ * Hook to get friend suggestions
+ */
+export const useFriendSuggestions = (limit: number = 5) => {
+    return useQuery({
+        queryKey: ['friend-suggestions', limit],
+        queryFn: () => FriendService.getFriendSuggestions(limit),
+    });
+};
