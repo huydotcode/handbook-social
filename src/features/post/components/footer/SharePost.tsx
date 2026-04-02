@@ -23,10 +23,7 @@ interface Props {
     post: IPost;
 }
 
-const BASE_URL =
-    env.NODE_ENV === 'production'
-        ? 'https://handbook-social.me'
-        : 'http://localhost:3000';
+const BASE_URL = env.NODE_ENV === 'production' ? 'https://handbook-social.me' : 'http://localhost:3000';
 
 const SharePost: React.FC<Props> = ({ post }) => {
     const { user } = useAuth();
@@ -46,11 +43,10 @@ const SharePost: React.FC<Props> = ({ post }) => {
 
         try {
             // Get or create conversation
-            const { conversation } =
-                await ConversationService.getPrivateConversation({
-                    userId: user.id,
-                    friendId,
-                });
+            const { conversation } = await ConversationService.getPrivateConversation({
+                userId: user.id,
+                friendId,
+            });
 
             if (!conversation) {
                 toast.error('Không tìm thấy cuộc trò chuyện!', {
@@ -96,9 +92,7 @@ const SharePost: React.FC<Props> = ({ post }) => {
             <DialogTrigger asChild>
                 <Button className="flex-1 md:p-1" variant={'ghost'}>
                     <Icons.Share className="text-xl" />
-                    <span className="ml-1 mr-2 min-w-[10px] text-sm sm:hidden">
-                        Chia sẻ
-                    </span>
+                    <span className="ml-1 mr-2 min-w-[10px] text-sm sm:hidden">Chia sẻ</span>
                 </Button>
             </DialogTrigger>
 
@@ -112,15 +106,18 @@ const SharePost: React.FC<Props> = ({ post }) => {
                 </DialogHeader>
 
                 <div className="flex max-h-[400px] flex-col gap-2 overflow-y-scroll">
+                    {friends && friends.length === 0 && (
+                        <div className="flex items-center justify-center text-sm text-secondary-1">
+                            <span>Chưa có bạn bè để chia sẻ</span>
+                        </div>
+                    )}
+
                     {friends &&
                         friends.map((friend) => {
                             const isSend = sended.includes(friend._id);
 
                             return (
-                                <div
-                                    className="flex items-center justify-between"
-                                    key={friend._id}
-                                >
+                                <div className="flex items-center justify-between" key={friend._id}>
                                     <div className="flex items-center gap-2">
                                         <Avatar
                                             alt={friend.name}
@@ -138,12 +135,8 @@ const SharePost: React.FC<Props> = ({ post }) => {
                                         </Button>
                                     ) : (
                                         <Button
-                                            disabled={
-                                                sharingFriendId === friend._id
-                                            }
-                                            onClick={() =>
-                                                handleShare(friend._id)
-                                            }
+                                            disabled={sharingFriendId === friend._id}
+                                            onClick={() => handleShare(friend._id)}
                                             variant={'secondary'}
                                         >
                                             {sharingFriendId === friend._id ? (
