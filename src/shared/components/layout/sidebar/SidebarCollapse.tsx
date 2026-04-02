@@ -49,7 +49,7 @@ const SidebarCollapse: React.FC<Props> = ({
     return (
         <div
             className={cn(
-                'no-scrollbar fixed left-0 top-[56px] z-20 h-[calc(100vh-56px)] w-[300px] max-w-screen border-r-2 bg-secondary-1 p-2 transition-transform duration-300 ease-in-out dark:border-none dark:bg-dark-secondary-1',
+                'no-scrollbar fixed left-0 top-[58px] z-20 h-[calc(100vh-56px)] w-[300px] max-w-screen border-r-2 bg-secondary-1 p-2 transition-transform duration-300 ease-in-out dark:border-none dark:bg-dark-secondary-1',
                 {
                     'translate-x-0': isMobile && isSidebarOpen,
                     '-translate-x-full': isMobile && !isSidebarOpen,
