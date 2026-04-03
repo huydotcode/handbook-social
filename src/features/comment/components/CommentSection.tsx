@@ -8,11 +8,7 @@ import { Button } from '@/shared/components/ui/Button';
 import { Form, FormControl } from '@/shared/components/ui/Form';
 import { Textarea } from '@/shared/components/ui/textarea';
 import { IComment, IPost } from '@/types/entites';
-import {
-    useInfiniteQuery,
-    useMutation,
-    useQueryClient,
-} from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import React, { useCallback, useMemo, useRef } from 'react';
 import { Controller, SubmitHandler, useForm } from 'react-hook-form';
 import { toast } from 'sonner';
@@ -51,9 +47,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
         },
         initialPageParam: 1,
         getNextPageParam: (lastPage, allPages) => {
-            return lastPage.length === PAGE_SIZE
-                ? allPages.length + 1
-                : undefined;
+            return lastPage.length === PAGE_SIZE ? allPages.length + 1 : undefined;
         },
         getPreviousPageParam: (firstPage, allPages) => {
             return firstPage.length === PAGE_SIZE ? 1 : undefined;
@@ -99,16 +93,13 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
                 });
 
                 // Update post cache - tăng commentsCount
-                await queryClient.setQueryData(
-                    queryKey.posts.id(post._id),
-                    (oldData: IPost | undefined) => {
-                        if (!oldData) return oldData;
-                        return {
-                            ...oldData,
-                            commentsCount: (oldData.commentsCount || 0) + 1,
-                        };
-                    }
-                );
+                await queryClient.setQueryData(queryKey.posts.id(post._id), (oldData: IPost | undefined) => {
+                    if (!oldData) return oldData;
+                    return {
+                        ...oldData,
+                        commentsCount: (oldData.commentsCount || 0) + 1,
+                    };
+                });
 
                 // Update comments cache - thêm comment mới vào đầu
                 await queryClient.setQueryData(
@@ -145,32 +136,24 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
         [post._id, queryClient, reset, setFocus, setValue, setCommentCount]
     );
 
-    const handleKeyDown = useCallback(
-        (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-            // Nếu Shift + Enter thì xuống dòng
-            if (e.key === 'Enter' && e.shiftKey) return;
+    const handleKeyDown = useCallback((e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+        // Nếu Shift + Enter thì xuống dòng
+        if (e.key === 'Enter' && e.shiftKey) return;
 
-            if (e.key === 'Enter') {
-                e.preventDefault();
+        if (e.key === 'Enter') {
+            e.preventDefault();
 
-                formRef.current?.dispatchEvent(
-                    new Event('submit', { cancelable: true, bubbles: true })
-                );
-            }
-        },
-        []
-    );
+            formRef.current?.dispatchEvent(new Event('submit', { cancelable: true, bubbles: true }));
+        }
+    }, []);
 
     // Memoize loading state check
-    const isLoading = useMemo(
-        () => isLoadingComments || !comments,
-        [isLoadingComments, comments]
-    );
+    const isLoading = useMemo(() => isLoadingComments || !comments, [isLoadingComments, comments]);
 
     // Early return cho loading state
     if (isLoading) {
         return (
-            <div className={'flex flex-col gap-4'}>
+            <div className={'mt-2 flex flex-col gap-4'}>
                 <SkeletonComment />
                 <SkeletonComment />
                 <SkeletonComment />
@@ -221,11 +204,7 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
                                 type="submit"
                                 disabled={isPending}
                             >
-                                {isPending ? (
-                                    <Icons.Loading className="animate-spin" />
-                                ) : (
-                                    <Icons.Send />
-                                )}
+                                {isPending ? <Icons.Loading className="animate-spin" /> : <Icons.Send />}
                             </Button>
                         </form>
                     </Form>
@@ -235,27 +214,14 @@ const CommentSection: React.FC<Props> = ({ post, setCommentCount }) => {
             {isPending && <SkeletonComment />}
 
             {!isPending && comments && comments.length === 0 && (
-                <div className="text-center text-xs text-secondary-1">
-                    Không có bình luận
-                </div>
+                <div className="text-center text-xs text-secondary-1">Không có bình luận</div>
             )}
 
             {comments &&
-                comments.map((cmt) => (
-                    <CommentItem
-                        data={cmt}
-                        key={cmt._id}
-                        setCommentCount={setCommentCount}
-                    />
-                ))}
+                comments.map((cmt) => <CommentItem data={cmt} key={cmt._id} setCommentCount={setCommentCount} />)}
 
             {hasNextPage && (
-                <Button
-                    className="text-secondary-1"
-                    variant={'text'}
-                    size={'xs'}
-                    onClick={() => fetchNextPage()}
-                >
+                <Button className="text-secondary-1" variant={'text'} size={'xs'} onClick={() => fetchNextPage()}>
                     Xem thêm bình luận
                 </Button>
             )}
