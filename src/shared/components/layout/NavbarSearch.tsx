@@ -120,7 +120,7 @@ const NavbarSearch = () => {
             <Collapse in={showModal}>
                 <div
                     className={
-                        'fixed left-0 top-0 z-10 w-[400px] max-w-screen rounded-b-xl bg-secondary-1 p-1 pl-5 shadow-md dark:bg-dark-secondary-1'
+                        'fixed left-0 top-0 z-[99] w-[400px] max-w-screen rounded-b-xl bg-secondary-1 p-1 pl-5 shadow-md dark:bg-dark-secondary-1'
                     }
                 >
                     <div className={'flex h-12 w-full items-center bg-secondary-1 dark:bg-dark-secondary-1'}>
