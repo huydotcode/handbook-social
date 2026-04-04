@@ -7,17 +7,8 @@ import { cn } from '@/lib/utils';
 import { splitName, timeConvert3 } from '@/shared';
 import { Avatar, ConfirmModal, Icons } from '@/shared/components/ui';
 import { Button } from '@/shared/components/ui/Button';
-import {
-    Popover,
-    PopoverContent,
-    PopoverTrigger,
-} from '@/shared/components/ui/Popover';
-import {
-    Tooltip,
-    TooltipContent,
-    TooltipProvider,
-    TooltipTrigger,
-} from '@/shared/components/ui/tooltip';
+import { Popover, PopoverContent, PopoverTrigger } from '@/shared/components/ui/Popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/shared/components/ui/tooltip';
 import { useQueryInvalidation } from '@/shared/hooks';
 import { IConversation } from '@/types/entites';
 import { usePathname, useRouter } from 'next/navigation';
@@ -36,17 +27,12 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     const { setIsSidebarOpen } = useSidebarCollapse();
     const path = usePathname();
     const router = useRouter();
-    const members = useMemo(
-        () => conversation.members || [],
-        [conversation.members]
-    );
+    const members = useMemo(() => conversation.members || [], [conversation.members]);
 
     const [openModalDelete, setOpenModalDelete] = useState<boolean>(false);
 
     const partner = useMemo(() => {
-        return conversation.group
-            ? null
-            : members.find((m) => m.user._id !== user?.id)?.user;
+        return conversation.group ? null : members.find((m) => m.user._id !== user?.id)?.user;
     }, [conversation.group, members, user]);
 
     const isSelect = useMemo(() => {
@@ -68,10 +54,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
     const isReadLastMessage = useMemo(() => {
         if (!lastMessage) return false;
 
-        return (
-            lastMessage.sender._id === user?.id ||
-            lastMessage.readBy.some((read) => read.user._id === user?.id)
-        );
+        return lastMessage.sender._id === user?.id || lastMessage.readBy.some((read) => read.user._id === user?.id);
     }, [lastMessage, user]);
 
     const handleShowProfile = () => {
@@ -130,7 +113,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                         <Button
                             className={cn(
                                 'relative m-0 flex w-full justify-between px-2 shadow-none',
-                                isSelect && 'bg-primary-1'
+                                isSelect && 'bg-primary-1 dark:bg-dark-primary-1'
                             )}
                             onClick={() => {
                                 setIsSidebarOpen(false);
@@ -143,17 +126,11 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                     {conversation.group ? (
                                         <Avatar
                                             onlyImage
-                                            imgSrc={
-                                                conversation.group.avatar.url
-                                            }
+                                            imgSrc={conversation.group.avatar.url}
                                             alt={conversation.group.name}
                                         />
                                     ) : (
-                                        <Avatar
-                                            onlyImage
-                                            imgSrc={partner?.avatar}
-                                            alt={partner?.name}
-                                        />
+                                        <Avatar onlyImage imgSrc={partner?.avatar} alt={partner?.name} />
                                     )}
                                 </div>
                                 {partner && (
@@ -172,80 +149,40 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                     </h3>
                                 </div>
                                 <div className="ml-2 max-w-full overflow-ellipsis whitespace-nowrap text-start text-xs">
-                                    {!lastMessage && (
-                                        <span className="text-secondary-1">
-                                            Chưa có tin nhắn
-                                        </span>
-                                    )}
+                                    {!lastMessage && <span className="text-secondary-1">Chưa có tin nhắn</span>}
 
                                     {lastMessage && (
                                         <>
-                                            <div
-                                                className={
-                                                    'flex items-center justify-between'
-                                                }
-                                            >
-                                                <div
-                                                    className={
-                                                        'flex items-center justify-between'
-                                                    }
-                                                >
-                                                    <span
-                                                        className={cn(
-                                                            'text-secondary-1 dark:text-dark-primary-1'
-                                                        )}
-                                                    >
-                                                        {lastMessage?.sender
-                                                            ._id == user?.id
+                                            <div className={'flex items-center justify-between'}>
+                                                <div className={'flex items-center justify-between'}>
+                                                    <span className={cn('text-secondary-1 dark:text-dark-primary-1')}>
+                                                        {lastMessage?.sender._id == user?.id
                                                             ? 'Bạn: '
-                                                            : lastMessage
-                                                                    ?.sender
-                                                                    .givenName
-                                                              ? lastMessage
-                                                                    ?.sender
-                                                                    .givenName
+                                                            : lastMessage?.sender.givenName
+                                                              ? lastMessage?.sender.givenName
                                                               : `${
-                                                                    splitName(
-                                                                        lastMessage
-                                                                            ?.sender
-                                                                            ?.name ||
-                                                                            ''
-                                                                    ).lastName
+                                                                    splitName(lastMessage?.sender?.name || '').lastName
                                                                 }: `}
                                                     </span>
 
                                                     <span
-                                                        className={cn(
-                                                            'ml-1 font-bold',
-                                                            {
-                                                                'font-normal text-secondary-1':
-                                                                    isReadLastMessage,
-                                                            }
-                                                        )}
+                                                        className={cn('ml-1 font-bold', {
+                                                            'font-normal text-secondary-1': isReadLastMessage,
+                                                        })}
                                                     >
-                                                        {lastMessage.text.trim()
-                                                            .length > 0
-                                                            ? lastMessage.text
-                                                                  .slice(0, 8)
-                                                                  .concat('...')
+                                                        {lastMessage.text.trim().length > 0
+                                                            ? lastMessage.text.slice(0, 8).concat('...')
                                                             : 'Gửi một ảnh'}
                                                     </span>
                                                 </div>
 
                                                 {lastMessage.createdAt && (
                                                     <span
-                                                        className={cn(
-                                                            'ml-2 font-bold',
-                                                            {
-                                                                'font-normal text-secondary-1':
-                                                                    isReadLastMessage,
-                                                            }
-                                                        )}
+                                                        className={cn('ml-2 font-bold', {
+                                                            'font-normal text-secondary-1': isReadLastMessage,
+                                                        })}
                                                     >
-                                                        {timeConvert3(
-                                                            lastMessage.createdAt.toString(),
-                                                            'trước'
-                                                        )}
+                                                        {timeConvert3(lastMessage.createdAt.toString(), 'trước')}
                                                     </span>
                                                 )}
                                             </div>
@@ -262,11 +199,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
             <div className="absolute right-6 top-1/2 z-50 -translate-y-1/2 opacity-0 transition-opacity group-hover:opacity-100">
                 <Popover>
                     <PopoverTrigger asChild>
-                        <Button
-                            className="text-gray-500 hover:text-gray-700"
-                            variant="default"
-                            size={'sm'}
-                        >
+                        <Button className="text-gray-500 hover:text-gray-700" variant="default" size={'sm'}>
                             <Icons.Menu />
                         </Button>
                     </PopoverTrigger>
@@ -288,9 +221,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
                                 size={'sm'}
                                 onClick={() => setOpenModalDelete(true)}
                             >
-                                {isDeleted
-                                    ? 'Khôi phục cuộc trò chuyện'
-                                    : 'Xoá cuộc trò chuyện'}
+                                {isDeleted ? 'Khôi phục cuộc trò chuyện' : 'Xoá cuộc trò chuyện'}
                             </Button>
                         </div>
                     </PopoverContent>
@@ -298,11 +229,7 @@ const ConversationItem: React.FC<Props> = ({ data: conversation }) => {
             </div>
 
             <ConfirmModal
-                title={
-                    isDeleted
-                        ? 'Khôi phục cuộc trò chuyện'
-                        : 'Xoá cuộc trò chuyện'
-                }
+                title={isDeleted ? 'Khôi phục cuộc trò chuyện' : 'Xoá cuộc trò chuyện'}
                 cancelText="Huỷ"
                 confirmText={isDeleted ? 'Khôi phục' : 'Xoá'}
                 open={openModalDelete}
