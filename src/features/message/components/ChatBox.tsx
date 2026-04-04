@@ -12,6 +12,7 @@ import React, { KeyboardEventHandler, useEffect, useMemo, useRef, useState } fro
 import { toast } from 'sonner';
 import { useInView } from 'react-intersection-observer';
 import ChatHeader from './ChatHeader';
+import ConversationInfoBanner from './ConversationInfoBanner';
 import InfomationConversation from './InfomationConversation';
 import InputMessage from './InputMessage';
 import Message from './Message';
@@ -291,7 +292,16 @@ const ChatBox: React.FC<Props> = ({ className, conversation, findMessage }) => {
                                     </div>
                                 ))}
 
+                            {/* Empty */}
+                            {messages?.length === 0 && (
+                                <div className="flex items-center justify-center">
+                                    <span className="text-sm text-secondary-1">Không có tin nhắn</span>
+                                </div>
+                            )}
+
                             <div ref={topRef} className={'p-2'} />
+
+                            <ConversationInfoBanner conversation={conversation} />
                         </div>
 
                         {findMessage && (
