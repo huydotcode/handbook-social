@@ -39,12 +39,6 @@ const GroupLayout: React.FC<Props> = ({ params, children }) => {
         enabled: !!user?.id && hasAccess,
     });
 
-    useEffect(() => {
-        console.log({
-            group,
-        });
-    }, [group]);
-
     // Redirect to home if user is not logged in
     useEffect(() => {
         if (!user?.id) {
