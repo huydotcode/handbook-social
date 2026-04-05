@@ -1,7 +1,8 @@
 export interface CreateConversationDto {
     type: string;
     participants: string[];
-    name?: string;
+    group?: string;
+    title?: string;
 }
 
 export interface UpdateConversationDto {
@@ -11,6 +12,7 @@ export interface UpdateConversationDto {
 
 export interface ConversationQueryParams {
     user_id?: string;
+    group_id?: string;
     page?: number;
     page_size?: number;
 }
